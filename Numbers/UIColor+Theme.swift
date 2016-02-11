@@ -23,4 +23,13 @@ extension UIColor {
             return UIColor(red: 0.09, green: 0.09, blue: 0.09, alpha: 1)
         }
     }
+    
+    class func themeColorHighlighted(themeColor: ThemeColor) -> UIColor {
+        switch (themeColor) {
+        case .OffWhite:
+            return UIColor(red: 0.8, green: 0.87, blue: 0.78, alpha: 1)
+        default:
+            return UIColor.themeColor(themeColor)
+        }
+    }
 }
