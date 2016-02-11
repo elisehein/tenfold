@@ -11,6 +11,8 @@
 		0C738ADD1C69D811007C9548 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C738ADC1C69D811007C9548 /* ViewController.swift */; };
 		0C738AE21C69D811007C9548 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C738AE11C69D811007C9548 /* Assets.xcassets */; };
 		0C90AE9B1C6B29A700E1E42E /* lsansuni.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0C90AE9A1C6B29A700E1E42E /* lsansuni.ttf */; };
+		0C90AE9E1C6C7F1D00E1E42E /* PureLayout.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C90AE9D1C6C7F1D00E1E42E /* PureLayout.framework */; };
+		0C90AEA01C6C7FDF00E1E42E /* UIFont+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C90AE9F1C6C7FDF00E1E42E /* UIFont+Theme.swift */; };
 		0CA050A81C6B23D9006A42B9 /* UIColor+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA050A71C6B23D9006A42B9 /* UIColor+Theme.swift */; };
 /* End PBXBuildFile section */
 
@@ -21,6 +23,8 @@
 		0C738AE11C69D811007C9548 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0C738AE61C69D811007C9548 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0C90AE9A1C6B29A700E1E42E /* lsansuni.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = lsansuni.ttf; sourceTree = "<group>"; };
+		0C90AE9D1C6C7F1D00E1E42E /* PureLayout.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PureLayout.framework; path = Carthage/Build/iOS/PureLayout.framework; sourceTree = "<group>"; };
+		0C90AE9F1C6C7FDF00E1E42E /* UIFont+Theme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+Theme.swift"; sourceTree = "<group>"; };
 		0CA050A71C6B23D9006A42B9 /* UIColor+Theme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Theme.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -29,6 +33,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C90AE9E1C6C7F1D00E1E42E /* PureLayout.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -38,6 +43,7 @@
 		0C738ACE1C69D811007C9548 = {
 			isa = PBXGroup;
 			children = (
+				0C90AE9D1C6C7F1D00E1E42E /* PureLayout.framework */,
 				0C738AD91C69D811007C9548 /* Numbers */,
 				0C738AD81C69D811007C9548 /* Products */,
 			);
@@ -76,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				0CA050A71C6B23D9006A42B9 /* UIColor+Theme.swift */,
+				0C90AE9F1C6C7FDF00E1E42E /* UIFont+Theme.swift */,
 			);
 			name = Theming;
 			sourceTree = "<group>";
@@ -90,6 +97,7 @@
 				0C738AD31C69D811007C9548 /* Sources */,
 				0C738AD41C69D811007C9548 /* Frameworks */,
 				0C738AD51C69D811007C9548 /* Resources */,
+				0C90AE9C1C6C7E8700E1E42E /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -145,12 +153,30 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		0C90AE9C1C6C7E8700E1E42E /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/PureLayout.framework",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		0C738AD31C69D811007C9548 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				0C738ADD1C69D811007C9548 /* ViewController.swift in Sources */,
+				0C90AEA01C6C7FDF00E1E42E /* UIFont+Theme.swift in Sources */,
 				0CA050A81C6B23D9006A42B9 /* UIColor+Theme.swift in Sources */,
 				0C738ADB1C69D811007C9548 /* AppDelegate.swift in Sources */,
 			);
@@ -244,6 +270,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = Numbers/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = elisehein.Numbers;
@@ -255,6 +285,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = Numbers/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = elisehein.Numbers;

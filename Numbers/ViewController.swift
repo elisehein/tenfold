@@ -7,18 +7,19 @@
 //
 
 import UIKit
+import PureLayout
 
 class ViewController: UIViewController {
     
     let titleLabel = UILabel()
+    var hasLoadedConstraints = false
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         
         titleLabel.text = "Numbers"
-        titleLabel.font = UIFont(name: "Lucida Sans Unicode", size: 20)
+        titleLabel.font = UIFont.themeFontWithSize(20)
         titleLabel.textColor = UIColor.themeColor(.OffBlack)
-        titleLabel.frame = CGRectMake(0, 0, 100, 100)
         
         view.addSubview(titleLabel)
     }
@@ -26,6 +27,17 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.themeColor(.OffWhite)
+        
+        view.setNeedsUpdateConstraints()
+    }
+    
+    override func updateViewConstraints() {
+        if (!hasLoadedConstraints) {
+            titleLabel.autoCenterInSuperview()
+            hasLoadedConstraints = true
+        }
+        
+        super.updateViewConstraints()
     }
     
     required init?(coder aDecoder: NSCoder) {
