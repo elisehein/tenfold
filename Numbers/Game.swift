@@ -9,47 +9,45 @@
 import Foundation
 
 class Game: NSObject {
-    private var numbers: Array<Int>
-    private var crossedOut: Array<Bool>
-    private var endOfRound: Array<Bool>
+    
+    private let initialNumberValues = [1, 2, 3, 4, 5, 6, 7, 8, 9,
+                                       1, 1, 1, 2, 1, 3, 1, 4, 1,
+                                       5, 1, 6, 1, 7, 1, 8, 1, 9];
+    
+    private var numbers: Array<Number> = []
     
     override init() {
-        numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9,
-                   1, 1, 1, 2, 1, 3, 1, 4, 1,
-                   5, 1, 6, 1, 7, 1, 8, 1, 9];
+        for value in initialNumberValues {
+            let number = Number(value: value, crossedOut: false, marksEndOfRound: false)
+            numbers.append(number)
+        }
         
-        crossedOut = [Bool](count: numbers.count, repeatedValue: false)
-        endOfRound = [Bool](count: numbers.count, repeatedValue: false)
-        endOfRound[endOfRound.count - 1] = true
+        numbers.last.marksEndOfRound = true
         
         super.init()
     }
     
     func crossOutIndex (index: Int) {
-        crossedOut[index] = true
+        numbers[index].crossedOut = true
     }
     
     func makeNextRound () {
-        var nextRoundNumbers: Array<Int> = []
+        var nextRound: Array<Number> = []
         
-        for var index = 0; index < numbers.count; index++ {
-            if (!crossedOut[index]) {
-                nextRoundNumbers.append(numbers[index])
+        for number in numbers {
+            if (!number.crossedOut) {
+                let newNumber = number.copy() as! Number
+                newNumber.marksEndOfRound = false
+                nextRound.append(newNumber)
             }
         }
         
-        numbers += nextRoundNumbers
-        
-        let nextRoundCrossedOut = [Bool](count: nextRoundNumbers.count, repeatedValue: false)
-        crossedOut += nextRoundCrossedOut
-        
-        var nextRoundEndOfRound = [Bool](count: nextRoundNumbers.count, repeatedValue: false)
-        nextRoundEndOfRound[nextRoundEndOfRound.count - 1] = true
-        endOfRound += nextRoundEndOfRound
+        nextRound.last.marksEndOfRound = true
+        numbers += nextRound
     }
     
     func numbersRemaining () -> Int {
-        return crossedOut.filter({ !$0 }).count
+        return numbers.filter({ !$0.crossedOut }).count
     }
     
     func totalNumbers () -> Int {
@@ -57,14 +55,14 @@ class Game: NSObject {
     }
     
     func numberAtIndex (index: Int) -> Int {
-        return numbers[index]
+        return numbers[index].value
     }
     
     func isCrossedOut (index: Int) -> Bool {
-        return crossedOut[index]
+        return numbers[index].crossedOut
     }
     
     func marksEndOfRound (index: Int) -> Bool {
-        return endOfRound[index]
+        return numbers[index].marksEndOfRound
     }
 }
