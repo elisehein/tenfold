@@ -60,6 +60,11 @@ class GameGrid: UIViewController, UICollectionViewDataSource, UICollectionViewDe
         return cell
     }
     
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        game.crossOutIndex(indexPath.item)
+        collectionView.reloadData()
+    }
+    
     func collectionView(collectionView: UICollectionView, layout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         let cellWidth = collectionView.bounds.size.width / 9.0
         return CGSize(width: cellWidth, height: cellWidth)
@@ -76,7 +81,7 @@ class NumberCell: UICollectionViewCell {
     
     override var selected: Bool {
         didSet {
-            self.contentView.backgroundColor = self.selected ? UIColor.themeColorHighlighted(.OffWhite) : UIColor.clearColor()
+            contentView.backgroundColor = self.selected ? UIColor.themeColorHighlighted(.OffWhite) : UIColor.clearColor()
         }
     }
     
@@ -88,23 +93,29 @@ class NumberCell: UICollectionViewCell {
         }
     }
     
-    var marksEndOfRound: Bool? {
+    var marksEndOfRound: Bool {
         didSet {
-            if let marksEndOfRound = marksEndOfRound {
-                endOfRoundMarker.hidden = !marksEndOfRound
-            }
+            endOfRoundMarker.hidden = !marksEndOfRound
         }
     }
     
-    var isCrossedOut: Bool? {
+    // ????? why does this only work on reloadData?
+    var isCrossedOut: Bool {
         didSet {
-            if let isCrossedOut = isCrossedOut {
-                self.contentView.backgroundColor = isCrossedOut ? UIColor.blackColor() : UIColor.clearColor()
+            if (self.isCrossedOut) {
+                endOfRoundMarker.fillColor = UIColor.themeColor(.OffWhite).CGColor
+                contentView.backgroundColor = UIColor.themeColor(.OffBlack)
+            } else {
+                endOfRoundMarker.fillColor = UIColor.themeColor(.OffBlack).CGColor
+                contentView.backgroundColor = UIColor.themeColor(.OffWhite)
             }
         }
     }
     
     override init(frame: CGRect) {
+        isCrossedOut = false
+        marksEndOfRound = false
+        
         super.init(frame: frame)
         
         numberLabel.textAlignment = .Center
@@ -113,14 +124,17 @@ class NumberCell: UICollectionViewCell {
         
         contentView.addSubview(numberLabel)
         
-        endOfRoundMarker.fillColor = UIColor.themeColor(.OffBlack).CGColor
         contentView.layer.addSublayer(endOfRoundMarker)
+    }
+    
+    func setDefaultState () {
+        marksEndOfRound = false
+        isCrossedOut = false
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        marksEndOfRound = false
-        isCrossedOut = false
+        setDefaultState()
     }
     
     override func layoutSubviews() {

@@ -9,9 +9,9 @@
 import Foundation
 
 class Game: NSObject {
-    private var numbers: [Int]!
-    private var crossedOut: [Bool]!
-    private var endOfRound: [Bool]!
+    private var numbers: Array<Int>
+    private var crossedOut: Array<Bool>
+    private var endOfRound: Array<Bool>
     
     override init() {
         numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9,
@@ -30,6 +30,22 @@ class Game: NSObject {
     }
     
     func makeNextRound () {
+        var nextRoundNumbers: Array<Int> = []
+        
+        for var index = 0; index < numbers.count; index++ {
+            if (!crossedOut[index]) {
+                nextRoundNumbers.append(numbers[index])
+            }
+        }
+        
+        numbers += nextRoundNumbers
+        
+        let nextRoundCrossedOut = [Bool](count: nextRoundNumbers.count, repeatedValue: false)
+        crossedOut += nextRoundCrossedOut
+        
+        var nextRoundEndOfRound = [Bool](count: nextRoundNumbers.count, repeatedValue: false)
+        nextRoundEndOfRound[nextRoundEndOfRound.count - 1] = true
+        endOfRound += nextRoundEndOfRound
     }
     
     func numbersRemaining () -> Int {

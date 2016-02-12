@@ -11,15 +11,18 @@ import PureLayout
 
 class ViewController: UIViewController {
     
+    let game: Game
+    
     let gridMargin: CGFloat = 10
     
     let titleLabel = UILabel()
+    let nextRoundButton = UIButton()
     let grid: GameGrid
     
     var hasLoadedConstraints = false
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
-        let game = Game()
+        self.game = Game()
         grid = GameGrid(game: game)
         
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -28,6 +31,13 @@ class ViewController: UIViewController {
         titleLabel.font = UIFont.themeFontWithSize(20)
         titleLabel.textColor = UIColor.themeColor(.OffBlack)
         view.addSubview(titleLabel)
+        
+        nextRoundButton.titleLabel!.font = UIFont.themeFontWithSize(14)
+        nextRoundButton.setTitle("Next round!", forState: .Normal)
+        nextRoundButton.setTitleColor(UIColor.themeColor(.OffBlack), forState: .Normal)
+        nextRoundButton.setTitleColor(UIColor.themeColorHighlighted(.OffBlack), forState: .Highlighted)
+        nextRoundButton.addTarget(self, action: Selector("makeNextRound"), forControlEvents: .TouchUpInside)
+        view.addSubview(nextRoundButton)
         
         addChildViewController(grid)
         view.addSubview(grid.view)
@@ -43,7 +53,11 @@ class ViewController: UIViewController {
         if (!hasLoadedConstraints) {
             titleLabel.autoAlignAxisToSuperviewAxis(.Vertical)
             titleLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: 100)
-            grid.view.autoPinEdge(.Top, toEdge: .Bottom, ofView: titleLabel, withOffset: 20)
+            
+            nextRoundButton.autoAlignAxisToSuperviewAxis(.Vertical)
+            nextRoundButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: titleLabel, withOffset: 20)
+            
+            grid.view.autoPinEdge(.Top, toEdge: .Bottom, ofView: nextRoundButton, withOffset: 20)
             grid.view.autoPinEdgeToSuperviewEdge(.Left, withInset: gridMargin)
             grid.view.autoPinEdgeToSuperviewEdge(.Right, withInset: gridMargin)
             grid.view.autoPinEdgeToSuperviewEdge(.Bottom, withInset: gridMargin)
@@ -51,6 +65,11 @@ class ViewController: UIViewController {
         }
         
         super.updateViewConstraints()
+    }
+    
+    func makeNextRound () {
+        game.makeNextRound()
+        grid.collectionView.reloadData()
     }
     
     required init?(coder aDecoder: NSCoder) {

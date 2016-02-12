@@ -28,8 +28,8 @@ extension UIColor {
         switch (themeColor) {
         case .OffWhite:
             return UIColor(red: 0.8, green: 0.87, blue: 0.78, alpha: 1)
-        default:
-            return UIColor.themeColor(themeColor)
+        case .OffBlack:
+            return UIColor.grayColor()
         }
     }
 }
