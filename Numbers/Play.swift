@@ -69,7 +69,7 @@ class Play: UIViewController {
     
     func makeNextRound () {
         game.makeNextRound()
-        grid.collectionView.reloadData()
+        grid.loadNextRound()
     }
     
     required init?(coder aDecoder: NSCoder) {

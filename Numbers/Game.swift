@@ -27,8 +27,9 @@ class Game: NSObject {
         super.init()
     }
     
-    func crossOutIndex (index: Int) {
+    func crossOutPair (index: Int, otherIndex: Int) {
         numbers[index].crossedOut = true
+        numbers[otherIndex].crossedOut = true
     }
     
     func makeNextRound () {
@@ -44,6 +45,17 @@ class Game: NSObject {
         
         nextRound.last.marksEndOfRound = true
         numbers += nextRound
+    }
+    
+    func currentRoundIndeces () -> Array<Int> {
+        let indeces: [Int] = Array(currentRoundStartIndex()...numbers.count - 1)
+        return indeces
+    }
+    
+    func currentRoundStartIndex () -> Int {
+        let roundEndings = numbers.filter({ $0.marksEndOfRound })
+        let previousRoundEnding = roundEndings[roundEndings.count - 2]
+        return numbers.indexOf(previousRoundEnding)! + 1
     }
     
     func numbersRemaining () -> Int {

@@ -9,8 +9,10 @@
 import Foundation
 import UIKit
 
-class GameGrid: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class GameGrid: UIViewController {
     let game: Game
+    let rules: GameRules
+    
     let collectionView: UICollectionView
     
     private let layout: UICollectionViewFlowLayout = {
@@ -25,6 +27,8 @@ class GameGrid: UIViewController, UICollectionViewDataSource, UICollectionViewDe
     
     init(game: Game) {
         self.game = game
+        self.rules = GameRules(game: game)
+        
         self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
         
         super.init(nibName: nil, bundle: nil)
@@ -34,6 +38,8 @@ class GameGrid: UIViewController, UICollectionViewDataSource, UICollectionViewDe
         collectionView.backgroundColor = UIColor.clearColor()
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.showsVerticalScrollIndicator = false
         
         view.addSubview(collectionView)
     }
@@ -43,6 +49,46 @@ class GameGrid: UIViewController, UICollectionViewDataSource, UICollectionViewDe
         collectionView.frame = view.bounds
     }
     
+    func attemptItemPairing (item: Int, otherItem: Int) {
+        let successfulPairing = rules.attemptPairing(item, otherIndex: otherItem)
+        
+        let indexPath = NSIndexPath(forItem: item, inSection: 0)
+        let otherIndexPath = NSIndexPath(forItem: otherItem, inSection: 0)
+        
+        let cell = self.collectionView(collectionView, cellForItemAtIndexPath: indexPath) as! NumberCell
+        let otherCell = self.collectionView(collectionView, cellForItemAtIndexPath: otherIndexPath) as! NumberCell
+        
+        if successfulPairing {
+            game.crossOutPair(item, otherIndex: otherItem)
+            self.collectionView.reloadItemsAtIndexPaths([indexPath, otherIndexPath])
+        } else {
+            self.collectionView.deselectItemAtIndexPath(indexPath, animated: false)
+            self.collectionView.deselectItemAtIndexPath(otherIndexPath, animated: false)
+            cell.indicatePairingFail()
+            otherCell.indicatePairingFail()
+        }
+    }
+    
+    // Instead of calling reloadData on the entire grid, dynamically add the next round
+    // This function assumes that the state of the game has diverged from the state of
+    // the collectionView.
+    func loadNextRound () {
+        var indexPaths: Array<NSIndexPath> = []
+        
+        for index in game.currentRoundIndeces() {
+           indexPaths.append(NSIndexPath(forItem: index, inSection: 0))
+        }
+        
+        collectionView.insertItemsAtIndexPaths(indexPaths)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+
+extension GameGrid: UICollectionViewDataSource {
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -62,12 +108,21 @@ class GameGrid: UIViewController, UICollectionViewDataSource, UICollectionViewDe
         
         return cell
     }
+}
+
+extension GameGrid:  UICollectionViewDelegateFlowLayout {
+    func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
+        let cell = self.collectionView(collectionView, cellForItemAtIndexPath: indexPath)
+        return !(cell as! NumberCell).isCrossedOut
+    }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         let selectedIndexPaths = collectionView.indexPathsForSelectedItems()!
         let latestSelectedIndexPath = indexPath
         
-        if selectedIndexPaths.count <= maxSelectedItems {
+        if selectedIndexPaths.count == maxSelectedItems {
+            attemptItemPairing(selectedIndexPaths[0].item, otherItem: selectedIndexPaths[1].item)
+        } else if selectedIndexPaths.count < maxSelectedItems {
             return
         }
         
@@ -81,95 +136,5 @@ class GameGrid: UIViewController, UICollectionViewDataSource, UICollectionViewDe
     func collectionView(collectionView: UICollectionView, layout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         let cellWidth = collectionView.bounds.size.width / 9.0
         return CGSize(width: cellWidth, height: cellWidth)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-class NumberCell: UICollectionViewCell {
-    private let numberLabel = UILabel()
-    private let endOfRoundMarker = CAShapeLayer()
-    
-    override var selected: Bool {
-        didSet {
-            contentView.backgroundColor = self.selected ? UIColor.themeColorHighlighted(.OffWhite) : UIColor.clearColor()
-        }
-    }
-    
-    var number: Int? {
-        didSet {
-            if let number = number {
-                numberLabel.text = String(number)
-            }
-        }
-    }
-    
-    var marksEndOfRound: Bool {
-        didSet {
-            endOfRoundMarker.hidden = !marksEndOfRound
-        }
-    }
-    
-    // ????? why does this only work on reloadData?
-    var isCrossedOut: Bool {
-        didSet {
-            if (self.isCrossedOut) {
-                endOfRoundMarker.fillColor = UIColor.themeColor(.OffWhite).CGColor
-                contentView.backgroundColor = UIColor.themeColor(.OffBlack)
-            } else {
-                endOfRoundMarker.fillColor = UIColor.themeColor(.OffBlack).CGColor
-                contentView.backgroundColor = UIColor.themeColor(.OffWhite)
-            }
-        }
-    }
-    
-    override init(frame: CGRect) {
-        isCrossedOut = false
-        marksEndOfRound = false
-        
-        super.init(frame: frame)
-        
-        numberLabel.textAlignment = .Center
-        numberLabel.font = UIFont.themeFontWithSize(16)
-        numberLabel.backgroundColor = UIColor.clearColor()
-        
-        contentView.addSubview(numberLabel)
-        
-        contentView.layer.addSublayer(endOfRoundMarker)
-    }
-    
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        marksEndOfRound = false
-        isCrossedOut = false
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        numberLabel.frame = contentView.bounds
-        
-        let markerPath = CGPathCreateMutable();
-        let markerMargin: CGFloat = 3
-        let markerDepth: CGFloat = 4
-        let markerLength: CGFloat = 10
-        let totalWidth: CGFloat = contentView.bounds.size.width
-        let totalHeight: CGFloat = contentView.bounds.size.height
-        
-        CGPathMoveToPoint(markerPath, nil,
-                          totalWidth - markerMargin,
-                          totalHeight - markerMargin);
-        CGPathAddLineToPoint(markerPath, nil, totalWidth - markerMargin, totalHeight - markerMargin - markerLength);
-        CGPathAddLineToPoint(markerPath, nil, totalWidth - markerMargin - markerDepth, totalHeight - markerMargin - markerLength);
-        CGPathAddLineToPoint(markerPath, nil, totalWidth - markerMargin - markerDepth, totalHeight - markerMargin - markerDepth);
-        CGPathAddLineToPoint(markerPath, nil, totalWidth - markerMargin - markerLength, totalHeight - markerMargin - markerDepth);
-        CGPathAddLineToPoint(markerPath, nil, totalWidth - markerMargin - markerLength, totalHeight - markerMargin);
-        CGPathCloseSubpath(markerPath);
-        endOfRoundMarker.path = markerPath
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
