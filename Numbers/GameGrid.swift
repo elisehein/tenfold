@@ -13,21 +13,24 @@ class GameGrid: UIViewController, UICollectionViewDataSource, UICollectionViewDe
     let game: Game
     let collectionView: UICollectionView
     
+    private let layout: UICollectionViewFlowLayout = {
+        let l = UICollectionViewFlowLayout()
+        l.minimumInteritemSpacing = 0
+        l.minimumLineSpacing = 0
+        return l
+    }()
+    
     private let reuseIdentifier = "NumberCell"
+    private let maxSelectedItems = 2
     
     init(game: Game) {
         self.game = game
-        
-        let layout = UICollectionViewFlowLayout()
-        layout.minimumInteritemSpacing = 0
-        layout.minimumLineSpacing = 0
-        
         self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
         
         super.init(nibName: nil, bundle: nil)
         
         collectionView.registerClass(NumberCell.self, forCellWithReuseIdentifier: self.reuseIdentifier)
-        
+        collectionView.allowsMultipleSelection = true
         collectionView.backgroundColor = UIColor.clearColor()
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -61,8 +64,18 @@ class GameGrid: UIViewController, UICollectionViewDataSource, UICollectionViewDe
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        game.crossOutIndex(indexPath.item)
-        collectionView.reloadData()
+        let selectedIndexPaths = collectionView.indexPathsForSelectedItems()!
+        let latestSelectedIndexPath = indexPath
+        
+        if selectedIndexPaths.count <= maxSelectedItems {
+            return
+        }
+        
+        for selectedIndexPath in selectedIndexPaths {
+            if selectedIndexPath != latestSelectedIndexPath {
+                collectionView.deselectItemAtIndexPath(selectedIndexPath, animated: false)
+            }
+        }
     }
     
     func collectionView(collectionView: UICollectionView, layout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
@@ -127,14 +140,10 @@ class NumberCell: UICollectionViewCell {
         contentView.layer.addSublayer(endOfRoundMarker)
     }
     
-    func setDefaultState () {
-        marksEndOfRound = false
-        isCrossedOut = false
-    }
-    
     override func prepareForReuse() {
         super.prepareForReuse()
-        setDefaultState()
+        marksEndOfRound = false
+        isCrossedOut = false
     }
     
     override func layoutSubviews() {
