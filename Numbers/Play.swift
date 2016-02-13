@@ -13,13 +13,13 @@ class Play: UIViewController {
     
     let game: Game
     
-    let gridMargin: CGFloat = 10
+    private let gridMargin: CGFloat = 10
     
-    let titleLabel = UILabel()
-    let nextRoundButton = UIButton()
-    let grid: GameGrid
+    private let titleLabel = UILabel()
+    private let nextRoundButton = UIButton()
+    private let grid: GameGrid
     
-    var hasLoadedConstraints = false
+    private var hasLoadedConstraints = false
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
         self.game = Game()
