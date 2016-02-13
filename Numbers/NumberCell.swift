@@ -33,15 +33,12 @@ class NumberCell: UICollectionViewCell {
         }
     }
     
-    // ????? why does this only work on reloadData?
     var isCrossedOut: Bool = false {
         didSet {
             if self.isCrossedOut {
-                print("Setting crossed out...")
                 endOfRoundMarker.fillColor = UIColor.themeColor(.OffWhite).CGColor
                 contentView.backgroundColor = UIColor.themeColor(.OffBlack)
             } else {
-                print("Setting not crossed out")
                 endOfRoundMarker.fillColor = UIColor.themeColor(.OffBlack).CGColor
                 contentView.backgroundColor = UIColor.themeColor(.OffWhite)
             }
@@ -86,14 +83,6 @@ class NumberCell: UICollectionViewCell {
         CGPathAddLineToPoint(markerPath, nil, totalWidth - markerMargin - markerLength, totalHeight - markerMargin);
         CGPathCloseSubpath(markerPath);
         endOfRoundMarker.path = markerPath
-    }
-    
-    func indicatePairingFail () {
-        print("Indicating fail...")
-        self.numberLabel.text = "F"
-//
-//        UIView.animateWithDuration(1.0, animations: {
-//        }, completion: nil)
     }
 
     required init?(coder aDecoder: NSCoder) {

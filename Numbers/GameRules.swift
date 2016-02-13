@@ -17,6 +17,13 @@ class GameRules: NSObject {
     }
     
     func attemptPairing (index: Int, otherIndex: Int) -> Bool {
+        if game.isCrossedOut(index) || game.isCrossedOut(otherIndex) || index == otherIndex {
+            NSException(name: "Invalid pairing",
+                        reason: "These numbers cannot be attempted for pairing",
+                        userInfo: nil).raise()
+            return false
+        }
+        
         return valuesCanPair(index, otherIndex: otherIndex) &&
                positionsCanPair(index, otherIndex: otherIndex)
     }
@@ -29,6 +36,23 @@ class GameRules: NSObject {
     }
     
     private func positionsCanPair(index: Int, otherIndex: Int) -> Bool {
+        return backToBack(index, otherIndex: otherIndex) ||
+               enclosingCrossedOutNumbers(index, otherIndex: otherIndex)
+    }
+    
+    private func backToBack (index: Int, otherIndex: Int) -> Bool {
+        return abs(index - otherIndex) == 1
+    }
+    
+    private func enclosingCrossedOutNumbers (index: Int, otherIndex: Int) -> Bool {
+        let orderedIndeces = [index, otherIndex].sort { return $0 < $1 }
+        
+        for var i = orderedIndeces[0] + 1; i < orderedIndeces[1]; i++ {
+            if !game.isCrossedOut(i) {
+                return false
+            }
+        }
+        
         return true
     }
 }
