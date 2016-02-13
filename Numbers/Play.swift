@@ -9,7 +9,7 @@
 import UIKit
 import PureLayout
 
-class ViewController: UIViewController {
+class Play: UIViewController {
     
     let game: Game
     

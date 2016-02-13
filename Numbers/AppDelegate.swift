@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         if let window = window {
             window.backgroundColor = UIColor.clearColor()
-            window.rootViewController = ViewController()
+            window.rootViewController = Play()
             window.makeKeyAndVisible()
         }
         
