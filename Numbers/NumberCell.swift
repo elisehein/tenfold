@@ -18,6 +18,10 @@ class NumberCell: UICollectionViewCell {
     private let defaultBackgroundColor = UIColor.clearColor()
     private let crossedOutBackgroundColor = UIColor.themeColor(.OffBlack)
     
+    private let markerMargin: CGFloat = 2
+    private let markerDepth: CGFloat = 3.2
+    private let markerLength: CGFloat = 8.5
+    
     var animationDuration: NSTimeInterval = 0
     
     override var selected: Bool {
@@ -59,7 +63,6 @@ class NumberCell: UICollectionViewCell {
         super.init(frame: frame)
         
         numberLabel.textAlignment = .Center
-        numberLabel.font = UIFont.themeFontWithSize(16)
         numberLabel.backgroundColor = UIColor.clearColor()
         
         contentView.addSubview(numberLabel)
@@ -77,6 +80,7 @@ class NumberCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         numberLabel.frame = contentView.bounds
+        numberLabel.font = UIFont.themeFontWithSize(contentView.bounds.size.height * 0.45)
         drawEndOfRoundMarker()
     }
     
@@ -104,9 +108,6 @@ class NumberCell: UICollectionViewCell {
     
     private func drawEndOfRoundMarker () {
         let markerPath = CGPathCreateMutable();
-        let markerMargin: CGFloat = 3
-        let markerDepth: CGFloat = 4
-        let markerLength: CGFloat = 10
         let totalWidth: CGFloat = contentView.bounds.size.width
         let totalHeight: CGFloat = contentView.bounds.size.height
         
