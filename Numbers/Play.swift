@@ -68,8 +68,11 @@ class Play: UIViewController {
     }
     
     func makeNextRound () {
-        game.makeNextRound()
-        grid.loadNextRound()
+        if game.makeNextRound() {
+            grid.loadNextRound()
+        } else {
+            print("GAME OVER")
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {

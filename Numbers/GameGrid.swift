@@ -81,7 +81,10 @@ class GameGrid: UIViewController {
            indexPaths.append(NSIndexPath(forItem: index, inSection: 0))
         }
         
-        collectionView.insertItemsAtIndexPaths(indexPaths)
+        
+        if indexPaths.count > 0 {
+            collectionView.insertItemsAtIndexPaths(indexPaths)
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
