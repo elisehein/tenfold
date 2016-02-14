@@ -87,7 +87,7 @@ class GameRules: NSObject {
     }
     
     private func allCrossedOutBetween (start start: Int, end: Int, withIncrement increment: Int) -> Bool {
-        if (start + increment == end) {
+        if (start + increment >= end) {
             return false
         }
         
