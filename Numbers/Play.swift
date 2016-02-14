@@ -45,6 +45,7 @@ class Play: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        // TODO colours look different on simulator and device
         view.backgroundColor = UIColor.themeColor(.OffWhite)
         view.setNeedsUpdateConstraints()
     }
@@ -52,10 +53,10 @@ class Play: UIViewController {
     override func updateViewConstraints() {
         if (!hasLoadedConstraints) {
             titleLabel.autoAlignAxisToSuperviewAxis(.Vertical)
-            titleLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: 100)
+            titleLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: 50)
             
             nextRoundButton.autoAlignAxisToSuperviewAxis(.Vertical)
-            nextRoundButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: titleLabel, withOffset: 20)
+            nextRoundButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: titleLabel, withOffset: 10)
             
             grid.view.autoPinEdge(.Top, toEdge: .Bottom, ofView: nextRoundButton, withOffset: 20)
             grid.view.autoPinEdgeToSuperviewEdge(.Left, withInset: gridMargin)
