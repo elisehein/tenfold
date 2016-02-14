@@ -54,18 +54,20 @@ class GameGrid: UIViewController {
         
         let indexPath = NSIndexPath(forItem: item, inSection: 0)
         let otherIndexPath = NSIndexPath(forItem: otherItem, inSection: 0)
+        let cell = self.collectionView.cellForItemAtIndexPath(indexPath) as! NumberCell
+        let otherCell = self.collectionView.cellForItemAtIndexPath(otherIndexPath) as! NumberCell
         
         if successfulPairing {
             game.crossOutPair(item, otherIndex: otherItem)
-            self.collectionView.reloadItemsAtIndexPaths([indexPath, otherIndexPath])
+            cell.isCrossedOut = true
+            otherCell.isCrossedOut = true
         } else {
-            let cell = self.collectionView.cellForItemAtIndexPath(indexPath) as! NumberCell
-            let otherCell = self.collectionView.cellForItemAtIndexPath(otherIndexPath) as! NumberCell
             cell.shouldDeselectWithFailure = true
             otherCell.shouldDeselectWithFailure = true
-            self.collectionView.deselectItemAtIndexPath(indexPath, animated: false)
-            self.collectionView.deselectItemAtIndexPath(otherIndexPath, animated: false)
         }
+        
+        self.collectionView.deselectItemAtIndexPath(indexPath, animated: false)
+        self.collectionView.deselectItemAtIndexPath(otherIndexPath, animated: false)
     }
     
     // Instead of calling reloadData on the entire grid, dynamically add the next round

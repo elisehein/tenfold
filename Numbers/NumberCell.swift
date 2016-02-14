@@ -14,17 +14,24 @@ class NumberCell: UICollectionViewCell {
     
     private let numberLabel = UILabel()
     private let endOfRoundMarker = CAShapeLayer()
+    
     private let defaultBackgroundColor = UIColor.clearColor()
+    private let crossedOutBackgroundColor = UIColor.themeColor(.OffBlack)
+    private let animationDuration = 0.15
     
     override var selected: Bool {
         didSet {
             if (selected) {
-                contentView.backgroundColor = UIColor.themeColorHighlighted(.OffWhite)
+                UIView.animateWithDuration(animationDuration, animations: {
+                    self.contentView.backgroundColor = UIColor.themeColorHighlighted(.OffWhite)
+                })
             } else if shouldDeselectWithFailure {
                 indicateFailure()
                 shouldDeselectWithFailure = false
             } else {
-                contentView.backgroundColor = defaultBackgroundColor
+                UIView.animateWithDuration(animationDuration, animations: {
+                    self.contentView.backgroundColor = self.isCrossedOut ? self.crossedOutBackgroundColor : self.defaultBackgroundColor
+                })
             }
         }
     }
@@ -45,13 +52,15 @@ class NumberCell: UICollectionViewCell {
     
     var isCrossedOut: Bool = false {
         didSet {
-            if self.isCrossedOut {
-                endOfRoundMarker.fillColor = UIColor.themeColor(.OffWhite).CGColor
-                contentView.backgroundColor = UIColor.themeColor(.OffBlack)
-            } else {
-                endOfRoundMarker.fillColor = UIColor.themeColor(.OffBlack).CGColor
-                contentView.backgroundColor = UIColor.themeColor(.OffWhite)
-            }
+            UIView.animateWithDuration(animationDuration, animations: {
+                if self.isCrossedOut {
+                    self.endOfRoundMarker.fillColor = self.defaultBackgroundColor.CGColor
+                    self.contentView.backgroundColor = self.crossedOutBackgroundColor
+                } else {
+                    self.endOfRoundMarker.fillColor = self.crossedOutBackgroundColor.CGColor
+                    self.contentView.backgroundColor = self.defaultBackgroundColor
+                }
+            })
         }
     }
     
@@ -68,6 +77,7 @@ class NumberCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        contentView.backgroundColor = defaultBackgroundColor
         marksEndOfRound = false
         isCrossedOut = false
     }
@@ -79,9 +89,9 @@ class NumberCell: UICollectionViewCell {
     }
     
     private func indicateFailure () {
-        UIView.animateWithDuration(0.2, delay: 0, options: .Repeat, animations: {
+        UIView.animateWithDuration(0.16, delay: 0, options: .Repeat, animations: {
             UIView.setAnimationRepeatCount(2)
-            self.contentView.backgroundColor = UIColor.redColor()
+            self.contentView.backgroundColor = UIColor.themeColor(.OffBlack)
             }, completion: { (value: Bool) in
                 self.contentView.backgroundColor = self.defaultBackgroundColor
         })
