@@ -59,11 +59,12 @@ class GameGrid: UIViewController {
             game.crossOutPair(item, otherIndex: otherItem)
             self.collectionView.reloadItemsAtIndexPaths([indexPath, otherIndexPath])
         } else {
+            let cell = self.collectionView.cellForItemAtIndexPath(indexPath) as! NumberCell
+            let otherCell = self.collectionView.cellForItemAtIndexPath(otherIndexPath) as! NumberCell
+            cell.shouldDeselectWithFailure = true
+            otherCell.shouldDeselectWithFailure = true
             self.collectionView.deselectItemAtIndexPath(indexPath, animated: false)
             self.collectionView.deselectItemAtIndexPath(otherIndexPath, animated: false)
-            // TODO
-            // let cell = self.collectionView(collectionView, cellForItemAtIndexPath: indexPath) as! NumberCell
-            // let otherCell = self.collectionView(collectionView, cellForItemAtIndexPath: otherIndexPath) as! NumberCell
         }
     }
     
@@ -110,8 +111,7 @@ extension GameGrid: UICollectionViewDataSource {
 
 extension GameGrid:  UICollectionViewDelegateFlowLayout {
     func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        let cell = self.collectionView(collectionView, cellForItemAtIndexPath: indexPath)
-        return !(cell as! NumberCell).isCrossedOut
+        return !game.isCrossedOut(indexPath.item)
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {

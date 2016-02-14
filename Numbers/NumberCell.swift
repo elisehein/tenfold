@@ -10,12 +10,22 @@ import Foundation
 import UIKit
 
 class NumberCell: UICollectionViewCell {
+    var shouldDeselectWithFailure: Bool = false
+    
     private let numberLabel = UILabel()
     private let endOfRoundMarker = CAShapeLayer()
+    private let defaultBackgroundColor = UIColor.clearColor()
     
     override var selected: Bool {
         didSet {
-            contentView.backgroundColor = self.selected ? UIColor.themeColorHighlighted(.OffWhite) : UIColor.clearColor()
+            if (selected) {
+                contentView.backgroundColor = UIColor.themeColorHighlighted(.OffWhite)
+            } else if shouldDeselectWithFailure {
+                indicateFailure()
+                shouldDeselectWithFailure = false
+            } else {
+                contentView.backgroundColor = defaultBackgroundColor
+            }
         }
     }
     
@@ -65,7 +75,19 @@ class NumberCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         numberLabel.frame = contentView.bounds
-        
+        drawEndOfRoundMarker()
+    }
+    
+    private func indicateFailure () {
+        UIView.animateWithDuration(0.2, delay: 0, options: .Repeat, animations: {
+            UIView.setAnimationRepeatCount(2)
+            self.contentView.backgroundColor = UIColor.redColor()
+            }, completion: { (value: Bool) in
+                self.contentView.backgroundColor = self.defaultBackgroundColor
+        })
+    }
+    
+    private func drawEndOfRoundMarker () {
         let markerPath = CGPathCreateMutable();
         let markerMargin: CGFloat = 3
         let markerDepth: CGFloat = 4

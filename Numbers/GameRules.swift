@@ -41,7 +41,7 @@ class GameRules: NSObject {
     }
     
     private func backToBack (index: Int, otherIndex: Int) -> Bool {
-        return abs(index - otherIndex) == 1
+        return abs(index - otherIndex) == 1 || abs(index - otherIndex) == 9
     }
     
     private func enclosingCrossedOutNumbers (index: Int, otherIndex: Int) -> Bool {
@@ -53,6 +53,15 @@ class GameRules: NSObject {
             }
         }
         
+        return true
+    }
+    
+    private func enclosingCrossedOutNumbersVertically (index: Int, otherIndex: Int) -> Bool {
+        return true
+        
+    }
+    
+    private func beginningAndEndOfLine (index: Int, otherIndex: Int) -> Bool {
         return true
     }
 }
