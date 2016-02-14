@@ -39,32 +39,64 @@ class GameRules: NSObject {
     }
     
     private func positionsCanPair(index: Int, otherIndex: Int) -> Bool {
-        return backToBack(index, otherIndex: otherIndex) ||
-               enclosingCrossedOutNumbers(index, otherIndex: otherIndex)
+        if (backToBack(index, otherIndex: otherIndex)) {
+            return true
+        } else {
+            let orderedIndeces = [index, otherIndex].sort { return $0 < $1 }
+            return enclosingCrossedOutNumbers(from: orderedIndeces[0], to: orderedIndeces[1]) ||
+                   beginningAndEndOfLine(first: orderedIndeces[0], second: orderedIndeces[1])
+        }
     }
     
     private func backToBack (index: Int, otherIndex: Int) -> Bool {
         return abs(index - otherIndex) == 1 || abs(index - otherIndex) == 9
     }
     
-    private func enclosingCrossedOutNumbers (index: Int, otherIndex: Int) -> Bool {
-        let orderedIndeces = [index, otherIndex].sort { return $0 < $1 }
+    private func enclosingCrossedOutNumbers (from start: Int, to end: Int) -> Bool {
+        let enclosingHorizontally = allCrossedOutBetween(start: start, end: end, withIncrement: 1)
+        let enclosingVertically = allCrossedOutBetween(start: start, end: end, withIncrement: 9)
         
-        for var i = orderedIndeces[0] + 1; i < orderedIndeces[1]; i++ {
+        return enclosingHorizontally || enclosingVertically
+    }
+    
+    // This makes the game pretty easy. Could enable in easy mode
+    private func beginningAndEndOfLine (first first: Int, second: Int) -> Bool {
+        let positionOfFirstOnLine = first % numbersPerLine
+        
+        if !sameLine(first: first, second: second, positionOfFirstOnLine: positionOfFirstOnLine) {
+            return false
+        }
+        
+        let positionOfSecondOnLine = positionOfFirstOnLine + (second - first)
+        
+        let startOfLine = first - positionOfFirstOnLine
+        let endOfLine = first + (numbersPerLine - positionOfFirstOnLine) - 1
+        
+        let firstIsBeginning = positionOfFirstOnLine == 0 ||
+                               allCrossedOutBetween(start: startOfLine - 1, end: first, withIncrement: 1)
+        
+        let secondIsEnd = positionOfSecondOnLine == (numbersPerLine - 1) ||
+                          allCrossedOutBetween(start: second, end: endOfLine + 1, withIncrement: 1)
+        
+        return firstIsBeginning && secondIsEnd
+    }
+    
+    private func sameLine(first first: Int, second: Int, positionOfFirstOnLine: Int) -> Bool {
+        let positionsAvailableUntilEndOfLine = numbersPerLine - positionOfFirstOnLine - 1
+        return second - first <= positionsAvailableUntilEndOfLine
+    }
+    
+    private func allCrossedOutBetween (start start: Int, end: Int, withIncrement increment: Int) -> Bool {
+        if (start + increment == end) {
+            return false
+        }
+        
+        for var i = start + increment; i < end; i += increment {
             if !game.isCrossedOut(i) {
                 return false
             }
         }
         
-        return true
-    }
-    
-    private func enclosingCrossedOutNumbersVertically (index: Int, otherIndex: Int) -> Bool {
-        return true
-        
-    }
-    
-    private func beginningAndEndOfLine (index: Int, otherIndex: Int) -> Bool {
         return true
     }
 }
