@@ -24,6 +24,7 @@ class GameGrid: UIViewController {
     
     private let reuseIdentifier = "NumberCell"
     private let maxSelectedItems = 2
+    private let cellAnimationDuration = 0.15
     
     init(game: Game) {
         self.game = game
@@ -105,6 +106,7 @@ extension GameGrid: UICollectionViewDataSource {
             cell.number = game.numberAtIndex(indexPath.item)
             cell.isCrossedOut = game.isCrossedOut(indexPath.item)
             cell.marksEndOfRound = game.marksEndOfRound(indexPath.item)
+            cell.animationDuration = cellAnimationDuration
         }
         
         return cell

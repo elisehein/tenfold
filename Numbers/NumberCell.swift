@@ -17,7 +17,8 @@ class NumberCell: UICollectionViewCell {
     
     private let defaultBackgroundColor = UIColor.clearColor()
     private let crossedOutBackgroundColor = UIColor.themeColor(.OffBlack)
-    private let animationDuration = 0.15
+    
+    var animationDuration: NSTimeInterval = 0
     
     override var selected: Bool {
         didSet {
@@ -78,6 +79,7 @@ class NumberCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         contentView.backgroundColor = defaultBackgroundColor
+        animationDuration = 0
         marksEndOfRound = false
         isCrossedOut = false
     }
