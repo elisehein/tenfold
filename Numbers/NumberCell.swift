@@ -30,9 +30,7 @@ class NumberCell: UICollectionViewCell {
                 indicateFailure()
                 shouldDeselectWithFailure = false
             } else {
-                UIView.animateWithDuration(animationDuration, animations: {
-                    self.contentView.backgroundColor = self.isCrossedOut ? self.crossedOutBackgroundColor : self.defaultBackgroundColor
-                })
+                resetColors()
             }
         }
     }
@@ -53,15 +51,7 @@ class NumberCell: UICollectionViewCell {
     
     var isCrossedOut: Bool = false {
         didSet {
-            UIView.animateWithDuration(animationDuration, animations: {
-                if self.isCrossedOut {
-                    self.endOfRoundMarker.fillColor = self.defaultBackgroundColor.CGColor
-                    self.contentView.backgroundColor = self.crossedOutBackgroundColor
-                } else {
-                    self.endOfRoundMarker.fillColor = self.crossedOutBackgroundColor.CGColor
-                    self.contentView.backgroundColor = self.defaultBackgroundColor
-                }
-            })
+            resetColors()
         }
     }
     
@@ -88,6 +78,19 @@ class NumberCell: UICollectionViewCell {
         super.layoutSubviews()
         numberLabel.frame = contentView.bounds
         drawEndOfRoundMarker()
+    }
+    
+    private func resetColors() {
+        UIView.animateWithDuration(animationDuration, animations: {
+            if self.isCrossedOut {
+                // TODO fillColor not changing
+                self.endOfRoundMarker.fillColor = self.defaultBackgroundColor.CGColor
+                self.contentView.backgroundColor = self.crossedOutBackgroundColor
+            } else {
+                self.endOfRoundMarker.fillColor = self.crossedOutBackgroundColor.CGColor
+                self.contentView.backgroundColor = self.defaultBackgroundColor
+            }
+        })
     }
     
     private func indicateFailure () {
