@@ -23,12 +23,13 @@ class GameGrid: UIViewController {
     }()
     
     private let reuseIdentifier = "NumberCell"
-    private let maxSelectedItems = 2
+    private let maxSelectedItems: Int
     private let cellAnimationDuration = 0.15
     
     init(game: Game) {
         self.game = game
         self.rules = GameRules(game: game)
+        self.maxSelectedItems = rules.numbersInPairing
         
         self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
         
@@ -139,7 +140,7 @@ extension GameGrid:  UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(collectionView: UICollectionView, layout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        let cellWidth = collectionView.bounds.size.width / 9.0
+        let cellWidth = collectionView.bounds.size.width / CGFloat(rules.numbersPerLine)
         return CGSize(width: cellWidth, height: cellWidth)
     }
 }
