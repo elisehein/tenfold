@@ -15,7 +15,7 @@ class NumberCell: UICollectionViewCell {
     private let numberLabel = UILabel()
     private let endOfRoundMarker = CAShapeLayer()
     
-    private let defaultBackgroundColor = UIColor.clearColor()
+    private let defaultBackgroundColor = UIColor.themeColor(.OffWhite)
     private let crossedOutBackgroundColor = UIColor.themeColor(.OffBlack)
     
     private let markerMargin: CGFloat = 2
@@ -87,7 +87,6 @@ class NumberCell: UICollectionViewCell {
     private func resetColors() {
         UIView.animateWithDuration(animationDuration, animations: {
             if self.isCrossedOut {
-                // TODO fillColor not changing
                 self.endOfRoundMarker.fillColor = self.defaultBackgroundColor.CGColor
                 self.contentView.backgroundColor = self.crossedOutBackgroundColor
             } else {
