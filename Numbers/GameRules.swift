@@ -62,13 +62,12 @@ class GameRules: NSObject {
     
     // This makes the game pretty easy. Could enable in easy mode
     private func beginningAndEndOfLine (first first: Int, second: Int) -> Bool {
-        let positionOfFirstOnLine = first % numbersPerLine
-        
-        if !sameLine(first, second, positionOfFirstOnLine: positionOfFirstOnLine) {
+        if !sameLine(first, second) {
             return false
         }
         
-        let positionOfSecondOnLine = positionOfFirstOnLine + (second - first)
+        let positionOfFirstOnLine = positionOnLine(first)
+        let positionOfSecondOnLine = positionOnLine(second)
         
         let startOfLine = first - positionOfFirstOnLine
         let endOfLine = first + (numbersPerLine - positionOfFirstOnLine) - 1
@@ -82,13 +81,16 @@ class GameRules: NSObject {
         return firstIsBeginning && secondIsEnd
     }
     
-    private func sameLine(first: Int, _ second: Int, positionOfFirstOnLine: Int) -> Bool {
-        let positionsAvailableUntilEndOfLine = numbersPerLine - positionOfFirstOnLine - 1
-        return second - first <= positionsAvailableUntilEndOfLine
+    private func sameLine(first: Int, _ second: Int) -> Bool {
+        return second - first < numbersPerLine && positionOnLine(second) > positionOnLine(first)
     }
     
     private func sameColumn(index: Int, _ otherIndex: Int) -> Bool {
-        return index % numbersPerLine == otherIndex % numbersPerLine
+        return positionOnLine(index) == positionOnLine(otherIndex)
+    }
+    
+    private func positionOnLine(index: Int) -> Int {
+        return index % numbersPerLine
     }
     
     private func allCrossedOutBetween (start start: Int, end: Int, withIncrement increment: Int) -> Bool {
