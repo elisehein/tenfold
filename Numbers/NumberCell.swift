@@ -89,9 +89,11 @@ class NumberCell: UICollectionViewCell {
             if self.isCrossedOut {
                 self.endOfRoundMarker.fillColor = self.defaultBackgroundColor.CGColor
                 self.contentView.backgroundColor = self.crossedOutBackgroundColor
+                self.numberLabel.textColor = UIColor.clearColor()
             } else {
                 self.endOfRoundMarker.fillColor = self.crossedOutBackgroundColor.CGColor
                 self.contentView.backgroundColor = self.defaultBackgroundColor
+                self.numberLabel.textColor = self.crossedOutBackgroundColor
             }
         })
     }

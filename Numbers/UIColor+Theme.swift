@@ -18,16 +18,16 @@ extension UIColor {
     class func themeColor (themeColor: ThemeColor) -> UIColor {
         switch (themeColor) {
         case .OffWhite:
-            return UIColor(red: 1, green: 1, blue: 0.94, alpha: 1)
+            return UIColor(hex: "#FFFEF1")
         case .OffBlack:
-            return UIColor(red: 0.09, green: 0.09, blue: 0.09, alpha: 1)
+            return UIColor(hex: "#20201E")
         }
     }
     
     class func themeColorHighlighted(themeColor: ThemeColor) -> UIColor {
         switch (themeColor) {
         case .OffWhite:
-            return UIColor(red: 0.8, green: 0.87, blue: 0.78, alpha: 1)
+            return UIColor(hex: "#E6E4D0")
         case .OffBlack:
             return UIColor.grayColor()
         }

@@ -20,6 +20,7 @@
 		0C90AEA51C6D1B0700E1E42E /* GameGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C90AEA41C6D1B0700E1E42E /* GameGrid.swift */; };
 		0C90AEA71C6D1BCF00E1E42E /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C90AEA61C6D1BCF00E1E42E /* Game.swift */; };
 		0CA050A81C6B23D9006A42B9 /* UIColor+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA050A71C6B23D9006A42B9 /* UIColor+Theme.swift */; };
+		0CB109341C7234FB00182663 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB109331C7234FB00182663 /* UIColor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 		0C90AEA41C6D1B0700E1E42E /* GameGrid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameGrid.swift; sourceTree = "<group>"; };
 		0C90AEA61C6D1BCF00E1E42E /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		0CA050A71C6B23D9006A42B9 /* UIColor+Theme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Theme.swift"; sourceTree = "<group>"; };
+		0CB109331C7234FB00182663 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +58,7 @@
 			isa = PBXGroup;
 			children = (
 				0C69CE4D1C6DCDE9002E0D29 /* Array.swift */,
+				0CB109331C7234FB00182663 /* UIColor.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -241,6 +244,7 @@
 				0C90AEA51C6D1B0700E1E42E /* GameGrid.swift in Sources */,
 				0C34638F1C6F89B30086D3CC /* NumberCell.swift in Sources */,
 				0C69CE4E1C6DCDE9002E0D29 /* Array.swift in Sources */,
+				0CB109341C7234FB00182663 /* UIColor.swift in Sources */,
 				0CA050A81C6B23D9006A42B9 /* UIColor+Theme.swift in Sources */,
 				0C738ADB1C69D811007C9548 /* AppDelegate.swift in Sources */,
 				0C3463931C6F8C340086D3CC /* GameRules.swift in Sources */,
