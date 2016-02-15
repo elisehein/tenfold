@@ -54,7 +54,8 @@ class GameRules: NSObject {
     
     private func enclosingCrossedOutNumbers (from start: Int, to end: Int) -> Bool {
         let enclosingHorizontally = allCrossedOutBetween(start: start, end: end, withIncrement: 1)
-        let enclosingVertically = allCrossedOutBetween(start: start, end: end, withIncrement: 9)
+        let enclosingVertically = sameColumn(start, end) &&
+                                  allCrossedOutBetween(start: start, end: end, withIncrement: 9)
         
         return enclosingHorizontally || enclosingVertically
     }
@@ -63,7 +64,7 @@ class GameRules: NSObject {
     private func beginningAndEndOfLine (first first: Int, second: Int) -> Bool {
         let positionOfFirstOnLine = first % numbersPerLine
         
-        if !sameLine(first: first, second: second, positionOfFirstOnLine: positionOfFirstOnLine) {
+        if !sameLine(first, second, positionOfFirstOnLine: positionOfFirstOnLine) {
             return false
         }
         
@@ -81,9 +82,13 @@ class GameRules: NSObject {
         return firstIsBeginning && secondIsEnd
     }
     
-    private func sameLine(first first: Int, second: Int, positionOfFirstOnLine: Int) -> Bool {
+    private func sameLine(first: Int, _ second: Int, positionOfFirstOnLine: Int) -> Bool {
         let positionsAvailableUntilEndOfLine = numbersPerLine - positionOfFirstOnLine - 1
         return second - first <= positionsAvailableUntilEndOfLine
+    }
+    
+    private func sameColumn(index: Int, _ otherIndex: Int) -> Bool {
+        return index % numbersPerLine == otherIndex % numbersPerLine
     }
     
     private func allCrossedOutBetween (start start: Int, end: Int, withIncrement increment: Int) -> Bool {
