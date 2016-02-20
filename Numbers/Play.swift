@@ -50,9 +50,8 @@ class Play: UIViewController {
     }
     
     func makeNextRound () {
-        if game.makeNextRound() {
-            grid.loadNextRound()
-        } else {
+        let success = grid.loadNextRound()
+        if !success {
             print("GAME OVER")
         }
     }

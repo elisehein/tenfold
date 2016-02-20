@@ -79,7 +79,15 @@ class GameGrid: UIViewController {
     // Instead of calling reloadData on the entire grid, dynamically add the next round
     // This function assumes that the state of the game has diverged from the state of
     // the collectionView.
-    func loadNextRound () {
+    func loadNextRound () -> Bool {
+        let hypotheticalNextRound = game.hypotheticalNextRound()
+        
+        if (hypotheticalNextRound.count == 0) {
+            return false
+        }
+        
+        game.makeNextRound(usingNumbers: hypotheticalNextRound)
+        
         var indexPaths: Array<NSIndexPath> = []
         
         for index in game.currentRoundIndeces() {
@@ -87,9 +95,8 @@ class GameGrid: UIViewController {
         }
         
         
-        if indexPaths.count > 0 {
-            collectionView.insertItemsAtIndexPaths(indexPaths)
-        }
+        collectionView.insertItemsAtIndexPaths(indexPaths)
+        return true
     }
     
     func optimalGridHeight () -> CGFloat {
