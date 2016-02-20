@@ -48,7 +48,11 @@ class GameGrid: UIViewController {
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        collectionView.frame = view.bounds
+        
+        var frame = view.bounds
+        frame.size.height = optimalGridHeight()
+        frame.origin.y += (view.bounds.size.height - frame.size.height) / 2
+        collectionView.frame = frame
     }
     
     func attemptItemPairing (item: Int, otherItem: Int) {
@@ -86,6 +90,18 @@ class GameGrid: UIViewController {
         if indexPaths.count > 0 {
             collectionView.insertItemsAtIndexPaths(indexPaths)
         }
+    }
+    
+    func optimalGridHeight () -> CGFloat {
+        let cellHeight = cellSize().height
+        let availableHeight = view.bounds.size.height
+        
+        return availableHeight - (availableHeight % cellHeight)
+    }
+    
+    func cellSize () -> CGSize {
+        let cellWidth = view.bounds.size.width / CGFloat(rules.numbersPerLine)
+        return CGSize(width: cellWidth, height: cellWidth)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -140,7 +156,6 @@ extension GameGrid:  UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(collectionView: UICollectionView, layout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        let cellWidth = collectionView.bounds.size.width / CGFloat(rules.numbersPerLine)
-        return CGSize(width: cellWidth, height: cellWidth)
+        return cellSize()
     }
 }
