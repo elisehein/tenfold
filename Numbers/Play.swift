@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  Play.swift
 //  Numbers
 //
 //  Created by Elise Hein on 09/02/2016.
@@ -11,11 +11,11 @@ import PureLayout
 
 class Play: UIViewController {
     
+    private static let gridMargin: CGFloat = 10
+    
     let game: Game
     
-    private let gridMargin: CGFloat = 10
     private let grid: GameGrid
-    
     private var hasLoadedConstraints = false
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
@@ -24,7 +24,7 @@ class Play: UIViewController {
         
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         
-        let doubleTap = UITapGestureRecognizer(target: self, action: Selector("makeNextRound"))
+        let doubleTap = UITapGestureRecognizer(target: self, action: #selector(Play.makeNextRound))
         doubleTap.numberOfTapsRequired = 2
         view.addGestureRecognizer(doubleTap)
         
@@ -41,7 +41,7 @@ class Play: UIViewController {
     
     override func updateViewConstraints() {
         if (!hasLoadedConstraints) {
-            grid.view.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsets(top: gridMargin, left: gridMargin, bottom: gridMargin, right: gridMargin))
+            grid.view.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsets(top: Play.gridMargin, left: Play.gridMargin, bottom: 0, right: Play.gridMargin))
             
             hasLoadedConstraints = true
         }
@@ -50,7 +50,7 @@ class Play: UIViewController {
     }
     
     func makeNextRound () {
-        let success = grid.loadNextRound()
+        let success = grid.loadNextRound(whileAtScrollOffset: CGPoint.zero)
         if !success {
             print("GAME OVER")
         }

@@ -98,7 +98,7 @@ class GameRules: NSObject {
             return false
         }
         
-        for var i = start + increment; i < end; i += increment {
+        for i in (start + increment).stride(to: end, by: increment) {
             if !game.isCrossedOut(i) {
                 return false
             }

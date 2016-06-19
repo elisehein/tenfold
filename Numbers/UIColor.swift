@@ -13,9 +13,9 @@ import UIKit
 extension UIColor {
     // Initialiser for strings of format '#_RED_GREEN_BLUE_'
     convenience init(hex: String) {
-        let redRange    = Range<String.Index>(start: hex.startIndex.advancedBy(1), end: hex.startIndex.advancedBy(3))
-        let greenRange  = Range<String.Index>(start: hex.startIndex.advancedBy(3), end: hex.startIndex.advancedBy(5))
-        let blueRange   = Range<String.Index>(start: hex.startIndex.advancedBy(5), end: hex.startIndex.advancedBy(7))
+        let redRange    = hex.startIndex.advancedBy(1)..<hex.startIndex.advancedBy(3)
+        let greenRange  = hex.startIndex.advancedBy(3)..<hex.startIndex.advancedBy(5)
+        let blueRange   = hex.startIndex.advancedBy(5)..<hex.startIndex.advancedBy(7)
         
         var red     : UInt32 = 0
         var green   : UInt32 = 0
