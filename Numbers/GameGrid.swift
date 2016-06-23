@@ -12,7 +12,7 @@ import UIKit
 class GameGrid: UIViewController {
     
     private static let cellAnimationDuration = 0.15
-    private static let nextRoundTriggerThreshold: CGFloat = 50
+    private static let nextRoundTriggerThreshold: CGFloat = 150
     
     let game: Game
     let rules: GameRules
@@ -43,7 +43,7 @@ class GameGrid: UIViewController {
         
         collectionView.registerClass(NumberCell.self, forCellWithReuseIdentifier: self.reuseIdentifier)
         collectionView.allowsMultipleSelection = true
-        collectionView.backgroundColor = UIColor.grayColor()
+        collectionView.backgroundColor = UIColor.clearColor()
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.showsHorizontalScrollIndicator = false
@@ -51,15 +51,12 @@ class GameGrid: UIViewController {
         
         toggleBounce(false)
         
-        nextRoundGrid = NextRoundGrid(cellSize: cellSize(),
-                                      cellsPerRow: GameRules.numbersPerLine,
+        nextRoundGrid = NextRoundGrid(cellsPerRow: GameRules.numbersPerLine,
                                       frame: CGRect.zero)
         nextRoundGrid?.hidden = true
     
-        view.clipsToBounds = true
-        view.backgroundColor = UIColor.greenColor()
-        view.addSubview(collectionView)
         collectionView.addSubview(nextRoundGrid!)
+        view.addSubview(collectionView)
     }
     
     override func viewWillLayoutSubviews() {
@@ -70,6 +67,7 @@ class GameGrid: UIViewController {
         frame.origin.y += (view.bounds.size.height - frame.size.height) / 2
         collectionView.frame = frame
         
+        nextRoundGrid?.itemSize = cellSize()
         positionNextRoundGrid()
     }
     
@@ -220,8 +218,16 @@ extension GameGrid: UIScrollViewDelegate {
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        nextRoundGrid?.hidden = !pullUpInProgress()
-        positionNextRoundGrid()
+        if pullUpInProgress() {
+            positionNextRoundGrid()
+            nextRoundGrid?.hidden = false
+            
+            let amountPulledUp = collectionView.contentOffset.y - maxOffsetBeforeBounce()
+            let proportionVisible = min(1, amountPulledUp / GameGrid.nextRoundTriggerThreshold)
+            nextRoundGrid?.proportionVisible = proportionVisible
+        } else {
+            nextRoundGrid?.hidden = true
+        }
     }
     
     // NOTE this does not take into account content insets
@@ -230,6 +236,7 @@ extension GameGrid: UIScrollViewDelegate {
         
         if collectionView.contentOffset.y >
            maxOffsetBeforeBounce() + GameGrid.nextRoundTriggerThreshold {
+            nextRoundGrid?.hidden = true
             loadNextRound(whileAtScrollOffset: scrollView.contentOffset)
         }
     }

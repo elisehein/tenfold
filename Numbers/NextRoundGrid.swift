@@ -11,34 +11,58 @@ import UIKit
 
 class NextRoundGrid: UIView {
     
-    private static let numberOfRows = 10
+    private static let numberOfRows = 7
     
-    var itemSize: CGSize
     var itemsPerRow: Int
     
-    init(cellSize: CGSize, cellsPerRow: Int, frame: CGRect) {
-        itemSize = cellSize
-        itemsPerRow = cellsPerRow
-        
-        super.init(frame: frame)
-        
-        for i in 0..<NextRoundGrid.numberOfRows {
-            let indexInRow = i % NextRoundGrid.numberOfRows
-            let rowIndex = i / NextRoundGrid.numberOfRows
-            let x = CGFloat(indexInRow) * itemSize.width
-            let y = CGFloat(rowIndex) * itemSize.height
-            let cellFrame = CGRect(x: x,
-                                   y: y,
-                                   width: itemSize.width,
-                                   height: itemSize.height)
-            let cell = NextRoundCell(frame: cellFrame)
-            addSubview(cell)
+    var itemSize: CGSize? {
+        didSet {
+            if itemSize != nil {
+                drawItems()
+            }
         }
+    }
+    
+    var proportionVisible: CGFloat? {
+        didSet {
+            if proportionVisible != nil {
+                adjustItemIntensity(proportionVisible!)
+            }
+        }
+    }
+    
+    init(cellsPerRow: Int, frame: CGRect) {
+        itemsPerRow = cellsPerRow
+        super.init(frame: frame)
+    }
+    
+    func drawItems () {
+        subviews.forEach({ $0.removeFromSuperview() })
         
+        for row in 0..<NextRoundGrid.numberOfRows {
+            for item in 0..<itemsPerRow {
+                let x = CGFloat(item) * itemSize!.width
+                let y = CGFloat(row) * itemSize!.height
+                let cellFrame = CGRect(x: x,
+                                       y: y,
+                                       width: itemSize!.width,
+                                       height: itemSize!.height)
+                let cell = NextRoundCell(frame: cellFrame)
+                addSubview(cell)
+            }
+        }
     }
     
     func heightRequired () -> CGFloat {
-        return CGFloat(NextRoundGrid.numberOfRows) * itemSize.height
+        return CGFloat(NextRoundGrid.numberOfRows) * itemSize!.height
+    }
+    
+    private func adjustItemIntensity (proportionVisible: CGFloat) {
+        for item in subviews {
+            if let item = item as? NextRoundCell {
+                item.intensity = proportionVisible
+            }
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -48,12 +72,39 @@ class NextRoundGrid: UIView {
 
 class NextRoundCell: UIView {
     
+    private let dotLayer = CAShapeLayer()
+    
+    private static let maxRadius: CGFloat = 4
+    private static let minRadius: CGFloat = 0
+    
+    var intensity: CGFloat? {
+        didSet {
+            if intensity != nil {
+                let radius = (NextRoundCell.maxRadius - NextRoundCell.minRadius) * intensity!
+                redrawDot(withRadius: radius)
+            }
+        }
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        let bubble = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
-        bubble.backgroundColor = UIColor.blueColor()
-        addSubview(bubble)
+        dotLayer.fillColor = UIColor.themeColor(.OffBlack).colorWithAlphaComponent(0.7).CGColor
+        dotLayer.lineWidth = 0
+        
+        layer.addSublayer(dotLayer)
+    }
+    
+    func redrawDot (withRadius radius: CGFloat) {
+        let arcCenter = CGPoint(x: bounds.size.width / 2.0,
+                                y: bounds.size.height / 2.0)
+        let circlePath = UIBezierPath(arcCenter: arcCenter,
+                                      radius: radius,
+                                      startAngle: 0,
+                                      endAngle:CGFloat(M_PI * 2),
+                                      clockwise: true)
+        
+        dotLayer.path = circlePath.CGPath
     }
     
     required init?(coder aDecoder: NSCoder) {
