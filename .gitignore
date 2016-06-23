@@ -1,3 +1,4 @@
 .DS_Store
 Carthage/
-Numbers.xcodeproj/project.xcworkspace/xcuserdata/elise.xcuserdatad/
+Numbers.xcodeproj/xcuserdata/
+Numbers.xcodeproj/project.xcproject/xcuserdata/
