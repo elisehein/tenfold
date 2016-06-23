@@ -11,8 +11,8 @@ import Foundation
 class GameRules: NSObject {
     private let game: Game // TODO Figure out how to make this readonly, keeping the reference
     
-    let numbersPerLine = 9
-    let numbersInPairing = 2
+    static let numbersPerLine = 9
+    static let numbersInPairing = 2
     
     init(game: Game) {
         self.game = game
@@ -70,19 +70,19 @@ class GameRules: NSObject {
         let positionOfSecondOnLine = positionOnLine(second)
         
         let startOfLine = first - positionOfFirstOnLine
-        let endOfLine = first + (numbersPerLine - positionOfFirstOnLine) - 1
+        let endOfLine = first + (GameRules.numbersPerLine - positionOfFirstOnLine) - 1
         
         let firstIsBeginning = positionOfFirstOnLine == 0 ||
                                allCrossedOutBetween(start: startOfLine - 1, end: first, withIncrement: 1)
         
-        let secondIsEnd = positionOfSecondOnLine == (numbersPerLine - 1) ||
+        let secondIsEnd = positionOfSecondOnLine == (GameRules.numbersPerLine - 1) ||
                           allCrossedOutBetween(start: second, end: endOfLine + 1, withIncrement: 1)
         
         return firstIsBeginning && secondIsEnd
     }
     
     private func sameLine(first: Int, _ second: Int) -> Bool {
-        return second - first < numbersPerLine && positionOnLine(second) > positionOnLine(first)
+        return second - first < GameRules.numbersPerLine && positionOnLine(second) > positionOnLine(first)
     }
     
     private func sameColumn(index: Int, _ otherIndex: Int) -> Bool {
@@ -90,7 +90,7 @@ class GameRules: NSObject {
     }
     
     private func positionOnLine(index: Int) -> Int {
-        return index % numbersPerLine
+        return index % GameRules.numbersPerLine
     }
     
     private func allCrossedOutBetween (start start: Int, end: Int, withIncrement increment: Int) -> Bool {
