@@ -18,6 +18,7 @@ class Play: UIViewController {
 
     private let gameGrid: GameGrid
     private var nextRoundGrid: NextRoundGrid?
+    private var passedNextRoundThreshold = false
 
     init() {
         self.game = Game()
@@ -44,13 +45,8 @@ class Play: UIViewController {
                                 y: 0,
                                 width: view.bounds.size.width - (2 * Play.gridMargin),
                                 height: view.bounds.size.height)
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-
-        positionGameGrid()
-        positionNextRoundGrid()
+        self.positionGameGrid()
+        self.nextRoundGrid?.itemSize = self.gameGrid.cellSize()
     }
 
     private func positionGameGrid () {
@@ -67,8 +63,6 @@ class Play: UIViewController {
     }
 
     private func positionNextRoundGrid () {
-        nextRoundGrid?.itemSize = gameGrid.cellSize()
-
         var nextRoundGridFrame = gameGrid.frame
         nextRoundGridFrame.size.height = nextRoundGrid!.heightRequired()
 
@@ -110,12 +104,15 @@ class Play: UIViewController {
             let pullUpRatio = gameGrid.pullUpPercentage(ofThreshold: Play.nextRoundTriggerThreshold)
             let proportionVisible = min(1, pullUpRatio)
 
-            if proportionVisible == 1 {
-                 AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
+            if proportionVisible == 1 && !passedNextRoundThreshold {
+//                AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
+                passedNextRoundThreshold = true
             }
+
             nextRoundGrid?.proportionVisible = proportionVisible
         } else {
             nextRoundGrid?.hidden = true
+            passedNextRoundThreshold = false
         }
     }
 

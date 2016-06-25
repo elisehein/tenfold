@@ -11,6 +11,7 @@ import UIKit
 
 enum ThemeColor {
     case OffWhite
+    case OffWhiteDark
     case OffBlack
 }
 
@@ -19,6 +20,8 @@ extension UIColor {
         switch themeColor {
         case .OffWhite:
             return UIColor(hex: "#FFFEF1")
+        case .OffWhiteDark:
+            return UIColor(hex: "#CBC9B0")
         case .OffBlack:
             return UIColor(hex: "#20201E")
         }
@@ -28,6 +31,8 @@ extension UIColor {
         switch themeColor {
         case .OffWhite:
             return UIColor(hex: "#E6E4D0")
+        case .OffWhiteDark:
+            return UIColor.themeColor(.OffWhite)
         case .OffBlack:
             return UIColor.grayColor()
         }

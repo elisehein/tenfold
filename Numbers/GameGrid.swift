@@ -48,24 +48,15 @@ class GameGrid: UICollectionView {
         alwaysBounceVertical = true
     }
 
-    func loadNextRound (completion: () -> Void ) {
+    func loadNextRound (completion: (Bool) -> Void ) {
         var indexPaths: Array<NSIndexPath> = []
 
         for index in game.currentRoundIndeces() {
            indexPaths.append(NSIndexPath(forItem: index, inSection: 0))
         }
 
-        let latestScrollOffset = contentOffset
         insertItemsAtIndexPaths(indexPaths)
-        performBatchUpdates(nil, completion: { _ in
-            // This runs when item insertion has finished, and removes momentum
-            // from the scrollview so the user always stays at the exact point
-            // they released the pull-up-to-load-next-round widget
-            // http://stackoverflow.com/a/30668519/2026098
-            self.setContentOffset(latestScrollOffset, animated: false)
-            completion()
-        })
-
+        performBatchUpdates(nil, completion: completion)
     }
 
     func toggleBounce (shouldBounce: Bool) {
@@ -80,7 +71,7 @@ class GameGrid: UICollectionView {
 
     func pullUpInProgress () -> Bool {
         let offset = contentOffset.y
-        return offset > maxOffsetBeforeBounce()
+        return offset > maxOffsetBeforeBounce() && contentSize.height > 0
     }
 
     func pullDownInProgress () -> Bool {
