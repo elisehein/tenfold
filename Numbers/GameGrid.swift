@@ -8,18 +8,11 @@
 
 import Foundation
 import UIKit
-import AudioToolbox
 
-class GameGrid: UIViewController {
+class GameGrid: UICollectionView {
 
     private static let cellAnimationDuration = 0.15
-    private static let nextRoundTriggerThreshold: CGFloat = 150
-
-    let game: Game
-    let rules: GameRules
-
-    let collectionView: UICollectionView
-    var nextRoundGrid: NextRoundGrid?
+    private let reuseIdentifier = "NumberCell"
 
     private let layout: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
@@ -28,83 +21,100 @@ class GameGrid: UIViewController {
         return l
     }()
 
-    private let reuseIdentifier = "NumberCell"
+    private let game: Game
+    private let rules: GameRules
     private let maxSelectedItems: Int
 
     private var bouncingInProgress = false
 
-    init(game: Game) {
+    var scrollHandler: (() -> Void)?
+    var draggingEndedHandler: (() -> Void)?
+
+    init (game: Game) {
         self.game = game
         self.rules = GameRules(game: game)
         self.maxSelectedItems = GameRules.numbersInPairing
 
-        self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
+        super.init(frame: CGRect.zero, collectionViewLayout: layout)
 
-        super.init(nibName: nil, bundle: nil)
-
-        collectionView.registerClass(NumberCell.self,
-                                     forCellWithReuseIdentifier: self.reuseIdentifier)
-        collectionView.allowsMultipleSelection = true
-        collectionView.backgroundColor = UIColor.clearColor()
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.showsVerticalScrollIndicator = false
-        collectionView.alwaysBounceVertical = true
-
-        nextRoundGrid = NextRoundGrid(cellsPerRow: GameRules.numbersPerLine,
-                                      frame: CGRect.zero)
-        nextRoundGrid?.hidden = true
-
-        view.addSubview(nextRoundGrid!)
-        view.addSubview(collectionView)
+        registerClass(NumberCell.self,
+                      forCellWithReuseIdentifier: self.reuseIdentifier)
+        allowsMultipleSelection = true
+        backgroundColor = UIColor.clearColor()
+        dataSource = self
+        delegate = self
+        showsHorizontalScrollIndicator = false
+        showsVerticalScrollIndicator = false
+        alwaysBounceVertical = true
     }
 
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
+    func loadNextRound (completion: () -> Void ) {
+        var indexPaths: Array<NSIndexPath> = []
 
-        positionGameGrid()
-        positionNextRoundGrid()
+        for index in game.currentRoundIndeces() {
+           indexPaths.append(NSIndexPath(forItem: index, inSection: 0))
+        }
+
+        let latestScrollOffset = contentOffset
+        insertItemsAtIndexPaths(indexPaths)
+        performBatchUpdates(nil, completion: { _ in
+            // This runs when item insertion has finished, and removes momentum
+            // from the scrollview so the user always stays at the exact point
+            // they released the pull-up-to-load-next-round widget
+            // http://stackoverflow.com/a/30668519/2026098
+            self.setContentOffset(latestScrollOffset, animated: false)
+            completion()
+        })
+
     }
 
-    func positionGameGrid () {
-        let currentGridHeight = CGFloat(game.totalRows()) * cellSize().height
-        let optimalHeight = optimalGridHeight()
-
-        var frame = view.bounds
-        frame.size.height = optimalHeight
-        frame.origin.y = (view.bounds.size.height - optimalHeight) / 2.0
-        collectionView.frame = frame
-
-        let topInset = max(0, optimalHeight - currentGridHeight)
-        collectionView.contentInset.top = topInset
-    }
-
-    func positionNextRoundGrid (amountPulledUp: CGFloat = 0) {
-        nextRoundGrid?.itemSize = cellSize()
-
-        let gameGridFrame = collectionView.frame
-        var nextRoundGridFrame = gameGridFrame
-        nextRoundGridFrame.size.height = nextRoundGrid!.heightRequired()
-
-        let y = gameGridFrame.size.height - amountPulledUp - cellSize().height
-        nextRoundGridFrame.origin.y += y
-        nextRoundGrid?.frame = nextRoundGridFrame
-    }
-
-    func toggleBounce (bounces: Bool) {
+    func toggleBounce (shouldBounce: Bool) {
         // We should *never* disable bounce if there is a top contentInset
         // otherwise we can't pull up from the first rounds where the grid isn't full screen yet
-        collectionView.bounces = collectionView.contentInset.top > 0 || bounces
+        bounces = contentInset.top > 0 || shouldBounce
     }
 
-    func attemptItemPairing (item: Int, otherItem: Int) {
+    func bottomEdgeY () -> CGFloat {
+        return frame.size.height - distancePulledUp()
+    }
+
+    func pullUpInProgress () -> Bool {
+        let offset = contentOffset.y
+        return offset > maxOffsetBeforeBounce()
+    }
+
+    func pullDownInProgress () -> Bool {
+        return contentOffset.y < 0
+    }
+
+    func pullUpPercentage(ofThreshold threshold: CGFloat) -> CGFloat {
+        return distancePulledUp() / threshold
+    }
+
+    func pullUpDistanceExceeds (threshold: CGFloat) -> Bool {
+        return contentOffset.y > maxOffsetBeforeBounce() + threshold
+    }
+
+    func cellSize () -> CGSize {
+        let cellWidth = bounds.size.width / CGFloat(GameRules.numbersPerLine)
+        return CGSize(width: cellWidth, height: cellWidth)
+    }
+
+    private func distancePulledUp () -> CGFloat {
+        return contentOffset.y - maxOffsetBeforeBounce()
+    }
+
+    private func maxOffsetBeforeBounce () -> CGFloat {
+        return contentSize.height - bounds.size.height
+    }
+
+    private func attemptItemPairing (item: Int, otherItem: Int) {
         let successfulPairing = rules.attemptPairing(item, otherIndex: otherItem)
 
         let indexPath = NSIndexPath(forItem: item, inSection: 0)
         let otherIndexPath = NSIndexPath(forItem: otherItem, inSection: 0)
-        let cell = self.collectionView.cellForItemAtIndexPath(indexPath) as? NumberCell
-        let otherCell = self.collectionView.cellForItemAtIndexPath(otherIndexPath) as? NumberCell
+        let cell = cellForItemAtIndexPath(indexPath) as? NumberCell
+        let otherCell = cellForItemAtIndexPath(otherIndexPath) as? NumberCell
 
         guard cell != nil && otherCell != nil else { return }
 
@@ -117,58 +127,14 @@ class GameGrid: UIViewController {
             otherCell!.shouldDeselectWithFailure = true
         }
 
-        self.collectionView.deselectItemAtIndexPath(indexPath, animated: false)
-        self.collectionView.deselectItemAtIndexPath(otherIndexPath, animated: false)
-    }
-
-    // Instead of calling reloadData on the entire grid, dynamically add the next round
-    // This function assumes that the state of the game has diverged from the state of
-    // the collectionView.
-    func loadNextRound (whileAtScrollOffset scrollOffset: CGPoint) -> Bool {
-        let hypotheticalNextRound = game.hypotheticalNextRound()
-
-        if hypotheticalNextRound.count == 0 {
-            return false
-        }
-
-        game.makeNextRound(usingNumbers: hypotheticalNextRound)
-
-        var indexPaths: Array<NSIndexPath> = []
-
-        for index in game.currentRoundIndeces() {
-           indexPaths.append(NSIndexPath(forItem: index, inSection: 0))
-        }
-
-        collectionView.insertItemsAtIndexPaths(indexPaths)
-        collectionView.performBatchUpdates(nil, completion: { _ in
-            // This runs when item insertion has finished, and removes momentum
-            // from the scrollview so the user always stays at the exact point
-            // they released the pull-up-to-load-next-round widget
-            // http://stackoverflow.com/a/30668519/2026098
-//            self.collectionView.setContentOffset(scrollOffset, animated: false)
-            self.positionGameGrid()
-        })
-
-        return true
-    }
-
-    func optimalGridHeight () -> CGFloat {
-        let cellHeight = cellSize().height
-        let availableHeight = view.bounds.size.height
-
-        return availableHeight - (availableHeight % cellHeight)
-    }
-
-    func cellSize () -> CGSize {
-        let cellWidth = view.bounds.size.width / CGFloat(GameRules.numbersPerLine)
-        return CGSize(width: cellWidth, height: cellWidth)
+        deselectItemAtIndexPath(indexPath, animated: false)
+        deselectItemAtIndexPath(otherIndexPath, animated: false)
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
-
 
 extension GameGrid: UICollectionViewDataSource {
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
@@ -244,42 +210,11 @@ extension GameGrid: UIScrollViewDelegate {
     }
 
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        if pullUpInProgress() {
-            let amountPulledUp = collectionView.contentOffset.y - maxOffsetBeforeBounce()
-            positionNextRoundGrid(amountPulledUp)
-            nextRoundGrid?.hidden = false
-
-            let proportionVisible = min(1, amountPulledUp / GameGrid.nextRoundTriggerThreshold)
-            if proportionVisible == 1 {
-                 AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
-            }
-            nextRoundGrid?.proportionVisible = proportionVisible
-        } else {
-            nextRoundGrid?.hidden = true
-        }
+        self.scrollHandler!()
     }
 
-    // NOTE this does not take into account content insets
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         bouncingInProgress = pullUpInProgress() || pullDownInProgress()
-
-        if collectionView.contentOffset.y >
-           maxOffsetBeforeBounce() + GameGrid.nextRoundTriggerThreshold {
-            nextRoundGrid?.hidden = true
-            loadNextRound(whileAtScrollOffset: scrollView.contentOffset)
-        }
-    }
-
-    func pullUpInProgress () -> Bool {
-        let offset = collectionView.contentOffset.y
-        return offset > maxOffsetBeforeBounce()
-    }
-
-    func pullDownInProgress () -> Bool {
-        return collectionView.contentOffset.y < 0
-    }
-
-    func maxOffsetBeforeBounce () -> CGFloat {
-        return collectionView.contentSize.height - collectionView.bounds.size.height
+        self.draggingEndedHandler!()
     }
 }

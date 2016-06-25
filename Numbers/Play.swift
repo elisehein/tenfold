@@ -7,45 +7,123 @@
 //
 
 import UIKit
-import PureLayout
+import AudioToolbox
 
 class Play: UIViewController {
 
     private static let gridMargin: CGFloat = 10
+    private static let nextRoundTriggerThreshold: CGFloat = 150
 
-    let game: Game
+    private let game: Game
 
     private let gameGrid: GameGrid
-    private var hasLoadedConstraints = false
+    private var nextRoundGrid: NextRoundGrid?
 
     init() {
         self.game = Game()
-        gameGrid = GameGrid(game: game)
+        self.gameGrid = GameGrid(game: game)
 
         super.init(nibName: nil, bundle: nil)
 
-        addChildViewController(gameGrid)
-        view.addSubview(gameGrid.view)
+        gameGrid.scrollHandler = handleScroll
+        gameGrid.draggingEndedHandler = handleDraggingEnd
+
+        nextRoundGrid = NextRoundGrid(cellsPerRow: GameRules.numbersPerLine,
+                                      frame: CGRect.zero)
+        nextRoundGrid?.hidden = true
+
+        view.backgroundColor = UIColor.themeColor(.OffWhite)
+        view.addSubview(nextRoundGrid!)
+        view.addSubview(gameGrid)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.themeColor(.OffWhite)
-        view.setNeedsUpdateConstraints()
+
+        gameGrid.frame = CGRect(x: Play.gridMargin,
+                                y: 0,
+                                width: view.bounds.size.width - (2 * Play.gridMargin),
+                                height: view.bounds.size.height)
     }
 
-    override func updateViewConstraints() {
-        if !hasLoadedConstraints {
-            let gameGridInsets = UIEdgeInsets(top: 0,
-                                              left: Play.gridMargin,
-                                              bottom: 0,
-                                              right: Play.gridMargin)
-            gameGrid.view.autoPinEdgesToSuperviewEdgesWithInsets(gameGridInsets)
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
 
-            hasLoadedConstraints = true
+        positionGameGrid()
+        positionNextRoundGrid()
+    }
+
+    private func positionGameGrid () {
+        let currentGridHeight = CGFloat(game.totalRows()) * gameGrid.cellSize().height
+        let optimalHeight = optimalGridHeight()
+
+        var frame = gameGrid.frame
+        frame.size.height = optimalHeight
+        frame.origin.y = (view.bounds.size.height - optimalHeight) / 2.0
+        gameGrid.frame = frame
+
+        let topInset = max(0, optimalHeight - currentGridHeight)
+        gameGrid.contentInset.top = topInset
+    }
+
+    private func positionNextRoundGrid () {
+        nextRoundGrid?.itemSize = gameGrid.cellSize()
+
+        var nextRoundGridFrame = gameGrid.frame
+        nextRoundGridFrame.size.height = nextRoundGrid!.heightRequired()
+
+        nextRoundGridFrame.origin.y += gameGrid.bottomEdgeY() - gameGrid.cellSize().height
+        nextRoundGrid?.frame = nextRoundGridFrame
+    }
+
+    // Instead of calling reloadData on the entire grid, dynamically add the next round
+    // This function assumes that the state of the game has diverged from the state of
+    // the collectionView.
+    private func loadNextRound () -> Bool {
+        let hypotheticalNextRound = game.hypotheticalNextRound()
+
+        if hypotheticalNextRound.count == 0 {
+            return false
         }
 
-        super.updateViewConstraints()
+        game.makeNextRound(usingNumbers: hypotheticalNextRound)
+        gameGrid.loadNextRound({ _ in
+            self.positionGameGrid()
+        })
+
+        return true
+    }
+
+    // NOTE this does not take into account content insets
+    private func handleDraggingEnd () {
+        if gameGrid.pullUpDistanceExceeds(Play.nextRoundTriggerThreshold) {
+            nextRoundGrid?.hidden = true
+            loadNextRound()
+        }
+    }
+
+    private func handleScroll () {
+        if gameGrid.pullUpInProgress() {
+            positionNextRoundGrid()
+            nextRoundGrid?.hidden = false
+
+            let pullUpRatio = gameGrid.pullUpPercentage(ofThreshold: Play.nextRoundTriggerThreshold)
+            let proportionVisible = min(1, pullUpRatio)
+
+            if proportionVisible == 1 {
+                 AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
+            }
+            nextRoundGrid?.proportionVisible = proportionVisible
+        } else {
+            nextRoundGrid?.hidden = true
+        }
+    }
+
+    private func optimalGridHeight () -> CGFloat {
+        let cellHeight = gameGrid.cellSize().height
+        let availableHeight = view.bounds.size.height
+
+        return availableHeight - (availableHeight % cellHeight)
     }
 
     required init?(coder aDecoder: NSCoder) {
