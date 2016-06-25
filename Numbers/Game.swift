@@ -79,6 +79,10 @@ class Game: NSObject {
         return numbers.count
     }
 
+    func totalRows () -> Int {
+        return Int(ceil(Float(numbers.count) / Float(GameRules.numbersPerLine)))
+    }
+
     func numberAtIndex (index: Int) -> Int {
         return numbers[index].value
     }

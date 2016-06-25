@@ -15,26 +15,21 @@ class Play: UIViewController {
 
     let game: Game
 
-    private let grid: GameGrid
+    private let gameGrid: GameGrid
     private var hasLoadedConstraints = false
 
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    init() {
         self.game = Game()
-        grid = GameGrid(game: game)
+        gameGrid = GameGrid(game: game)
 
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        super.init(nibName: nil, bundle: nil)
 
-        let doubleTap = UITapGestureRecognizer(target: self, action: #selector(Play.makeNextRound))
-        doubleTap.numberOfTapsRequired = 2
-        view.addGestureRecognizer(doubleTap)
-
-        addChildViewController(grid)
-        view.addSubview(grid.view)
+        addChildViewController(gameGrid)
+        view.addSubview(gameGrid.view)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // TODO colours look different on simulator and device
         view.backgroundColor = UIColor.themeColor(.OffWhite)
         view.setNeedsUpdateConstraints()
     }
@@ -45,19 +40,12 @@ class Play: UIViewController {
                                               left: Play.gridMargin,
                                               bottom: 0,
                                               right: Play.gridMargin)
-            grid.view.autoPinEdgesToSuperviewEdgesWithInsets(gameGridInsets)
+            gameGrid.view.autoPinEdgesToSuperviewEdgesWithInsets(gameGridInsets)
 
             hasLoadedConstraints = true
         }
 
         super.updateViewConstraints()
-    }
-
-    func makeNextRound () {
-        let success = grid.loadNextRound(whileAtScrollOffset: CGPoint.zero)
-        if !success {
-            print("GAME OVER")
-        }
     }
 
     required init?(coder aDecoder: NSCoder) {

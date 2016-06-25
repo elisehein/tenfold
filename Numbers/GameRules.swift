@@ -9,7 +9,7 @@
 import Foundation
 
 class GameRules: NSObject {
-    private let game: Game // TODO Figure out how to make this readonly, keeping the reference
+    private let game: Game
 
     static let numbersPerLine = 9
     static let numbersInPairing = 2
