@@ -66,7 +66,7 @@ class NextRoundGrid: UIView {
             if let item = subviews[i] as? NextRoundCell {
                 let currentRow = i / itemsPerRow
                 // Each row of items becomes less intense as we move further along
-                item.intensity = proportionVisible// - (CGFloat(currentRow) * 0.2)
+                item.intensity = proportionVisible - (CGFloat(currentRow) * 0.2)
             }
         }
     }
@@ -84,10 +84,11 @@ class NextRoundGrid: UIView {
 
 class NextRoundCell: UIView {
 
-    private let dotLayer = CAShapeLayer()
+    private let dot = UIView()
+    private let innerDot = UIView()
 
     private static let lineWidth: CGFloat = 1
-    private static let maxRadius: CGFloat = 4
+    private static let maxRadius: CGFloat = 3.5
     private static let minRadius: CGFloat = 0
 
     private var didBlimp = false
@@ -96,7 +97,17 @@ class NextRoundCell: UIView {
         didSet {
             if intensity != nil {
                 let radius = (NextRoundCell.maxRadius - NextRoundCell.minRadius) * intensity!
-                redrawDot(withRadius: radius)
+
+                if didBlimp {
+                    animate({
+                        self.redrawDot(self.innerDot, withRadius: 0)
+                        self.redrawDot(self.dot, withRadius: radius)
+                    })
+                    didBlimp = false
+                } else {
+                    self.redrawDot(self.innerDot, withRadius: 0)
+                    redrawDot(dot, withRadius: radius)
+                }
             }
         }
     }
@@ -104,66 +115,40 @@ class NextRoundCell: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        let strokeColor = UIColor.themeColor(.OffWhiteDark).colorWithAlphaComponent(0.7).CGColor
+        dot.backgroundColor = UIColor.themeColor(.OffWhiteDark)
+        innerDot.backgroundColor = UIColor.themeColor(.OffWhite)
 
-        dotLayer.fillColor = UIColor.themeColor(.OffWhite).CGColor
-        dotLayer.strokeColor = strokeColor
-        dotLayer.lineWidth = NextRoundCell.lineWidth
-
-        redrawDot(withRadius: 3)
-
-        layer.addSublayer(dotLayer)
+        addSubview(dot)
+        addSubview(innerDot)
     }
 
-    func redrawDot (withRadius radius: CGFloat) {
-        let newPath = dotPath(withRadius: radius)
-
-        if didBlimp {
-            dotLayer.removeAllAnimations()
-//            animate(1, path: newPath)
-            didBlimp = false
-        } else {
-            dotLayer.lineWidth = 1
-            dotLayer.path = newPath.CGPath
-        }
-
-    }
-
-    func dotPath (withRadius radius: CGFloat) -> UIBezierPath {
-        let arcCenter = CGPoint(x: bounds.size.width / 2.0,
-                                y: bounds.size.height / 2.0)
-        return UIBezierPath(arcCenter: arcCenter,
-                            radius: radius,
-                            startAngle: 0,
-                            endAngle:CGFloat(M_PI * 2),
-                            clockwise: true)
+    func redrawDot (givenDot: UIView, withRadius radius: CGFloat) {
+        givenDot.layer.cornerRadius = radius
+        givenDot.frame = CGRect(x: (bounds.size.width / 2.0) - radius,
+                           y: (bounds.size.height / 2.0) - radius,
+                           width: 2 * radius,
+                           height: 2 * radius)
     }
 
     func blimp () {
         if !didBlimp {
-            animate(6, path: dotPath(withRadius: 4))
+            animate({
+                self.redrawDot(self.innerDot, withRadius: 2)
+                self.redrawDot(self.dot, withRadius: 4)
+            })
             didBlimp = true
         }
     }
 
-    func animate (lineWith: CGFloat, path: UIBezierPath) {
-        dotLayer.removeAllAnimations()
-
-        let lineAnimation = CABasicAnimation(keyPath: "lineWidth")
-        lineAnimation.toValue = 6
-        lineAnimation.duration = 0.3
-        lineAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
-        lineAnimation.fillMode = kCAFillModeBoth
-        lineAnimation.removedOnCompletion = false
-        dotLayer.addAnimation(lineAnimation, forKey: lineAnimation.keyPath)
-
-        let pathAnimation = CABasicAnimation(keyPath: "path")
-        pathAnimation.toValue = path
-        pathAnimation.duration = 0.3
-        pathAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
-        pathAnimation.fillMode = kCAFillModeBoth
-        pathAnimation.removedOnCompletion = false
-        dotLayer.addAnimation(pathAnimation, forKey: pathAnimation.keyPath)
+    func animate (fn: () -> Void) {
+        UIView.animateWithDuration(1,
+                                   delay: 0,
+                                   usingSpringWithDamping: 0.35,
+                                   initialSpringVelocity: 0.6,
+                                   options: .CurveEaseInOut,
+                                   animations: {
+            fn()
+        }, completion: nil)
     }
 
     required init?(coder aDecoder: NSCoder) {
