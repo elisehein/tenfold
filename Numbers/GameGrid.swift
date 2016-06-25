@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import AudioToolbox
 
 class GameGrid: UIViewController {
 
@@ -54,9 +55,12 @@ class GameGrid: UIViewController {
 
         nextRoundGrid = NextRoundGrid(cellsPerRow: GameRules.numbersPerLine,
                                       frame: CGRect.zero)
-        nextRoundGrid?.hidden = true
+//        nextRoundGrid?.hidden = true
 
-        collectionView.addSubview(nextRoundGrid!)
+        view.backgroundColor = UIColor.greenColor()
+        collectionView.backgroundColor = UIColor.grayColor()
+
+        view.addSubview(nextRoundGrid!)
         view.addSubview(collectionView)
     }
 
@@ -69,13 +73,15 @@ class GameGrid: UIViewController {
         collectionView.frame = frame
 
         nextRoundGrid?.itemSize = cellSize()
+        nextRoundGrid?.proportionVisible = 1
         positionNextRoundGrid()
     }
 
-    func positionNextRoundGrid () {
-        var nextRoundGridFrame = collectionView.bounds
+    func positionNextRoundGrid (amountPulledUp: CGFloat = 0) {
+        let gameGridFrame = collectionView.frame
+        var nextRoundGridFrame = gameGridFrame
         nextRoundGridFrame.size.height = nextRoundGrid!.heightRequired()
-        nextRoundGridFrame.origin.y = collectionView.contentSize.height
+        nextRoundGridFrame.origin.y += gameGridFrame.size.height - amountPulledUp
         nextRoundGrid?.frame = nextRoundGridFrame
     }
 
@@ -191,7 +197,8 @@ extension GameGrid: UICollectionViewDelegateFlowLayout {
         let latestSelectedIndexPath = indexPath
 
         if selectedIndexPaths.count == maxSelectedItems {
-            attemptItemPairing(selectedIndexPaths[0].item, otherItem: selectedIndexPaths[1].item)
+            attemptItemPairing(selectedIndexPaths[0].item,
+                               otherItem: selectedIndexPaths[1].item)
         } else if selectedIndexPaths.count < maxSelectedItems {
             return
         }
@@ -228,15 +235,16 @@ extension GameGrid: UIScrollViewDelegate {
     func scrollViewDidScroll(scrollView: UIScrollView) {
         if pullUpInProgress() {
             let amountPulledUp = collectionView.contentOffset.y - maxOffsetBeforeBounce()
-            // TODO pass in amountPulledUp and make the grid a child of the view
-            // so that we can put it behind the cells
-            positionNextRoundGrid()
-            nextRoundGrid?.hidden = false
+            positionNextRoundGrid(amountPulledUp)
+//            nextRoundGrid?.hidden = false
 
             let proportionVisible = min(1, amountPulledUp / GameGrid.nextRoundTriggerThreshold)
+            if proportionVisible == 1 {
+                 AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
+            }
             nextRoundGrid?.proportionVisible = proportionVisible
         } else {
-            nextRoundGrid?.hidden = true
+//            nextRoundGrid?.hidden = true
         }
     }
 
@@ -246,7 +254,7 @@ extension GameGrid: UIScrollViewDelegate {
 
         if collectionView.contentOffset.y >
            maxOffsetBeforeBounce() + GameGrid.nextRoundTriggerThreshold {
-            nextRoundGrid?.hidden = true
+//            nextRoundGrid?.hidden = true
             loadNextRound(whileAtScrollOffset: scrollView.contentOffset)
         }
     }

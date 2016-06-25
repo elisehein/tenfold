@@ -41,10 +41,11 @@ class Play: UIViewController {
 
     override func updateViewConstraints() {
         if !hasLoadedConstraints {
-            grid.view.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsets(top: Play.gridMargin,
-                                                                          left: Play.gridMargin,
-                                                                          bottom: 0,
-                                                                          right: Play.gridMargin))
+            let gameGridInsets = UIEdgeInsets(top: 0,
+                                              left: Play.gridMargin,
+                                              bottom: 0,
+                                              right: Play.gridMargin)
+            grid.view.autoPinEdgesToSuperviewEdgesWithInsets(gameGridInsets)
 
             hasLoadedConstraints = true
         }
