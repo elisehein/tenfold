@@ -10,11 +10,11 @@ import Foundation
 import UIKit
 
 class NextRoundGrid: UIView {
-    
+
     private static let numberOfRows = 7
-    
+
     var itemsPerRow: Int
-    
+
     var itemSize: CGSize? {
         didSet {
             if itemSize != nil {
@@ -22,7 +22,7 @@ class NextRoundGrid: UIView {
             }
         }
     }
-    
+
     var proportionVisible: CGFloat? {
         didSet {
             if proportionVisible != nil {
@@ -30,15 +30,15 @@ class NextRoundGrid: UIView {
             }
         }
     }
-    
+
     init(cellsPerRow: Int, frame: CGRect) {
         itemsPerRow = cellsPerRow
         super.init(frame: frame)
     }
-    
+
     func drawItems () {
         subviews.forEach({ $0.removeFromSuperview() })
-        
+
         for row in 0..<NextRoundGrid.numberOfRows {
             for item in 0..<itemsPerRow {
                 let x = CGFloat(item) * itemSize!.width
@@ -52,11 +52,11 @@ class NextRoundGrid: UIView {
             }
         }
     }
-    
+
     func heightRequired () -> CGFloat {
         return CGFloat(NextRoundGrid.numberOfRows) * itemSize!.height
     }
-    
+
     private func adjustItemIntensity (proportionVisible: CGFloat) {
         for item in subviews {
             if let item = item as? NextRoundCell {
@@ -64,19 +64,19 @@ class NextRoundGrid: UIView {
             }
         }
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
 
 class NextRoundCell: UIView {
-    
+
     private let dotLayer = CAShapeLayer()
-    
+
     private static let maxRadius: CGFloat = 4
     private static let minRadius: CGFloat = 0
-    
+
     var intensity: CGFloat? {
         didSet {
             if intensity != nil {
@@ -85,16 +85,16 @@ class NextRoundCell: UIView {
             }
         }
     }
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+
         dotLayer.fillColor = UIColor.themeColor(.OffBlack).colorWithAlphaComponent(0.7).CGColor
         dotLayer.lineWidth = 0
-        
+
         layer.addSublayer(dotLayer)
     }
-    
+
     func redrawDot (withRadius radius: CGFloat) {
         let arcCenter = CGPoint(x: bounds.size.width / 2.0,
                                 y: bounds.size.height / 2.0)
@@ -103,12 +103,12 @@ class NextRoundCell: UIView {
                                       startAngle: 0,
                                       endAngle:CGFloat(M_PI * 2),
                                       clockwise: true)
-        
+
         dotLayer.path = circlePath.CGPath
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
 }

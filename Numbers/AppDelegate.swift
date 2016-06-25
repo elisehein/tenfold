@@ -14,17 +14,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var rootViewController: UIViewController?
 
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    func application(application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
-        
+
         if let window = window {
             window.backgroundColor = UIColor.clearColor()
             window.rootViewController = Play()
             window.makeKeyAndVisible()
         }
-        
+
         return true
     }
-
 }
-

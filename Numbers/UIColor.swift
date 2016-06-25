@@ -16,15 +16,15 @@ extension UIColor {
         let redRange    = hex.startIndex.advancedBy(1)..<hex.startIndex.advancedBy(3)
         let greenRange  = hex.startIndex.advancedBy(3)..<hex.startIndex.advancedBy(5)
         let blueRange   = hex.startIndex.advancedBy(5)..<hex.startIndex.advancedBy(7)
-        
-        var red     : UInt32 = 0
-        var green   : UInt32 = 0
-        var blue    : UInt32 = 0
-        
+
+        var red: UInt32 = 0
+        var green: UInt32 = 0
+        var blue: UInt32 = 0
+
         NSScanner(string: hex.substringWithRange(redRange)).scanHexInt(&red)
         NSScanner(string: hex.substringWithRange(greenRange)).scanHexInt(&green)
         NSScanner(string: hex.substringWithRange(blueRange)).scanHexInt(&blue)
-        
+
         self.init(
             red: CGFloat(red) / 255,
             green: CGFloat(green) / 255,

@@ -16,16 +16,16 @@ enum ThemeColor {
 
 extension UIColor {
     class func themeColor (themeColor: ThemeColor) -> UIColor {
-        switch (themeColor) {
+        switch themeColor {
         case .OffWhite:
             return UIColor(hex: "#FFFEF1")
         case .OffBlack:
             return UIColor(hex: "#20201E")
         }
     }
-    
+
     class func themeColorHighlighted(themeColor: ThemeColor) -> UIColor {
-        switch (themeColor) {
+        switch themeColor {
         case .OffWhite:
             return UIColor(hex: "#E6E4D0")
         case .OffBlack:
