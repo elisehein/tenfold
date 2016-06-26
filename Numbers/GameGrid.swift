@@ -22,7 +22,6 @@ class GameGrid: UICollectionView {
     }()
 
     private let game: Game
-    private let maxSelectedItems: Int
 
     private var bouncingInProgress = false
 
@@ -32,7 +31,6 @@ class GameGrid: UICollectionView {
 
     init (game: Game) {
         self.game = game
-        self.maxSelectedItems = GameRules.numbersInPairing
 
         super.init(frame: CGRect.zero, collectionViewLayout: layout)
 
@@ -166,10 +164,10 @@ extension GameGrid: UICollectionViewDelegateFlowLayout {
         let selectedIndexPaths = collectionView.indexPathsForSelectedItems()!
         let latestSelectedIndexPath = indexPath
 
-        if selectedIndexPaths.count == maxSelectedItems {
+        if selectedIndexPaths.count == GameRules.numbersInPairing {
             onPairingAttempt!(itemIndex: selectedIndexPaths[0].item,
                               otherItemIndex: selectedIndexPaths[1].item)
-        } else if selectedIndexPaths.count < maxSelectedItems {
+        } else if selectedIndexPaths.count < GameRules.numbersInPairing {
             return
         }
 
