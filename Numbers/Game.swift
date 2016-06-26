@@ -8,23 +8,39 @@
 
 import Foundation
 
-class Game: NSObject {
+class Game: NSObject, NSCoding {
 
-    private let initialNumberValues = [1, 2, 3, 4, 5, 6, 7, 8, 9,
-                                       1, 1, 1, 2, 1, 3, 1, 4, 1,
-                                       5, 1, 6, 1, 7, 1, 8, 1, 9]
+    private static let numbersCoderKey = "gameNumbersCoderKey"
+
+    private static let initialNumberValues = [1, 2, 3, 4, 5, 6, 7, 8, 9,
+                                              1, 1, 1, 2, 1, 3, 1, 4, 1,
+                                              5, 1, 6, 1, 7, 1, 8, 1, 9]
 
     private var numbers: Array<Number> = []
 
-    override init() {
+    class func initialNumbers () -> Array<Number> {
+        var initialNumbers = Array<Number>()
+
         for value in initialNumberValues {
             let number = Number(value: value, crossedOut: false, marksEndOfRound: false)
-            numbers.append(number)
+            initialNumbers.append(number)
         }
 
-        numbers.last.marksEndOfRound = true
+        initialNumbers.last.marksEndOfRound = true
+        return initialNumbers
+    }
 
+    override init () {
+        numbers = Game.initialNumbers()
         super.init()
+    }
+
+    required init (coder aDecoder: NSCoder) {
+        self.numbers = (aDecoder.decodeObjectForKey(Game.numbersCoderKey) as? Array<Number>)!
+    }
+
+    func restart () {
+        numbers = Game.initialNumbers()
     }
 
     func crossOutPair (index: Int, otherIndex: Int) {
@@ -93,5 +109,9 @@ class Game: NSObject {
 
     func marksEndOfRound (index: Int) -> Bool {
         return numbers[index].marksEndOfRound
+    }
+
+    func encodeWithCoder (aCoder: NSCoder) {
+        aCoder.encodeObject(numbers, forKey: Game.numbersCoderKey)
     }
 }

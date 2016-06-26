@@ -22,6 +22,7 @@
 		0C9145FF1D171F1100FB5874 /* NextRoundGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C9145FE1D171F1100FB5874 /* NextRoundGrid.swift */; };
 		0CA050A81C6B23D9006A42B9 /* UIColor+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA050A71C6B23D9006A42B9 /* UIColor+Theme.swift */; };
 		0CB109341C7234FB00182663 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB109331C7234FB00182663 /* UIColor.swift */; };
+		0CB938831D1FE6DD005B81F4 /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB938821D1FE6DD005B81F4 /* StorageService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 		0C9145FE1D171F1100FB5874 /* NextRoundGrid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextRoundGrid.swift; sourceTree = "<group>"; };
 		0CA050A71C6B23D9006A42B9 /* UIColor+Theme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Theme.swift"; sourceTree = "<group>"; };
 		0CB109331C7234FB00182663 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
+		0CB938821D1FE6DD005B81F4 /* StorageService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,8 +95,9 @@
 				0C90AEA21C6D1AB000E1E42E /* Reusable UI */,
 				0C90AEA31C6D1AE800E1E42E /* Screens */,
 				0CA050A61C6B23AB006A42B9 /* Theming */,
-				0C3463921C6F8C340086D3CC /* GameRules.swift */,
 				0C738ADA1C69D811007C9548 /* AppDelegate.swift */,
+				0C3463921C6F8C340086D3CC /* GameRules.swift */,
+				0CB938821D1FE6DD005B81F4 /* StorageService.swift */,
 				0C738AE61C69D811007C9548 /* Info.plist */,
 			);
 			path = Numbers;
@@ -247,6 +250,7 @@
 				0C90AEA51C6D1B0700E1E42E /* GameGrid.swift in Sources */,
 				0C34638F1C6F89B30086D3CC /* NumberCell.swift in Sources */,
 				0C69CE4E1C6DCDE9002E0D29 /* Array.swift in Sources */,
+				0CB938831D1FE6DD005B81F4 /* StorageService.swift in Sources */,
 				0C9145FF1D171F1100FB5874 /* NextRoundGrid.swift in Sources */,
 				0CB109341C7234FB00182663 /* UIColor.swift in Sources */,
 				0CA050A81C6B23D9006A42B9 /* UIColor+Theme.swift in Sources */,

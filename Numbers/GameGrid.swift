@@ -111,6 +111,7 @@ class GameGrid: UICollectionView {
 
         if successfulPairing {
             game.crossOutPair(item, otherIndex: otherItem)
+            StorageService.saveGame(game)
             cell!.isCrossedOut = true
             otherCell!.isCrossedOut = true
         } else {
