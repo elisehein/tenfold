@@ -11,6 +11,7 @@ import UIKit
 
 extension UIFont {
     class func themeFontWithSize (fontSize: CGFloat) -> UIFont {
-        return UIFont(name: "Lucida Sans Unicode", size: fontSize)!
+//        return UIFont(name: "Lucida Sans Unicode", size: fontSize)!
+        return UIFont(name: "Montserrat", size: fontSize)!
     }
 }

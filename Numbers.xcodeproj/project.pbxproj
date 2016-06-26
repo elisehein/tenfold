@@ -23,6 +23,7 @@
 		0CB109341C7234FB00182663 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB109331C7234FB00182663 /* UIColor.swift */; };
 		0CB938831D1FE6DD005B81F4 /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB938821D1FE6DD005B81F4 /* StorageService.swift */; };
 		0CB938871D201188005B81F4 /* lsansuni.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0CB938861D20116E005B81F4 /* lsansuni.ttf */; };
+		0CB9388B1D2019A7005B81F4 /* Montserrat-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0CB9388A1D20199A005B81F4 /* Montserrat-Light.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +45,7 @@
 		0CB109331C7234FB00182663 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		0CB938821D1FE6DD005B81F4 /* StorageService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
 		0CB938861D20116E005B81F4 /* lsansuni.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = lsansuni.ttf; sourceTree = "<group>"; };
+		0CB9388A1D20199A005B81F4 /* Montserrat-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Light.otf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +109,7 @@
 			isa = PBXGroup;
 			children = (
 				0CB938861D20116E005B81F4 /* lsansuni.ttf */,
+				0CB9388A1D20199A005B81F4 /* Montserrat-Light.otf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -214,6 +217,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0CB9388B1D2019A7005B81F4 /* Montserrat-Light.otf in Resources */,
 				0CB938871D201188005B81F4 /* lsansuni.ttf in Resources */,
 				0C738AE21C69D811007C9548 /* Assets.xcassets in Resources */,
 			);

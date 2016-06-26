@@ -24,6 +24,7 @@
 	<true/>
 	<key>UIAppFonts</key>
 	<array>
+		<string>Montserrat-Light.otf</string>
 		<string>lsansuni.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
