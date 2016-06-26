@@ -15,6 +15,7 @@ class Play: UIViewController {
     private static let nextRoundTriggerThreshold: CGFloat = 150
 
     private var game: Game
+    private var rules: GameRules
 
     private let gameGrid: GameGrid
     private var nextRoundGrid: NextRoundGrid?
@@ -22,13 +23,16 @@ class Play: UIViewController {
 
     init() {
         let savedGame = StorageService.restoreGame()
+
         self.game = savedGame == nil ? Game() : savedGame!
+        self.rules = GameRules(game: game)
         self.gameGrid = GameGrid(game: game)
 
         super.init(nibName: nil, bundle: nil)
 
-        gameGrid.scrollHandler = handleScroll
-        gameGrid.draggingEndedHandler = handleDraggingEnd
+        gameGrid.onScroll = handleScroll
+        gameGrid.onDraggingEnd = handleDraggingEnd
+        gameGrid.onPairingAttempt = handlePairingAttempt
 
         nextRoundGrid = NextRoundGrid(cellsPerRow: GameRules.numbersPerLine,
                                       frame: CGRect.zero)
@@ -108,6 +112,18 @@ class Play: UIViewController {
     }
 
     // MARK: Gameplay logic
+
+    private func handlePairingAttempt (itemIndex: Int, otherItemIndex: Int) {
+        let successfulPairing = rules.attemptPairing(itemIndex, otherIndex: otherItemIndex)
+
+        if successfulPairing {
+            game.crossOutPair(itemIndex, otherIndex: otherItemIndex)
+            StorageService.saveGame(game)
+            gameGrid.crossOutPair(itemIndex, otherIndex: otherItemIndex)
+        } else {
+            gameGrid.dismissSelection()
+        }
+    }
 
     // Instead of calling reloadData on the entire grid, dynamically add the next round
     // This function assumes that the state of the game has diverged from the state of

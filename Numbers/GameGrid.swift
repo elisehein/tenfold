@@ -22,17 +22,16 @@ class GameGrid: UICollectionView {
     }()
 
     private let game: Game
-    private let rules: GameRules
     private let maxSelectedItems: Int
 
     private var bouncingInProgress = false
 
-    var scrollHandler: (() -> Void)?
-    var draggingEndedHandler: (() -> Void)?
+    var onScroll: (() -> Void)?
+    var onDraggingEnd: (() -> Void)?
+    var onPairingAttempt: ((itemIndex: Int, otherItemIndex: Int) -> Void)?
 
     init (game: Game) {
         self.game = game
-        self.rules = GameRules(game: game)
         self.maxSelectedItems = GameRules.numbersInPairing
 
         super.init(frame: CGRect.zero, collectionViewLayout: layout)
@@ -57,6 +56,32 @@ class GameGrid: UICollectionView {
 
         insertItemsAtIndexPaths(indexPaths)
         performBatchUpdates(nil, completion: completion)
+    }
+
+    func crossOutPair (index: Int, otherIndex: Int) {
+        let indexPath = NSIndexPath(forItem: index, inSection: 0)
+        let otherIndexPath = NSIndexPath(forItem: otherIndex, inSection: 0)
+        let cell = cellForItemAtIndexPath(indexPath) as? NumberCell
+        let otherCell = cellForItemAtIndexPath(otherIndexPath) as? NumberCell
+
+        guard cell != nil && otherCell != nil else { return }
+
+        cell!.isCrossedOut = true
+        otherCell!.isCrossedOut = true
+
+        deselectItemAtIndexPath(indexPath, animated: false)
+        deselectItemAtIndexPath(otherIndexPath, animated: false)
+    }
+
+    func dismissSelection () {
+        let selectedIndexPaths = indexPathsForSelectedItems()
+
+        for indexPath in selectedIndexPaths! {
+            if let cell = cellForItemAtIndexPath(indexPath) as? NumberCell {
+                cell.shouldDeselectWithFailure = true
+                deselectItemAtIndexPath(indexPath, animated: true)
+            }
+        }
     }
 
     func toggleBounce (shouldBounce: Bool) {
@@ -97,30 +122,6 @@ class GameGrid: UICollectionView {
 
     private func maxOffsetBeforeBounce () -> CGFloat {
         return contentSize.height - bounds.size.height
-    }
-
-    private func attemptItemPairing (item: Int, otherItem: Int) {
-        let successfulPairing = rules.attemptPairing(item, otherIndex: otherItem)
-
-        let indexPath = NSIndexPath(forItem: item, inSection: 0)
-        let otherIndexPath = NSIndexPath(forItem: otherItem, inSection: 0)
-        let cell = cellForItemAtIndexPath(indexPath) as? NumberCell
-        let otherCell = cellForItemAtIndexPath(otherIndexPath) as? NumberCell
-
-        guard cell != nil && otherCell != nil else { return }
-
-        if successfulPairing {
-            game.crossOutPair(item, otherIndex: otherItem)
-            StorageService.saveGame(game)
-            cell!.isCrossedOut = true
-            otherCell!.isCrossedOut = true
-        } else {
-            cell!.shouldDeselectWithFailure = true
-            otherCell!.shouldDeselectWithFailure = true
-        }
-
-        deselectItemAtIndexPath(indexPath, animated: false)
-        deselectItemAtIndexPath(otherIndexPath, animated: false)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -166,8 +167,8 @@ extension GameGrid: UICollectionViewDelegateFlowLayout {
         let latestSelectedIndexPath = indexPath
 
         if selectedIndexPaths.count == maxSelectedItems {
-            attemptItemPairing(selectedIndexPaths[0].item,
-                               otherItem: selectedIndexPaths[1].item)
+            onPairingAttempt!(itemIndex: selectedIndexPaths[0].item,
+                              otherItemIndex: selectedIndexPaths[1].item)
         } else if selectedIndexPaths.count < maxSelectedItems {
             return
         }
@@ -202,11 +203,11 @@ extension GameGrid: UIScrollViewDelegate {
     }
 
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        self.scrollHandler!()
+        self.onScroll!()
     }
 
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         bouncingInProgress = pullUpInProgress() || pullDownInProgress()
-        self.draggingEndedHandler!()
+        self.onDraggingEnd!()
     }
 }
