@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import AudioToolbox
+import AVFoundation
 
 class Play: UIViewController {
 
@@ -20,6 +20,22 @@ class Play: UIViewController {
     private let gameGrid: GameGrid
     private var nextRoundGrid: NextRoundGrid?
     private var passedNextRoundThreshold = false
+
+    private var blimpPlayer: AVAudioPlayer? = {
+        var player = AVAudioPlayer()
+        if let sound = NSDataAsset(name: "blimp") {
+            do {
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+                try AVAudioSession.sharedInstance().setActive(true)
+                player = try AVAudioPlayer(data: sound.data, fileTypeHint: AVFileTypeWAVE)
+                player.prepareToPlay()
+            } catch {
+                print("error initializing AVAudioPlayer")
+            }
+        }
+
+        return player
+    }()
 
     init() {
         let savedGame = StorageService.restoreGame()
@@ -161,9 +177,13 @@ class Play: UIViewController {
             let pullUpRatio = gameGrid.pullUpPercentage(ofThreshold: Play.nextRoundTriggerThreshold)
             let proportionVisible = min(1, pullUpRatio)
 
-            if proportionVisible == 1 && !passedNextRoundThreshold {
-//                AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
-                passedNextRoundThreshold = true
+            if proportionVisible == 1 {
+                if !passedNextRoundThreshold {
+                    blimpPlayer?.play()
+                    passedNextRoundThreshold = true
+                }
+            } else {
+                passedNextRoundThreshold = false
             }
 
             nextRoundGrid?.proportionVisible = proportionVisible
