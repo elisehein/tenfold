@@ -25,9 +25,9 @@ class Number: NSObject, NSCopying, NSCoding {
     }
 
     required init (coder aDecoder: NSCoder) {
-        self.value = (aDecoder.decodeObjectForKey(Number.valueCoderKey) as? Int)!
-        self.crossedOut = (aDecoder.decodeObjectForKey(Number.crossedOutCoderKey) as? Bool)!
-        self.marksEndOfRound = (aDecoder.decodeObjectForKey(Number.marksEndOfRoundCoderKey) as? Bool)!
+        value = (aDecoder.decodeObjectForKey(Number.valueCoderKey) as? Int)!
+        crossedOut = (aDecoder.decodeObjectForKey(Number.crossedOutCoderKey) as? Bool)!
+        marksEndOfRound = (aDecoder.decodeObjectForKey(Number.marksEndOfRoundCoderKey) as? Bool)!
     }
 
     func copyWithZone(zone: NSZone) -> AnyObject {
