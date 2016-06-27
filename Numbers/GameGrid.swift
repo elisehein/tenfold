@@ -12,7 +12,7 @@ import UIKit
 class GameGrid: UICollectionView {
 
     private static let cellAnimationDuration = 0.15
-    private let reuseIdentifier = "NumberCell"
+    private let reuseIdentifier = "GameNumberCell"
 
     private let layout: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
@@ -34,7 +34,7 @@ class GameGrid: UICollectionView {
 
         super.init(frame: CGRect.zero, collectionViewLayout: layout)
 
-        registerClass(NumberCell.self,
+        registerClass(GameNumberCell.self,
                       forCellWithReuseIdentifier: self.reuseIdentifier)
         allowsMultipleSelection = true
         backgroundColor = UIColor.clearColor()
@@ -59,8 +59,8 @@ class GameGrid: UICollectionView {
     func crossOutPair (index: Int, otherIndex: Int) {
         let indexPath = NSIndexPath(forItem: index, inSection: 0)
         let otherIndexPath = NSIndexPath(forItem: otherIndex, inSection: 0)
-        let cell = cellForItemAtIndexPath(indexPath) as? NumberCell
-        let otherCell = cellForItemAtIndexPath(otherIndexPath) as? NumberCell
+        let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell
+        let otherCell = cellForItemAtIndexPath(otherIndexPath) as? GameNumberCell
 
         guard cell != nil && otherCell != nil else { return }
 
@@ -75,7 +75,7 @@ class GameGrid: UICollectionView {
         let selectedIndexPaths = indexPathsForSelectedItems()
 
         for indexPath in selectedIndexPaths! {
-            if let cell = cellForItemAtIndexPath(indexPath) as? NumberCell {
+            if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
                 cell.shouldDeselectWithFailure = true
                 deselectItemAtIndexPath(indexPath, animated: true)
             }
@@ -142,7 +142,7 @@ extension GameGrid: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier,
                                                                          forIndexPath: indexPath)
 
-        if let cell = cell as? NumberCell {
+        if let cell = cell as? GameNumberCell {
             cell.number = game.numberAtIndex(indexPath.item)
             cell.isCrossedOut = game.isCrossedOut(indexPath.item)
             cell.marksEndOfRound = game.marksEndOfRound(indexPath.item)

@@ -1,5 +1,5 @@
 //
-//  NumberCell.swift
+//  GameNumberCell.swift
 //  Numbers
 //
 //  Created by Elise Hein on 13/02/2016.
@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class NumberCell: UICollectionViewCell {
+class GameNumberCell: UICollectionViewCell {
     var shouldDeselectWithFailure: Bool = false
 
     private let numberLabel = UILabel()

@@ -19,6 +19,10 @@ class GameRules: NSObject {
         super.init()
     }
 
+    func lastNumberPositionOnLine () -> Int {
+        return positionOnLine(game.totalNumbers() - 1)
+    }
+
     func attemptPairing (index: Int, otherIndex: Int) -> Bool {
         if game.isCrossedOut(index) || game.isCrossedOut(otherIndex) || index == otherIndex {
             NSException(name: "Invalid pairing",
@@ -95,6 +99,7 @@ class GameRules: NSObject {
     private func positionOnLine(index: Int) -> Int {
         return index % GameRules.numbersPerLine
     }
+
 
     private func allCrossedOutBetween (start start: Int,
                                        end: Int,

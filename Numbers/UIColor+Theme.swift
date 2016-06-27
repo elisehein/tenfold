@@ -19,11 +19,14 @@ extension UIColor {
     class func themeColor (themeColor: ThemeColor) -> UIColor {
         switch themeColor {
         case .OffWhite:
-            return UIColor(hex: "#FFFEF1")
+//            return UIColor(hex: "#FFFEF1")
+            return UIColor(hex: "#EDE6D2")
         case .OffWhiteDark:
-            return UIColor(hex: "#CBC9B0")
+//            return UIColor(hex: "#CBC9B0")
+            return UIColor(hex: "#B78837")
         case .OffBlack:
-            return UIColor(hex: "#20201E")
+//            return UIColor(hex: "#20201E")
+            return UIColor(hex: "#090809")
         }
     }
 

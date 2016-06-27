@@ -37,7 +37,7 @@ class Play: UIViewController {
         return player
     }()
 
-    init() {
+    init () {
         let savedGame = StorageService.restoreGame()
 
         self.game = savedGame == nil ? Game() : savedGame!
@@ -50,12 +50,7 @@ class Play: UIViewController {
         gameGrid.onDraggingEnd = handleDraggingEnd
         gameGrid.onPairingAttempt = handlePairingAttempt
 
-        nextRoundGrid = NextRoundGrid(cellsPerRow: GameRules.numbersPerLine,
-                                      frame: CGRect.zero)
-        nextRoundGrid?.hidden = true
-
         view.backgroundColor = UIColor.themeColor(.OffWhite)
-        view.addSubview(nextRoundGrid!)
         view.addSubview(gameGrid)
     }
 
@@ -67,7 +62,15 @@ class Play: UIViewController {
                                 width: view.bounds.size.width - (2 * Play.gridMargin),
                                 height: view.bounds.size.height)
         self.positionGameGrid()
-        self.nextRoundGrid?.itemSize = self.gameGrid.cellSize()
+
+        nextRoundGrid = NextRoundGrid(cellSize: gameGrid.cellSize(),
+                                      cellsPerRow: GameRules.numbersPerLine,
+                                      startIndex: nextRoundStartIndex(),
+                                      values: game.nextRoundValues(),
+                                      frame: gameGrid.frame)
+        nextRoundGrid?.hidden = true
+
+        view.insertSubview(nextRoundGrid!, belowSubview: gameGrid)
     }
 
 
@@ -91,7 +94,7 @@ class Play: UIViewController {
     override func motionEnded(motion: UIEventSubtype, withEvent event: UIEvent?) {
         if motion == .MotionShake {
             game.restart()
-            StorageService.saveGame(game)
+            updateState()
             gameGrid.reloadData()
             positionGameGrid()
         }
@@ -113,11 +116,13 @@ class Play: UIViewController {
     }
 
     private func positionNextRoundGrid () {
-        var nextRoundGridFrame = gameGrid.frame
-        nextRoundGridFrame.size.height = nextRoundGrid!.heightRequired()
+        nextRoundGrid?.frame = nextRoundGridFrame()
+    }
 
+    private func nextRoundGridFrame () -> CGRect {
+        var nextRoundGridFrame = gameGrid.frame
         nextRoundGridFrame.origin.y += gameGrid.bottomEdgeY() - gameGrid.cellSize().height
-        nextRoundGrid?.frame = nextRoundGridFrame
+        return nextRoundGridFrame
     }
 
     private func optimalGridHeight () -> CGFloat {
@@ -134,7 +139,7 @@ class Play: UIViewController {
 
         if successfulPairing {
             game.crossOutPair(itemIndex, otherIndex: otherItemIndex)
-            StorageService.saveGame(game)
+            updateState()
             gameGrid.crossOutPair(itemIndex, otherIndex: otherItemIndex)
         } else {
             gameGrid.dismissSelection()
@@ -145,21 +150,32 @@ class Play: UIViewController {
     // This function assumes that the state of the game has diverged from the state of
     // the collectionView.
     private func loadNextRound () -> Bool {
-        let hypotheticalNextRound = game.hypotheticalNextRound()
+        let nextRoundNumbers = game.nextRoundNumbers()
 
-        if hypotheticalNextRound.count == 0 {
+        if nextRoundNumbers.count == 0 {
             return false
         }
 
-        game.makeNextRound(usingNumbers: hypotheticalNextRound)
+        game.makeNextRound(usingNumbers: nextRoundNumbers)
         gameGrid.loadNextRound({ _ in
             self.positionGameGrid()
         })
 
-        StorageService.saveGame(game)
-
+        updateState()
         return true
     }
+
+    private func updateState () {
+        nextRoundGrid!.update(startIndex: nextRoundStartIndex(),
+                              values: game.nextRoundValues())
+        StorageService.saveGame(game)
+    }
+
+    private func nextRoundStartIndex () -> Int {
+        return rules.lastNumberPositionOnLine() + 1
+    }
+
+    // MARK: Scrolling interactions
 
     // NOTE this does not take into account content insets
     private func handleDraggingEnd () {

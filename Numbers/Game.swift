@@ -48,7 +48,7 @@ class Game: NSObject, NSCoding {
         numbers[otherIndex].crossedOut = true
     }
 
-    func hypotheticalNextRound () -> Array<Number> {
+    func nextRoundNumbers () -> Array<Number> {
         var nextRound: Array<Number> = []
 
         for number in numbers {
@@ -62,8 +62,20 @@ class Game: NSObject, NSCoding {
         return nextRound
     }
 
+    func nextRoundValues () -> Array<Int> {
+        var nextRoundValues: Array<Int> = []
+
+        for number in numbers {
+            if !number.crossedOut {
+                nextRoundValues.append(number.value)
+            }
+        }
+
+        return nextRoundValues
+    }
+
     func makeNextRound () -> Bool {
-        return makeNextRound(usingNumbers: hypotheticalNextRound())
+        return makeNextRound(usingNumbers: nextRoundNumbers())
     }
 
     func makeNextRound (usingNumbers nextRoundNumbers: Array<Number>) -> Bool {
