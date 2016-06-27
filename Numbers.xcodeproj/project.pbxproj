@@ -25,6 +25,8 @@
 		0CB9388B1D2019A7005B81F4 /* Montserrat-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0CB9388A1D20199A005B81F4 /* Montserrat-Light.otf */; };
 		0CB9388D1D202832005B81F4 /* NextRoundNumberCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB9388C1D202832005B81F4 /* NextRoundNumberCell.swift */; };
 		0CB938911D20389C005B81F4 /* NextRoundGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB938901D20389C005B81F4 /* NextRoundGrid.swift */; };
+		0CCACC1D1D21B28800757C1B /* AvenirNextLTPro-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0CCACC1C1D21B27300757C1B /* AvenirNextLTPro-Regular.otf */; };
+		0CCACC1F1D21B31F00757C1B /* AvenirNextLTPro-Demi.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0CCACC1E1D21B2FE00757C1B /* AvenirNextLTPro-Demi.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +50,8 @@
 		0CB9388A1D20199A005B81F4 /* Montserrat-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Light.otf"; sourceTree = "<group>"; };
 		0CB9388C1D202832005B81F4 /* NextRoundNumberCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextRoundNumberCell.swift; sourceTree = "<group>"; };
 		0CB938901D20389C005B81F4 /* NextRoundGrid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextRoundGrid.swift; sourceTree = "<group>"; };
+		0CCACC1C1D21B27300757C1B /* AvenirNextLTPro-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "AvenirNextLTPro-Regular.otf"; sourceTree = "<group>"; };
+		0CCACC1E1D21B2FE00757C1B /* AvenirNextLTPro-Demi.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "AvenirNextLTPro-Demi.otf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +114,8 @@
 		0C90AE991C6B29A700E1E42E /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				0CCACC1E1D21B2FE00757C1B /* AvenirNextLTPro-Demi.otf */,
+				0CCACC1C1D21B27300757C1B /* AvenirNextLTPro-Regular.otf */,
 				0CB938861D20116E005B81F4 /* lsansuni.ttf */,
 				0CB9388A1D20199A005B81F4 /* Montserrat-Light.otf */,
 			);
@@ -220,6 +226,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0CCACC1F1D21B31F00757C1B /* AvenirNextLTPro-Demi.otf in Resources */,
+				0CCACC1D1D21B28800757C1B /* AvenirNextLTPro-Regular.otf in Resources */,
 				0CB9388B1D2019A7005B81F4 /* Montserrat-Light.otf in Resources */,
 				0CB938871D201188005B81F4 /* lsansuni.ttf in Resources */,
 				0C738AE21C69D811007C9548 /* Assets.xcassets in Resources */,

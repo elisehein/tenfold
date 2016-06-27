@@ -35,7 +35,7 @@ class NextRoundNumberCell: UICollectionViewCell {
     override init (frame: CGRect) {
         super.init(frame: frame)
 
-        dot.backgroundColor = UIColor.themeColor(.OffBlack)
+        dot.backgroundColor = UIColor.themeColor(.OffWhiteDark)
 
         let radius = NextRoundNumberCell.dotRadius
         dot.layer.cornerRadius = radius
@@ -45,14 +45,14 @@ class NextRoundNumberCell: UICollectionViewCell {
                            height: 2 * radius)
 
         numberLabel.textAlignment = .Center
-        numberLabel.textColor = UIColor.themeColor(.OffBlack)
+        numberLabel.textColor = UIColor.themeColor(.OffWhiteDark)
         numberLabel.frame = contentView.frame
         numberLabel.hidden = true
 
         // Set the font size to what I want it to be when it's at its largest,
         // and scale it down later, so the scale up transformation won't look blurry
-        numberLabel.font = UIFont.themeFontWithSize(NextRoundNumberCell.fontSizeFactor *
-            contentView.bounds.size.height)
+        let fontSize = NextRoundNumberCell.fontSizeFactor * contentView.bounds.size.height
+        numberLabel.font = UIFont.themeFontWithSize(fontSize, weight: .Bold)
 
         contentView.addSubview(numberLabel)
         contentView.addSubview(dot)
