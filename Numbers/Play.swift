@@ -94,9 +94,9 @@ class Play: UIViewController {
     override func motionEnded(motion: UIEventSubtype, withEvent event: UIEvent?) {
         if motion == .MotionShake {
             game.restart()
-            updateState()
             gameGrid.reloadData()
             positionGameGrid()
+            updateState()
         }
     }
 
@@ -113,6 +113,8 @@ class Play: UIViewController {
 
         let topInset = max(0, optimalHeight - currentGridHeight)
         gameGrid.contentInset.top = topInset
+
+        gameGrid.toggleBounce(false)
     }
 
     private func positionNextRoundGrid () {
