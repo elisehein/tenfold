@@ -11,47 +11,51 @@ import UIKit
 
 class NextRoundNumberCell: UICollectionViewCell {
 
-    private static let dotRadius: CGFloat = 2
+    private static let dotRadius: CGFloat = 1
+    private static let animationDuration: Double = 0.6
+    private static let animationDamping: CGFloat = 0.3
+    private static let animationVelocity: CGFloat = 0.6
+    private static let fontSizeFactor: CGFloat = 0.3
 
     private let dot = UIView()
     private let numberLabel = UILabel()
 
-    private var didBlimp = false
-
     var shouldBlimp: Bool = false {
         didSet {
-            if shouldBlimp {
-                blimp()
-            }
+            blimp()
         }
     }
 
     var value: Int? = nil {
         didSet {
-            numberLabel.text = value != nil ? "\(value!)" : ""
+            numberLabel.text = value != nil ? "\(value!)" : nil
         }
     }
 
     override init (frame: CGRect) {
         super.init(frame: frame)
 
-//        dot.backgroundColor = UIColor.themeColor(.OffBlack)
-//
-//        let radius = NextRoundNumberCell.dotRadius
-//        dot.layer.cornerRadius = radius
-//        dot.frame = CGRect(x: (frame.size.width / 2.0) - radius,
-//                           y: (frame.size.height / 2.0) - radius,
-//                           width: 2 * radius,
-//                           height: 2 * radius)
+        dot.backgroundColor = UIColor.themeColor(.OffBlack)
+
+        let radius = NextRoundNumberCell.dotRadius
+        dot.layer.cornerRadius = radius
+        dot.frame = CGRect(x: (frame.size.width / 2.0) - radius,
+                           y: (frame.size.height / 2.0) - radius,
+                           width: 2 * radius,
+                           height: 2 * radius)
 
         numberLabel.textAlignment = .Center
-        numberLabel.font = UIFont.themeFontWithSize(frame.size.height * 0.25) // TODO
         numberLabel.textColor = UIColor.themeColor(.OffBlack)
-        numberLabel.center = center
-        numberLabel.clipsToBounds = true
+        numberLabel.frame = contentView.frame
+        numberLabel.hidden = true
 
-        contentView.addSubview(dot)
+        // Set the font size to what I want it to be when it's at its largest,
+        // and scale it down later, so the scale up transformation won't look blurry
+        numberLabel.font = UIFont.themeFontWithSize(NextRoundNumberCell.fontSizeFactor *
+            contentView.bounds.size.height)
+
         contentView.addSubview(numberLabel)
+        contentView.addSubview(dot)
     }
 
     override func layoutSubviews () {
@@ -59,25 +63,49 @@ class NextRoundNumberCell: UICollectionViewCell {
         numberLabel.frame = contentView.bounds
     }
 
-    func blimp () {
-        if !didBlimp {
-            animate({
-//                self.numberLabel.frame = self.contentView.bounds
-            })
+    private func blimp () {
+        guard value != nil else { return }
 
-            didBlimp = true
+        if shouldBlimp {
+            numberLabel.transform = NextRoundNumberCell.shrink(numberLabel)
+            numberLabel.hidden = false
+
+            animateSpring({
+                self.dot.alpha = 0
+                self.numberLabel.transform = CGAffineTransformIdentity
+            })
+        } else {
+            animate({
+                self.dot.alpha = 1
+                self.numberLabel.transform = NextRoundNumberCell.shrink(self.numberLabel)
+            }, completion: { _ in
+                self.numberLabel.hidden = true
+            })
         }
     }
 
-    func animate (fn: () -> Void) {
-        UIView.animateWithDuration(1,
+    private func animateSpring (animations: () -> Void) {
+        UIView.animateWithDuration(NextRoundNumberCell.animationDuration,
                                    delay: 0,
-                                   usingSpringWithDamping: 0.35,
-                                   initialSpringVelocity: 0.6,
+                                   usingSpringWithDamping: NextRoundNumberCell.animationDamping,
+                                   initialSpringVelocity: NextRoundNumberCell.animationVelocity,
                                    options: .CurveEaseInOut,
                                    animations: {
-            fn()
+            animations()
         }, completion: nil)
+    }
+
+    private func animate (animations: () -> Void, completion: ((finished: Bool) -> Void)? = nil) {
+        UIView.animateWithDuration(NextRoundNumberCell.animationDuration,
+                                   delay: 0,
+                                   options: .CurveEaseInOut,
+                                   animations: {
+            animations()
+        }, completion: completion)
+    }
+
+    class func shrink (view: UIView) -> CGAffineTransform {
+        return CGAffineTransformScale(view.transform, 0.1, 0.1)
     }
 
     required init? (coder aDecoder: NSCoder) {

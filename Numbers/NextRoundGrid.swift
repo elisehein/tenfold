@@ -39,8 +39,6 @@ import UIKit
  *
  */
 
-
-
 class NextRoundGrid: UICollectionView {
 
     // We should store more or as many fibonacci numbers as there are rows
@@ -50,12 +48,9 @@ class NextRoundGrid: UICollectionView {
 
     private let reuseIdentifier = "NextRoundNumberCell"
 
-    private let cellSize: CGSize
     private let cellsPerRow: Int
-
     private var values: Array<Int>
     private var startIndex: Int
-    private var revealValues: Bool = false
 
     private let layout: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
@@ -66,15 +61,22 @@ class NextRoundGrid: UICollectionView {
 
     var proportionVisible: CGFloat = 0 {
         didSet {
+            // Take care not to set this continuously; it should be set to true
+            // ONCE when we reach 100% visible, and set to false ONCE when we
+            // no longer have 100% visible.
             if proportionVisible == 1 && !revealValues {
-                print("SHOW NUMBERS")
                 revealValues = true
             } else if proportionVisible < 1 && revealValues {
-                print("HIDE NUMBERS")
                 revealValues = false
             }
 
             collectionViewLayout.invalidateLayout()
+        }
+    }
+
+    private var revealValues: Bool = false {
+        didSet {
+            reloadData()
         }
     }
 
@@ -84,11 +86,11 @@ class NextRoundGrid: UICollectionView {
           values: Array<Int>,
           frame: CGRect) {
 
-        self.cellSize = cellSize
         self.cellsPerRow = cellsPerRow
         self.values = values
         self.startIndex = startIndex
 
+        layout.itemSize = cellSize
         super.init(frame: frame, collectionViewLayout: layout)
         registerClass(NextRoundNumberCell.self,
                       forCellWithReuseIdentifier: self.reuseIdentifier)
@@ -142,7 +144,7 @@ extension NextRoundGrid: UICollectionViewDataSource {
     }
 }
 
-extension NextRoundGrid: UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+extension NextRoundGrid: UICollectionViewDelegateFlowLayout {
 
     func collectionView (collectionView: UICollectionView,
                          layout collectionViewLayout: UICollectionViewLayout,
@@ -174,12 +176,5 @@ extension NextRoundGrid: UICollectionViewDelegate, UICollectionViewDelegateFlowL
         let initialSpacing = NextRoundGrid.fibonacciSeries[section] * NextRoundGrid.rowSpacingFactor
         let scaledSpacing = (1.0 - proportionVisible) * initialSpacing
         return UIEdgeInsets(top: 0, left: 0, bottom: scaledSpacing, right: 0)
-    }
-
-
-    func collectionView (collectionView: UICollectionView,
-                         layout: UICollectionViewLayout,
-                         sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        return cellSize
     }
 }
