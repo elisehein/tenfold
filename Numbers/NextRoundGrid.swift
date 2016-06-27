@@ -9,9 +9,44 @@
 import Foundation
 import UIKit
 
+/*
+ *
+ * NextRoundGrid is a UICollectionView with totalRows sections and
+ * cellsPerRow items per section. Its very first section is always hidden
+ * behind the very last row of the gameGrid, so that we can show next round
+ * values on the same line as the last gameGrid line. For example, if the game
+ * finishes with just three numbers on a line
+ *
+ * | 6 | 5 | 1 |   |   |   |   |   |   |
+ *
+ * next round grid must produce the following, where values correspond to
+ * [1, 2, 3, 4, 5, 6, 7, 8, 9, 2, 4, 5]
+ *
+ * |   |   |   | 1 | 2 | 3 | 4 | 5 | 6 |
+ * | 7 | 8 | 9 | 2 | 4 | 5 |   |   |   |
+ *
+ * By putting the grid on below the gamegrid with the last and first lines overlapping,
+ * we see a continuation of numbers on the same line.
+ *
+ * Note that each section has a full set of 9 items, we simply choose which items
+ * display values or not. This is because we may want the empty cells to display
+ * something else, not just stop the row in a random place.
+ *
+ * Note also that if there are more values given than there are totalRows * 9,
+ * we only add values for as long as there are cells to add them to. Because this
+ * grid is what we see when we pull up the game from the bottom, we can be confident
+ * that we'll never see more than a certain number of cells anyway.
+ *
+ */
+
+
+
 class NextRoundGrid: UICollectionView {
 
-    private static let totalRows = 7
+    // We should store more or as many fibonacci numbers as there are rows
+    private static let totalRows = 8
+    private static let fibonacciSeries: Array<CGFloat> = [1, 1, 2, 3, 5, 8, 13, 21, 34]
+    private static let rowSpacingFactor: CGFloat = 30.0
 
     private let reuseIdentifier = "NextRoundNumberCell"
 
@@ -112,7 +147,33 @@ extension NextRoundGrid: UICollectionViewDelegate, UICollectionViewDelegateFlowL
     func collectionView (collectionView: UICollectionView,
                          layout collectionViewLayout: UICollectionViewLayout,
                          insetForSectionAtIndex section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 0, bottom: CGFloat(section) * 10, right: 0)
+        // Each row has an increasingly large bottom inset to start out with, eg
+        //
+        // |   |   |   |   |   |   |   |   |   |
+        //
+        // |   |   |   |   |   |   |   |   |   |
+        //
+        //
+        // |   |   |   |   |   |   |   |   |   |
+        //
+        //
+        //
+        // |   |   |   |   |   |   |   |   |   |
+        //
+        //
+        //
+        //
+        // |   |   |   |   |   |   |   |   |   |
+        //
+        // By the time proportionVisible is 1 (corresponding to the moment we need to
+        // reveal all the upcoming numbers), all of the insets must be zero. So,
+        // Each initial bottom inset should be mapped onto proportionVisible, so that
+        // when proportionVisible is 0, it has its original value, and when proportionVisible
+        // is 1, it equals 0.
+
+        let initialSpacing = NextRoundGrid.fibonacciSeries[section] * NextRoundGrid.rowSpacingFactor
+        let scaledSpacing = (1.0 - proportionVisible) * initialSpacing
+        return UIEdgeInsets(top: 0, left: 0, bottom: scaledSpacing, right: 0)
     }
 
 
