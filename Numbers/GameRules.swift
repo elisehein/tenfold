@@ -20,7 +20,7 @@ class GameRules: NSObject {
     }
 
     func lastNumberPositionOnLine () -> Int {
-        return positionOnLine(game.totalNumbers() - 1)
+        return Grid.singleton.positionOnRow(game.totalNumbers() - 1)
     }
 
     func attemptPairing (index: Int, otherIndex: Int) -> Bool {
@@ -48,7 +48,7 @@ class GameRules: NSObject {
         } else {
             let orderedIndeces = [index, otherIndex].sort { return $0 < $1 }
             return enclosingCrossedOutNumbers(from: orderedIndeces[0], to: orderedIndeces[1]) ||
-                   beginningAndEndOfLine(first: orderedIndeces[0], second: orderedIndeces[1])
+                   beginningAndEndOfRow(index: orderedIndeces[0], laterIndex: orderedIndeces[1])
         }
     }
 
@@ -58,48 +58,33 @@ class GameRules: NSObject {
 
     private func enclosingCrossedOutNumbers (from start: Int, to end: Int) -> Bool {
         let enclosingHorizontally = allCrossedOutBetween(start: start, end: end, withIncrement: 1)
-        let enclosingVertically = sameColumn(start, end) &&
+        let enclosingVertically = Grid.singleton.sameColumn(start, end) &&
                                   allCrossedOutBetween(start: start, end: end, withIncrement: 9)
 
         return enclosingHorizontally || enclosingVertically
     }
 
     // This makes the game pretty easy. Could enable in easy mode
-    private func beginningAndEndOfLine (first first: Int, second: Int) -> Bool {
-        if !sameLine(first, second) {
+    private func beginningAndEndOfRow (index index: Int, laterIndex: Int) -> Bool {
+        if !Grid.singleton.sameRow(index, laterIndex) {
             return false
         }
 
-        let positionOfFirstOnLine = positionOnLine(first)
-        let positionOfSecondOnLine = positionOnLine(second)
+        let firstIndexOfRow = Grid.singleton.firstIndexOfRow(containingIndex: index)
+        let lastIndexOfRow = Grid.singleton.lastIndexOfRow(containingIndex: index)
 
-        let startOfLine = first - positionOfFirstOnLine
-        let endOfLine = first + (GameRules.numbersPerLine - positionOfFirstOnLine) - 1
-
-        let firstIsBeginning = positionOfFirstOnLine == 0 ||
-                               allCrossedOutBetween(start: startOfLine - 1,
-                                                    end: first,
+        let firstIsBeginning = Grid.singleton.isFirstOnRow(index) ||
+                               allCrossedOutBetween(start: firstIndexOfRow - 1,
+                                                    end: index,
                                                     withIncrement: 1)
 
-        let secondIsEnd = positionOfSecondOnLine == (GameRules.numbersPerLine - 1) ||
-                          allCrossedOutBetween(start: second, end: endOfLine + 1, withIncrement: 1)
+        let secondIsEnd = Grid.singleton.isLastOnRow(laterIndex) ||
+                          allCrossedOutBetween(start: laterIndex,
+                                               end: lastIndexOfRow + 1,
+                                               withIncrement: 1)
 
         return firstIsBeginning && secondIsEnd
     }
-
-    private func sameLine(first: Int, _ second: Int) -> Bool {
-        return second - first < GameRules.numbersPerLine &&
-               positionOnLine(second) > positionOnLine(first)
-    }
-
-    private func sameColumn(index: Int, _ otherIndex: Int) -> Bool {
-        return positionOnLine(index) == positionOnLine(otherIndex)
-    }
-
-    private func positionOnLine(index: Int) -> Int {
-        return index % GameRules.numbersPerLine
-    }
-
 
     private func allCrossedOutBetween (start start: Int,
                                        end: Int,

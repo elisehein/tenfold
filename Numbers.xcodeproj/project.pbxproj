@@ -27,6 +27,7 @@
 		0CB938911D20389C005B81F4 /* NextRoundGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB938901D20389C005B81F4 /* NextRoundGrid.swift */; };
 		0CCACC1D1D21B28800757C1B /* AvenirNextLTPro-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0CCACC1C1D21B27300757C1B /* AvenirNextLTPro-Regular.otf */; };
 		0CCACC1F1D21B31F00757C1B /* AvenirNextLTPro-Demi.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0CCACC1E1D21B2FE00757C1B /* AvenirNextLTPro-Demi.otf */; };
+		4EE46E201D22CD55005C4493 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE46E1F1D22CD55005C4493 /* Grid.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +53,7 @@
 		0CB938901D20389C005B81F4 /* NextRoundGrid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextRoundGrid.swift; sourceTree = "<group>"; };
 		0CCACC1C1D21B27300757C1B /* AvenirNextLTPro-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "AvenirNextLTPro-Regular.otf"; sourceTree = "<group>"; };
 		0CCACC1E1D21B2FE00757C1B /* AvenirNextLTPro-Demi.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "AvenirNextLTPro-Demi.otf"; sourceTree = "<group>"; };
+		4EE46E1F1D22CD55005C4493 /* Grid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +154,7 @@
 			isa = PBXGroup;
 			children = (
 				0C90AEA61C6D1BCF00E1E42E /* Game.swift */,
+				4EE46E1F1D22CD55005C4493 /* Grid.swift */,
 				0C69CE4A1C6DCABA002E0D29 /* Number.swift */,
 			);
 			name = Models;
@@ -266,6 +269,7 @@
 				0C34638F1C6F89B30086D3CC /* GameNumberCell.swift in Sources */,
 				0C69CE4E1C6DCDE9002E0D29 /* Array.swift in Sources */,
 				0CB938911D20389C005B81F4 /* NextRoundGrid.swift in Sources */,
+				4EE46E201D22CD55005C4493 /* Grid.swift in Sources */,
 				0CB938831D1FE6DD005B81F4 /* StorageService.swift in Sources */,
 				0CB109341C7234FB00182663 /* UIColor.swift in Sources */,
 				0CB9388D1D202832005B81F4 /* NextRoundNumberCell.swift in Sources */,
