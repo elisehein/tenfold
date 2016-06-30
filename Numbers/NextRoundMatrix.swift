@@ -1,5 +1,5 @@
 //
-//  NextRoundGrid.swift
+//  NextRoundMatrix.swift
 //  Numbers
 //
 //  Created by Elise Hein on 26/06/2016.
@@ -11,21 +11,21 @@ import UIKit
 
 /*
  *
- * NextRoundGrid is a UICollectionView with totalRows sections and
+ * NextRoundMatrix is a UICollectionView with totalRows sections and
  * cellsPerRow items per section. Its very first section is always hidden
- * behind the very last row of the gameGrid, so that we can show next round
- * values on the same line as the last gameGrid line. For example, if the game
+ * behind the very last row of the gameMatrix, so that we can show next round
+ * values on the same line as the last gameMatrix line. For example, if the game
  * finishes with just three numbers on a line
  *
  * | 6 | 5 | 1 |   |   |   |   |   |   |
  *
- * next round grid must produce the following, where values correspond to
+ * next round matrix must produce the following, where values correspond to
  * [1, 2, 3, 4, 5, 6, 7, 8, 9, 2, 4, 5]
  *
  * |   |   |   | 1 | 2 | 3 | 4 | 5 | 6 |
  * | 7 | 8 | 9 | 2 | 4 | 5 |   |   |   |
  *
- * By putting the grid on below the gamegrid with the last and first lines overlapping,
+ * By putting the matrix below the gameMatrix with the last and first lines overlapping,
  * we see a continuation of numbers on the same line.
  *
  * Note that each section has a full set of 9 items, we simply choose which items
@@ -34,16 +34,16 @@ import UIKit
  *
  * Note also that if there are more values given than there are totalRows * 9,
  * we only add values for as long as there are cells to add them to. Because this
- * grid is what we see when we pull up the game from the bottom, we can be confident
+ * matrix is what we see when we pull up the game from the bottom, we can be confident
  * that we'll never see more than a certain number of cells anyway.
  *
  */
 
-class NextRoundGrid: UICollectionView {
+class NextRoundMatrix: UICollectionView {
 
-    // We should store more or as many fibonacci numbers as there are rows
+    // We should store more or as many scale series numbers as there are rows
     private static let totalRows = 8
-    private static let fibonacciSeries: Array<CGFloat> = [1, 1, 2, 3, 5, 8, 13, 21, 34]
+    private static let scaleSeries: Array<CGFloat> = [0, 2, 4, 8, 16, 32, 64, 128, 256]
     private static let rowSpacingFactor: CGFloat = 30.0
 
     private let reuseIdentifier = "NextRoundNumberCell"
@@ -111,9 +111,9 @@ class NextRoundGrid: UICollectionView {
     }
 }
 
-extension NextRoundGrid: UICollectionViewDataSource {
+extension NextRoundMatrix: UICollectionViewDataSource {
     func numberOfSectionsInCollectionView (collectionView: UICollectionView) -> Int {
-        return NextRoundGrid.totalRows
+        return NextRoundMatrix.totalRows
     }
 
     func collectionView (collectionView: UICollectionView,
@@ -144,7 +144,7 @@ extension NextRoundGrid: UICollectionViewDataSource {
     }
 }
 
-extension NextRoundGrid: UICollectionViewDelegateFlowLayout {
+extension NextRoundMatrix: UICollectionViewDelegateFlowLayout {
 
     func collectionView (collectionView: UICollectionView,
                          layout collectionViewLayout: UICollectionViewLayout,
@@ -173,7 +173,7 @@ extension NextRoundGrid: UICollectionViewDelegateFlowLayout {
         // when proportionVisible is 0, it has its original value, and when proportionVisible
         // is 1, it equals 0.
 
-        let initialSpacing = NextRoundGrid.fibonacciSeries[section] * NextRoundGrid.rowSpacingFactor
+        let initialSpacing = NextRoundMatrix.scaleSeries[section] * NextRoundMatrix.rowSpacingFactor
         let scaledSpacing = (1.0 - proportionVisible) * initialSpacing
         return UIEdgeInsets(top: 0, left: 0, bottom: scaledSpacing, right: 0)
     }

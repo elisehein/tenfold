@@ -1,5 +1,5 @@
 //
-//  GameGrid.swift
+//  GameMatrix.swift
 //  Numbers
 //
 //  Created by Elise Hein on 11/02/2016.
@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class GameGrid: UICollectionView {
+class GameMatrix: UICollectionView {
 
     private static let cellAnimationDuration = 0.15
     private let reuseIdentifier = "GameNumberCell"
@@ -84,7 +84,7 @@ class GameGrid: UICollectionView {
 
     func toggleBounce (shouldBounce: Bool) {
         // We should *never* disable bounce if there is a top contentInset
-        // otherwise we can't pull up from the first rounds where the grid isn't full screen yet
+        // otherwise we can't pull up from the first rounds where the matrix isn't full screen yet
         bounces = contentInset.top > 0 || shouldBounce
     }
 
@@ -127,7 +127,7 @@ class GameGrid: UICollectionView {
     }
 }
 
-extension GameGrid: UICollectionViewDataSource {
+extension GameMatrix: UICollectionViewDataSource {
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -146,14 +146,14 @@ extension GameGrid: UICollectionViewDataSource {
             cell.number = game.numberAtIndex(indexPath.item)
             cell.isCrossedOut = game.isCrossedOut(indexPath.item)
             cell.marksEndOfRound = game.marksEndOfRound(indexPath.item)
-            cell.animationDuration = GameGrid.cellAnimationDuration
+            cell.animationDuration = GameMatrix.cellAnimationDuration
         }
 
         return cell
     }
 }
 
-extension GameGrid: UICollectionViewDelegateFlowLayout {
+extension GameMatrix: UICollectionViewDelegateFlowLayout {
     func collectionView(collectionView: UICollectionView,
                         shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
         return !game.isCrossedOut(indexPath.item)
@@ -185,7 +185,7 @@ extension GameGrid: UICollectionViewDelegateFlowLayout {
     }
 }
 
-extension GameGrid: UIScrollViewDelegate {
+extension GameMatrix: UIScrollViewDelegate {
     func scrollViewWillBeginDragging(scrollView: UIScrollView) {
         toggleBounce(true)
     }

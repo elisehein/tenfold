@@ -11,14 +11,14 @@ import AVFoundation
 
 class Play: UIViewController {
 
-    private static let gridMargin: CGFloat = 10
+    private static let matrixMargin: CGFloat = 10
     private static let nextRoundTriggerThreshold: CGFloat = 150
 
     private var game: Game
     private var rules: GameRules
 
-    private let gameGrid: GameGrid
-    private var nextRoundGrid: NextRoundGrid?
+    private let gameMatrix: GameMatrix
+    private var nextRoundMatrix: NextRoundMatrix?
     private var passedNextRoundThreshold = false
 
     private var blimpPlayer: AVAudioPlayer? = {
@@ -42,35 +42,35 @@ class Play: UIViewController {
 
         self.game = savedGame == nil ? Game() : savedGame!
         self.rules = GameRules(game: game)
-        self.gameGrid = GameGrid(game: game)
+        self.gameMatrix = GameMatrix(game: game)
 
         super.init(nibName: nil, bundle: nil)
 
-        gameGrid.onScroll = handleScroll
-        gameGrid.onDraggingEnd = handleDraggingEnd
-        gameGrid.onPairingAttempt = handlePairingAttempt
+        gameMatrix.onScroll = handleScroll
+        gameMatrix.onDraggingEnd = handleDraggingEnd
+        gameMatrix.onPairingAttempt = handlePairingAttempt
 
         view.backgroundColor = UIColor.themeColor(.OffWhite)
-        view.addSubview(gameGrid)
+        view.addSubview(gameMatrix)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        gameGrid.frame = CGRect(x: Play.gridMargin,
-                                y: 0,
-                                width: view.bounds.size.width - (2 * Play.gridMargin),
-                                height: view.bounds.size.height)
-        self.positionGameGrid()
+        gameMatrix.frame = CGRect(x: Play.matrixMargin,
+                                  y: 0,
+                                  width: view.bounds.size.width - (2 * Play.matrixMargin),
+                                  height: view.bounds.size.height)
+        self.positionGameMatrix()
 
-        nextRoundGrid = NextRoundGrid(cellSize: gameGrid.cellSize(),
-                                      cellsPerRow: GameRules.numbersPerLine,
-                                      startIndex: nextRoundStartIndex(),
-                                      values: game.nextRoundValues(),
-                                      frame: gameGrid.frame)
-        nextRoundGrid?.hidden = true
+        nextRoundMatrix = NextRoundMatrix(cellSize: gameMatrix.cellSize(),
+                                          cellsPerRow: GameRules.numbersPerLine,
+                                          startIndex: nextRoundStartIndex(),
+                                          values: game.nextRoundValues(),
+                                          frame: gameMatrix.frame)
+        nextRoundMatrix?.hidden = true
 
-        view.insertSubview(nextRoundGrid!, belowSubview: gameGrid)
+        view.insertSubview(nextRoundMatrix!, belowSubview: gameMatrix)
     }
 
 
@@ -94,41 +94,41 @@ class Play: UIViewController {
     override func motionEnded(motion: UIEventSubtype, withEvent event: UIEvent?) {
         if motion == .MotionShake {
             game.restart()
-            gameGrid.reloadData()
-            positionGameGrid()
+            gameMatrix.reloadData()
+            positionGameMatrix()
             updateState()
         }
     }
 
     // MARK: Positioning
 
-    private func positionGameGrid () {
-        let currentGridHeight = CGFloat(game.totalRows()) * gameGrid.cellSize().height
-        let optimalHeight = optimalGridHeight()
+    private func positionGameMatrix () {
+        let currentMatrixHeight = CGFloat(game.totalRows()) * gameMatrix.cellSize().height
+        let optimalHeight = optimalMatrixHeight()
 
-        var frame = gameGrid.frame
+        var frame = gameMatrix.frame
         frame.size.height = optimalHeight
         frame.origin.y = (view.bounds.size.height - optimalHeight) / 2.0
-        gameGrid.frame = frame
+        gameMatrix.frame = frame
 
-        let topInset = max(0, optimalHeight - currentGridHeight)
-        gameGrid.contentInset.top = topInset
+        let topInset = max(0, optimalHeight - currentMatrixHeight)
+        gameMatrix.contentInset.top = topInset
 
-        gameGrid.toggleBounce(false)
+        gameMatrix.toggleBounce(false)
     }
 
-    private func positionNextRoundGrid () {
-        nextRoundGrid?.frame = nextRoundGridFrame()
+    private func positionNextRoundMatrix () {
+        nextRoundMatrix?.frame = nextRoundMatrixFrame()
     }
 
-    private func nextRoundGridFrame () -> CGRect {
-        var nextRoundGridFrame = gameGrid.frame
-        nextRoundGridFrame.origin.y += gameGrid.bottomEdgeY() - gameGrid.cellSize().height
-        return nextRoundGridFrame
+    private func nextRoundMatrixFrame () -> CGRect {
+        var nextRoundMatrixFrame = gameMatrix.frame
+        nextRoundMatrixFrame.origin.y += gameMatrix.bottomEdgeY() - gameMatrix.cellSize().height
+        return nextRoundMatrixFrame
     }
 
-    private func optimalGridHeight () -> CGFloat {
-        let cellHeight = gameGrid.cellSize().height
+    private func optimalMatrixHeight () -> CGFloat {
+        let cellHeight = gameMatrix.cellSize().height
         let availableHeight = view.bounds.size.height
 
         return availableHeight - (availableHeight % cellHeight)
@@ -142,13 +142,13 @@ class Play: UIViewController {
         if successfulPairing {
             game.crossOutPair(itemIndex, otherIndex: otherItemIndex)
             updateState()
-            gameGrid.crossOutPair(itemIndex, otherIndex: otherItemIndex)
+            gameMatrix.crossOutPair(itemIndex, otherIndex: otherItemIndex)
         } else {
-            gameGrid.dismissSelection()
+            gameMatrix.dismissSelection()
         }
     }
 
-    // Instead of calling reloadData on the entire grid, dynamically add the next round
+    // Instead of calling reloadData on the entire matrix, dynamically add the next round
     // This function assumes that the state of the game has diverged from the state of
     // the collectionView.
     private func loadNextRound () -> Bool {
@@ -159,8 +159,8 @@ class Play: UIViewController {
         }
 
         game.makeNextRound(usingNumbers: nextRoundNumbers)
-        gameGrid.loadNextRound({ _ in
-            self.positionGameGrid()
+        gameMatrix.loadNextRound({ _ in
+            self.positionGameMatrix()
         })
 
         updateState()
@@ -168,7 +168,7 @@ class Play: UIViewController {
     }
 
     private func updateState () {
-        nextRoundGrid!.update(startIndex: nextRoundStartIndex(),
+        nextRoundMatrix!.update(startIndex: nextRoundStartIndex(),
                               values: game.nextRoundValues())
         StorageService.saveGame(game)
     }
@@ -181,18 +181,18 @@ class Play: UIViewController {
 
     // NOTE this does not take into account content insets
     private func handleDraggingEnd () {
-        if gameGrid.pullUpDistanceExceeds(Play.nextRoundTriggerThreshold) {
-            nextRoundGrid?.hidden = true
+        if gameMatrix.pullUpDistanceExceeds(Play.nextRoundTriggerThreshold) {
+            nextRoundMatrix?.hidden = true
             loadNextRound()
         }
     }
 
     private func handleScroll () {
-        if gameGrid.pullUpInProgress() {
-            positionNextRoundGrid()
-            nextRoundGrid?.hidden = false
+        if gameMatrix.pullUpInProgress() {
+            positionNextRoundMatrix()
+            nextRoundMatrix?.hidden = false
 
-            let pullUpRatio = gameGrid.pullUpPercentage(ofThreshold: Play.nextRoundTriggerThreshold)
+            let pullUpRatio = gameMatrix.pullUpPercentage(ofThreshold: Play.nextRoundTriggerThreshold)
             let proportionVisible = min(1, pullUpRatio)
 
             if proportionVisible == 1 {
@@ -204,9 +204,9 @@ class Play: UIViewController {
                 passedNextRoundThreshold = false
             }
 
-            nextRoundGrid?.proportionVisible = proportionVisible
+            nextRoundMatrix?.proportionVisible = proportionVisible
         } else {
-            nextRoundGrid?.hidden = true
+            nextRoundMatrix?.hidden = true
             passedNextRoundThreshold = false
         }
     }

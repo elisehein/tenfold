@@ -1,5 +1,5 @@
 //
-//  Grid.swift
+//  Matrix.swift
 //  Numbers
 //
 //  Created by Elise Hein on 28/06/2016.
@@ -8,9 +8,9 @@
 
 import Foundation
 
-class Grid: NSObject {
+class Matrix: NSObject {
 
-    static let singleton = Grid(itemsPerRow: GameRules.numbersPerLine)
+    static let singleton = Matrix(itemsPerRow: GameRules.numbersPerLine)
 
     private let itemsPerRow: Int
 

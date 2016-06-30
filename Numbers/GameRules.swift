@@ -20,7 +20,7 @@ class GameRules: NSObject {
     }
 
     func lastNumberPositionOnLine () -> Int {
-        return Grid.singleton.positionOnRow(game.totalNumbers() - 1)
+        return Matrix.singleton.positionOnRow(game.totalNumbers() - 1)
     }
 
     func attemptPairing (index: Int, otherIndex: Int) -> Bool {
@@ -58,7 +58,7 @@ class GameRules: NSObject {
 
     private func enclosingCrossedOutNumbers (from start: Int, to end: Int) -> Bool {
         let enclosingHorizontally = allCrossedOutBetween(start: start, end: end, withIncrement: 1)
-        let enclosingVertically = Grid.singleton.sameColumn(start, end) &&
+        let enclosingVertically = Matrix.singleton.sameColumn(start, end) &&
                                   allCrossedOutBetween(start: start, end: end, withIncrement: 9)
 
         return enclosingHorizontally || enclosingVertically
@@ -66,19 +66,19 @@ class GameRules: NSObject {
 
     // This makes the game pretty easy. Could enable in easy mode
     private func beginningAndEndOfRow (index index: Int, laterIndex: Int) -> Bool {
-        if !Grid.singleton.sameRow(index, laterIndex) {
+        if !Matrix.singleton.sameRow(index, laterIndex) {
             return false
         }
 
-        let firstIndexOfRow = Grid.singleton.firstIndexOfRow(containingIndex: index)
-        let lastIndexOfRow = Grid.singleton.lastIndexOfRow(containingIndex: index)
+        let firstIndexOfRow = Matrix.singleton.firstIndexOfRow(containingIndex: index)
+        let lastIndexOfRow = Matrix.singleton.lastIndexOfRow(containingIndex: index)
 
-        let firstIsBeginning = Grid.singleton.isFirstOnRow(index) ||
+        let firstIsBeginning = Matrix.singleton.isFirstOnRow(index) ||
                                allCrossedOutBetween(start: firstIndexOfRow - 1,
                                                     end: index,
                                                     withIncrement: 1)
 
-        let secondIsEnd = Grid.singleton.isLastOnRow(laterIndex) ||
+        let secondIsEnd = Matrix.singleton.isLastOnRow(laterIndex) ||
                           allCrossedOutBetween(start: laterIndex,
                                                end: lastIndexOfRow + 1,
                                                withIncrement: 1)
