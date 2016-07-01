@@ -110,7 +110,7 @@ class GameMatrix: UICollectionView {
     }
 
     func cellSize () -> CGSize {
-        let cellWidth = bounds.size.width / CGFloat(GameRules.numbersPerLine)
+        let cellWidth = bounds.size.width / CGFloat(Game.numbersPerRow)
         return CGSize(width: cellWidth, height: cellWidth)
     }
 
@@ -164,10 +164,10 @@ extension GameMatrix: UICollectionViewDelegateFlowLayout {
         let selectedIndexPaths = collectionView.indexPathsForSelectedItems()!
         let latestSelectedIndexPath = indexPath
 
-        if selectedIndexPaths.count == GameRules.numbersInPairing {
+        if selectedIndexPaths.count == Game.numbersInPairing {
             onPairingAttempt!(itemIndex: selectedIndexPaths[0].item,
                               otherItemIndex: selectedIndexPaths[1].item)
-        } else if selectedIndexPaths.count < GameRules.numbersInPairing {
+        } else if selectedIndexPaths.count < Game.numbersInPairing {
             return
         }
 

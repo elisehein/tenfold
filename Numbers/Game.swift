@@ -10,6 +10,9 @@ import Foundation
 
 class Game: NSObject, NSCoding {
 
+    static let numbersPerRow = 9
+    static let numbersInPairing = 2
+
     private static let numbersCoderKey = "gameNumbersCoderKey"
 
     private static let initialNumberValues = [1, 2, 3, 4, 5, 6, 7, 8, 9,
@@ -17,6 +20,7 @@ class Game: NSObject, NSCoding {
                                               5, 1, 6, 1, 7, 1, 8, 1, 9]
 
     private var numbers: Array<Number> = []
+    let matrix = Matrix(itemsPerRow: Game.numbersPerRow)
 
     class func initialNumbers () -> Array<Number> {
         var initialNumbers = Array<Number>()
@@ -108,7 +112,11 @@ class Game: NSObject, NSCoding {
     }
 
     func totalRows () -> Int {
-        return Int(ceil(Float(numbers.count) / Float(GameRules.numbersPerLine)))
+        return matrix.totalRows(totalNumbers())
+    }
+
+    func lastNumberColumn () -> Int {
+        return matrix.columnOfItem(atIndex: totalNumbers() - 1)
     }
 
     func numberAtIndex (index: Int) -> Int {

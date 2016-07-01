@@ -10,42 +10,43 @@ import Foundation
 
 class Matrix: NSObject {
 
-    static let singleton = Matrix(itemsPerRow: GameRules.numbersPerLine)
-
     private let itemsPerRow: Int
 
-    private init (itemsPerRow: Int) {
+    init (itemsPerRow: Int) {
         self.itemsPerRow = itemsPerRow
         super.init()
     }
 
+    func columnOfItem (atIndex index: Int) -> Int {
+        return index % itemsPerRow
+    }
+
     func firstIndexOfRow (containingIndex index: Int) -> Int {
-        return index - positionOnRow(index)
+        return index - columnOfItem(atIndex: index)
     }
 
     func lastIndexOfRow (containingIndex index: Int) -> Int {
-        return index + (itemsPerRow - positionOnRow(index)) - 1
+        return index + (itemsPerRow - columnOfItem(atIndex: index)) - 1
     }
 
     func isFirstOnRow (index: Int) -> Bool {
-        return positionOnRow(index) == 0
+        return columnOfItem(atIndex: index) == 0
     }
 
     func isLastOnRow (index: Int) -> Bool {
-        return positionOnRow(index) == itemsPerRow - 1
+        return columnOfItem(atIndex: index) == itemsPerRow - 1
     }
 
     func sameRow (index: Int, _ laterIndex: Int) -> Bool {
         return (laterIndex - index < itemsPerRow &&
-                positionOnRow(laterIndex) > positionOnRow(index))
+                columnOfItem(atIndex: laterIndex) > columnOfItem(atIndex: index))
     }
 
     func sameColumn (index: Int, _ laterIndex: Int) -> Bool {
-        return positionOnRow(index) == positionOnRow(laterIndex)
+        return columnOfItem(atIndex: index) == columnOfItem(atIndex: laterIndex)
     }
 
-    func positionOnRow (index: Int) -> Int {
-        return index % itemsPerRow
+    func totalRows (totalItems: Int) -> Int {
+        return Int(ceil(Float(totalItems) / Float(itemsPerRow)))
     }
-
 }

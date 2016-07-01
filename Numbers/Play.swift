@@ -64,7 +64,7 @@ class Play: UIViewController {
         self.positionGameMatrix()
 
         nextRoundMatrix = NextRoundMatrix(cellSize: gameMatrix.cellSize(),
-                                          cellsPerRow: GameRules.numbersPerLine,
+                                          cellsPerRow: Game.numbersPerRow,
                                           startIndex: nextRoundStartIndex(),
                                           values: game.nextRoundValues(),
                                           frame: gameMatrix.frame)
@@ -174,7 +174,7 @@ class Play: UIViewController {
     }
 
     private func nextRoundStartIndex () -> Int {
-        return rules.lastNumberPositionOnLine() + 1
+        return game.lastNumberColumn() + 1
     }
 
     // MARK: Scrolling interactions
