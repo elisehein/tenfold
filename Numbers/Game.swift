@@ -23,12 +23,9 @@ class Game: NSObject, NSCoding {
     let matrix = Matrix(itemsPerRow: Game.numbersPerRow)
 
     class func initialNumbers () -> Array<Number> {
-        var initialNumbers = Array<Number>()
-
-        for value in initialNumberValues {
-            let number = Number(value: value, crossedOut: false, marksEndOfRound: false)
-            initialNumbers.append(number)
-        }
+        let initialNumbers: Array<Number> = initialNumberValues.map({ value in
+            return Number(value: value, crossedOut: false, marksEndOfRound: false)
+        })
 
         initialNumbers.last.marksEndOfRound = true
         return initialNumbers
@@ -53,29 +50,22 @@ class Game: NSObject, NSCoding {
     }
 
     func nextRoundNumbers () -> Array<Number> {
-        var nextRound: Array<Number> = []
+        let nextRoundNumbers: Array<Number> = remainingNumbers().map({ number in
+            let newNumber = number.copy() as? Number
+            newNumber!.marksEndOfRound = false
+            return newNumber!
+        })
 
-        for number in numbers {
-            if !number.crossedOut {
-                let newNumber = number.copy() as? Number
-                newNumber!.marksEndOfRound = false
-                nextRound.append(newNumber!)
-            }
-        }
-
-        return nextRound
+        nextRoundNumbers.last.marksEndOfRound = true
+        return nextRoundNumbers
     }
 
     func nextRoundValues () -> Array<Int> {
-        var nextRoundValues: Array<Int> = []
+        return remainingNumbers().map({ $0.value })
+    }
 
-        for number in numbers {
-            if !number.crossedOut {
-                nextRoundValues.append(number.value)
-            }
-        }
-
-        return nextRoundValues
+    private func remainingNumbers () -> Array<Number> {
+        return numbers.filter({ !$0.crossedOut })
     }
 
     func makeNextRound () -> Bool {
@@ -84,7 +74,6 @@ class Game: NSObject, NSCoding {
 
     func makeNextRound (usingNumbers nextRoundNumbers: Array<Number>) -> Bool {
         if nextRoundNumbers.count > 0 {
-            nextRoundNumbers.last.marksEndOfRound = true
             numbers += nextRoundNumbers
             return true
         } else {
