@@ -39,10 +39,10 @@ class GameNumberCell: UICollectionViewCell {
         }
     }
 
-    var number: Int? {
+    var value: Int? {
         didSet {
-            if let number = number {
-                numberLabel.text = String(number)
+            if let value = value {
+                numberLabel.text = String(value)
             }
         }
     }

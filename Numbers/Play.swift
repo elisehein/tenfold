@@ -95,7 +95,7 @@ class Play: UIViewController {
         if motion == .MotionShake {
             game.restart()
             gameMatrix.reloadData()
-            positionGameMatrix()
+            adjustGameMatrixInset()
             updateState()
         }
     }
@@ -103,7 +103,6 @@ class Play: UIViewController {
     // MARK: Positioning
 
     private func positionGameMatrix () {
-        let currentMatrixHeight = CGFloat(game.totalRows()) * gameMatrix.cellSize().height
         let optimalHeight = optimalMatrixHeight()
 
         var frame = gameMatrix.frame
@@ -111,10 +110,14 @@ class Play: UIViewController {
         frame.origin.y = (view.bounds.size.height - optimalHeight) / 2.0
         gameMatrix.frame = frame
 
-        let topInset = max(0, optimalHeight - currentMatrixHeight)
-        gameMatrix.contentInset.top = topInset
-
+        adjustGameMatrixInset()
         gameMatrix.toggleBounce(false)
+    }
+
+    private func adjustGameMatrixInset () {
+        let currentGameHeight = CGFloat(game.totalRows()) * gameMatrix.cellSize().height
+        let topInset = max(0, gameMatrix.frame.size.height - currentGameHeight)
+        gameMatrix.contentInset.top = topInset
     }
 
     private func positionNextRoundMatrix () {
@@ -141,8 +144,9 @@ class Play: UIViewController {
 
         if successfulPairing {
             game.crossOutPair(itemIndex, otherIndex: otherItemIndex)
-            updateState()
             gameMatrix.crossOutPair(itemIndex, otherIndex: otherItemIndex)
+            updateState()
+            removeSurplusRowsAfterPairing(itemIndex, otherItemIndex)
         } else {
             gameMatrix.dismissSelection()
         }
@@ -160,21 +164,39 @@ class Play: UIViewController {
 
         game.makeNextRound(usingNumbers: nextRoundNumbers)
         gameMatrix.loadNextRound({ _ in
-            self.positionGameMatrix()
+            self.adjustGameMatrixInset()
         })
 
         updateState()
         return true
     }
 
-    private func updateState () {
-        nextRoundMatrix!.update(startIndex: nextRoundStartIndex(),
-                              values: game.nextRoundValues())
-        StorageService.saveGame(game)
-    }
-
     private func nextRoundStartIndex () -> Int {
         return game.lastNumberColumn() + 1
+    }
+
+    private func removeSurplusRowsAfterPairing (index: Int, _ otherIndex: Int) {
+        for itemIndex in [index, otherIndex] {
+            let indeces = game.indecesOnRow(containingIndex: itemIndex)
+            if game.allCrossedOut(indeces) {
+                removeNumbers(atIndeces: indeces)
+            }
+        }
+    }
+
+    private func removeNumbers (atIndeces indeces: Array<Int>) {
+        game.removeNumbers(atIndeces: indeces)
+
+        let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
+        gameMatrix.deleteItemsAtIndexPaths(indexPaths)
+        adjustGameMatrixInset()
+        updateState()
+    }
+
+    private func updateState () {
+        nextRoundMatrix!.update(startIndex: nextRoundStartIndex(),
+                                values: game.nextRoundValues())
+        StorageService.saveGame(game)
     }
 
     // MARK: Scrolling interactions
@@ -192,7 +214,8 @@ class Play: UIViewController {
             positionNextRoundMatrix()
             nextRoundMatrix?.hidden = false
 
-            let pullUpRatio = gameMatrix.pullUpPercentage(ofThreshold: Play.nextRoundTriggerThreshold)
+            let threshold = Play.nextRoundTriggerThreshold
+            let pullUpRatio = gameMatrix.pullUpPercentage(ofThreshold: threshold)
             let proportionVisible = min(1, pullUpRatio)
 
             if proportionVisible == 1 {

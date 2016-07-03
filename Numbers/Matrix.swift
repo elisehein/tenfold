@@ -21,6 +21,13 @@ class Matrix: NSObject {
         return index % itemsPerRow
     }
 
+    // Back to back refers to numbers that are right next to each
+    // other either horizontally (incl. last column of previous row
+    // and first column of this one), or vertically.
+    func backToBack (index: Int, otherIndex: Int) -> Bool {
+        return abs(index - otherIndex) == 1 || abs(index - otherIndex) == itemsPerRow
+    }
+
     func firstIndexOfRow (containingIndex index: Int) -> Int {
         return index - columnOfItem(atIndex: index)
     }
@@ -44,6 +51,12 @@ class Matrix: NSObject {
 
     func sameColumn (index: Int, _ laterIndex: Int) -> Bool {
         return columnOfItem(atIndex: index) == columnOfItem(atIndex: laterIndex)
+    }
+
+    func indecesOnRow (containingIndex index: Int, lastGameIndex: Int = Int.max) -> Array<Int> {
+        let first = firstIndexOfRow(containingIndex: index)
+        let last = min(lastIndexOfRow(containingIndex: index), lastGameIndex)
+        return Array(first...last)
     }
 
     func totalRows (totalItems: Int) -> Int {

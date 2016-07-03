@@ -20,6 +20,7 @@ class Game: NSObject, NSCoding {
                                               5, 1, 6, 1, 7, 1, 8, 1, 9]
 
     private var numbers: Array<Number> = []
+
     let matrix = Matrix(itemsPerRow: Game.numbersPerRow)
 
     class func initialNumbers () -> Array<Number> {
@@ -64,10 +65,6 @@ class Game: NSObject, NSCoding {
         return remainingNumbers().map({ $0.value })
     }
 
-    private func remainingNumbers () -> Array<Number> {
-        return numbers.filter({ !$0.crossedOut })
-    }
-
     func makeNextRound () -> Bool {
         return makeNextRound(usingNumbers: nextRoundNumbers())
     }
@@ -92,8 +89,13 @@ class Game: NSObject, NSCoding {
         return numbers.indexOf(previousRoundEnding)! + 1
     }
 
+    func removeNumbers (atIndeces indeces: Array<Int>) {
+        let numbersToRemove = numbers.filter({ indeces.contains(numbers.indexOf($0)!) })
+        numbers.removeObjects(numbersToRemove)
+    }
+
     func numbersRemaining () -> Int {
-        return numbers.filter({ !$0.crossedOut }).count
+        return remainingNumbers().count
     }
 
     func totalNumbers () -> Int {
@@ -108,19 +110,47 @@ class Game: NSObject, NSCoding {
         return matrix.columnOfItem(atIndex: totalNumbers() - 1)
     }
 
-    func numberAtIndex (index: Int) -> Int {
+    func valueAtIndex (index: Int) -> Int {
         return numbers[index].value
-    }
-
-    func isCrossedOut (index: Int) -> Bool {
-        return numbers[index].crossedOut
     }
 
     func marksEndOfRound (index: Int) -> Bool {
         return numbers[index].marksEndOfRound
     }
 
+    func indecesOnRow (containingIndex index: Int) -> Array<Int> {
+        return matrix.indecesOnRow(containingIndex: index, lastGameIndex: totalNumbers() - 1)
+    }
+
+    func isCrossedOut (index: Int) -> Bool {
+        return numbers[index].crossedOut
+    }
+
+    func allCrossedOut (indeces: Array<Int>) -> Bool {
+        return indeces.filter({ numbers[$0].crossedOut }).count == indeces.count
+    }
+
+    func allCrossedOutBetween (index index: Int,
+                               laterIndex: Int,
+                               withIncrement increment: Int = 1) -> Bool {
+        if index + increment >= laterIndex {
+            return false
+        }
+
+        for i in (index + increment).stride(to: laterIndex, by: increment) {
+            if numbers.count > i && !isCrossedOut(i) {
+                return false
+            }
+        }
+
+        return true
+    }
+
     func encodeWithCoder (aCoder: NSCoder) {
         aCoder.encodeObject(numbers, forKey: Game.numbersCoderKey)
+    }
+
+    private func remainingNumbers () -> Array<Number> {
+        return numbers.filter({ !$0.crossedOut })
     }
 }

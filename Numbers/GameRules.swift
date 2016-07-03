@@ -11,7 +11,7 @@ import Foundation
 class GameRules: NSObject {
     private let game: Game
 
-    init(game: Game) {
+    init (game: Game) {
         self.game = game
         super.init()
     }
@@ -24,19 +24,19 @@ class GameRules: NSObject {
             return false
         }
 
-        return valuesCanPair(index, otherIndex: otherIndex) &&
+        return valuesCanPair (index, otherIndex: otherIndex) &&
                positionsCanPair(index, otherIndex: otherIndex)
     }
 
-    private func valuesCanPair(index: Int, otherIndex: Int) -> Bool {
-        let number = game.numberAtIndex(index)
-        let otherNumber = game.numberAtIndex(otherIndex)
+    private func valuesCanPair (index: Int, otherIndex: Int) -> Bool {
+        let value = game.valueAtIndex(index)
+        let otherValue = game.valueAtIndex(otherIndex)
 
-        return (number == otherNumber) || (number + otherNumber == 10)
+        return (value == otherValue) || (value + otherValue == 10)
     }
 
-    private func positionsCanPair(index: Int, otherIndex: Int) -> Bool {
-        if (backToBack(index, otherIndex: otherIndex)) {
+    private func positionsCanPair (index: Int, otherIndex: Int) -> Bool {
+        if (game.matrix.backToBack(index, otherIndex: otherIndex)) {
             return true
         } else {
             let orderedIndeces = [index, otherIndex].sort { return $0 < $1 }
@@ -45,14 +45,12 @@ class GameRules: NSObject {
         }
     }
 
-    private func backToBack (index: Int, otherIndex: Int) -> Bool {
-        return abs(index - otherIndex) == 1 || abs(index - otherIndex) == 9
-    }
-
     private func enclosingCrossedOutNumbers (from start: Int, to end: Int) -> Bool {
-        let enclosingHorizontally = allCrossedOutBetween(start: start, end: end, withIncrement: 1)
+        let enclosingHorizontally = game.allCrossedOutBetween(index: start, laterIndex: end)
         let enclosingVertically = game.matrix.sameColumn(start, end) &&
-                                  allCrossedOutBetween(start: start, end: end, withIncrement: 9)
+                                  game.allCrossedOutBetween(index: start,
+                                                            laterIndex: end,
+                                                            withIncrement: Game.numbersPerRow)
 
         return enclosingHorizontally || enclosingVertically
     }
@@ -67,31 +65,14 @@ class GameRules: NSObject {
         let lastIndexOfRow = game.matrix.lastIndexOfRow(containingIndex: index)
 
         let firstIsBeginning = game.matrix.isFirstOnRow(index) ||
-                               allCrossedOutBetween(start: firstIndexOfRow - 1,
-                                                    end: index,
-                                                    withIncrement: 1)
+                               game.allCrossedOutBetween(index: firstIndexOfRow - 1,
+                                                         laterIndex: index)
 
         let secondIsEnd = game.matrix.isLastOnRow(laterIndex) ||
-                          allCrossedOutBetween(start: laterIndex,
-                                               end: lastIndexOfRow + 1,
-                                               withIncrement: 1)
+                          game.allCrossedOutBetween(index: laterIndex,
+                                                    laterIndex: lastIndexOfRow + 1)
 
         return firstIsBeginning && secondIsEnd
     }
 
-    private func allCrossedOutBetween (start start: Int,
-                                       end: Int,
-                                       withIncrement increment: Int) -> Bool {
-        if start + increment >= end {
-            return false
-        }
-
-        for i in (start + increment).stride(to: end, by: increment) {
-            if !game.isCrossedOut(i) {
-                return false
-            }
-        }
-
-        return true
-    }
 }

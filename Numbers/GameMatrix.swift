@@ -143,7 +143,7 @@ extension GameMatrix: UICollectionViewDataSource {
                                                                          forIndexPath: indexPath)
 
         if let cell = cell as? GameNumberCell {
-            cell.number = game.numberAtIndex(indexPath.item)
+            cell.value = game.valueAtIndex(indexPath.item)
             cell.isCrossedOut = game.isCrossedOut(indexPath.item)
             cell.marksEndOfRound = game.marksEndOfRound(indexPath.item)
             cell.animationDuration = GameMatrix.cellAnimationDuration
