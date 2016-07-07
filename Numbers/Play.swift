@@ -146,7 +146,7 @@ class Play: UIViewController {
             game.crossOutPair(itemIndex, otherIndex: otherItemIndex)
             gameMatrix.crossOutPair(itemIndex, otherIndex: otherItemIndex)
             updateState()
-            removeSurplusRowsAfterPairing(itemIndex, otherItemIndex)
+            removeSurplusRows(containingIndeces: [itemIndex, otherItemIndex])
         } else {
             gameMatrix.dismissSelection()
         }
@@ -175,13 +175,17 @@ class Play: UIViewController {
         return game.lastNumberColumn() + 1
     }
 
-    private func removeSurplusRowsAfterPairing (index: Int, _ otherIndex: Int) {
-        for itemIndex in [index, otherIndex] {
-            let indeces = game.indecesOnRow(containingIndex: itemIndex)
-            if game.allCrossedOut(indeces) {
-                removeNumbers(atIndeces: indeces)
+    private func removeSurplusRows (containingIndeces indeces: Array<Int>) {
+        var surplusIndeces: Array<Int> = []
+
+        for index in indeces {
+            let rowIndeces = game.indecesOnRow(containingIndex: index)
+            if game.allCrossedOut(rowIndeces) {
+                surplusIndeces += rowIndeces
             }
         }
+
+        removeNumbers(atIndeces: surplusIndeces)
     }
 
     private func removeNumbers (atIndeces indeces: Array<Int>) {
