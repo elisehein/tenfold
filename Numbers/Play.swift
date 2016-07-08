@@ -12,13 +12,14 @@ import AVFoundation
 class Play: UIViewController {
 
     private static let matrixMargin: CGFloat = 10
-    private static let nextRoundTriggerThreshold: CGFloat = 150
+    private static let maxNextRoundTriggerThreshold: CGFloat = 150
 
     private var game: Game
     private var rules: GameRules
 
     private let gameMatrix: GameMatrix
     private var nextRoundMatrix: NextRoundMatrix?
+    private var nextRoundTriggerThreshold: CGFloat?
     private var passedNextRoundThreshold = false
 
     private var blimpPlayer: AVAudioPlayer? = {
@@ -63,16 +64,17 @@ class Play: UIViewController {
                                   height: view.bounds.size.height)
         self.positionGameMatrix()
 
+        let nextRoundValues = game.nextRoundValues()
         nextRoundMatrix = NextRoundMatrix(cellSize: gameMatrix.cellSize(),
                                           cellsPerRow: Game.numbersPerRow,
                                           startIndex: nextRoundStartIndex(),
-                                          values: game.nextRoundValues(),
+                                          values: nextRoundValues,
                                           frame: gameMatrix.frame)
         nextRoundMatrix?.hidden = true
+        nextRoundTriggerThreshold = calcNextRoundTriggerThreshold(nextRoundValues.count)
 
         view.insertSubview(nextRoundMatrix!, belowSubview: gameMatrix)
     }
-
 
     // MARK: Shake gestures
     // http://stackoverflow.com/questions/10154958/ios-how-to-detect-shake-motion
@@ -128,6 +130,13 @@ class Play: UIViewController {
         var nextRoundMatrixFrame = gameMatrix.frame
         nextRoundMatrixFrame.origin.y += gameMatrix.bottomEdgeY() - gameMatrix.cellSize().height
         return nextRoundMatrixFrame
+    }
+
+    private func calcNextRoundTriggerThreshold (numberOfItemsInNextRound: Int) -> CGFloat {
+        // TODO maybe matrix shouldn't belong to Game after all?
+        let rowHeight = gameMatrix.cellSize().height
+        let threshold = CGFloat(game.matrix.totalRows(numberOfItemsInNextRound)) * rowHeight
+        return min(threshold, Play.maxNextRoundTriggerThreshold)
     }
 
     private func optimalMatrixHeight () -> CGFloat {
@@ -198,8 +207,10 @@ class Play: UIViewController {
     }
 
     private func updateState () {
+        let nextRoundValues = game.nextRoundValues()
         nextRoundMatrix!.update(startIndex: nextRoundStartIndex(),
-                                values: game.nextRoundValues())
+                                values: nextRoundValues)
+        nextRoundTriggerThreshold = calcNextRoundTriggerThreshold(nextRoundValues.count)
         StorageService.saveGame(game)
     }
 
@@ -207,7 +218,7 @@ class Play: UIViewController {
 
     // NOTE this does not take into account content insets
     private func handleDraggingEnd () {
-        if gameMatrix.pullUpDistanceExceeds(Play.nextRoundTriggerThreshold) {
+        if gameMatrix.pullUpDistanceExceeds(nextRoundTriggerThreshold!) {
             nextRoundMatrix?.hidden = true
             loadNextRound()
         }
@@ -218,8 +229,7 @@ class Play: UIViewController {
             positionNextRoundMatrix()
             nextRoundMatrix?.hidden = false
 
-            let threshold = Play.nextRoundTriggerThreshold
-            let pullUpRatio = gameMatrix.pullUpPercentage(ofThreshold: threshold)
+            let pullUpRatio = gameMatrix.pullUpPercentage(ofThreshold: nextRoundTriggerThreshold!)
             let proportionVisible = min(1, pullUpRatio)
 
             if proportionVisible == 1 {
