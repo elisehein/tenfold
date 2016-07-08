@@ -165,19 +165,22 @@ class Play: UIViewController {
     // This function assumes that the state of the game has diverged from the state of
     // the collectionView.
     private func loadNextRound () -> Bool {
+        let nextRoundStartIndex = game.totalNumbers()
         let nextRoundNumbers = game.nextRoundNumbers()
 
-        if nextRoundNumbers.count == 0 {
+        if game.makeNextRound(usingNumbers: nextRoundNumbers) {
+            let nextRoundEndIndex = nextRoundStartIndex + nextRoundNumbers.count - 1
+            let nextRoundIndeces = Array(nextRoundStartIndex...nextRoundEndIndex)
+            gameMatrix.loadNextRound(atIndeces: nextRoundIndeces,
+                                     completion: { _ in
+                self.adjustGameMatrixInset()
+            })
+
+            updateState()
+            return true
+        } else {
             return false
         }
-
-        game.makeNextRound(usingNumbers: nextRoundNumbers)
-        gameMatrix.loadNextRound({ _ in
-            self.adjustGameMatrixInset()
-        })
-
-        updateState()
-        return true
     }
 
     private func nextRoundStartIndex () -> Int {

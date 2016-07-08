@@ -78,17 +78,6 @@ class Game: NSObject, NSCoding {
         }
     }
 
-    func currentRoundIndeces () -> Array<Int> {
-        let indeces: [Int] = Array(currentRoundStartIndex()...numbers.count - 1)
-        return indeces
-    }
-
-    func currentRoundStartIndex () -> Int {
-        let roundEndings = numbers.filter({ $0.marksEndOfRound })
-        let previousRoundEnding = roundEndings[roundEndings.count - 2]
-        return numbers.indexOf(previousRoundEnding)! + 1
-    }
-
     func removeNumbers (atIndeces indeces: Array<Int>) {
         let numbersToRemove = numbers.filter({ indeces.contains(numbers.indexOf($0)!) })
         numbers.removeObjects(numbersToRemove)

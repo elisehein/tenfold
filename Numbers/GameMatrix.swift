@@ -45,10 +45,10 @@ class GameMatrix: UICollectionView {
         alwaysBounceVertical = true
     }
 
-    func loadNextRound (completion: (Bool) -> Void ) {
+    func loadNextRound (atIndeces indeces: Array<Int>, completion: (Bool) -> Void ) {
         var indexPaths: Array<NSIndexPath> = []
 
-        for index in game.currentRoundIndeces() {
+        for index in indeces {
            indexPaths.append(NSIndexPath(forItem: index, inSection: 0))
         }
 
