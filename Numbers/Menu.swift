@@ -9,40 +9,61 @@
 import Foundation
 import UIKit
 
-class Menu: UIViewController {
+class Menu: UIView {
 
     let buttonsStackView = UIStackView()
+    let newGameButton = UIButton()
+    let instructionsButton = UIButton()
+
+    var onTapNewGame: (() -> Void)?
+    var onTapInstructions: (() -> Void)?
+
+    private static let buttonSize = CGSize(width: 100, height: 40)
 
     init () {
-        super.init(nibName: nil, bundle: nil)
+        super.init(frame: CGRect.zero)
 
-        let newGameButton = UIButton()
+        newGameButton.frame = CGRect(origin: CGPoint.zero, size: Menu.buttonSize)
+        newGameButton.backgroundColor = UIColor.blueColor()
         newGameButton.setTitle("New game", forState: .Normal)
         newGameButton.addTarget(self,
-                                selector: #selector(Menu.startNewGame(_:)),
+                                action: #selector(Menu.didTapNewGame),
                                 forControlEvents: .TouchUpInside)
 
-        let instructionsButton = UIButton()
+        instructionsButton.frame = CGRect(origin: CGPoint.zero, size: Menu.buttonSize)
+        instructionsButton.backgroundColor = UIColor.blueColor()
         instructionsButton.setTitle("Instructions", forState: .Normal)
         instructionsButton.addTarget(self,
-                                     selector: #selector(Menu.displayInstructions(_:)),
+                                     action: #selector(Menu.didTapInstructions),
                                      forControlEvents: .TouchUpInside)
 
+        buttonsStackView.axis = .Vertical
+        buttonsStackView.distribution = .FillEqually
+        buttonsStackView.alignment = .Fill
+        buttonsStackView.spacing = 5
         buttonsStackView.addArrangedSubview(newGameButton)
         buttonsStackView.addArrangedSubview(instructionsButton)
 
-        view.addSubview(buttonsStackView)
+        addSubview(buttonsStackView)
     }
 
-    override func viewDidLayoutSubviews () {
-        super.viewDidLayoutSubviews()
-        buttonsStackView.frame = view.bounds
+    override func layoutSubviews () {
+        super.layoutSubviews()
+        let totalButtons = buttonsStackView.arrangedSubviews.count
+        let buttonsHeight = CGFloat(totalButtons) * Menu.buttonSize.height
+        let stackHeight = buttonsHeight + (CGFloat(totalButtons - 1) * buttonsStackView.spacing)
+        let stackViewFrame = CGRect(origin: CGPoint.zero,
+                                    size: CGSize(width: Menu.buttonSize.width, height: stackHeight))
+        buttonsStackView.frame = stackViewFrame
+        buttonsStackView.center = center
     }
 
-    private func startNewGame () {
+    func didTapNewGame () {
+        onTapNewGame!()
     }
 
-    private func displayInstructions () {
+    func didTapInstructions () {
+        onTapInstructions!()
     }
 
     required init?(coder aDecoder: NSCoder) {

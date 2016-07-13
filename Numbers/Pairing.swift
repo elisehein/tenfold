@@ -1,5 +1,5 @@
 //
-//  GameRules.swift
+//  Pairing.swift
 //  Numbers
 //
 //  Created by Elise Hein on 13/02/2016.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-class GameRules: NSObject {
+class Pairing: NSObject {
     private let game: Game
 
     init (game: Game) {
@@ -16,7 +16,7 @@ class GameRules: NSObject {
         super.init()
     }
 
-    func attemptPairing (index: Int, otherIndex: Int) -> Bool {
+    func validate (index: Int, otherIndex: Int) -> Bool {
         if game.isCrossedOut(index) || game.isCrossedOut(otherIndex) || index == otherIndex {
             NSException(name: "Invalid pairing",
                         reason: "These numbers cannot be attempted for pairing",
@@ -74,5 +74,4 @@ class GameRules: NSObject {
 
         return firstIsBeginning && secondIsEnd
     }
-
 }

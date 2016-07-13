@@ -201,7 +201,7 @@ extension GameMatrix: UIScrollViewDelegate {
     }
 
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        self.onScroll!()
+        onScroll!()
     }
 
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {

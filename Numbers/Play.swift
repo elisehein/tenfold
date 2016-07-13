@@ -15,10 +15,12 @@ class Play: UIViewController {
     private static let maxNextRoundTriggerThreshold: CGFloat = 150
 
     private var game: Game
-    private var rules: GameRules
+    private var pairing: Pairing
 
+    private let menu = Menu()
     private let gameMatrix: GameMatrix
     private var nextRoundMatrix: NextRoundMatrix?
+
     private var nextRoundTriggerThreshold: CGFloat?
     private var passedNextRoundThreshold = false
 
@@ -31,7 +33,7 @@ class Play: UIViewController {
                 player = try AVAudioPlayer(data: sound.data, fileTypeHint: AVFileTypeWAVE)
                 player.prepareToPlay()
             } catch {
-                print("error initializing AVAudioPlayer")
+                print("Error initializing AVAudioPlayer")
             }
         }
 
@@ -42,7 +44,7 @@ class Play: UIViewController {
         let savedGame = StorageService.restoreGame()
 
         self.game = savedGame == nil ? Game() : savedGame!
-        self.rules = GameRules(game: game)
+        self.pairing = Pairing(game: game)
         self.gameMatrix = GameMatrix(game: game)
 
         super.init(nibName: nil, bundle: nil)
@@ -51,19 +53,25 @@ class Play: UIViewController {
         gameMatrix.onDraggingEnd = handleDraggingEnd
         gameMatrix.onPairingAttempt = handlePairingAttempt
 
+        menu.onTapNewGame = handleTapNewGame
+        menu.onTapInstructions = handleTapInstructions
+        menu.layer.borderWidth = 1
+        menu.layer.borderColor = UIColor.redColor().CGColor
+
         view.backgroundColor = UIColor.themeColor(.OffWhite)
         view.addSubview(gameMatrix)
+        view.addSubview(menu)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        gameMatrix.frame = CGRect(x: Play.matrixMargin,
-                                  y: 0,
-                                  width: view.bounds.size.width - (2 * Play.matrixMargin),
-                                  height: view.bounds.size.height)
-        self.positionGameMatrix()
+        positionGameMatrix()
+        positionMenu()
+        initNextRoundMatrix()
+    }
 
+    private func initNextRoundMatrix () {
         let nextRoundValues = game.nextRoundValues()
         nextRoundMatrix = NextRoundMatrix(cellSize: gameMatrix.cellSize(),
                                           cellsPerRow: Game.numbersPerRow,
@@ -95,16 +103,26 @@ class Play: UIViewController {
 
     override func motionEnded(motion: UIEventSubtype, withEvent event: UIEvent?) {
         if motion == .MotionShake {
-            game.restart()
-            gameMatrix.reloadData()
-            adjustGameMatrixInset()
-            updateState()
+            handleTapNewGame()
         }
     }
 
     // MARK: Positioning
 
+    private func positionMenu () {
+        var menuFrame = gameMatrix.frame
+        menuFrame.size.height -= (gameMatrix.frame.size.height - gameMatrix.contentInset.top)
+        menu.frame = menuFrame
+    }
+
     private func positionGameMatrix () {
+        if CGRectEqualToRect(gameMatrix.frame, CGRect.zero) {
+            gameMatrix.frame = CGRect(x: Play.matrixMargin,
+                                      y: 0,
+                                      width: view.bounds.size.width - (2 * Play.matrixMargin),
+                                      height: view.bounds.size.height)
+        }
+
         let optimalHeight = optimalMatrixHeight()
 
         var frame = gameMatrix.frame
@@ -146,10 +164,23 @@ class Play: UIViewController {
         return availableHeight - (availableHeight % cellHeight)
     }
 
+    // MARK: Menu interactions
+
+    private func handleTapNewGame () {
+        game.restart()
+        gameMatrix.reloadData()
+        adjustGameMatrixInset()
+        updateState()
+    }
+
+    private func handleTapInstructions () {
+        print("SHOW INSTRUCTIONS")
+    }
+
     // MARK: Gameplay logic
 
     private func handlePairingAttempt (itemIndex: Int, otherItemIndex: Int) {
-        let successfulPairing = rules.attemptPairing(itemIndex, otherIndex: otherItemIndex)
+        let successfulPairing = pairing.validate(itemIndex, otherIndex: otherItemIndex)
 
         if successfulPairing {
             game.crossOutPair(itemIndex, otherIndex: otherItemIndex)
