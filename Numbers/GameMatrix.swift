@@ -88,34 +88,9 @@ class GameMatrix: UICollectionView {
         bounces = contentInset.top > 0 || shouldBounce
     }
 
-    func bottomEdgeY() -> CGFloat {
-        return frame.size.height - distancePulledUp()
-    }
-
-    func pullUpInProgress() -> Bool {
-        let offset = contentOffset.y
-        return offset > maxOffsetBeforeBounce() && contentSize.height > 0
-    }
-
-    func pullDownInProgress() -> Bool {
-        return contentOffset.y < 0
-    }
-
-    func pullUpPercentage(ofThreshold threshold: CGFloat) -> CGFloat {
-        return distancePulledUp() / threshold
-    }
-
-    func pullUpDistanceExceeds(threshold: CGFloat) -> Bool {
-        return contentOffset.y > maxOffsetBeforeBounce() + threshold
-    }
-
     func cellSize() -> CGSize {
         let cellWidth = bounds.size.width / CGFloat(Game.numbersPerRow)
         return CGSize(width: cellWidth, height: cellWidth)
-    }
-
-    private func distancePulledUp() -> CGFloat {
-        return contentOffset.y - maxOffsetBeforeBounce()
     }
 
     private func maxOffsetBeforeBounce() -> CGFloat {

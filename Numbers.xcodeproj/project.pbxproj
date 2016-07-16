@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0C34638F1C6F89B30086D3CC /* GameNumberCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C34638E1C6F89B30086D3CC /* GameNumberCell.swift */; };
 		0C3463931C6F8C340086D3CC /* Pairing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3463921C6F8C340086D3CC /* Pairing.swift */; };
+		0C39D3081D3AB48B0047CE74 /* UIScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39D3071D3AB48B0047CE74 /* UIScrollView.swift */; };
 		0C68BE7E1D3A4B3A00A6ACDC /* Instructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C68BE7D1D3A4B3A00A6ACDC /* Instructions.swift */; };
 		0C69CE4B1C6DCABA002E0D29 /* Number.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C69CE4A1C6DCABA002E0D29 /* Number.swift */; };
 		0C69CE4E1C6DCDE9002E0D29 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C69CE4D1C6DCDE9002E0D29 /* Array.swift */; };
@@ -35,6 +36,7 @@
 /* Begin PBXFileReference section */
 		0C34638E1C6F89B30086D3CC /* GameNumberCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameNumberCell.swift; sourceTree = "<group>"; };
 		0C3463921C6F8C340086D3CC /* Pairing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pairing.swift; sourceTree = "<group>"; };
+		0C39D3071D3AB48B0047CE74 /* UIScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIScrollView.swift; sourceTree = "<group>"; };
 		0C68BE7D1D3A4B3A00A6ACDC /* Instructions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Instructions.swift; sourceTree = "<group>"; };
 		0C69CE4A1C6DCABA002E0D29 /* Number.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Number.swift; sourceTree = "<group>"; };
 		0C69CE4D1C6DCDE9002E0D29 /* Array.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 			children = (
 				0C69CE4D1C6DCDE9002E0D29 /* Array.swift */,
 				0CB109331C7234FB00182663 /* UIColor.swift */,
+				0C39D3071D3AB48B0047CE74 /* UIScrollView.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -262,6 +265,7 @@
 				0C738ADD1C69D811007C9548 /* Play.swift in Sources */,
 				0C69CE4B1C6DCABA002E0D29 /* Number.swift in Sources */,
 				0C90AEA71C6D1BCF00E1E42E /* Game.swift in Sources */,
+				0C39D3081D3AB48B0047CE74 /* UIScrollView.swift in Sources */,
 				0C90AEA01C6C7FDF00E1E42E /* UIFont+Theme.swift in Sources */,
 				0C90AEA51C6D1B0700E1E42E /* GameMatrix.swift in Sources */,
 				0C34638F1C6F89B30086D3CC /* GameNumberCell.swift in Sources */,
