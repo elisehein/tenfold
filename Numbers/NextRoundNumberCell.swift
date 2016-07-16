@@ -32,7 +32,7 @@ class NextRoundNumberCell: UICollectionViewCell {
         }
     }
 
-    override init (frame: CGRect) {
+    override init(frame: CGRect) {
         super.init(frame: frame)
 
         dot.backgroundColor = UIColor.themeColor(.OffWhiteDark)
@@ -58,12 +58,12 @@ class NextRoundNumberCell: UICollectionViewCell {
         contentView.addSubview(dot)
     }
 
-    override func layoutSubviews () {
+    override func layoutSubviews() {
         super.layoutSubviews()
         numberLabel.frame = contentView.bounds
     }
 
-    private func blimp () {
+    private func blimp() {
         guard value != nil else { return }
 
         if shouldBlimp {
@@ -84,7 +84,7 @@ class NextRoundNumberCell: UICollectionViewCell {
         }
     }
 
-    private func animateSpring (animations: () -> Void) {
+    private func animateSpring(animations: () -> Void) {
         UIView.animateWithDuration(NextRoundNumberCell.animationDuration,
                                    delay: 0,
                                    usingSpringWithDamping: NextRoundNumberCell.animationDamping,
@@ -95,7 +95,7 @@ class NextRoundNumberCell: UICollectionViewCell {
         }, completion: nil)
     }
 
-    private func animate (animations: () -> Void, completion: ((finished: Bool) -> Void)? = nil) {
+    private func animate(animations: () -> Void, completion: ((finished: Bool) -> Void)? = nil) {
         UIView.animateWithDuration(NextRoundNumberCell.animationDuration,
                                    delay: 0,
                                    options: .CurveEaseInOut,
@@ -104,11 +104,11 @@ class NextRoundNumberCell: UICollectionViewCell {
         }, completion: completion)
     }
 
-    class func shrink (view: UIView) -> CGAffineTransform {
+    class func shrink(view: UIView) -> CGAffineTransform {
         return CGAffineTransformScale(view.transform, 0.1, 0.1)
     }
 
-    required init? (coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }

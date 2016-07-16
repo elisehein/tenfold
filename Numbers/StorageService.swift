@@ -12,13 +12,13 @@ class StorageService {
 
     private static let gameStorageKey = "singularFieldsGameStorageKey"
 
-    class func saveGame (game: Game) {
+    class func saveGame(game: Game) {
         let gameData = NSKeyedArchiver.archivedDataWithRootObject(game)
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setObject(gameData, forKey: StorageService.gameStorageKey)
     }
 
-    class func restoreGame () -> Game? {
+    class func restoreGame() -> Game? {
         let defaults = NSUserDefaults.standardUserDefaults()
         let gameData = defaults.objectForKey(StorageService.gameStorageKey)
 

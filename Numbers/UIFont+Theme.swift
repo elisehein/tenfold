@@ -15,11 +15,11 @@ enum FontWeight {
 }
 
 extension UIFont {
-    class func themeFontWithSize (fontSize: CGFloat) -> UIFont {
+    class func themeFontWithSize(fontSize: CGFloat) -> UIFont {
         return themeFontWithSize(fontSize, weight: .Regular)
     }
 
-    class func themeFontWithSize (fontSize: CGFloat, weight: FontWeight) -> UIFont {
+    class func themeFontWithSize(fontSize: CGFloat, weight: FontWeight) -> UIFont {
 //        return UIFont(name: "Lucida Sans Unicode", size: fontSize)!
 //        return UIFont(name: "Montserrat", size: fontSize)!
 

@@ -24,7 +24,7 @@ class Number: NSObject, NSCopying, NSCoding {
         super.init()
     }
 
-    required init (coder aDecoder: NSCoder) {
+    required init(coder aDecoder: NSCoder) {
         value = (aDecoder.decodeObjectForKey(Number.valueCoderKey) as? Int)!
         crossedOut = (aDecoder.decodeObjectForKey(Number.crossedOutCoderKey) as? Bool)!
         marksEndOfRound = (aDecoder.decodeObjectForKey(Number.marksEndOfRoundCoderKey) as? Bool)!
@@ -35,7 +35,7 @@ class Number: NSObject, NSCopying, NSCoding {
         return copy
     }
 
-    func encodeWithCoder (aCoder: NSCoder) {
+    func encodeWithCoder(aCoder: NSCoder) {
         aCoder.encodeObject(value, forKey: Number.valueCoderKey)
         aCoder.encodeObject(crossedOut, forKey: Number.crossedOutCoderKey)
         aCoder.encodeObject(marksEndOfRound, forKey: Number.marksEndOfRoundCoderKey)

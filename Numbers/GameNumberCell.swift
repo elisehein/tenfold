@@ -98,7 +98,7 @@ class GameNumberCell: UICollectionViewCell {
         })
     }
 
-    private func indicateFailure () {
+    private func indicateFailure() {
         UIView.animateWithDuration(0.16, delay: 0, options: .Repeat, animations: {
             UIView.setAnimationRepeatCount(2)
             self.contentView.backgroundColor = UIColor.themeColor(.OffBlack)
@@ -107,7 +107,7 @@ class GameNumberCell: UICollectionViewCell {
         })
     }
 
-    private func drawEndOfRoundMarker () {
+    private func drawEndOfRoundMarker() {
         let markerPath = CGPathCreateMutable()
         let totalWidth: CGFloat = contentView.bounds.size.width
         let totalHeight: CGFloat = contentView.bounds.size.height

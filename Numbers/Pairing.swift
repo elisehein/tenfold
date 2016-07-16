@@ -11,7 +11,7 @@ import Foundation
 class Pairing: NSObject {
     private static let matrix = Matrix.singleton
 
-    static func validate (index: Int, _ otherIndex: Int, inGame game: Game) -> Bool {
+    static func validate(index: Int, _ otherIndex: Int, inGame game: Game) -> Bool {
         if game.isCrossedOut(index) || game.isCrossedOut(otherIndex) || index == otherIndex {
             NSException(name: "Invalid pairing",
                         reason: "These numbers cannot be attempted for pairing",
@@ -23,14 +23,14 @@ class Pairing: NSObject {
                positionsCanPair(index, otherIndex: otherIndex, inGame: game)
     }
 
-    static private func valuesCanPair (index: Int, otherIndex: Int, inGame game: Game) -> Bool {
+    static private func valuesCanPair(index: Int, otherIndex: Int, inGame game: Game) -> Bool {
         let value = game.valueAtIndex(index)
         let otherValue = game.valueAtIndex(otherIndex)
 
         return (value == otherValue) || (value + otherValue == 10)
     }
 
-    static private func positionsCanPair (index: Int, otherIndex: Int, inGame game: Game) -> Bool {
+    static private func positionsCanPair(index: Int, otherIndex: Int, inGame game: Game) -> Bool {
         if (matrix.backToBack(index, otherIndex: otherIndex)) {
             return true
         } else {
@@ -40,9 +40,9 @@ class Pairing: NSObject {
         }
     }
 
-    static private func enclosingCrossedOutNumbers (start: Int,
-                                                    _ end: Int,
-                                                    inGame game: Game) -> Bool {
+    static private func enclosingCrossedOutNumbers(start: Int,
+                                                   _ end: Int,
+                                                   inGame game: Game) -> Bool {
         let enclosingHorizontally = game.allCrossedOutBetween(index: start, laterIndex: end)
         let enclosingVertically = matrix.sameColumn(start, end) &&
                                   game.allCrossedOutBetween(index: start,
@@ -53,9 +53,9 @@ class Pairing: NSObject {
     }
 
     // This makes the game pretty easy. Could enable in easy mode
-    static private func beginningAndEndOfRow (index: Int,
-                                              _ laterIndex: Int,
-                                              inGame game: Game) -> Bool {
+    static private func beginningAndEndOfRow(index: Int,
+                                             _ laterIndex: Int,
+                                             inGame game: Game) -> Bool {
         if !matrix.sameRow(index, laterIndex) {
             return false
         }

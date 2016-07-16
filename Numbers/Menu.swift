@@ -20,7 +20,7 @@ class Menu: UIView {
 
     private static let buttonSize = CGSize(width: 100, height: 40)
 
-    init () {
+    init() {
         super.init(frame: CGRect.zero)
 
         newGameButton.frame = CGRect(origin: CGPoint.zero, size: Menu.buttonSize)
@@ -47,7 +47,7 @@ class Menu: UIView {
         addSubview(buttonsStackView)
     }
 
-    override func layoutSubviews () {
+    override func layoutSubviews() {
         super.layoutSubviews()
         let totalButtons = buttonsStackView.arrangedSubviews.count
         let buttonsHeight = CGFloat(totalButtons) * Menu.buttonSize.height
@@ -58,11 +58,11 @@ class Menu: UIView {
         buttonsStackView.center = center
     }
 
-    func didTapNewGame () {
+    func didTapNewGame() {
         onTapNewGame!()
     }
 
-    func didTapInstructions () {
+    func didTapInstructions() {
         onTapInstructions!()
     }
 

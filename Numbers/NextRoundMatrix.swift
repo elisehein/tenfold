@@ -80,7 +80,7 @@ class NextRoundMatrix: UICollectionView {
         }
     }
 
-    init (cellSize: CGSize,
+    init(cellSize: CGSize,
           cellsPerRow: Int,
           startIndex: Int,
           values: Array<Int>,
@@ -100,13 +100,13 @@ class NextRoundMatrix: UICollectionView {
         delegate = self
     }
 
-    func update (startIndex startIndex: Int, values: Array<Int>) {
+    func update(startIndex startIndex: Int, values: Array<Int>) {
         self.startIndex = startIndex
         self.values = values
         reloadData()
     }
 
-    required init? (coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
@@ -116,13 +116,13 @@ extension NextRoundMatrix: UICollectionViewDataSource {
         return NextRoundMatrix.totalRows
     }
 
-    func collectionView (collectionView: UICollectionView,
-                         numberOfItemsInSection section: Int) -> Int {
+    func collectionView(collectionView: UICollectionView,
+                        numberOfItemsInSection section: Int) -> Int {
         return cellsPerRow
     }
 
-    func collectionView (collectionView: UICollectionView,
-                         cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    func collectionView(collectionView: UICollectionView,
+                        cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier,
                                                                          forIndexPath: indexPath)
 
@@ -146,7 +146,7 @@ extension NextRoundMatrix: UICollectionViewDataSource {
 
 extension NextRoundMatrix: UICollectionViewDelegateFlowLayout {
 
-    func collectionView (collectionView: UICollectionView,
+    func collectionView(collectionView: UICollectionView,
                          layout collectionViewLayout: UICollectionViewLayout,
                          insetForSectionAtIndex section: Int) -> UIEdgeInsets {
         // Each row has an increasingly large bottom inset to start out with, eg

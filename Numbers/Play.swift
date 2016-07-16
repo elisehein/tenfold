@@ -39,7 +39,7 @@ class Play: UIViewController {
         return player
     }()
 
-    init () {
+    init() {
         let savedGame = StorageService.restoreGame()
 
         self.game = savedGame == nil ? Game() : savedGame!
@@ -65,11 +65,11 @@ class Play: UIViewController {
         view.addSubview(menu)
     }
 
-    func handleSwipe () {
+    func handleSwipe() {
         navigationController?.pushViewController(Instructions(), animated: true)
     }
 
-    override func viewDidLoad () {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
         positionGameMatrix()
@@ -77,12 +77,12 @@ class Play: UIViewController {
         initNextRoundMatrix()
     }
 
-    override func viewWillAppear (animated: Bool) {
+    override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
     }
 
-    private func initNextRoundMatrix () {
+    private func initNextRoundMatrix() {
         let nextRoundValues = game.nextRoundValues()
         nextRoundMatrix = NextRoundMatrix(cellSize: gameMatrix.cellSize(),
                                           cellsPerRow: Game.numbersPerRow,
@@ -120,13 +120,13 @@ class Play: UIViewController {
 
     // MARK: Positioning
 
-    private func positionMenu () {
+    private func positionMenu() {
         var menuFrame = gameMatrix.frame
         menuFrame.size.height -= (gameMatrix.frame.size.height - gameMatrix.contentInset.top)
         menu.frame = menuFrame
     }
 
-    private func positionGameMatrix () {
+    private func positionGameMatrix() {
         if CGRectEqualToRect(gameMatrix.frame, CGRect.zero) {
             gameMatrix.frame = CGRect(x: Play.matrixMargin,
                                       y: 0,
@@ -145,29 +145,29 @@ class Play: UIViewController {
         gameMatrix.toggleBounce(false)
     }
 
-    private func adjustGameMatrixInset () {
+    private func adjustGameMatrixInset() {
         let currentGameHeight = CGFloat(game.totalRows()) * gameMatrix.cellSize().height
         let topInset = max(0, gameMatrix.frame.size.height - currentGameHeight)
         gameMatrix.contentInset.top = topInset
     }
 
-    private func positionNextRoundMatrix () {
+    private func positionNextRoundMatrix() {
         nextRoundMatrix?.frame = nextRoundMatrixFrame()
     }
 
-    private func nextRoundMatrixFrame () -> CGRect {
+    private func nextRoundMatrixFrame() -> CGRect {
         var nextRoundMatrixFrame = gameMatrix.frame
         nextRoundMatrixFrame.origin.y += gameMatrix.bottomEdgeY() - gameMatrix.cellSize().height
         return nextRoundMatrixFrame
     }
 
-    private func calcNextRoundTriggerThreshold (numberOfItemsInNextRound: Int) -> CGFloat {
+    private func calcNextRoundTriggerThreshold(numberOfItemsInNextRound: Int) -> CGFloat {
         let rowHeight = gameMatrix.cellSize().height
         let threshold = CGFloat(Matrix.singleton.totalRows(numberOfItemsInNextRound)) * rowHeight
         return min(threshold, Play.maxNextRoundTriggerThreshold)
     }
 
-    private func optimalMatrixHeight () -> CGFloat {
+    private func optimalMatrixHeight() -> CGFloat {
         let cellHeight = gameMatrix.cellSize().height
         let availableHeight = view.bounds.size.height
 
@@ -176,20 +176,20 @@ class Play: UIViewController {
 
     // MARK: Menu interactions
 
-    private func handleTapNewGame () {
+    private func handleTapNewGame() {
         game.restart()
         gameMatrix.reloadData()
         adjustGameMatrixInset()
         updateState()
     }
 
-    private func handleTapInstructions () {
+    private func handleTapInstructions() {
         print("SHOW INSTRUCTIONS")
     }
 
     // MARK: Gameplay logic
 
-    private func handlePairingAttempt (itemIndex: Int, otherItemIndex: Int) {
+    private func handlePairingAttempt(itemIndex: Int, otherItemIndex: Int) {
         let successfulPairing = Pairing.validate(itemIndex, otherItemIndex, inGame: game)
 
         if successfulPairing {
@@ -205,7 +205,7 @@ class Play: UIViewController {
     // Instead of calling reloadData on the entire matrix, dynamically add the next round
     // This function assumes that the state of the game has diverged from the state of
     // the collectionView.
-    private func loadNextRound () -> Bool {
+    private func loadNextRound() -> Bool {
         let nextRoundStartIndex = game.totalNumbers()
         let nextRoundNumbers = game.nextRoundNumbers()
 
@@ -224,11 +224,11 @@ class Play: UIViewController {
         }
     }
 
-    private func nextRoundStartIndex () -> Int {
+    private func nextRoundStartIndex() -> Int {
         return game.lastNumberColumn() + 1
     }
 
-    private func removeSurplusRows (containingIndeces indeces: Array<Int>) {
+    private func removeSurplusRows(containingIndeces indeces: Array<Int>) {
         var surplusIndeces: Array<Int> = []
 
         for index in indeces {
@@ -241,7 +241,7 @@ class Play: UIViewController {
         removeNumbers(atIndeces: surplusIndeces)
     }
 
-    private func removeNumbers (atIndeces indeces: Array<Int>) {
+    private func removeNumbers(atIndeces indeces: Array<Int>) {
         game.removeNumbers(atIndeces: indeces)
 
         let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
@@ -250,7 +250,7 @@ class Play: UIViewController {
         updateState()
     }
 
-    private func updateState () {
+    private func updateState() {
         let nextRoundValues = game.nextRoundValues()
         nextRoundMatrix!.update(startIndex: nextRoundStartIndex(),
                                 values: nextRoundValues)
@@ -261,14 +261,14 @@ class Play: UIViewController {
     // MARK: Scrolling interactions
 
     // NOTE this does not take into account content insets
-    private func handleDraggingEnd () {
+    private func handleDraggingEnd() {
         if gameMatrix.pullUpDistanceExceeds(nextRoundTriggerThreshold!) {
             nextRoundMatrix?.hidden = true
             loadNextRound()
         }
     }
 
-    private func handleScroll () {
+    private func handleScroll() {
         if gameMatrix.pullUpInProgress() {
             positionNextRoundMatrix()
             nextRoundMatrix?.hidden = false

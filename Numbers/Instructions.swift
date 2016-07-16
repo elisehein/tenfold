@@ -11,18 +11,18 @@ import UIKit
 
 class Instructions: UIViewController {
 
-    init () {
+    init() {
         super.init(nibName: nil, bundle: nil)
         title = "Instructions"
         view.backgroundColor = UIColor.grayColor()
     }
 
-    override func viewWillAppear (animated: Bool) {
+    override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: true)
     }
 
-    required init? (coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }

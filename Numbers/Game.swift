@@ -20,7 +20,7 @@ class Game: NSObject, NSCoding {
 
     private var numbers: Array<Number> = []
 
-    class func initialNumbers () -> Array<Number> {
+    class func initialNumbers() -> Array<Number> {
         let initialNumbers: Array<Number> = initialNumberValues.map({ value in
             return Number(value: value, crossedOut: false, marksEndOfRound: false)
         })
@@ -29,25 +29,25 @@ class Game: NSObject, NSCoding {
         return initialNumbers
     }
 
-    override init () {
+    override init() {
         numbers = Game.initialNumbers()
         super.init()
     }
 
-    required init (coder aDecoder: NSCoder) {
+    required init(coder aDecoder: NSCoder) {
         self.numbers = (aDecoder.decodeObjectForKey(Game.numbersCoderKey) as? Array<Number>)!
     }
 
-    func restart () {
+    func restart() {
         numbers = Game.initialNumbers()
     }
 
-    func crossOutPair (index: Int, otherIndex: Int) {
+    func crossOutPair(index: Int, otherIndex: Int) {
         numbers[index].crossedOut = true
         numbers[otherIndex].crossedOut = true
     }
 
-    func nextRoundNumbers () -> Array<Number> {
+    func nextRoundNumbers() -> Array<Number> {
         let nextRoundNumbers: Array<Number> = remainingNumbers().map({ number in
             let newNumber = number.copy() as? Number
             newNumber!.marksEndOfRound = false
@@ -58,15 +58,15 @@ class Game: NSObject, NSCoding {
         return nextRoundNumbers
     }
 
-    func nextRoundValues () -> Array<Int> {
+    func nextRoundValues() -> Array<Int> {
         return remainingNumbers().map({ $0.value })
     }
 
-    func makeNextRound () -> Bool {
+    func makeNextRound() -> Bool {
         return makeNextRound(usingNumbers: nextRoundNumbers())
     }
 
-    func makeNextRound (usingNumbers nextRoundNumbers: Array<Number>) -> Bool {
+    func makeNextRound(usingNumbers nextRoundNumbers: Array<Number>) -> Bool {
         if nextRoundNumbers.count > 0 {
             numbers += nextRoundNumbers
             return true
@@ -75,51 +75,51 @@ class Game: NSObject, NSCoding {
         }
     }
 
-    func removeNumbers (atIndeces indeces: Array<Int>) {
+    func removeNumbers(atIndeces indeces: Array<Int>) {
         let numbersToRemove = numbers.filter({ indeces.contains(numbers.indexOf($0)!) })
         numbers.removeObjects(numbersToRemove)
     }
 
-    func numbersRemaining () -> Int {
+    func numbersRemaining() -> Int {
         return remainingNumbers().count
     }
 
-    func totalNumbers () -> Int {
+    func totalNumbers() -> Int {
         return numbers.count
     }
 
-    func totalRows () -> Int {
+    func totalRows() -> Int {
         return Matrix.singleton.totalRows(totalNumbers())
     }
 
-    func lastNumberColumn () -> Int {
+    func lastNumberColumn() -> Int {
         return Matrix.singleton.columnOfItem(atIndex: totalNumbers() - 1)
     }
 
-    func indecesOnRow (containingIndex index: Int) -> Array<Int> {
+    func indecesOnRow(containingIndex index: Int) -> Array<Int> {
         return Matrix.singleton.indecesOnRow(containingIndex: index,
                                              lastGameIndex: totalNumbers() - 1)
     }
 
-    func valueAtIndex (index: Int) -> Int {
+    func valueAtIndex(index: Int) -> Int {
         return numbers[index].value
     }
 
-    func marksEndOfRound (index: Int) -> Bool {
+    func marksEndOfRound(index: Int) -> Bool {
         return numbers[index].marksEndOfRound
     }
 
-    func isCrossedOut (index: Int) -> Bool {
+    func isCrossedOut(index: Int) -> Bool {
         return numbers[index].crossedOut
     }
 
-    func allCrossedOut (indeces: Array<Int>) -> Bool {
+    func allCrossedOut(indeces: Array<Int>) -> Bool {
         return indeces.filter({ numbers[$0].crossedOut }).count == indeces.count
     }
 
-    func allCrossedOutBetween (index index: Int,
-                               laterIndex: Int,
-                               withIncrement increment: Int = 1) -> Bool {
+    func allCrossedOutBetween(index index: Int,
+                              laterIndex: Int,
+                              withIncrement increment: Int = 1) -> Bool {
         if index + increment >= laterIndex {
             return false
         }
@@ -133,11 +133,11 @@ class Game: NSObject, NSCoding {
         return true
     }
 
-    func encodeWithCoder (aCoder: NSCoder) {
+    func encodeWithCoder(aCoder: NSCoder) {
         aCoder.encodeObject(numbers, forKey: Game.numbersCoderKey)
     }
 
-    private func remainingNumbers () -> Array<Number> {
+    private func remainingNumbers() -> Array<Number> {
         return numbers.filter({ !$0.crossedOut })
     }
 }

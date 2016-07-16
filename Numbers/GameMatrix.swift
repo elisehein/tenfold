@@ -29,7 +29,7 @@ class GameMatrix: UICollectionView {
     var onDraggingEnd: (() -> Void)?
     var onPairingAttempt: ((itemIndex: Int, otherItemIndex: Int) -> Void)?
 
-    init (game: Game) {
+    init(game: Game) {
         self.game = game
 
         super.init(frame: CGRect.zero, collectionViewLayout: layout)
@@ -45,7 +45,7 @@ class GameMatrix: UICollectionView {
         alwaysBounceVertical = true
     }
 
-    func loadNextRound (atIndeces indeces: Array<Int>, completion: (Bool) -> Void ) {
+    func loadNextRound(atIndeces indeces: Array<Int>, completion: (Bool) -> Void ) {
         var indexPaths: Array<NSIndexPath> = []
 
         for index in indeces {
@@ -56,7 +56,7 @@ class GameMatrix: UICollectionView {
         performBatchUpdates(nil, completion: completion)
     }
 
-    func crossOutPair (index: Int, otherIndex: Int) {
+    func crossOutPair(index: Int, otherIndex: Int) {
         let indexPath = NSIndexPath(forItem: index, inSection: 0)
         let otherIndexPath = NSIndexPath(forItem: otherIndex, inSection: 0)
         let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell
@@ -71,7 +71,7 @@ class GameMatrix: UICollectionView {
         deselectItemAtIndexPath(otherIndexPath, animated: false)
     }
 
-    func dismissSelection () {
+    func dismissSelection() {
         let selectedIndexPaths = indexPathsForSelectedItems()
 
         for indexPath in selectedIndexPaths! {
@@ -82,22 +82,22 @@ class GameMatrix: UICollectionView {
         }
     }
 
-    func toggleBounce (shouldBounce: Bool) {
+    func toggleBounce(shouldBounce: Bool) {
         // We should *never* disable bounce if there is a top contentInset
         // otherwise we can't pull up from the first rounds where the matrix isn't full screen yet
         bounces = contentInset.top > 0 || shouldBounce
     }
 
-    func bottomEdgeY () -> CGFloat {
+    func bottomEdgeY() -> CGFloat {
         return frame.size.height - distancePulledUp()
     }
 
-    func pullUpInProgress () -> Bool {
+    func pullUpInProgress() -> Bool {
         let offset = contentOffset.y
         return offset > maxOffsetBeforeBounce() && contentSize.height > 0
     }
 
-    func pullDownInProgress () -> Bool {
+    func pullDownInProgress() -> Bool {
         return contentOffset.y < 0
     }
 
@@ -105,20 +105,20 @@ class GameMatrix: UICollectionView {
         return distancePulledUp() / threshold
     }
 
-    func pullUpDistanceExceeds (threshold: CGFloat) -> Bool {
+    func pullUpDistanceExceeds(threshold: CGFloat) -> Bool {
         return contentOffset.y > maxOffsetBeforeBounce() + threshold
     }
 
-    func cellSize () -> CGSize {
+    func cellSize() -> CGSize {
         let cellWidth = bounds.size.width / CGFloat(Game.numbersPerRow)
         return CGSize(width: cellWidth, height: cellWidth)
     }
 
-    private func distancePulledUp () -> CGFloat {
+    private func distancePulledUp() -> CGFloat {
         return contentOffset.y - maxOffsetBeforeBounce()
     }
 
-    private func maxOffsetBeforeBounce () -> CGFloat {
+    private func maxOffsetBeforeBounce() -> CGFloat {
         return contentSize.height - bounds.size.height
     }
 
