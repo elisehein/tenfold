@@ -15,7 +15,6 @@ class Play: UIViewController {
     private static let maxNextRoundTriggerThreshold: CGFloat = 150
 
     private var game: Game
-    private var pairing: Pairing
 
     private let menu = Menu()
     private let gameMatrix: GameMatrix
@@ -44,7 +43,6 @@ class Play: UIViewController {
         let savedGame = StorageService.restoreGame()
 
         self.game = savedGame == nil ? Game() : savedGame!
-        self.pairing = Pairing(game: game)
         self.gameMatrix = GameMatrix(game: game)
 
         super.init(nibName: nil, bundle: nil)
@@ -151,9 +149,8 @@ class Play: UIViewController {
     }
 
     private func calcNextRoundTriggerThreshold (numberOfItemsInNextRound: Int) -> CGFloat {
-        // TODO maybe matrix shouldn't belong to Game after all?
         let rowHeight = gameMatrix.cellSize().height
-        let threshold = CGFloat(game.matrix.totalRows(numberOfItemsInNextRound)) * rowHeight
+        let threshold = CGFloat(Matrix.singleton.totalRows(numberOfItemsInNextRound)) * rowHeight
         return min(threshold, Play.maxNextRoundTriggerThreshold)
     }
 
@@ -180,7 +177,7 @@ class Play: UIViewController {
     // MARK: Gameplay logic
 
     private func handlePairingAttempt (itemIndex: Int, otherItemIndex: Int) {
-        let successfulPairing = pairing.validate(itemIndex, otherIndex: otherItemIndex)
+        let successfulPairing = Pairing.validate(itemIndex, otherItemIndex, inGame: game)
 
         if successfulPairing {
             game.crossOutPair(itemIndex, otherIndex: otherItemIndex)

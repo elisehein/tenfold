@@ -164,10 +164,10 @@ extension GameMatrix: UICollectionViewDelegateFlowLayout {
         let selectedIndexPaths = collectionView.indexPathsForSelectedItems()!
         let latestSelectedIndexPath = indexPath
 
-        if selectedIndexPaths.count == Game.numbersInPairing {
+        if selectedIndexPaths.count == 2 {
             onPairingAttempt!(itemIndex: selectedIndexPaths[0].item,
                               otherItemIndex: selectedIndexPaths[1].item)
-        } else if selectedIndexPaths.count < Game.numbersInPairing {
+        } else if selectedIndexPaths.count < 2 {
             return
         }
 

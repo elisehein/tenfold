@@ -11,6 +11,7 @@ import Foundation
 class Matrix: NSObject {
 
     private let itemsPerRow: Int
+    static let singleton = Matrix(itemsPerRow: Game.numbersPerRow)
 
     init (itemsPerRow: Int) {
         self.itemsPerRow = itemsPerRow
