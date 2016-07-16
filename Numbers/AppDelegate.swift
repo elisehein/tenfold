@@ -22,8 +22,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
 
         if let window = window {
+            let navigationController = UINavigationController(rootViewController: Play())
+            navigationController.navigationBarHidden = true
+
+            // The following hacks the interactive pop gesture to work with a hidden nav bar
+            navigationController.interactivePopGestureRecognizer?.delegate = nil
+
+            window.rootViewController = navigationController
             window.backgroundColor = UIColor.clearColor()
-            window.rootViewController = Play()
             window.makeKeyAndVisible()
         }
 

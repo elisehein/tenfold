@@ -56,17 +56,30 @@ class Play: UIViewController {
         menu.layer.borderWidth = 1
         menu.layer.borderColor = UIColor.redColor().CGColor
 
+        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.handleSwipe))
+        swipe.direction = .Left
+
+        view.addGestureRecognizer(swipe)
         view.backgroundColor = UIColor.themeColor(.OffWhite)
         view.addSubview(gameMatrix)
         view.addSubview(menu)
     }
 
-    override func viewDidLoad() {
+    func handleSwipe () {
+        navigationController?.pushViewController(Instructions(), animated: true)
+    }
+
+    override func viewDidLoad () {
         super.viewDidLoad()
 
         positionGameMatrix()
         positionMenu()
         initNextRoundMatrix()
+    }
+
+    override func viewWillAppear (animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: true)
     }
 
     private func initNextRoundMatrix () {
