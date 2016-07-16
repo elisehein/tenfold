@@ -32,7 +32,15 @@ extension UIScrollView {
     }
 
     func pullDownInProgress() -> Bool {
-        return contentOffset.y < 0
+        return distancePulledDown() > 0
+    }
+
+    func pullDownDistanceExceeds(threshold: CGFloat) -> Bool {
+        return distancePulledDown() > threshold
+    }
+
+    func distancePulledDown() -> CGFloat {
+        return -(contentOffset.y + contentInset.top)
     }
 
     private func maxOffsetBeforeBounce() -> CGFloat {

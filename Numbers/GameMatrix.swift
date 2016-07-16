@@ -94,6 +94,10 @@ class GameMatrix: UICollectionView {
         }
     }
 
+    func prematureBounceDistanceExceeds(threshold: CGFloat) -> Bool {
+        return contentOffset.y + contentInset.top > threshold
+    }
+
     func toggleBounce(shouldBounce: Bool) {
         // We should *never* disable bounce if there is a top contentInset
         // otherwise we can't pull up from the first rounds where the matrix isn't full screen yet
@@ -103,10 +107,6 @@ class GameMatrix: UICollectionView {
     func cellSize() -> CGSize {
         let cellWidth = bounds.size.width / CGFloat(Game.numbersPerRow)
         return CGSize(width: cellWidth, height: cellWidth)
-    }
-
-    private func maxOffsetBeforeBounce() -> CGFloat {
-        return contentSize.height - bounds.size.height
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -189,7 +189,7 @@ extension GameMatrix: UIScrollViewDelegate {
     }
 
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        if prematureBottomBounceEnabled {
+        if shouldBouncePrematurely() {
             interjectBounce(scrollView)
         }
 
@@ -224,6 +224,16 @@ extension GameMatrix: UIScrollViewDelegate {
     }
 
     func bounceBackIfNeeded () {
-        setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: true)
+        if shouldBouncePrematurely() {
+            setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: true)
+        }
+    }
+
+    // We only want to create a simulated bounce if we would see extra content underneath
+    // the "fold". If the current content size isn't big enough to show anything
+    // extra, we would get a native bounce anyway.
+    func shouldBouncePrematurely () -> Bool {
+        return prematureBottomBounceEnabled &&
+               contentSize.height > (frame.size.height - contentInset.top)
     }
 }

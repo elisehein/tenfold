@@ -13,6 +13,8 @@ class Play: UIViewController {
 
     private static let matrixMargin: CGFloat = 10
     private static let maxNextRoundTriggerThreshold: CGFloat = 150
+    private static let hideMenuPullUpThreshold: CGFloat = 50
+    private static let showMenuPullDownThreshold: CGFloat = 100
 
     private var game: Game
 
@@ -64,7 +66,7 @@ class Play: UIViewController {
         view.backgroundColor = UIColor.themeColor(.OffWhite)
         view.addGestureRecognizer(swipe)
         view.addSubview(gameMatrix)
-//        view.addSubview(menu)
+        view.addSubview(menu)
     }
 
     override func viewDidLoad() {
@@ -97,7 +99,8 @@ class Play: UIViewController {
 
     private func positionMenu() {
         var menuFrame = gameMatrix.frame
-        menuFrame.size.height -= (gameMatrix.frame.size.height - gameMatrix.contentInset.top)
+        let spaceAvailable = -gameMatrix.contentOffset.y
+        menuFrame.size.height = spaceAvailable
         menu.frame = menuFrame
     }
 
@@ -186,12 +189,60 @@ class Play: UIViewController {
         navigationController?.pushViewController(Instructions(), animated: true)
     }
 
+    private func hideMenuIfNeeded () {
+        if !menu.hidden {
+            hideMenu()
+        }
+    }
+
+    private func hideMenu () {
+        gameMatrix.prematureBottomBounceEnabled = false
+
+        UIView.animateWithDuration(0.3,
+                                   delay: 0,
+                                   options: .CurveEaseIn,
+                                   animations: {
+            let topInset = self.gameMatrixTopInset()
+            self.gameMatrix.contentInset.top = topInset
+            self.gameMatrix.setContentOffset(CGPoint(x: 0, y: -topInset), animated: false)
+
+            var offScreenFrame = self.menu.frame
+            offScreenFrame.origin.y = -offScreenFrame.size.height
+            self.menu.frame = offScreenFrame
+            self.menu.alpha = 0
+        }, completion: { _ in
+            self.menu.hidden = true
+        })
+    }
+
+    private func showMenu () {
+        if !menu.hidden {
+            return
+        }
+
+        menu.hidden = false
+        gameMatrix.prematureBottomBounceEnabled = true
+
+        UIView.animateWithDuration(0.3,
+                                   delay: 0,
+                                   options: .CurveEaseIn,
+                                   animations: {
+            let topInset = self.gameMatrixTopInset(showingMenu: true)
+            self.gameMatrix.contentInset.top = topInset
+            self.gameMatrix.setContentOffset(CGPoint(x: 0, y: -topInset), animated: false)
+
+            self.positionMenu()
+            self.menu.alpha = 1
+        }, completion: nil)
+    }
+
     // MARK: Gameplay logic
 
     private func handlePairingAttempt(itemIndex: Int, otherItemIndex: Int) {
         let successfulPairing = Pairing.validate(itemIndex, otherItemIndex, inGame: game)
 
         if successfulPairing {
+            hideMenuIfNeeded()
             game.crossOutPair(itemIndex, otherIndex: otherItemIndex)
             gameMatrix.crossOutPair(itemIndex, otherIndex: otherItemIndex)
             updateState()
@@ -214,6 +265,7 @@ class Play: UIViewController {
             gameMatrix.loadNextRound(atIndeces: nextRoundIndeces,
                                      completion: { _ in
                 self.adjustGameMatrixInset()
+                self.hideMenuIfNeeded()
             })
 
             updateState()
@@ -264,6 +316,10 @@ class Play: UIViewController {
         if gameMatrix.pullUpDistanceExceeds(nextRoundTriggerThreshold!) {
             nextRoundMatrix?.hidden = true
             loadNextRound()
+        } else if gameMatrix.prematureBounceDistanceExceeds(Play.hideMenuPullUpThreshold) {
+            hideMenuIfNeeded()
+        } else if gameMatrix.pullDownDistanceExceeds(Play.showMenuPullDownThreshold) {
+            showMenu()
         }
     }
 
@@ -289,6 +345,8 @@ class Play: UIViewController {
             nextRoundMatrix?.hidden = true
             passedNextRoundThreshold = false
         }
+
+        positionMenu()
     }
 
     required init?(coder aDecoder: NSCoder) {
