@@ -61,8 +61,8 @@ class Play: UIViewController {
 
         view.addGestureRecognizer(swipe)
         view.backgroundColor = UIColor.themeColor(.OffWhite)
-        view.addSubview(gameMatrix)
         view.addSubview(menu)
+        view.addSubview(gameMatrix)
     }
 
     func handleSwipe() {
@@ -93,29 +93,6 @@ class Play: UIViewController {
         nextRoundTriggerThreshold = calcNextRoundTriggerThreshold(nextRoundValues.count)
 
         view.insertSubview(nextRoundMatrix!, belowSubview: gameMatrix)
-    }
-
-    // MARK: Shake gestures
-    // http://stackoverflow.com/questions/10154958/ios-how-to-detect-shake-motion
-
-    override func canBecomeFirstResponder() -> Bool {
-        return true
-    }
-
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        self.becomeFirstResponder()
-    }
-
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.resignFirstResponder()
-    }
-
-    override func motionEnded(motion: UIEventSubtype, withEvent event: UIEvent?) {
-        if motion == .MotionShake {
-            handleTapNewGame()
-        }
     }
 
     // MARK: Positioning
