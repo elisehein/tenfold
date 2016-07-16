@@ -29,6 +29,18 @@ class GameMatrix: UICollectionView {
     var onDraggingEnd: (() -> Void)?
     var onPairingAttempt: ((itemIndex: Int, otherItemIndex: Int) -> Void)?
 
+    // This refers to whether we disallow scrolling beyond what is visible on the screen,
+    // and show a bounce effect instead. This essentially allows a bounce effect to happen
+    // even though we haven't reached the bottom of the content yet.
+    // http://stackoverflow.com/questions/20437657/increasing-uiscrollview-rubber-banding-resistance
+    var prematureBottomBounceEnabled = true
+
+    private static let scaleFactor = UIScreen.mainScreen().scale
+    private static let prematureBounceReductionFactor: CGFloat = 0.2
+
+    private var prevPrematureBounceOffset: CGFloat = 0
+    private var totalPrematureBounceDistance: CGFloat = 0
+
     init(game: Game) {
         self.game = game
 
@@ -169,6 +181,7 @@ extension GameMatrix: UIScrollViewDelegate {
         if !bouncingInProgress {
             toggleBounce(false)
         }
+        bounceBackIfNeeded()
     }
 
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
@@ -176,11 +189,41 @@ extension GameMatrix: UIScrollViewDelegate {
     }
 
     func scrollViewDidScroll(scrollView: UIScrollView) {
+        if prematureBottomBounceEnabled {
+            interjectBounce(scrollView)
+        }
+
         onScroll!()
     }
 
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        bounceBackIfNeeded()
         bouncingInProgress = pullUpInProgress() || pullDownInProgress()
         self.onDraggingEnd!()
+    }
+
+    func interjectBounce (scrollView: UIScrollView) {
+        let currentOffset = round(contentOffset.y + contentInset.top)
+
+        if currentOffset <= 0 {
+            return
+        }
+
+        if currentOffset >= prevPrematureBounceOffset {
+            totalPrematureBounceDistance += currentOffset - prevPrematureBounceOffset
+            prevPrematureBounceOffset = round(GameMatrix.scaleFactor
+                                              * totalPrematureBounceDistance
+                                              * GameMatrix.prematureBounceReductionFactor)
+                                        / GameMatrix.scaleFactor
+            let y = prevPrematureBounceOffset - contentInset.top
+            contentOffset.y = y
+        } else {
+            totalPrematureBounceDistance = currentOffset / GameMatrix.prematureBounceReductionFactor
+            prevPrematureBounceOffset = currentOffset
+        }
+    }
+
+    func bounceBackIfNeeded () {
+        setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: true)
     }
 }

@@ -61,10 +61,10 @@ class Play: UIViewController {
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.handleSwipe))
         swipe.direction = .Left
 
-        view.addGestureRecognizer(swipe)
         view.backgroundColor = UIColor.themeColor(.OffWhite)
+        view.addGestureRecognizer(swipe)
         view.addSubview(gameMatrix)
-        view.addSubview(menu)
+//        view.addSubview(menu)
     }
 
     override func viewDidLoad() {
