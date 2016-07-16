@@ -61,12 +61,8 @@ class Play: UIViewController {
 
         view.addGestureRecognizer(swipe)
         view.backgroundColor = UIColor.themeColor(.OffWhite)
-        view.addSubview(menu)
         view.addSubview(gameMatrix)
-    }
-
-    func handleSwipe() {
-        navigationController?.pushViewController(Instructions(), animated: true)
+        view.addSubview(menu)
     }
 
     override func viewDidLoad() {
@@ -161,7 +157,16 @@ class Play: UIViewController {
     }
 
     private func handleTapInstructions() {
-        print("SHOW INSTRUCTIONS")
+        showInstructions()
+    }
+
+    // This must be public as #selector makes use of obj c
+    func handleSwipe() {
+        showInstructions()
+    }
+
+    private func showInstructions() {
+        navigationController?.pushViewController(Instructions(), animated: true)
     }
 
     // MARK: Gameplay logic
