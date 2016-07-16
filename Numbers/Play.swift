@@ -23,6 +23,8 @@ class Play: UIViewController {
     private var nextRoundTriggerThreshold: CGFloat?
     private var passedNextRoundThreshold = false
 
+    private var viewLoaded = false
+
     private var blimpPlayer: AVAudioPlayer? = {
         var player = AVAudioPlayer()
         if let sound = NSDataAsset(name: "blimp") {
@@ -119,9 +121,24 @@ class Play: UIViewController {
     }
 
     private func adjustGameMatrixInset() {
-        let currentGameHeight = CGFloat(game.totalRows()) * gameMatrix.cellSize().height
-        let topInset = max(0, gameMatrix.frame.size.height - currentGameHeight)
-        gameMatrix.contentInset.top = topInset
+        // Whatever the game state, we initially start with 3 rows showing
+        // in the bottom of the view
+        if !viewLoaded {
+            gameMatrix.contentInset.top = gameMatrixTopInset(showingMenu: true)
+            viewLoaded = true
+        } else {
+            gameMatrix.contentInset.top = gameMatrixTopInset()
+        }
+    }
+
+    private func gameMatrixTopInset (showingMenu showingMenu: Bool = false) -> CGFloat {
+        if showingMenu {
+            let initialGameHeight = 3 * gameMatrix.cellSize().height
+            return gameMatrix.frame.size.height - initialGameHeight
+        } else {
+            let currentGameHeight = CGFloat(game.totalRows()) * gameMatrix.cellSize().height
+            return max(0, gameMatrix.frame.size.height - currentGameHeight)
+        }
     }
 
     private func positionNextRoundMatrix() {
