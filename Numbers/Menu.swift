@@ -15,6 +15,8 @@ class Menu: UIView {
     let newGameButton = UIButton()
     let instructionsButton = UIButton()
 
+    var defaultFrame: CGRect?
+
     var onTapNewGame: (() -> Void)?
     var onTapInstructions: (() -> Void)?
 
@@ -68,16 +70,17 @@ class Menu: UIView {
         onTapInstructions!()
     }
 
-    func showIfNeeded(inPosition endFrame: CGRect,
-                      alongWithAnimationBlock animationBlock: (() -> Void)?,
+    func showIfNeeded(alongWithAnimationBlock animationBlock: (() -> Void)?,
                       completion: (() -> Void)? = nil) {
         guard hidden else { return }
 
+        frame = offScreen(defaultFrame!)
+        print("Menu placed off screen", frame)
         hidden = false
 
         animate({
             animationBlock?()
-            self.frame = endFrame
+            self.frame = self.defaultFrame!
             self.alpha = 1
         }, completion: completion)
     }
@@ -88,9 +91,7 @@ class Menu: UIView {
 
         animate({
             animationBlock?()
-            var offScreenFrame = self.frame
-            offScreenFrame.origin.y = -offScreenFrame.size.height
-            self.frame = offScreenFrame
+            self.frame = self.offScreen(self.frame)
             self.alpha = 0
         }, completion: { _ in
             self.hidden = true
@@ -109,6 +110,12 @@ class Menu: UIView {
             self.animationInProgress = false
             completion?()
         })
+    }
+
+    private func offScreen(rect: CGRect) -> CGRect {
+        var offScreenRect = rect
+        offScreenRect.origin.y = -rect.size.height
+        return offScreenRect
     }
 
     required init?(coder aDecoder: NSCoder) {

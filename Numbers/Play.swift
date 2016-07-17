@@ -75,6 +75,8 @@ class Play: UIViewController {
         positionGameMatrix()
         positionMenu()
         initNextRoundMatrix()
+
+        menu.defaultFrame = menuFrame(fullyVisible: true)
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -209,8 +211,7 @@ class Play: UIViewController {
     private func showMenuIfNeeded () {
         let topInset = self.gameMatrixTopInset(showingMenu: true)
 
-        menu.showIfNeeded(inPosition: menuFrame(fullyVisible: true),
-                          alongWithAnimationBlock: {
+        menu.showIfNeeded(alongWithAnimationBlock: {
             self.gameMatrix.contentInset.top = topInset
         }, completion: {
             self.gameMatrix.setContentOffset(CGPoint(x: 0, y: -topInset), animated: true)
