@@ -204,10 +204,7 @@ extension GameMatrix: UIScrollViewDelegate {
 
     func interjectBounce (scrollView: UIScrollView) {
         let currentOffset = round(contentOffset.y + contentInset.top)
-
-        if currentOffset <= 0 {
-            return
-        }
+        guard currentOffset > 0 else { return }
 
         if currentOffset >= prevPrematureBounceOffset {
             totalPrematureBounceDistance += currentOffset - prevPrematureBounceOffset

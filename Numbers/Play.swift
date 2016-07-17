@@ -216,9 +216,7 @@ class Play: UIViewController {
     }
 
     private func showMenu () {
-        if !menu.hidden {
-            return
-        }
+        guard menu.hidden else { return }
 
         menu.hidden = false
         gameMatrix.prematureBottomBounceEnabled = true
