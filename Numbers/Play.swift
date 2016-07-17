@@ -12,7 +12,8 @@ import AVFoundation
 class Play: UIViewController {
 
     private static let gridInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
-    private static let maxNextRoundTriggerThreshold: CGFloat = 150
+
+    private static let maxNextRoundPullUpThreshold: CGFloat = 150
     private static let hideMenuPullUpThreshold: CGFloat = 50
     private static let showMenuPullDownThreshold: CGFloat = 100
 
@@ -22,7 +23,7 @@ class Play: UIViewController {
     private let gameGrid: GameGrid
     private var nextRoundGrid: NextRoundGrid?
 
-    private var nextRoundTriggerThreshold: CGFloat?
+    private var nextRoundPullUpThreshold: CGFloat?
     private var passedNextRoundThreshold = false
 
     private var viewHasLoaded = false
@@ -52,7 +53,9 @@ class Play: UIViewController {
         super.init(nibName: nil, bundle: nil)
 
         gameGrid.onScroll = handleScroll
-        gameGrid.onDraggingEnd = handleDraggingEnd
+        gameGrid.onPullDownThresholdExceeded = handlePullDownThresholdExceeded
+        gameGrid.onPullUpThresholdExceeded = handlePullUpThresholdExceeded
+        gameGrid.onPrematurePullUpThresholdExceeded = handlePrematurePullUpThresholdExceeded
         gameGrid.onPairingAttempt = handlePairingAttempt
 
         menu.onTapNewGame = handleTapNewGame
@@ -75,6 +78,11 @@ class Play: UIViewController {
         initNextRoundMatrix()
 
         menu.defaultFrame = menuFrame(atStartingPosition: true)
+
+        gameGrid.pullUpThreshold = nextRoundPullUpThreshold!
+        gameGrid.prematurePullUpThreshold = Play.hideMenuPullUpThreshold
+        gameGrid.pullDownThreshold = Play.showMenuPullDownThreshold
+
         viewHasLoaded = true
     }
 
@@ -90,7 +98,7 @@ class Play: UIViewController {
                                       values: nextRoundValues,
                                       frame: gameGrid.frame)
         nextRoundGrid?.hidden = true
-        nextRoundTriggerThreshold = calcNextRoundTriggerThreshold(nextRoundValues.count)
+        nextRoundPullUpThreshold = calcNextRoundPullUpThreshold(nextRoundValues.count)
 
         view.insertSubview(nextRoundGrid!, belowSubview: gameGrid)
     }
@@ -118,10 +126,10 @@ class Play: UIViewController {
         return nextRoundMatrixFrame
     }
 
-    private func calcNextRoundTriggerThreshold(numberOfItemsInNextRound: Int) -> CGFloat {
+    private func calcNextRoundPullUpThreshold(numberOfItemsInNextRound: Int) -> CGFloat {
         let rowHeight = gameGrid.cellSize().height
         let threshold = CGFloat(Matrix.singleton.totalRows(numberOfItemsInNextRound)) * rowHeight
-        return min(threshold, Play.maxNextRoundTriggerThreshold)
+        return min(threshold, Play.maxNextRoundPullUpThreshold)
     }
 
     // MARK: Menu interactions
@@ -184,10 +192,7 @@ class Play: UIViewController {
         if game.makeNextRound(usingNumbers: nextRoundNumbers) {
             let nextRoundEndIndex = nextRoundStartIndex + nextRoundNumbers.count - 1
             let nextRoundIndeces = Array(nextRoundStartIndex...nextRoundEndIndex)
-            gameGrid.loadNextRound(atIndeces: nextRoundIndeces,
-                                     completion: { _ in
-                self.hideMenuIfNeeded()
-            })
+            gameGrid.loadNextRound(atIndeces: nextRoundIndeces, completion: nil)
 
             updateState()
             return true
@@ -225,22 +230,24 @@ class Play: UIViewController {
         let nextRoundValues = game.nextRoundValues()
         nextRoundGrid!.update(startIndex: nextRoundStartIndex(),
                               values: nextRoundValues)
-        nextRoundTriggerThreshold = calcNextRoundTriggerThreshold(nextRoundValues.count)
+        nextRoundPullUpThreshold = calcNextRoundPullUpThreshold(nextRoundValues.count)
         StorageService.saveGame(game)
     }
 
     // MARK: Scrolling interactions
 
-    // NOTE this does not take into account content insets
-    private func handleDraggingEnd() {
-        if gameGrid.pullUpDistanceExceeds(nextRoundTriggerThreshold!) {
-            nextRoundGrid?.hidden = true
-            loadNextRound()
-        } else if gameGrid.prematureBounceDistanceExceeds(Play.hideMenuPullUpThreshold) {
-            hideMenuIfNeeded()
-        } else if gameGrid.pullDownDistanceExceeds(Play.showMenuPullDownThreshold) {
-            showMenuIfNeeded()
-        }
+    private func handlePullDownThresholdExceeded() {
+        showMenuIfNeeded()
+    }
+
+    private func handlePrematurePullUpThresholdExceeded() {
+        hideMenuIfNeeded()
+    }
+
+    private func handlePullUpThresholdExceeded() {
+        nextRoundGrid?.hidden = true
+        loadNextRound()
+        hideMenuIfNeeded()
     }
 
     private func handleScroll() {
@@ -250,7 +257,7 @@ class Play: UIViewController {
             positionNextRoundMatrix()
             nextRoundGrid?.hidden = false
 
-            let pullUpRatio = gameGrid.distancePulledUp() / nextRoundTriggerThreshold!
+            let pullUpRatio = gameGrid.distancePulledUp() / nextRoundPullUpThreshold!
             let proportionVisible = min(1, pullUpRatio)
 
             if proportionVisible == 1 {

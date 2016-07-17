@@ -19,7 +19,9 @@ class GameGrid: Grid {
     private var bouncingInProgress = false
 
     var onScroll: (() -> Void)?
-    var onDraggingEnd: (() -> Void)?
+    var onPullDownThresholdExceeded: (() -> Void)?
+    var onPullUpThresholdExceeded: (() -> Void)?
+    var onPrematurePullUpThresholdExceeded: (() -> Void)?
     var onPairingAttempt: ((itemIndex: Int, otherItemIndex: Int) -> Void)?
 
     // This refers to whether we disallow scrolling beyond what is visible on the screen,
@@ -33,6 +35,10 @@ class GameGrid: Grid {
 
     private var prevPrematureBounceOffset: CGFloat = 0
     private var totalPrematureBounceDistance: CGFloat = 0
+
+    var pullUpThreshold: CGFloat?
+    var pullDownThreshold: CGFloat?
+    var prematurePullUpThreshold: CGFloat?
 
     init(game: Game) {
         self.game = game
@@ -76,7 +82,7 @@ class GameGrid: Grid {
         contentInset.top = topInset(atStartingPosition: enforceStartingPosition)
     }
 
-    func loadNextRound(atIndeces indeces: Array<Int>, completion: (Bool) -> Void ) {
+    func loadNextRound(atIndeces indeces: Array<Int>, completion: ((Bool) -> Void)?) {
         var indexPaths: Array<NSIndexPath> = []
 
         for index in indeces {
@@ -86,7 +92,7 @@ class GameGrid: Grid {
         insertItemsAtIndexPaths(indexPaths)
         performBatchUpdates(nil, completion: { finished in
             self.adjustTopInset()
-            completion(finished)
+            completion?(finished)
         })
     }
 
@@ -264,7 +270,14 @@ extension GameGrid: UIScrollViewDelegate {
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         bounceBackIfNeeded()
         bouncingInProgress = pullUpInProgress() || pullDownInProgress()
-        self.onDraggingEnd?()
+
+        if pullUpDistanceExceeds(pullUpThreshold!) {
+            onPullUpThresholdExceeded?()
+        } else if prematureBounceDistanceExceeds(prematurePullUpThreshold!) {
+            onPrematurePullUpThresholdExceeded?()
+        } else if pullDownDistanceExceeds(pullDownThreshold!) {
+            onPullDownThresholdExceeded?()
+        }
     }
 
     func interjectBounce (scrollView: UIScrollView) {
