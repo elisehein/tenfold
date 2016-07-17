@@ -84,8 +84,7 @@ class Play: UIViewController {
 
     private func initNextRoundMatrix() {
         let nextRoundValues = game.nextRoundValues()
-        nextRoundMatrix = NextRoundMatrix(cellSize: gameMatrix.cellSize(),
-                                          cellsPerRow: Game.numbersPerRow,
+        nextRoundMatrix = NextRoundMatrix(cellsPerRow: Game.numbersPerRow,
                                           startIndex: nextRoundStartIndex(),
                                           values: nextRoundValues,
                                           frame: gameMatrix.frame)
@@ -119,7 +118,7 @@ class Play: UIViewController {
                                       height: view.bounds.size.height)
         }
 
-        let optimalHeight = optimalMatrixHeight()
+        let optimalHeight = gameMatrix.optimalHeight(forAvailableHeight: view.bounds.size.height)
 
         var frame = gameMatrix.frame
         frame.size.height = optimalHeight
@@ -163,13 +162,6 @@ class Play: UIViewController {
         let rowHeight = gameMatrix.cellSize().height
         let threshold = CGFloat(Matrix.singleton.totalRows(numberOfItemsInNextRound)) * rowHeight
         return min(threshold, Play.maxNextRoundTriggerThreshold)
-    }
-
-    private func optimalMatrixHeight() -> CGFloat {
-        let cellHeight = gameMatrix.cellSize().height
-        let availableHeight = view.bounds.size.height
-
-        return availableHeight - (availableHeight % cellHeight)
     }
 
     // MARK: Menu interactions

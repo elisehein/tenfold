@@ -9,17 +9,10 @@
 import Foundation
 import UIKit
 
-class GameMatrix: UICollectionView {
+class GameMatrix: GridView {
 
     private static let cellAnimationDuration = 0.15
     private let reuseIdentifier = "GameNumberCell"
-
-    private let layout: UICollectionViewFlowLayout = {
-        let l = UICollectionViewFlowLayout()
-        l.minimumInteritemSpacing = 0
-        l.minimumLineSpacing = 0
-        return l
-    }()
 
     private var game: Game
 
@@ -44,7 +37,7 @@ class GameMatrix: UICollectionView {
     init(game: Game) {
         self.game = game
 
-        super.init(frame: CGRect.zero, collectionViewLayout: layout)
+        super.init()
 
         registerClass(GameNumberCell.self,
                       forCellWithReuseIdentifier: self.reuseIdentifier)
@@ -121,11 +114,6 @@ class GameMatrix: UICollectionView {
         bounces = contentInset.top > 0 || shouldBounce
     }
 
-    func cellSize() -> CGSize {
-        let cellWidth = bounds.size.width / CGFloat(Game.numbersPerRow)
-        return CGSize(width: cellWidth, height: cellWidth)
-    }
-
     func initialGameHeight() -> CGFloat {
         return heightForGame(withTotalRows: 3)
     }
@@ -134,8 +122,8 @@ class GameMatrix: UICollectionView {
         return heightForGame(withTotalRows: game.totalRows())
     }
 
-    private func heightForGame(withTotalRows totalRows: Int) -> CGFloat {
-        return CGFloat(totalRows) * cellSize().height
+    func optimalHeight(forAvailableHeight availableHeight: CGFloat) -> CGFloat {
+        return availableHeight - (availableHeight % cellSize().height)
     }
 
     required init?(coder aDecoder: NSCoder) {

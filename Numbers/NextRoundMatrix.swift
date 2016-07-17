@@ -39,7 +39,7 @@ import UIKit
  *
  */
 
-class NextRoundMatrix: UICollectionView {
+class NextRoundMatrix: GridView {
 
     // We should store more or as many scale series numbers as there are rows
     private static let totalRows = 8
@@ -51,13 +51,6 @@ class NextRoundMatrix: UICollectionView {
     private let cellsPerRow: Int
     private var values: Array<Int>
     private var startIndex: Int
-
-    private let layout: UICollectionViewFlowLayout = {
-        let l = UICollectionViewFlowLayout()
-        l.minimumLineSpacing = 0
-        l.minimumInteritemSpacing = 0
-        return l
-    }()
 
     var proportionVisible: CGFloat = 0 {
         didSet {
@@ -80,18 +73,16 @@ class NextRoundMatrix: UICollectionView {
         }
     }
 
-    init(cellSize: CGSize,
-          cellsPerRow: Int,
-          startIndex: Int,
-          values: Array<Int>,
-          frame: CGRect) {
+    init(cellsPerRow: Int,
+         startIndex: Int,
+         values: Array<Int>,
+         frame: CGRect) {
 
         self.cellsPerRow = cellsPerRow
         self.values = values
         self.startIndex = startIndex
 
-        layout.itemSize = cellSize
-        super.init(frame: frame, collectionViewLayout: layout)
+        super.init()
         registerClass(NextRoundNumberCell.self,
                       forCellWithReuseIdentifier: self.reuseIdentifier)
 
@@ -141,6 +132,12 @@ extension NextRoundMatrix: UICollectionViewDataSource {
         }
 
         return cell
+    }
+
+    func collectionView(collectionView: UICollectionView,
+                        layout: UICollectionViewLayout,
+                        sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        return cellSize()
     }
 }
 
