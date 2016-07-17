@@ -127,9 +127,9 @@ class Play: UIViewController {
     }
 
     private func calcNextRoundPullUpThreshold(numberOfItemsInNextRound: Int) -> CGFloat {
-        let rowHeight = gameGrid.cellSize().height
-        let threshold = CGFloat(Matrix.singleton.totalRows(numberOfItemsInNextRound)) * rowHeight
-        return min(threshold, Play.maxNextRoundPullUpThreshold)
+        let rowsInNextRound = Matrix.singleton.totalRows(numberOfItemsInNextRound)
+        let threshold = nextRoundGrid?.heightForGame(withTotalRows: rowsInNextRound)
+        return min(threshold!, Play.maxNextRoundPullUpThreshold)
     }
 
     // MARK: Menu interactions
