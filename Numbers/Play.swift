@@ -56,11 +56,9 @@ class Play: UIViewController {
         gameMatrix.onPairingAttempt = handlePairingAttempt
 
         menu.onTapNewGame = handleTapNewGame
-        menu.onTapInstructions = handleTapInstructions
-        menu.layer.borderWidth = 1
-        menu.layer.borderColor = UIColor.redColor().CGColor
+        menu.onTapInstructions = showInstructions
 
-        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.handleSwipe))
+        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.showInstructions))
         swipe.direction = .Left
 
         view.backgroundColor = UIColor.themeColor(.OffWhite)
@@ -145,11 +143,9 @@ class Play: UIViewController {
 
     private func gameMatrixTopInset (showingMenu showingMenu: Bool = false) -> CGFloat {
         if showingMenu {
-            let initialGameHeight = 3 * gameMatrix.cellSize().height
-            return gameMatrix.frame.size.height - initialGameHeight
+            return gameMatrix.frame.size.height - gameMatrix.initialGameHeight()
         } else {
-            let currentGameHeight = CGFloat(game.totalRows()) * gameMatrix.cellSize().height
-            return max(0, gameMatrix.frame.size.height - currentGameHeight)
+            return max(0, gameMatrix.frame.size.height - gameMatrix.currentGameHeight())
         }
     }
 
@@ -179,22 +175,14 @@ class Play: UIViewController {
     // MARK: Menu interactions
 
     private func handleTapNewGame() {
-        game.restart()
-        gameMatrix.reloadData()
-        adjustGameMatrixInset()
-        updateState()
+        game = Game()
+        gameMatrix.restart(withGame: game, beforeReappearing: {
+            self.positionGameMatrix()
+            self.updateState()
+        })
     }
 
-    private func handleTapInstructions() {
-        showInstructions()
-    }
-
-    // This must be public as #selector makes use of obj c
-    func handleSwipe() {
-        showInstructions()
-    }
-
-    private func showInstructions() {
+    func showInstructions() {
         navigationController?.pushViewController(Instructions(), animated: true)
     }
 

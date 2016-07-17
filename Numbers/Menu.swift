@@ -75,7 +75,6 @@ class Menu: UIView {
         guard hidden else { return }
 
         frame = offScreen(defaultFrame!)
-        print("Menu placed off screen", frame)
         hidden = false
 
         animate({

@@ -38,10 +38,6 @@ class Game: NSObject, NSCoding {
         self.numbers = (aDecoder.decodeObjectForKey(Game.numbersCoderKey) as? Array<Number>)!
     }
 
-    func restart() {
-        numbers = Game.initialNumbers()
-    }
-
     func crossOutPair(index: Int, otherIndex: Int) {
         numbers[index].crossedOut = true
         numbers[otherIndex].crossedOut = true

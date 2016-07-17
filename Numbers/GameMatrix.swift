@@ -21,7 +21,7 @@ class GameMatrix: UICollectionView {
         return l
     }()
 
-    private let game: Game
+    private var game: Game
 
     private var bouncingInProgress = false
 
@@ -55,6 +55,23 @@ class GameMatrix: UICollectionView {
         showsHorizontalScrollIndicator = false
         showsVerticalScrollIndicator = false
         alwaysBounceVertical = true
+    }
+
+    func restart(withGame newGame: Game, beforeReappearing: (() -> Void)?) {
+        UIView.animateWithDuration(0.2, delay: 0, options: .CurveEaseIn, animations: {
+            self.alpha = 0
+            var offScreenFrame = self.frame
+            offScreenFrame.origin.y += self.initialGameHeight() * 0.3
+            self.frame = offScreenFrame
+        }, completion: { _ in
+            self.game = newGame
+            self.reloadData()
+            beforeReappearing?()
+
+            UIView.animateWithDuration(0.15, delay: 0.2, options: .CurveEaseIn, animations: {
+                self.alpha = 1
+            }, completion: nil)
+        })
     }
 
     func loadNextRound(atIndeces indeces: Array<Int>, completion: (Bool) -> Void ) {
@@ -107,6 +124,18 @@ class GameMatrix: UICollectionView {
     func cellSize() -> CGSize {
         let cellWidth = bounds.size.width / CGFloat(Game.numbersPerRow)
         return CGSize(width: cellWidth, height: cellWidth)
+    }
+
+    func initialGameHeight() -> CGFloat {
+        return heightForGame(withTotalRows: 3)
+    }
+
+    func currentGameHeight() -> CGFloat {
+        return heightForGame(withTotalRows: game.totalRows())
+    }
+
+    private func heightForGame(withTotalRows totalRows: Int) -> CGFloat {
+        return CGFloat(totalRows) * cellSize().height
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -193,13 +222,13 @@ extension GameMatrix: UIScrollViewDelegate {
             interjectBounce(scrollView)
         }
 
-        onScroll!()
+        onScroll?()
     }
 
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         bounceBackIfNeeded()
         bouncingInProgress = pullUpInProgress() || pullDownInProgress()
-        self.onDraggingEnd!()
+        self.onDraggingEnd?()
     }
 
     func interjectBounce (scrollView: UIScrollView) {
