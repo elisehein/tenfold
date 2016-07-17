@@ -19,8 +19,8 @@ class Play: UIViewController {
     private var game: Game
 
     private let menu = Menu()
-    private let gameMatrix: GameMatrix
-    private var nextRoundMatrix: NextRoundMatrix?
+    private let gameGrid: GameGrid
+    private var nextRoundGrid: NextRoundGrid?
 
     private var nextRoundTriggerThreshold: CGFloat?
     private var passedNextRoundThreshold = false
@@ -47,13 +47,13 @@ class Play: UIViewController {
         let savedGame = StorageService.restoreGame()
 
         self.game = savedGame == nil ? Game() : savedGame!
-        self.gameMatrix = GameMatrix(game: game)
+        self.gameGrid = GameGrid(game: game)
 
         super.init(nibName: nil, bundle: nil)
 
-        gameMatrix.onScroll = handleScroll
-        gameMatrix.onDraggingEnd = handleDraggingEnd
-        gameMatrix.onPairingAttempt = handlePairingAttempt
+        gameGrid.onScroll = handleScroll
+        gameGrid.onDraggingEnd = handleDraggingEnd
+        gameGrid.onPairingAttempt = handlePairingAttempt
 
         menu.onTapNewGame = handleTapNewGame
         menu.onTapInstructions = showInstructions
@@ -63,14 +63,14 @@ class Play: UIViewController {
 
         view.backgroundColor = UIColor.themeColor(.OffWhite)
         view.addGestureRecognizer(swipe)
-        view.addSubview(gameMatrix)
+        view.addSubview(gameGrid)
         view.addSubview(menu)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        positionGameMatrix()
+        positionGameGrid()
         positionMenu()
         initNextRoundMatrix()
 
@@ -84,14 +84,14 @@ class Play: UIViewController {
 
     private func initNextRoundMatrix() {
         let nextRoundValues = game.nextRoundValues()
-        nextRoundMatrix = NextRoundMatrix(cellsPerRow: Game.numbersPerRow,
-                                          startIndex: nextRoundStartIndex(),
-                                          values: nextRoundValues,
-                                          frame: gameMatrix.frame)
-        nextRoundMatrix?.hidden = true
+        nextRoundGrid = NextRoundGrid(cellsPerRow: Game.numbersPerRow,
+                                      startIndex: nextRoundStartIndex(),
+                                      values: nextRoundValues,
+                                      frame: gameGrid.frame)
+        nextRoundGrid?.hidden = true
         nextRoundTriggerThreshold = calcNextRoundTriggerThreshold(nextRoundValues.count)
 
-        view.insertSubview(nextRoundMatrix!, belowSubview: gameMatrix)
+        view.insertSubview(nextRoundGrid!, belowSubview: gameGrid)
     }
 
     // MARK: Positioning
@@ -102,64 +102,64 @@ class Play: UIViewController {
     }
 
     private func menuFrame(fullyVisible fullyVisible: Bool = false) -> CGRect {
-        var menuFrame = gameMatrix.frame
+        var menuFrame = gameGrid.frame
         let spaceAvailable = fullyVisible ?
-                             gameMatrixTopInset(showingMenu: true) :
-                             -gameMatrix.contentOffset.y
+                             gameGridTopInset(showingMenu: true) :
+                             -gameGrid.contentOffset.y
         menuFrame.size.height = spaceAvailable
         return menuFrame
     }
 
-    private func positionGameMatrix() {
-        if CGRectEqualToRect(gameMatrix.frame, CGRect.zero) {
-            gameMatrix.frame = CGRect(x: Play.matrixMargin,
+    private func positionGameGrid() {
+        if CGRectEqualToRect(gameGrid.frame, CGRect.zero) {
+            gameGrid.frame = CGRect(x: Play.matrixMargin,
                                       y: 0,
                                       width: view.bounds.size.width - (2 * Play.matrixMargin),
                                       height: view.bounds.size.height)
         }
 
-        let optimalHeight = gameMatrix.optimalHeight(forAvailableHeight: view.bounds.size.height)
+        let optimalHeight = gameGrid.optimalHeight(forAvailableHeight: view.bounds.size.height)
 
-        var frame = gameMatrix.frame
+        var frame = gameGrid.frame
         frame.size.height = optimalHeight
         frame.origin.y = (view.bounds.size.height - optimalHeight) / 2.0
-        gameMatrix.frame = frame
+        gameGrid.frame = frame
 
-        adjustGameMatrixInset()
-        gameMatrix.toggleBounce(false)
+        adjustGameGridInset()
+        gameGrid.toggleBounce(false)
     }
 
-    private func adjustGameMatrixInset() {
+    private func adjustGameGridInset() {
         // Whatever the game state, we initially start with 3 rows showing
         // in the bottom of the view
         if !viewLoaded {
-            gameMatrix.contentInset.top = gameMatrixTopInset(showingMenu: true)
+            gameGrid.contentInset.top = gameGridTopInset(showingMenu: true)
             viewLoaded = true
         } else {
-            gameMatrix.contentInset.top = gameMatrixTopInset()
+            gameGrid.contentInset.top = gameGridTopInset()
         }
     }
 
-    private func gameMatrixTopInset (showingMenu showingMenu: Bool = false) -> CGFloat {
+    private func gameGridTopInset(showingMenu showingMenu: Bool = false) -> CGFloat {
         if showingMenu {
-            return gameMatrix.frame.size.height - gameMatrix.initialGameHeight()
+            return gameGrid.frame.size.height - gameGrid.initialGameHeight()
         } else {
-            return max(0, gameMatrix.frame.size.height - gameMatrix.currentGameHeight())
+            return max(0, gameGrid.frame.size.height - gameGrid.currentGameHeight())
         }
     }
 
     private func positionNextRoundMatrix() {
-        nextRoundMatrix?.frame = nextRoundMatrixFrame()
+        nextRoundGrid?.frame = nextRoundMatrixFrame()
     }
 
     private func nextRoundMatrixFrame() -> CGRect {
-        var nextRoundMatrixFrame = gameMatrix.frame
-        nextRoundMatrixFrame.origin.y += gameMatrix.bottomEdgeY() - gameMatrix.cellSize().height
+        var nextRoundMatrixFrame = gameGrid.frame
+        nextRoundMatrixFrame.origin.y += gameGrid.bottomEdgeY() - gameGrid.cellSize().height
         return nextRoundMatrixFrame
     }
 
     private func calcNextRoundTriggerThreshold(numberOfItemsInNextRound: Int) -> CGFloat {
-        let rowHeight = gameMatrix.cellSize().height
+        let rowHeight = gameGrid.cellSize().height
         let threshold = CGFloat(Matrix.singleton.totalRows(numberOfItemsInNextRound)) * rowHeight
         return min(threshold, Play.maxNextRoundTriggerThreshold)
     }
@@ -168,8 +168,8 @@ class Play: UIViewController {
 
     private func handleTapNewGame() {
         game = Game()
-        gameMatrix.restart(withGame: game, beforeReappearing: {
-            self.positionGameMatrix()
+        gameGrid.restart(withGame: game, beforeReappearing: {
+            self.positionGameGrid()
             self.updateState()
         })
     }
@@ -180,22 +180,22 @@ class Play: UIViewController {
 
     private func hideMenuIfNeeded () {
         menu.hideIfNeeded(alongWithAnimationBlock: {
-            let topInset = self.gameMatrixTopInset()
-            self.gameMatrix.contentInset.top = topInset
-            self.gameMatrix.setContentOffset(CGPoint(x: 0, y: -topInset), animated: false)
+            let topInset = self.gameGridTopInset()
+            self.gameGrid.contentInset.top = topInset
+            self.gameGrid.setContentOffset(CGPoint(x: 0, y: -topInset), animated: false)
         }, completion: {
-            self.gameMatrix.prematureBottomBounceEnabled = false
+            self.gameGrid.prematureBottomBounceEnabled = false
         })
     }
 
     private func showMenuIfNeeded () {
-        let topInset = self.gameMatrixTopInset(showingMenu: true)
+        let topInset = self.gameGridTopInset(showingMenu: true)
 
         menu.showIfNeeded(alongWithAnimationBlock: {
-            self.gameMatrix.contentInset.top = topInset
+            self.gameGrid.contentInset.top = topInset
         }, completion: {
-            self.gameMatrix.setContentOffset(CGPoint(x: 0, y: -topInset), animated: true)
-            self.gameMatrix.prematureBottomBounceEnabled = true
+            self.gameGrid.setContentOffset(CGPoint(x: 0, y: -topInset), animated: true)
+            self.gameGrid.prematureBottomBounceEnabled = true
         })
     }
 
@@ -207,11 +207,11 @@ class Play: UIViewController {
         if successfulPairing {
             hideMenuIfNeeded()
             game.crossOutPair(itemIndex, otherIndex: otherItemIndex)
-            gameMatrix.crossOutPair(itemIndex, otherIndex: otherItemIndex)
+            gameGrid.crossOutPair(itemIndex, otherIndex: otherItemIndex)
             updateState()
             removeSurplusRows(containingIndeces: [itemIndex, otherItemIndex])
         } else {
-            gameMatrix.dismissSelection()
+            gameGrid.dismissSelection()
         }
     }
 
@@ -225,9 +225,9 @@ class Play: UIViewController {
         if game.makeNextRound(usingNumbers: nextRoundNumbers) {
             let nextRoundEndIndex = nextRoundStartIndex + nextRoundNumbers.count - 1
             let nextRoundIndeces = Array(nextRoundStartIndex...nextRoundEndIndex)
-            gameMatrix.loadNextRound(atIndeces: nextRoundIndeces,
+            gameGrid.loadNextRound(atIndeces: nextRoundIndeces,
                                      completion: { _ in
-                self.adjustGameMatrixInset()
+                self.adjustGameGridInset()
                 self.hideMenuIfNeeded()
             })
 
@@ -259,15 +259,15 @@ class Play: UIViewController {
         game.removeNumbers(atIndeces: indeces)
 
         let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
-        gameMatrix.deleteItemsAtIndexPaths(indexPaths)
-        adjustGameMatrixInset()
+        gameGrid.deleteItemsAtIndexPaths(indexPaths)
+        adjustGameGridInset()
         updateState()
     }
 
     private func updateState() {
         let nextRoundValues = game.nextRoundValues()
-        nextRoundMatrix!.update(startIndex: nextRoundStartIndex(),
-                                values: nextRoundValues)
+        nextRoundGrid!.update(startIndex: nextRoundStartIndex(),
+                              values: nextRoundValues)
         nextRoundTriggerThreshold = calcNextRoundTriggerThreshold(nextRoundValues.count)
         StorageService.saveGame(game)
     }
@@ -276,12 +276,12 @@ class Play: UIViewController {
 
     // NOTE this does not take into account content insets
     private func handleDraggingEnd() {
-        if gameMatrix.pullUpDistanceExceeds(nextRoundTriggerThreshold!) {
-            nextRoundMatrix?.hidden = true
+        if gameGrid.pullUpDistanceExceeds(nextRoundTriggerThreshold!) {
+            nextRoundGrid?.hidden = true
             loadNextRound()
-        } else if gameMatrix.prematureBounceDistanceExceeds(Play.hideMenuPullUpThreshold) {
+        } else if gameGrid.prematureBounceDistanceExceeds(Play.hideMenuPullUpThreshold) {
             hideMenuIfNeeded()
-        } else if gameMatrix.pullDownDistanceExceeds(Play.showMenuPullDownThreshold) {
+        } else if gameGrid.pullDownDistanceExceeds(Play.showMenuPullDownThreshold) {
             showMenuIfNeeded()
         }
     }
@@ -289,11 +289,11 @@ class Play: UIViewController {
     private func handleScroll() {
         guard viewLoaded else { return }
 
-        if gameMatrix.pullUpInProgress() {
+        if gameGrid.pullUpInProgress() {
             positionNextRoundMatrix()
-            nextRoundMatrix?.hidden = false
+            nextRoundGrid?.hidden = false
 
-            let pullUpRatio = gameMatrix.distancePulledUp() / nextRoundTriggerThreshold!
+            let pullUpRatio = gameGrid.distancePulledUp() / nextRoundTriggerThreshold!
             let proportionVisible = min(1, pullUpRatio)
 
             if proportionVisible == 1 {
@@ -305,9 +305,9 @@ class Play: UIViewController {
                 passedNextRoundThreshold = false
             }
 
-            nextRoundMatrix?.proportionVisible = proportionVisible
+            nextRoundGrid?.proportionVisible = proportionVisible
         } else {
-            nextRoundMatrix?.hidden = true
+            nextRoundGrid?.hidden = true
             passedNextRoundThreshold = false
         }
 

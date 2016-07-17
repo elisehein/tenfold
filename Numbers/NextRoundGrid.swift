@@ -1,5 +1,5 @@
 //
-//  NextRoundMatrix.swift
+//  NextRoundGrid.swift
 //  Numbers
 //
 //  Created by Elise Hein on 26/06/2016.
@@ -11,21 +11,21 @@ import UIKit
 
 /*
  *
- * NextRoundMatrix is a UICollectionView with totalRows sections and
+ * NextRoundGrid is a UICollectionView with totalRows sections and
  * cellsPerRow items per section. Its very first section is always hidden
- * behind the very last row of the gameMatrix, so that we can show next round
- * values on the same line as the last gameMatrix line. For example, if the game
+ * behind the very last row of the gameGrid, so that we can show next round
+ * values on the same line as the last gameGrid line. For example, if the game
  * finishes with just three numbers on a line
  *
  * | 6 | 5 | 1 |   |   |   |   |   |   |
  *
- * next round matrix must produce the following, where values correspond to
+ * next round grid must produce the following, where values correspond to
  * [1, 2, 3, 4, 5, 6, 7, 8, 9, 2, 4, 5]
  *
  * |   |   |   | 1 | 2 | 3 | 4 | 5 | 6 |
  * | 7 | 8 | 9 | 2 | 4 | 5 |   |   |   |
  *
- * By putting the matrix below the gameMatrix with the last and first lines overlapping,
+ * By putting the grid below the gameGrid with the last and first lines overlapping,
  * we see a continuation of numbers on the same line.
  *
  * Note that each section has a full set of 9 items, we simply choose which items
@@ -34,12 +34,12 @@ import UIKit
  *
  * Note also that if there are more values given than there are totalRows * 9,
  * we only add values for as long as there are cells to add them to. Because this
- * matrix is what we see when we pull up the game from the bottom, we can be confident
+ * grid is what we see when we pull up the game from the bottom, we can be confident
  * that we'll never see more than a certain number of cells anyway.
  *
  */
 
-class NextRoundMatrix: GridView {
+class NextRoundGrid: Grid {
 
     // We should store more or as many scale series numbers as there are rows
     private static let totalRows = 8
@@ -102,9 +102,9 @@ class NextRoundMatrix: GridView {
     }
 }
 
-extension NextRoundMatrix: UICollectionViewDataSource {
+extension NextRoundGrid: UICollectionViewDataSource {
     func numberOfSectionsInCollectionView (collectionView: UICollectionView) -> Int {
-        return NextRoundMatrix.totalRows
+        return NextRoundGrid.totalRows
     }
 
     func collectionView(collectionView: UICollectionView,
@@ -141,7 +141,7 @@ extension NextRoundMatrix: UICollectionViewDataSource {
     }
 }
 
-extension NextRoundMatrix: UICollectionViewDelegateFlowLayout {
+extension NextRoundGrid: UICollectionViewDelegateFlowLayout {
 
     func collectionView(collectionView: UICollectionView,
                          layout collectionViewLayout: UICollectionViewLayout,
@@ -170,7 +170,7 @@ extension NextRoundMatrix: UICollectionViewDelegateFlowLayout {
         // when proportionVisible is 0, it has its original value, and when proportionVisible
         // is 1, it equals 0.
 
-        let initialSpacing = NextRoundMatrix.scaleSeries[section] * NextRoundMatrix.rowSpacingFactor
+        let initialSpacing = NextRoundGrid.scaleSeries[section] * NextRoundGrid.rowSpacingFactor
         let scaledSpacing = (1.0 - proportionVisible) * initialSpacing
         return UIEdgeInsets(top: 0, left: 0, bottom: scaledSpacing, right: 0)
     }

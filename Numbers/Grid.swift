@@ -1,5 +1,5 @@
 //
-//  GridView.swift
+//  Grid.swift
 //  Numbers
 //
 //  Created by Elise Hein on 17/07/2016.
@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class GridView: UICollectionView {
+class Grid: UICollectionView {
     let layout: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
         l.minimumInteritemSpacing = 0
