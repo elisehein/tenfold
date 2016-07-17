@@ -114,16 +114,24 @@ class GameGrid: Grid {
         bounces = contentInset.top > 0 || shouldBounce
     }
 
-    func initialGameHeight() -> CGFloat {
+    func optimalHeight(forAvailableHeight availableHeight: CGFloat) -> CGFloat {
+        return availableHeight - (availableHeight % cellSize().height)
+    }
+
+    func topInset(atStartingPosition atStartingPosition: Bool = false) -> CGFloat {
+        if atStartingPosition {
+            return frame.size.height - initialGameHeight()
+        } else {
+            return max(0, frame.size.height - currentGameHeight())
+        }
+    }
+
+    private func initialGameHeight() -> CGFloat {
         return heightForGame(withTotalRows: 3)
     }
 
-    func currentGameHeight() -> CGFloat {
+    private func currentGameHeight() -> CGFloat {
         return heightForGame(withTotalRows: game.totalRows())
-    }
-
-    func optimalHeight(forAvailableHeight availableHeight: CGFloat) -> CGFloat {
-        return availableHeight - (availableHeight % cellSize().height)
     }
 
     required init?(coder aDecoder: NSCoder) {

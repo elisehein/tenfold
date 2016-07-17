@@ -104,7 +104,7 @@ class Play: UIViewController {
     private func menuFrame(fullyVisible fullyVisible: Bool = false) -> CGRect {
         var menuFrame = gameGrid.frame
         let spaceAvailable = fullyVisible ?
-                             gameGridTopInset(showingMenu: true) :
+                             gameGrid.topInset(atStartingPosition: true) :
                              -gameGrid.contentOffset.y
         menuFrame.size.height = spaceAvailable
         return menuFrame
@@ -133,18 +133,10 @@ class Play: UIViewController {
         // Whatever the game state, we initially start with 3 rows showing
         // in the bottom of the view
         if !viewLoaded {
-            gameGrid.contentInset.top = gameGridTopInset(showingMenu: true)
+            gameGrid.contentInset.top = gameGrid.topInset(atStartingPosition: true)
             viewLoaded = true
         } else {
-            gameGrid.contentInset.top = gameGridTopInset()
-        }
-    }
-
-    private func gameGridTopInset(showingMenu showingMenu: Bool = false) -> CGFloat {
-        if showingMenu {
-            return gameGrid.frame.size.height - gameGrid.initialGameHeight()
-        } else {
-            return max(0, gameGrid.frame.size.height - gameGrid.currentGameHeight())
+            gameGrid.contentInset.top = gameGrid.topInset()
         }
     }
 
@@ -180,7 +172,7 @@ class Play: UIViewController {
 
     private func hideMenuIfNeeded () {
         menu.hideIfNeeded(alongWithAnimationBlock: {
-            let topInset = self.gameGridTopInset()
+            let topInset = self.gameGrid.topInset()
             self.gameGrid.contentInset.top = topInset
             self.gameGrid.setContentOffset(CGPoint(x: 0, y: -topInset), animated: false)
         }, completion: {
@@ -189,7 +181,7 @@ class Play: UIViewController {
     }
 
     private func showMenuIfNeeded () {
-        let topInset = self.gameGridTopInset(showingMenu: true)
+        let topInset = self.gameGrid.topInset(atStartingPosition: true)
 
         menu.showIfNeeded(alongWithAnimationBlock: {
             self.gameGrid.contentInset.top = topInset
