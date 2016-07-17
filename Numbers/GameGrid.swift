@@ -50,7 +50,9 @@ class GameGrid: Grid {
         alwaysBounceVertical = true
     }
 
-    func restart(withGame newGame: Game, beforeReappearing: (() -> Void)?) {
+    func restart(withGame newGame: Game, completion: (() -> Void)?) {
+        let originalFrame = frame
+
         UIView.animateWithDuration(0.2, delay: 0, options: .CurveEaseIn, animations: {
             self.alpha = 0
             var offScreenFrame = self.frame
@@ -59,12 +61,19 @@ class GameGrid: Grid {
         }, completion: { _ in
             self.game = newGame
             self.reloadData()
-            beforeReappearing?()
+            self.frame = originalFrame
+            self.adjustTopInset()
 
             UIView.animateWithDuration(0.15, delay: 0.2, options: .CurveEaseIn, animations: {
                 self.alpha = 1
-            }, completion: nil)
+            }, completion: { _ in
+                completion?()
+            })
         })
+    }
+
+    func adjustTopInset(enforceStartingPosition enforceStartingPosition: Bool = false) {
+        contentInset.top = topInset(atStartingPosition: enforceStartingPosition)
     }
 
     func loadNextRound(atIndeces indeces: Array<Int>, completion: (Bool) -> Void ) {
@@ -75,7 +84,10 @@ class GameGrid: Grid {
         }
 
         insertItemsAtIndexPaths(indexPaths)
-        performBatchUpdates(nil, completion: completion)
+        performBatchUpdates(nil, completion: { finished in
+            self.adjustTopInset()
+            completion(finished)
+        })
     }
 
     func crossOutPair(index: Int, otherIndex: Int) {
@@ -91,6 +103,11 @@ class GameGrid: Grid {
 
         deselectItemAtIndexPath(indexPath, animated: false)
         deselectItemAtIndexPath(otherIndexPath, animated: false)
+    }
+
+    func removeNumbers(atIndexPaths indexPaths: Array<NSIndexPath>) {
+        deleteItemsAtIndexPaths(indexPaths)
+        adjustTopInset()
     }
 
     func dismissSelection() {
@@ -114,8 +131,24 @@ class GameGrid: Grid {
         bounces = contentInset.top > 0 || shouldBounce
     }
 
-    func optimalHeight(forAvailableHeight availableHeight: CGFloat) -> CGFloat {
-        return availableHeight - (availableHeight % cellSize().height)
+    func initialisePositionWithinFrame(givenFrame: CGRect, withInsets insets: UIEdgeInsets) {
+        let availableSize = CGSize(width: givenFrame.width - insets.left - insets.right,
+                                   height: givenFrame.height - insets.top - insets.bottom)
+        let size = optimalSize(forAvailableSize: availableSize)
+        let y = insets.top + (givenFrame.size.height - size.height) / 2.0
+
+        frame = CGRect(x: insets.left, y: y, width: size.width, height: size.height)
+
+        // Whatever the game state, we initially start with 3 rows showing
+        // in the bottom of the view
+        adjustTopInset(enforceStartingPosition: true)
+        toggleBounce(true)
+    }
+
+    func emptySpaceVisible(atStartingPosition atStartingPosition: Bool = false) -> CGFloat {
+        return atStartingPosition ?
+               topInset(atStartingPosition: true) :
+               -contentOffset.y
     }
 
     func topInset(atStartingPosition atStartingPosition: Bool = false) -> CGFloat {
@@ -124,6 +157,13 @@ class GameGrid: Grid {
         } else {
             return max(0, frame.size.height - currentGameHeight())
         }
+    }
+
+    private func optimalSize(forAvailableSize availableSize: CGSize) -> CGSize {
+        let cellHeight = cellSize(forAvailableWidth: availableSize.width).height
+        let remainder = availableSize.height % cellHeight
+        let height = availableSize.height - remainder
+        return CGSize(width: availableSize.width, height: height)
     }
 
     private func initialGameHeight() -> CGFloat {

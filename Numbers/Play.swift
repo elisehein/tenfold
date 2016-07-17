@@ -11,7 +11,7 @@ import AVFoundation
 
 class Play: UIViewController {
 
-    private static let matrixMargin: CGFloat = 10
+    private static let gridInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
     private static let maxNextRoundTriggerThreshold: CGFloat = 150
     private static let hideMenuPullUpThreshold: CGFloat = 50
     private static let showMenuPullDownThreshold: CGFloat = 100
@@ -25,7 +25,7 @@ class Play: UIViewController {
     private var nextRoundTriggerThreshold: CGFloat?
     private var passedNextRoundThreshold = false
 
-    private var viewLoaded = false
+    private var viewHasLoaded = false
 
     private var blimpPlayer: AVAudioPlayer? = {
         var player = AVAudioPlayer()
@@ -70,11 +70,12 @@ class Play: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        positionGameGrid()
+        gameGrid.initialisePositionWithinFrame(view.bounds, withInsets: Play.gridInsets)
         positionMenu()
         initNextRoundMatrix()
 
-        menu.defaultFrame = menuFrame(fullyVisible: true)
+        menu.defaultFrame = menuFrame(atStartingPosition: true)
+        viewHasLoaded = true
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -101,43 +102,10 @@ class Play: UIViewController {
         menu.frame = menuFrame()
     }
 
-    private func menuFrame(fullyVisible fullyVisible: Bool = false) -> CGRect {
+    private func menuFrame(atStartingPosition atStartingPosition: Bool = false) -> CGRect {
         var menuFrame = gameGrid.frame
-        let spaceAvailable = fullyVisible ?
-                             gameGrid.topInset(atStartingPosition: true) :
-                             -gameGrid.contentOffset.y
-        menuFrame.size.height = spaceAvailable
+        menuFrame.size.height = gameGrid.emptySpaceVisible(atStartingPosition: atStartingPosition)
         return menuFrame
-    }
-
-    private func positionGameGrid() {
-        if CGRectEqualToRect(gameGrid.frame, CGRect.zero) {
-            gameGrid.frame = CGRect(x: Play.matrixMargin,
-                                      y: 0,
-                                      width: view.bounds.size.width - (2 * Play.matrixMargin),
-                                      height: view.bounds.size.height)
-        }
-
-        let optimalHeight = gameGrid.optimalHeight(forAvailableHeight: view.bounds.size.height)
-
-        var frame = gameGrid.frame
-        frame.size.height = optimalHeight
-        frame.origin.y = (view.bounds.size.height - optimalHeight) / 2.0
-        gameGrid.frame = frame
-
-        adjustGameGridInset()
-        gameGrid.toggleBounce(false)
-    }
-
-    private func adjustGameGridInset() {
-        // Whatever the game state, we initially start with 3 rows showing
-        // in the bottom of the view
-        if !viewLoaded {
-            gameGrid.contentInset.top = gameGrid.topInset(atStartingPosition: true)
-            viewLoaded = true
-        } else {
-            gameGrid.contentInset.top = gameGrid.topInset()
-        }
     }
 
     private func positionNextRoundMatrix() {
@@ -160,8 +128,7 @@ class Play: UIViewController {
 
     private func handleTapNewGame() {
         game = Game()
-        gameGrid.restart(withGame: game, beforeReappearing: {
-            self.positionGameGrid()
+        gameGrid.restart(withGame: game, completion: {
             self.updateState()
         })
     }
@@ -219,7 +186,6 @@ class Play: UIViewController {
             let nextRoundIndeces = Array(nextRoundStartIndex...nextRoundEndIndex)
             gameGrid.loadNextRound(atIndeces: nextRoundIndeces,
                                      completion: { _ in
-                self.adjustGameGridInset()
                 self.hideMenuIfNeeded()
             })
 
@@ -251,8 +217,7 @@ class Play: UIViewController {
         game.removeNumbers(atIndeces: indeces)
 
         let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
-        gameGrid.deleteItemsAtIndexPaths(indexPaths)
-        adjustGameGridInset()
+        gameGrid.removeNumbers(atIndexPaths: indexPaths)
         updateState()
     }
 
@@ -279,7 +244,7 @@ class Play: UIViewController {
     }
 
     private func handleScroll() {
-        guard viewLoaded else { return }
+        guard viewHasLoaded else { return }
 
         if gameGrid.pullUpInProgress() {
             positionNextRoundMatrix()
