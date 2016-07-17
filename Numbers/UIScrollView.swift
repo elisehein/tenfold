@@ -72,7 +72,7 @@ extension UIScrollView {
         return -(min(0, contentDistanceFromTopEdge()))
     }
 
-    private func contentDistanceFromTopEdge() -> CGFloat {
+    func contentDistanceFromTopEdge() -> CGFloat {
         return contentOffset.y + contentInset.top
     }
 

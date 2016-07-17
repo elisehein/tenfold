@@ -23,7 +23,6 @@ class Play: UIViewController {
     private let gameGrid: GameGrid
     private var nextRoundGrid: NextRoundGrid?
 
-    private var nextRoundPullUpThreshold: CGFloat?
     private var passedNextRoundThreshold = false
 
     private var viewHasLoaded = false
@@ -79,7 +78,6 @@ class Play: UIViewController {
 
         menu.defaultFrame = menuFrame(atStartingPosition: true)
 
-        gameGrid.pullUpThreshold = nextRoundPullUpThreshold!
         gameGrid.prematurePullUpThreshold = Play.hideMenuPullUpThreshold
         gameGrid.pullDownThreshold = Play.showMenuPullDownThreshold
 
@@ -98,7 +96,7 @@ class Play: UIViewController {
                                       values: nextRoundValues,
                                       frame: gameGrid.frame)
         nextRoundGrid?.hidden = true
-        nextRoundPullUpThreshold = calcNextRoundPullUpThreshold(nextRoundValues.count)
+        gameGrid.pullUpThreshold = calcNextRoundPullUpThreshold(nextRoundValues.count)
 
         view.insertSubview(nextRoundGrid!, belowSubview: gameGrid)
     }
@@ -106,7 +104,7 @@ class Play: UIViewController {
     // MARK: Positioning
 
     private func positionMenu() {
-        guard !menu.animationInProgress else { return }
+//        guard !menu.hidingInProgress else { return }
         menu.frame = menuFrame()
     }
 
@@ -156,14 +154,7 @@ class Play: UIViewController {
     }
 
     private func showMenuIfNeeded () {
-        let topInset = self.gameGrid.topInset(atStartingPosition: true)
-
-        menu.showIfNeeded(alongWithAnimationBlock: {
-            self.gameGrid.contentInset.top = topInset
-        }, completion: {
-            self.gameGrid.setContentOffset(CGPoint(x: 0, y: -topInset), animated: true)
-            self.gameGrid.prematureBottomBounceEnabled = true
-        })
+        menu.prepareToShow()
     }
 
     // MARK: Gameplay logic
@@ -230,7 +221,7 @@ class Play: UIViewController {
         let nextRoundValues = game.nextRoundValues()
         nextRoundGrid!.update(startIndex: nextRoundStartIndex(),
                               values: nextRoundValues)
-        nextRoundPullUpThreshold = calcNextRoundPullUpThreshold(nextRoundValues.count)
+        gameGrid.pullUpThreshold = calcNextRoundPullUpThreshold(nextRoundValues.count)
         StorageService.saveGame(game)
     }
 
@@ -257,7 +248,7 @@ class Play: UIViewController {
             positionNextRoundMatrix()
             nextRoundGrid?.hidden = false
 
-            let pullUpRatio = gameGrid.distancePulledUp() / nextRoundPullUpThreshold!
+            let pullUpRatio = gameGrid.distancePulledUp() / gameGrid.pullUpThreshold!
             let proportionVisible = min(1, pullUpRatio)
 
             if proportionVisible == 1 {

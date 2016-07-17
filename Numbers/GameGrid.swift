@@ -40,6 +40,8 @@ class GameGrid: Grid {
     var pullDownThreshold: CGFloat?
     var prematurePullUpThreshold: CGFloat?
 
+    var shouldHandleDraggingEnd = true
+
     init(game: Game) {
         self.game = game
 
@@ -78,8 +80,9 @@ class GameGrid: Grid {
         })
     }
 
-    func adjustTopInset(enforceStartingPosition enforceStartingPosition: Bool = false) {
+    private func adjustTopInset(enforceStartingPosition enforceStartingPosition: Bool = false) {
         contentInset.top = topInset(atStartingPosition: enforceStartingPosition)
+        prematureBottomBounceEnabled = enforceStartingPosition
     }
 
     func loadNextRound(atIndeces indeces: Array<Int>, completion: ((Bool) -> Void)?) {
@@ -127,11 +130,18 @@ class GameGrid: Grid {
         }
     }
 
-    func prematureBounceDistanceExceeds(threshold: CGFloat) -> Bool {
-        return contentOffset.y + contentInset.top > threshold
+    private func prematurePullUpDistanceExceeds(threshold: CGFloat) -> Bool {
+        // NOTE there is a bug here which causes contentDistanceFromTopEdge()
+        // to evaluate to zero, even though it is not zero. Forcing an evaluation
+        // of the current content insets & offsets using shouldBouncePrematurely()
+        // makes the later evaluation succeed, too (good thing we should be doing
+        // that check anyway)
+        return !pullDownInProgress() &&
+               shouldBouncePrematurely() &&
+               contentDistanceFromTopEdge() > threshold
     }
 
-    func toggleBounce(shouldBounce: Bool) {
+    private func toggleBounce(shouldBounce: Bool) {
         // We should *never* disable bounce if there is a top contentInset
         // otherwise we can't pull up from the first rounds where the grid isn't full screen yet
         bounces = contentInset.top > 0 || shouldBounce
@@ -252,31 +262,47 @@ extension GameGrid: UIScrollViewDelegate {
         if !bouncingInProgress {
             toggleBounce(false)
         }
-        bounceBackIfNeeded()
+
+        if shouldHandleDraggingEnd {
+            bounceBackIfNeeded()
+        }
     }
 
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         toggleBounce(false)
+        decelerationRate = UIScrollViewDecelerationRateNormal
+        shouldHandleDraggingEnd = true
     }
 
     func scrollViewDidScroll(scrollView: UIScrollView) {
         if shouldBouncePrematurely() {
             interjectBounce(scrollView)
         }
-
         onScroll?()
     }
 
+    func scrollViewWillEndDragging(scrollView: UIScrollView,
+                                   withVelocity velocity: CGPoint,
+                                   targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        if pullDownDistanceExceeds(pullDownThreshold!) {
+            shouldHandleDraggingEnd = false
+            adjustTopInset(enforceStartingPosition: true)
+            decelerationRate = UIScrollViewDecelerationRateFast
+            targetContentOffset.memory.y = -contentInset.top
+            onPullDownThresholdExceeded?()
+        }
+    }
+
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        bounceBackIfNeeded()
         bouncingInProgress = pullUpInProgress() || pullDownInProgress()
 
+        guard shouldHandleDraggingEnd else { return }
+
+        bounceBackIfNeeded()
         if pullUpDistanceExceeds(pullUpThreshold!) {
             onPullUpThresholdExceeded?()
-        } else if prematureBounceDistanceExceeds(prematurePullUpThreshold!) {
+        } else if prematurePullUpDistanceExceeds(prematurePullUpThreshold!) {
             onPrematurePullUpThresholdExceeded?()
-        } else if pullDownDistanceExceeds(pullDownThreshold!) {
-            onPullDownThresholdExceeded?()
         }
     }
 

@@ -20,7 +20,7 @@ class Menu: UIView {
     var onTapNewGame: (() -> Void)?
     var onTapInstructions: (() -> Void)?
 
-    var animationInProgress = false
+    var hidingInProgress = false
 
     private static let buttonSize = CGSize(width: 100, height: 40)
 
@@ -70,43 +70,35 @@ class Menu: UIView {
         onTapInstructions!()
     }
 
-    func showIfNeeded(alongWithAnimationBlock animationBlock: (() -> Void)?,
-                      completion: (() -> Void)? = nil) {
+    func prepareToShow() {
         guard hidden else { return }
 
         frame = offScreen(defaultFrame!)
         hidden = false
-
-        animate({
-            animationBlock?()
-            self.frame = self.defaultFrame!
-            self.alpha = 1
-        }, completion: completion)
     }
 
     func hideIfNeeded(alongWithAnimationBlock animationBlock: (() -> Void)?,
                        completion: (() -> Void)? = nil) {
         guard !hidden else { return }
+        hidingInProgress = true
 
         animate({
             animationBlock?()
             self.frame = self.offScreen(self.frame)
-            self.alpha = 0
         }, completion: { _ in
             self.hidden = true
+            self.hidingInProgress = false
             completion?()
         })
     }
 
     private func animate(animations: () -> Void, completion: (() -> Void)? = nil) {
-        animationInProgress = true
         UIView.animateWithDuration(0.3,
                                    delay: 0,
                                    options: .CurveEaseIn,
                                    animations: {
             animations()
         }, completion: { finished in
-            self.animationInProgress = false
             completion?()
         })
     }
