@@ -98,10 +98,17 @@ class Play: UIViewController {
     // MARK: Positioning
 
     private func positionMenu() {
+        guard !menu.animationInProgress else { return }
+        menu.frame = menuFrame()
+    }
+
+    private func menuFrame(fullyVisible fullyVisible: Bool = false) -> CGRect {
         var menuFrame = gameMatrix.frame
-        let spaceAvailable = -gameMatrix.contentOffset.y
+        let spaceAvailable = fullyVisible ?
+                             gameMatrixTopInset(showingMenu: true) :
+                             -gameMatrix.contentOffset.y
         menuFrame.size.height = spaceAvailable
-        menu.frame = menuFrame
+        return menuFrame
     }
 
     private func positionGameMatrix() {
@@ -190,48 +197,25 @@ class Play: UIViewController {
     }
 
     private func hideMenuIfNeeded () {
-        if !menu.hidden {
-            hideMenu()
-        }
-    }
-
-    private func hideMenu () {
-        gameMatrix.prematureBottomBounceEnabled = false
-
-        UIView.animateWithDuration(0.3,
-                                   delay: 0,
-                                   options: .CurveEaseIn,
-                                   animations: {
+        menu.hideIfNeeded(alongWithAnimationBlock: {
             let topInset = self.gameMatrixTopInset()
             self.gameMatrix.contentInset.top = topInset
             self.gameMatrix.setContentOffset(CGPoint(x: 0, y: -topInset), animated: false)
-
-            var offScreenFrame = self.menu.frame
-            offScreenFrame.origin.y = -offScreenFrame.size.height
-            self.menu.frame = offScreenFrame
-            self.menu.alpha = 0
-        }, completion: { _ in
-            self.menu.hidden = true
+        }, completion: {
+            self.gameMatrix.prematureBottomBounceEnabled = false
         })
     }
 
-    private func showMenu () {
-        guard menu.hidden else { return }
+    private func showMenuIfNeeded () {
+        let topInset = self.gameMatrixTopInset(showingMenu: true)
 
-        menu.hidden = false
-        gameMatrix.prematureBottomBounceEnabled = true
-
-        UIView.animateWithDuration(0.3,
-                                   delay: 0,
-                                   options: .CurveEaseIn,
-                                   animations: {
-            let topInset = self.gameMatrixTopInset(showingMenu: true)
+        menu.showIfNeeded(inPosition: menuFrame(fullyVisible: true),
+                          alongWithAnimationBlock: {
             self.gameMatrix.contentInset.top = topInset
-            self.gameMatrix.setContentOffset(CGPoint(x: 0, y: -topInset), animated: false)
-
-            self.positionMenu()
-            self.menu.alpha = 1
-        }, completion: nil)
+        }, completion: {
+            self.gameMatrix.setContentOffset(CGPoint(x: 0, y: -topInset), animated: true)
+            self.gameMatrix.prematureBottomBounceEnabled = true
+        })
     }
 
     // MARK: Gameplay logic
@@ -317,16 +301,18 @@ class Play: UIViewController {
         } else if gameMatrix.prematureBounceDistanceExceeds(Play.hideMenuPullUpThreshold) {
             hideMenuIfNeeded()
         } else if gameMatrix.pullDownDistanceExceeds(Play.showMenuPullDownThreshold) {
-            showMenu()
+            showMenuIfNeeded()
         }
     }
 
     private func handleScroll() {
+        guard viewLoaded else { return }
+
         if gameMatrix.pullUpInProgress() {
             positionNextRoundMatrix()
             nextRoundMatrix?.hidden = false
 
-            let pullUpRatio = gameMatrix.pullUpPercentage(ofThreshold: nextRoundTriggerThreshold!)
+            let pullUpRatio = gameMatrix.distancePulledUp() / nextRoundTriggerThreshold!
             let proportionVisible = min(1, pullUpRatio)
 
             if proportionVisible == 1 {

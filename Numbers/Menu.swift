@@ -18,6 +18,8 @@ class Menu: UIView {
     var onTapNewGame: (() -> Void)?
     var onTapInstructions: (() -> Void)?
 
+    var animationInProgress = false
+
     private static let buttonSize = CGSize(width: 100, height: 40)
 
     init() {
@@ -64,6 +66,49 @@ class Menu: UIView {
 
     func didTapInstructions() {
         onTapInstructions!()
+    }
+
+    func showIfNeeded(inPosition endFrame: CGRect,
+                      alongWithAnimationBlock animationBlock: (() -> Void)?,
+                      completion: (() -> Void)? = nil) {
+        guard hidden else { return }
+
+        hidden = false
+
+        animate({
+            animationBlock?()
+            self.frame = endFrame
+            self.alpha = 1
+        }, completion: completion)
+    }
+
+    func hideIfNeeded(alongWithAnimationBlock animationBlock: (() -> Void)?,
+                       completion: (() -> Void)? = nil) {
+        guard !hidden else { return }
+
+        animate({
+            animationBlock?()
+            var offScreenFrame = self.frame
+            offScreenFrame.origin.y = -offScreenFrame.size.height
+            self.frame = offScreenFrame
+            self.alpha = 0
+        }, completion: { _ in
+            self.hidden = true
+            completion?()
+        })
+    }
+
+    private func animate(animations: () -> Void, completion: (() -> Void)? = nil) {
+        animationInProgress = true
+        UIView.animateWithDuration(0.3,
+                                   delay: 0,
+                                   options: .CurveEaseIn,
+                                   animations: {
+            animations()
+        }, completion: { finished in
+            self.animationInProgress = false
+            completion?()
+        })
     }
 
     required init?(coder aDecoder: NSCoder) {
