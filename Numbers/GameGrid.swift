@@ -129,13 +129,7 @@ class GameGrid: Grid {
     }
 
     private func prematurePullUpDistanceExceeds(threshold: CGFloat) -> Bool {
-        // NOTE there is a bug here which causes contentDistanceFromTopEdge()
-        // to evaluate to zero, even though it is not zero. Forcing an evaluation
-        // of the current content insets & offsets using shouldBouncePrematurely()
-        // makes the later evaluation succeed, too (good thing we should be doing
-        // that check anyway)
-        return shouldBouncePrematurely() &&
-               contentDistanceFromTopEdge() > threshold
+        return contentDistanceFromTopEdge() > threshold
     }
 
     private func toggleBounce(shouldBounce: Bool) {
@@ -291,13 +285,16 @@ extension GameGrid: UIScrollViewDelegate {
             return
         }
 
+        guard shouldBouncePrematurely() else { return }
+
         if prematurePullUpDistanceExceeds(prematurePullUpThreshold!) {
             onPrematurePullUpThresholdExceeded?()
             return
-        } else if shouldBouncePrematurely() {
-            decelerationRate = UIScrollViewDecelerationRateFast
-            targetContentOffset.memory.y = -contentInset.top
         }
+
+        // Bounce back prematurely if all other checks failed
+        decelerationRate = UIScrollViewDecelerationRateFast
+        targetContentOffset.memory.y = -contentInset.top
     }
 
     func interjectBounce (scrollView: UIScrollView) {
