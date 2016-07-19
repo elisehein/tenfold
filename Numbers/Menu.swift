@@ -28,15 +28,17 @@ class Menu: UIView {
         super.init(frame: CGRect.zero)
 
         newGameButton.frame = CGRect(origin: CGPoint.zero, size: Menu.buttonSize)
-        newGameButton.backgroundColor = UIColor.blueColor()
-        newGameButton.setTitle("New game", forState: .Normal)
+        newGameButton.setTitle("Start over", forState: .Normal)
+        newGameButton.titleLabel!.font = UIFont.themeFontWithSize(16)
+        newGameButton.setTitleColor(UIColor.themeColor(.OffBlack), forState: .Normal)
         newGameButton.addTarget(self,
                                 action: #selector(Menu.didTapNewGame),
                                 forControlEvents: .TouchUpInside)
 
         instructionsButton.frame = CGRect(origin: CGPoint.zero, size: Menu.buttonSize)
-        instructionsButton.backgroundColor = UIColor.blueColor()
-        instructionsButton.setTitle("Instructions", forState: .Normal)
+        instructionsButton.setTitle("How it works", forState: .Normal)
+        instructionsButton.titleLabel!.font = UIFont.themeFontWithSize(16)
+        instructionsButton.setTitleColor(UIColor.themeColor(.OffBlack), forState: .Normal)
         instructionsButton.addTarget(self,
                                      action: #selector(Menu.didTapInstructions),
                                      forControlEvents: .TouchUpInside)
@@ -77,18 +79,15 @@ class Menu: UIView {
         hidden = false
     }
 
-    func hideIfNeeded(alongWithAnimationBlock animationBlock: (() -> Void)?,
-                       completion: (() -> Void)? = nil) {
+    func hideIfNeeded() {
         guard !hidden else { return }
         hidingInProgress = true
 
         animate({
-            animationBlock?()
             self.frame = self.offScreen(self.frame)
         }, completion: { _ in
             self.hidden = true
             self.hidingInProgress = false
-            completion?()
         })
     }
 

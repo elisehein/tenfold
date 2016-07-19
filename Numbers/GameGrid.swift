@@ -28,7 +28,7 @@ class GameGrid: Grid {
     // and show a bounce effect instead. This essentially allows a bounce effect to happen
     // even though we haven't reached the bottom of the content yet.
     // http://stackoverflow.com/questions/20437657/increasing-uiscrollview-rubber-banding-resistance
-    var prematureBottomBounceEnabled = true
+    var gridAtStartingPosition = true
 
     private static let scaleFactor = UIScreen.mainScreen().scale
     private static let prematureBounceReductionFactor: CGFloat = 0.2
@@ -36,6 +36,8 @@ class GameGrid: Grid {
     private var prevPrematureBounceOffset: CGFloat = 0
     private var totalPrematureBounceDistance: CGFloat = 0
 
+    // The grid snaps back to its starting position when the pullDownThreshold is exceeded, 
+    // and back to normal game position when the pullUpThreshold is exceeded
     var pullUpThreshold: CGFloat?
     var pullDownThreshold: CGFloat?
     var prematurePullUpThreshold: CGFloat?
@@ -80,7 +82,7 @@ class GameGrid: Grid {
 
     private func adjustTopInset(enforceStartingPosition enforceStartingPosition: Bool = false) {
         contentInset.top = topInset(atStartingPosition: enforceStartingPosition)
-        prematureBottomBounceEnabled = enforceStartingPosition
+        gridAtStartingPosition = enforceStartingPosition
     }
 
     func loadNextRound(atIndeces indeces: Array<Int>, completion: ((Bool) -> Void)?) {
@@ -288,6 +290,9 @@ extension GameGrid: UIScrollViewDelegate {
         guard shouldBouncePrematurely() else { return }
 
         if prematurePullUpDistanceExceeds(prematurePullUpThreshold!) {
+            adjustTopInset()
+            decelerationRate = UIScrollViewDecelerationRateFast
+            targetContentOffset.memory.y = -contentInset.top
             onPrematurePullUpThresholdExceeded?()
             return
         }
@@ -319,7 +324,7 @@ extension GameGrid: UIScrollViewDelegate {
     // the "fold". If the current content size isn't big enough to show anything
     // extra, we would get a native bounce anyway.
     func shouldBouncePrematurely () -> Bool {
-        return prematureBottomBounceEnabled &&
+        return gridAtStartingPosition &&
                contentSize.height > (frame.size.height - contentInset.top)
     }
 }

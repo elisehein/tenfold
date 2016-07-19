@@ -153,13 +153,7 @@ class Play: UIViewController {
     }
 
     private func hideMenuIfNeeded () {
-        menu.hideIfNeeded(alongWithAnimationBlock: {
-            let topInset = self.gameGrid.topInset()
-            self.gameGrid.contentInset.top = topInset
-            self.gameGrid.setContentOffset(CGPoint(x: 0, y: -topInset), animated: false)
-        }, completion: {
-            self.gameGrid.prematureBottomBounceEnabled = false
-        })
+        menu.hideIfNeeded()
     }
 
     private func showMenuIfNeeded () {
