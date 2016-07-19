@@ -110,7 +110,16 @@ class Play: UIViewController {
 
     private func menuFrame(atStartingPosition atStartingPosition: Bool = false) -> CGRect {
         var menuFrame = gameGrid.frame
-        menuFrame.size.height = gameGrid.emptySpaceVisible(atStartingPosition: atStartingPosition)
+
+        let maxMenuHeight = gameGrid.emptySpaceVisible(atStartingPosition: true)
+
+        if atStartingPosition {
+            menuFrame.size.height = maxMenuHeight
+        } else {
+            let requestedMenuHeight = gameGrid.emptySpaceVisible()
+            menuFrame.size.height = min(maxMenuHeight, requestedMenuHeight)
+        }
+
         return menuFrame
     }
 
