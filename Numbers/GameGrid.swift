@@ -20,8 +20,8 @@ class GameGrid: Grid {
 
     var onScroll: (() -> Void)?
     var onPullUpThresholdExceeded: (() -> Void)?
-    var onSnappedToGameplayPosition: (() -> Void)?
-    var onSnappedToStartingPosition: (() -> Void)?
+    var onWillSnapToGameplayPosition: (() -> Void)?
+    var onWillSnapToStartingPosition: (() -> Void)?
     var onPairingAttempt: ((itemIndex: Int, otherItemIndex: Int) -> Void)?
 
     var pullUpThreshold: CGFloat?
@@ -125,16 +125,6 @@ class GameGrid: Grid {
         }
     }
 
-    private func prematurePullUpDistanceExceeds(threshold: CGFloat) -> Bool {
-        return contentDistanceFromTopEdge() > threshold
-    }
-
-    private func toggleBounce(shouldBounce: Bool) {
-        // We should *never* disable bounce if there is a top contentInset
-        // otherwise we can't pull up from the first rounds where the grid isn't full screen yet
-        bounces = contentInset.top > 0 || shouldBounce
-    }
-
     func initialisePositionWithinFrame(givenFrame: CGRect, withInsets insets: UIEdgeInsets) {
         let availableSize = CGSize(width: givenFrame.width - insets.left - insets.right,
                                    height: givenFrame.height - insets.top - insets.bottom)
@@ -155,7 +145,7 @@ class GameGrid: Grid {
                -contentOffset.y
     }
 
-    func topInset(atStartingPosition atStartingPosition: Bool = false) -> CGFloat {
+    private func topInset(atStartingPosition atStartingPosition: Bool = false) -> CGFloat {
         if atStartingPosition {
             return frame.size.height - initialGameHeight()
         } else {
@@ -184,12 +174,63 @@ class GameGrid: Grid {
     }
 
     private func positionGridForGameplay() {
+        // The reason this looks so obscure is because scroll views are SHIT.
+        // This specific combination of setting an inset and offset is the only one
+        // that results in an animation that STOPS when it reaches the top of the view
+        let nextTopInset = self.topInset()
         UIView.animateWithDuration(0.3, animations: {
-            self.adjustTopInset()
-            self.setContentOffset(CGPoint(x: 0, y: -self.contentInset.top), animated: false)
+            self.contentInset.top = nextTopInset
+            self.setContentOffset(CGPoint(x: 0, y: -nextTopInset), animated: false)
+        }, completion: { _ in
+            self.gridAtStartingPosition = false
         })
 
-        onSnappedToGameplayPosition?()
+        onWillSnapToGameplayPosition?()
+    }
+
+    private func prematurePullUpDistanceExceeds(threshold: CGFloat) -> Bool {
+        return shouldBouncePrematurely() && contentDistanceFromTopEdge() > threshold
+    }
+
+    private func toggleBounce(shouldBounce: Bool) {
+        // We should *never* disable bounce if there is a top contentInset
+        // otherwise we can't pull up from the first rounds where the grid isn't full screen yet
+        bounces = contentInset.top > 0 || shouldBounce
+    }
+
+    private func interjectBounce (scrollView: UIScrollView) {
+        let currentOffset = round(contentOffset.y + contentInset.top)
+        guard currentOffset > 0 else { return }
+
+        if currentOffset >= prevPrematureBounceOffset {
+            totalPrematureBounceDistance += currentOffset - prevPrematureBounceOffset
+            prevPrematureBounceOffset = round(GameGrid.scaleFactor
+                                              * totalPrematureBounceDistance
+                                              * GameGrid.prematureBounceReductionFactor)
+                                        / GameGrid.scaleFactor
+            let y = prevPrematureBounceOffset - contentInset.top
+            contentOffset.y = y
+        } else {
+            totalPrematureBounceDistance = currentOffset / GameGrid.prematureBounceReductionFactor
+            prevPrematureBounceOffset = currentOffset
+        }
+    }
+
+    private func bounceBack() {
+        setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: true)
+    }
+
+    // This refers to whether we disallow scrolling beyond what is visible on the screen,
+    // and show a bounce effect instead. This essentially allows a bounce effect to happen
+    // even though we haven't reached the bottom of the content yet.
+    // http://stackoverflow.com/questions/20437657/increasing-uiscrollview-rubber-banding-resistance
+    private func shouldBouncePrematurely () -> Bool {
+        // We only want to create a simulated bounce if we would see extra content underneath
+        // the "fold". If the current content size isn't big enough to show anything
+        // extra, we would get a native bounce anyway.
+        return !pullDownInProgress() &&
+               gridAtStartingPosition &&
+               contentSize.height > (frame.size.height - contentInset.top)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -258,8 +299,49 @@ extension GameGrid: UICollectionViewDelegateFlowLayout {
 }
 
 extension GameGrid: UIScrollViewDelegate {
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        if shouldBouncePrematurely() {
+            interjectBounce(scrollView)
+        }
+        onScroll?()
+    }
+
     func scrollViewWillBeginDragging(scrollView: UIScrollView) {
         toggleBounce(true)
+    }
+
+    func scrollViewWillEndDragging(scrollView: UIScrollView,
+                                   withVelocity velocity: CGPoint,
+                                   targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        if pullDownDistanceExceeds(snapToStartingPositionThreshold!) {
+            adjustTopInset(enforceStartingPosition: true)
+            decelerationRate = UIScrollViewDecelerationRateFast
+            targetContentOffset.memory.y = -contentInset.top
+            onWillSnapToStartingPosition?()
+            currentScrollCycleHandled = true
+        } else {
+            currentScrollCycleHandled = false
+        }
+    }
+
+    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        bouncingInProgress = pullUpInProgress() || pullDownInProgress()
+
+        guard !currentScrollCycleHandled else { return }
+
+        if pullUpDistanceExceeds(pullUpThreshold!) {
+            onPullUpThresholdExceeded?()
+            return
+        }
+
+        guard shouldBouncePrematurely() else { return }
+
+        if prematurePullUpDistanceExceeds(snapToGameplayPositionThreshold!) {
+            positionGridForGameplay()
+            return
+        }
+
+        bounceBack()
     }
 
     func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
@@ -275,82 +357,5 @@ extension GameGrid: UIScrollViewDelegate {
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         toggleBounce(false)
         decelerationRate = UIScrollViewDecelerationRateNormal
-    }
-
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        if shouldBouncePrematurely() {
-            interjectBounce(scrollView)
-        }
-        onScroll?()
-    }
-
-    func scrollViewWillEndDragging(scrollView: UIScrollView,
-                                   withVelocity velocity: CGPoint,
-                                   targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        bouncingInProgress = pullUpInProgress() || pullDownInProgress()
-
-        if pullDownDistanceExceeds(snapToStartingPositionThreshold!) {
-            adjustTopInset(enforceStartingPosition: true)
-            decelerationRate = UIScrollViewDecelerationRateFast
-            targetContentOffset.memory.y = -contentInset.top
-            onSnappedToStartingPosition?()
-            currentScrollCycleHandled = true
-        } else {
-            currentScrollCycleHandled = false
-        }
-    }
-
-    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        guard !currentScrollCycleHandled else { return }
-
-        if pullUpDistanceExceeds(pullUpThreshold!) {
-            onPullUpThresholdExceeded?()
-            return
-        }
-
-        guard shouldBouncePrematurely() else { return }
-
-        if prematurePullUpDistanceExceeds(snapToGameplayPositionThreshold!) {
-            positionGridForGameplay()
-            onSnappedToGameplayPosition?()
-            return
-        }
-
-        bounceBack()
-    }
-
-    private func interjectBounce (scrollView: UIScrollView) {
-        let currentOffset = round(contentOffset.y + contentInset.top)
-        guard currentOffset > 0 else { return }
-
-        if currentOffset >= prevPrematureBounceOffset {
-            totalPrematureBounceDistance += currentOffset - prevPrematureBounceOffset
-            prevPrematureBounceOffset = round(GameGrid.scaleFactor
-                                              * totalPrematureBounceDistance
-                                              * GameGrid.prematureBounceReductionFactor)
-                                        / GameGrid.scaleFactor
-            let y = prevPrematureBounceOffset - contentInset.top
-            contentOffset.y = y
-        } else {
-            totalPrematureBounceDistance = currentOffset / GameGrid.prematureBounceReductionFactor
-            prevPrematureBounceOffset = currentOffset
-        }
-    }
-
-    private func bounceBack() {
-        setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: true)
-    }
-
-    // This refers to whether we disallow scrolling beyond what is visible on the screen,
-    // and show a bounce effect instead. This essentially allows a bounce effect to happen
-    // even though we haven't reached the bottom of the content yet.
-    // http://stackoverflow.com/questions/20437657/increasing-uiscrollview-rubber-banding-resistance
-    private func shouldBouncePrematurely () -> Bool {
-        // We only want to create a simulated bounce if we would see extra content underneath
-        // the "fold". If the current content size isn't big enough to show anything
-        // extra, we would get a native bounce anyway.
-        return !pullDownInProgress() &&
-               gridAtStartingPosition &&
-               contentSize.height > (frame.size.height - contentInset.top)
     }
 }

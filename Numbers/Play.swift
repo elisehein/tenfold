@@ -15,7 +15,7 @@ class Play: UIViewController {
 
     private static let maxNextRoundPullUpThreshold: CGFloat = 150
     private static let hideMenuPullUpThreshold: CGFloat = 50
-    private static let showMenuPullDownThreshold: CGFloat = 100
+    private static let showMenuPullDownThreshold: CGFloat = 70
 
     private var game: Game
 
@@ -52,9 +52,9 @@ class Play: UIViewController {
         super.init(nibName: nil, bundle: nil)
 
         gameGrid.onScroll = handleScroll
-        gameGrid.onSnappedToStartingPosition = handleSnappedToStartingPosition
         gameGrid.onPullUpThresholdExceeded = handlePullUpThresholdExceeded
-        gameGrid.onSnappedToGameplayPosition = handleSnappedToGameplayPosition
+        gameGrid.onWillSnapToStartingPosition = handleWillSnapToStartingPosition
+        gameGrid.onWillSnapToGameplayPosition = handleWillSnapToGameplayPosition
         gameGrid.onPairingAttempt = handlePairingAttempt
 
         menu.onTapNewGame = handleTapNewGame
@@ -104,7 +104,6 @@ class Play: UIViewController {
     // MARK: Positioning
 
     private func positionMenu() {
-//        guard !menu.hidingInProgress else { return }
         menu.frame = menuFrame()
     }
 
@@ -152,21 +151,12 @@ class Play: UIViewController {
         navigationController?.pushViewController(Instructions(), animated: true)
     }
 
-    private func hideMenuIfNeeded () {
-        menu.hideIfNeeded()
-    }
-
-    private func showMenuIfNeeded () {
-        menu.prepareToShow()
-    }
-
     // MARK: Gameplay logic
 
     private func handlePairingAttempt(itemIndex: Int, otherItemIndex: Int) {
         let successfulPairing = Pairing.validate(itemIndex, otherItemIndex, inGame: game)
 
         if successfulPairing {
-            hideMenuIfNeeded()
             game.crossOutPair(itemIndex, otherIndex: otherItemIndex)
             gameGrid.crossOutPair(itemIndex, otherIndex: otherItemIndex)
             updateState()
@@ -230,18 +220,18 @@ class Play: UIViewController {
 
     // MARK: Scrolling interactions
 
-    private func handleSnappedToStartingPosition() {
-        showMenuIfNeeded()
+    private func handleWillSnapToStartingPosition() {
+        menu.prepareToShow()
     }
 
-    private func handleSnappedToGameplayPosition() {
-        hideMenuIfNeeded()
+    private func handleWillSnapToGameplayPosition() {
+        menu.prepareToHide()
     }
 
     private func handlePullUpThresholdExceeded() {
         nextRoundGrid?.hidden = true
         loadNextRound()
-        hideMenuIfNeeded()
+        menu.prepareToHide()
     }
 
     private func handleScroll() {
