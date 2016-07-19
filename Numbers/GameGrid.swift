@@ -19,9 +19,9 @@ class GameGrid: Grid {
     private var bouncingInProgress = false
 
     var onScroll: (() -> Void)?
-    var onPullDownThresholdExceeded: (() -> Void)?
     var onPullUpThresholdExceeded: (() -> Void)?
-    var onPrematurePullUpThresholdExceeded: (() -> Void)?
+    var onSnappedToGameplayPosition: (() -> Void)?
+    var onSnappedToStartingPosition: (() -> Void)?
     var onPairingAttempt: ((itemIndex: Int, otherItemIndex: Int) -> Void)?
 
     // This refers to whether we disallow scrolling beyond what is visible on the screen,
@@ -36,7 +36,7 @@ class GameGrid: Grid {
     private var prevPrematureBounceOffset: CGFloat = 0
     private var totalPrematureBounceDistance: CGFloat = 0
 
-    // The grid snaps back to its starting position when the pullDownThreshold is exceeded, 
+    // The grid snaps back to its starting position when the pullDownThreshold is exceeded,
     // and back to normal game position when the pullUpThreshold is exceeded
     var pullUpThreshold: CGFloat?
     var pullDownThreshold: CGFloat?
@@ -183,6 +183,17 @@ class GameGrid: Grid {
         return heightForGame(withTotalRows: game.totalRows())
     }
 
+    private func ensureGridPositionedForGameplay() {
+        guard gridAtStartingPosition else { return }
+
+        UIView.animateWithDuration(0.3, animations: {
+            self.adjustTopInset()
+            self.setContentOffset(CGPoint(x: 0, y: -self.contentInset.top), animated: false)
+        })
+
+        onSnappedToGameplayPosition?()
+    }
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -222,6 +233,8 @@ extension GameGrid: UICollectionViewDelegateFlowLayout {
 
     func collectionView(collectionView: UICollectionView,
                         didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        ensureGridPositionedForGameplay()
+
         let selectedIndexPaths = collectionView.indexPathsForSelectedItems()!
         let latestSelectedIndexPath = indexPath
 
@@ -278,7 +291,7 @@ extension GameGrid: UIScrollViewDelegate {
             adjustTopInset(enforceStartingPosition: true)
             decelerationRate = UIScrollViewDecelerationRateFast
             targetContentOffset.memory.y = -contentInset.top
-            onPullDownThresholdExceeded?()
+            onSnappedToStartingPosition?()
             return
         }
 
@@ -293,7 +306,7 @@ extension GameGrid: UIScrollViewDelegate {
             adjustTopInset()
             decelerationRate = UIScrollViewDecelerationRateFast
             targetContentOffset.memory.y = -contentInset.top
-            onPrematurePullUpThresholdExceeded?()
+            onSnappedToGameplayPosition?()
             return
         }
 

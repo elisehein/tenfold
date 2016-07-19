@@ -52,9 +52,9 @@ class Play: UIViewController {
         super.init(nibName: nil, bundle: nil)
 
         gameGrid.onScroll = handleScroll
-        gameGrid.onPullDownThresholdExceeded = handlePullDownThresholdExceeded
+        gameGrid.onSnappedToStartingPosition = handleSnappedToStartingPosition
         gameGrid.onPullUpThresholdExceeded = handlePullUpThresholdExceeded
-        gameGrid.onPrematurePullUpThresholdExceeded = handlePrematurePullUpThresholdExceeded
+        gameGrid.onSnappedToGameplayPosition = handleSnappedToGameplayPosition
         gameGrid.onPairingAttempt = handlePairingAttempt
 
         menu.onTapNewGame = handleTapNewGame
@@ -230,11 +230,11 @@ class Play: UIViewController {
 
     // MARK: Scrolling interactions
 
-    private func handlePullDownThresholdExceeded() {
+    private func handleSnappedToStartingPosition() {
         showMenuIfNeeded()
     }
 
-    private func handlePrematurePullUpThresholdExceeded() {
+    private func handleSnappedToGameplayPosition() {
         hideMenuIfNeeded()
     }
 
