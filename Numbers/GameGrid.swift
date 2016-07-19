@@ -24,11 +24,8 @@ class GameGrid: Grid {
     var onSnappedToStartingPosition: (() -> Void)?
     var onPairingAttempt: ((itemIndex: Int, otherItemIndex: Int) -> Void)?
 
-    // This refers to whether we disallow scrolling beyond what is visible on the screen,
-    // and show a bounce effect instead. This essentially allows a bounce effect to happen
-    // even though we haven't reached the bottom of the content yet.
-    // http://stackoverflow.com/questions/20437657/increasing-uiscrollview-rubber-banding-resistance
     var gridAtStartingPosition = true
+    var currentScrollCycleHandled = false
 
     private static let scaleFactor = UIScreen.mainScreen().scale
     private static let prematureBounceReductionFactor: CGFloat = 0.2
@@ -185,7 +182,10 @@ class GameGrid: Grid {
 
     private func ensureGridPositionedForGameplay() {
         guard gridAtStartingPosition else { return }
+        positionGridForGameplay()
+    }
 
+    private func positionGridForGameplay() {
         UIView.animateWithDuration(0.3, animations: {
             self.adjustTopInset()
             self.setContentOffset(CGPoint(x: 0, y: -self.contentInset.top), animated: false)
@@ -268,6 +268,10 @@ extension GameGrid: UIScrollViewDelegate {
         if !bouncingInProgress {
             toggleBounce(false)
         }
+
+        if !currentScrollCycleHandled && shouldBouncePrematurely() {
+            bounceBack()
+        }
     }
 
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
@@ -292,8 +296,14 @@ extension GameGrid: UIScrollViewDelegate {
             decelerationRate = UIScrollViewDecelerationRateFast
             targetContentOffset.memory.y = -contentInset.top
             onSnappedToStartingPosition?()
-            return
+            currentScrollCycleHandled = true
+        } else {
+            currentScrollCycleHandled = false
         }
+    }
+
+    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        guard !currentScrollCycleHandled else { return }
 
         if pullUpDistanceExceeds(pullUpThreshold!) {
             onPullUpThresholdExceeded?()
@@ -303,19 +313,15 @@ extension GameGrid: UIScrollViewDelegate {
         guard shouldBouncePrematurely() else { return }
 
         if prematurePullUpDistanceExceeds(prematurePullUpThreshold!) {
-            adjustTopInset()
-            decelerationRate = UIScrollViewDecelerationRateFast
-            targetContentOffset.memory.y = -contentInset.top
+            positionGridForGameplay()
             onSnappedToGameplayPosition?()
             return
         }
 
-        // Bounce back prematurely if all other checks failed
-        decelerationRate = UIScrollViewDecelerationRateFast
-        targetContentOffset.memory.y = -contentInset.top
+        bounceBack()
     }
 
-    func interjectBounce (scrollView: UIScrollView) {
+    private func interjectBounce (scrollView: UIScrollView) {
         let currentOffset = round(contentOffset.y + contentInset.top)
         guard currentOffset > 0 else { return }
 
@@ -333,11 +339,20 @@ extension GameGrid: UIScrollViewDelegate {
         }
     }
 
-    // We only want to create a simulated bounce if we would see extra content underneath
-    // the "fold". If the current content size isn't big enough to show anything
-    // extra, we would get a native bounce anyway.
-    func shouldBouncePrematurely () -> Bool {
-        return gridAtStartingPosition &&
+    private func bounceBack() {
+        setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: true)
+    }
+
+    // This refers to whether we disallow scrolling beyond what is visible on the screen,
+    // and show a bounce effect instead. This essentially allows a bounce effect to happen
+    // even though we haven't reached the bottom of the content yet.
+    // http://stackoverflow.com/questions/20437657/increasing-uiscrollview-rubber-banding-resistance
+    private func shouldBouncePrematurely () -> Bool {
+        // We only want to create a simulated bounce if we would see extra content underneath
+        // the "fold". If the current content size isn't big enough to show anything
+        // extra, we would get a native bounce anyway.
+        return !pullDownInProgress() &&
+               gridAtStartingPosition &&
                contentSize.height > (frame.size.height - contentInset.top)
     }
 }
