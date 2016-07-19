@@ -294,11 +294,10 @@ extension GameGrid: UIScrollViewDelegate {
         if prematurePullUpDistanceExceeds(prematurePullUpThreshold!) {
             onPrematurePullUpThresholdExceeded?()
             return
+        } else if shouldBouncePrematurely() {
+            decelerationRate = UIScrollViewDecelerationRateFast
+            targetContentOffset.memory.y = -contentInset.top
         }
-
-        // TODO test whether this should actually be called in DidBegin...
-        // Sometimes bounces to the wrong position
-        bounceBackIfNeeded()
     }
 
     func interjectBounce (scrollView: UIScrollView) {
@@ -316,12 +315,6 @@ extension GameGrid: UIScrollViewDelegate {
         } else {
             totalPrematureBounceDistance = currentOffset / GameGrid.prematureBounceReductionFactor
             prevPrematureBounceOffset = currentOffset
-        }
-    }
-
-    func bounceBackIfNeeded () {
-        if shouldBouncePrematurely() {
-            setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: true)
         }
     }
 
