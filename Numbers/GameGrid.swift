@@ -24,6 +24,10 @@ class GameGrid: Grid {
     var onSnappedToStartingPosition: (() -> Void)?
     var onPairingAttempt: ((itemIndex: Int, otherItemIndex: Int) -> Void)?
 
+    var pullUpThreshold: CGFloat?
+    var snapToStartingPositionThreshold: CGFloat?
+    var snapToGameplayPositionThreshold: CGFloat?
+
     var gridAtStartingPosition = true
     var currentScrollCycleHandled = false
 
@@ -32,12 +36,6 @@ class GameGrid: Grid {
 
     private var prevPrematureBounceOffset: CGFloat = 0
     private var totalPrematureBounceDistance: CGFloat = 0
-
-    // The grid snaps back to its starting position when the pullDownThreshold is exceeded,
-    // and back to normal game position when the pullUpThreshold is exceeded
-    var pullUpThreshold: CGFloat?
-    var pullDownThreshold: CGFloat?
-    var prematurePullUpThreshold: CGFloat?
 
     init(game: Game) {
         self.game = game
@@ -291,7 +289,7 @@ extension GameGrid: UIScrollViewDelegate {
                                    targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         bouncingInProgress = pullUpInProgress() || pullDownInProgress()
 
-        if pullDownDistanceExceeds(pullDownThreshold!) {
+        if pullDownDistanceExceeds(snapToStartingPositionThreshold!) {
             adjustTopInset(enforceStartingPosition: true)
             decelerationRate = UIScrollViewDecelerationRateFast
             targetContentOffset.memory.y = -contentInset.top
@@ -312,7 +310,7 @@ extension GameGrid: UIScrollViewDelegate {
 
         guard shouldBouncePrematurely() else { return }
 
-        if prematurePullUpDistanceExceeds(prematurePullUpThreshold!) {
+        if prematurePullUpDistanceExceeds(snapToGameplayPositionThreshold!) {
             positionGridForGameplay()
             onSnappedToGameplayPosition?()
             return

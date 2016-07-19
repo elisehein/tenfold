@@ -78,8 +78,8 @@ class Play: UIViewController {
 
         menu.defaultFrame = menuFrame(atStartingPosition: true)
 
-        gameGrid.prematurePullUpThreshold = Play.hideMenuPullUpThreshold
-        gameGrid.pullDownThreshold = Play.showMenuPullDownThreshold
+        gameGrid.snapToGameplayPositionThreshold = Play.hideMenuPullUpThreshold
+        gameGrid.snapToStartingPositionThreshold = Play.showMenuPullDownThreshold
 
         viewHasLoaded = true
     }
