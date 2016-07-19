@@ -134,8 +134,7 @@ class GameGrid: Grid {
         // of the current content insets & offsets using shouldBouncePrematurely()
         // makes the later evaluation succeed, too (good thing we should be doing
         // that check anyway)
-        return !pullDownInProgress() &&
-               shouldBouncePrematurely() &&
+        return shouldBouncePrematurely() &&
                contentDistanceFromTopEdge() > threshold
     }
 
