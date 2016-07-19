@@ -40,8 +40,6 @@ class GameGrid: Grid {
     var pullDownThreshold: CGFloat?
     var prematurePullUpThreshold: CGFloat?
 
-    var shouldHandleDraggingEnd = true
-
     init(game: Game) {
         self.game = game
 
@@ -262,16 +260,11 @@ extension GameGrid: UIScrollViewDelegate {
         if !bouncingInProgress {
             toggleBounce(false)
         }
-
-        if shouldHandleDraggingEnd {
-            bounceBackIfNeeded()
-        }
     }
 
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         toggleBounce(false)
         decelerationRate = UIScrollViewDecelerationRateNormal
-        shouldHandleDraggingEnd = true
     }
 
     func scrollViewDidScroll(scrollView: UIScrollView) {
@@ -284,26 +277,29 @@ extension GameGrid: UIScrollViewDelegate {
     func scrollViewWillEndDragging(scrollView: UIScrollView,
                                    withVelocity velocity: CGPoint,
                                    targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        bouncingInProgress = pullUpInProgress() || pullDownInProgress()
+
         if pullDownDistanceExceeds(pullDownThreshold!) {
-            shouldHandleDraggingEnd = false
             adjustTopInset(enforceStartingPosition: true)
             decelerationRate = UIScrollViewDecelerationRateFast
             targetContentOffset.memory.y = -contentInset.top
             onPullDownThresholdExceeded?()
+            return
         }
-    }
 
-    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        bouncingInProgress = pullUpInProgress() || pullDownInProgress()
-
-        guard shouldHandleDraggingEnd else { return }
-
-        bounceBackIfNeeded()
         if pullUpDistanceExceeds(pullUpThreshold!) {
             onPullUpThresholdExceeded?()
-        } else if prematurePullUpDistanceExceeds(prematurePullUpThreshold!) {
-            onPrematurePullUpThresholdExceeded?()
+            return
         }
+
+        if prematurePullUpDistanceExceeds(prematurePullUpThreshold!) {
+            onPrematurePullUpThresholdExceeded?()
+            return
+        }
+
+        // TODO test whether this should actually be called in DidBegin...
+        // Sometimes bounces to the wrong position
+        bounceBackIfNeeded()
     }
 
     func interjectBounce (scrollView: UIScrollView) {
