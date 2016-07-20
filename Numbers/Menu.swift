@@ -81,7 +81,10 @@ class Menu: UIView {
         animationInProgress = true
 
         let lockedFrame = frame
-        UIView.animateWithDuration(0.2, animations: {
+        UIView.animateWithDuration(0.2,
+                                   delay: 0,
+                                   options: .CurveEaseIn,
+                                   animations: {
             self.frame = self.offScreen(lockedFrame)
         }, completion: { _ in
             self.hidden = true
@@ -94,7 +97,12 @@ class Menu: UIView {
         hidden = false
         animationInProgress = true
 
-        UIView.animateWithDuration(0.2, animations: {
+        UIView.animateWithDuration(0.5,
+                                   delay: 0,
+                                   usingSpringWithDamping: 0.7,
+                                   initialSpringVelocity: 0.4,
+                                   options: .CurveEaseIn,
+                                   animations: {
             self.frame = endPosition
         }, completion: { _ in
             self.animationInProgress = false
