@@ -15,8 +15,6 @@ class Menu: UIView {
     let newGameButton = UIButton()
     let instructionsButton = UIButton()
 
-    var defaultFrame: CGRect?
-
     var onTapNewGame: (() -> Void)?
     var onTapInstructions: (() -> Void)?
 
@@ -83,18 +81,24 @@ class Menu: UIView {
         animationInProgress = true
 
         let lockedFrame = frame
-        print("Current frame is", lockedFrame)
         UIView.animateWithDuration(0.2, animations: {
             self.frame = self.offScreen(lockedFrame)
-//            self.alpha = 0
         }, completion: { _ in
-            print("Set frame to", self.frame)
-//            self.hidden = true
+            self.hidden = true
             self.animationInProgress = false
         })
     }
 
-    func prepareToShow() {
+    func showIfNeeded(atEndPosition endPosition: CGRect) {
+        guard hidden else { return }
+        hidden = false
+        animationInProgress = true
+
+        UIView.animateWithDuration(0.2, animations: {
+            self.frame = endPosition
+        }, completion: { _ in
+            self.animationInProgress = false
+        })
     }
 
     private func offScreen(rect: CGRect) -> CGRect {

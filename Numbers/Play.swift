@@ -76,8 +76,6 @@ class Play: UIViewController {
         positionMenu()
         initNextRoundMatrix()
 
-        menu.defaultFrame = menuFrame(atStartingPosition: true)
-
         gameGrid.snapToGameplayPositionThreshold = Play.hideMenuPullUpThreshold
         gameGrid.snapToStartingPositionThreshold = Play.showMenuPullDownThreshold
 
@@ -222,7 +220,7 @@ class Play: UIViewController {
     // MARK: Scrolling interactions
 
     private func handleWillSnapToStartingPosition() {
-        menu.prepareToShow()
+        menu.showIfNeeded(atEndPosition: menuFrame(atStartingPosition: true))
     }
 
     private func handleWillSnapToGameplayPosition() {
