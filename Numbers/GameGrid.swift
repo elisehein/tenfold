@@ -40,7 +40,7 @@ class GameGrid: Grid {
     init(game: Game) {
         self.game = game
 
-        super.init()
+        super.init(frame: CGRect.zero)
 
         registerClass(GameNumberCell.self,
                       forCellWithReuseIdentifier: self.reuseIdentifier)

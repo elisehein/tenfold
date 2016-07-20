@@ -82,7 +82,7 @@ class NextRoundGrid: Grid {
         self.values = values
         self.startIndex = startIndex
 
-        super.init()
+        super.init(frame: frame)
         registerClass(NextRoundNumberCell.self,
                       forCellWithReuseIdentifier: self.reuseIdentifier)
 

@@ -17,8 +17,8 @@ class Grid: UICollectionView {
         return l
     }()
 
-    init() {
-        super.init(frame: CGRect.zero, collectionViewLayout: layout)
+    init(frame: CGRect) {
+        super.init(frame: frame, collectionViewLayout: layout)
     }
 
     func heightForGame(withTotalRows totalRows: Int) -> CGFloat {
