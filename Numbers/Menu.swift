@@ -20,7 +20,15 @@ class Menu: UIView {
     var onTapNewGame: (() -> Void)?
     var onTapInstructions: (() -> Void)?
 
+    private var animationInProgress = false
+
     private static let buttonSize = CGSize(width: 100, height: 40)
+
+    var locked: Bool {
+        get {
+            return animationInProgress || hidden
+        }
+    }
 
     init() {
         super.init(frame: CGRect.zero)
@@ -70,7 +78,20 @@ class Menu: UIView {
         onTapInstructions!()
     }
 
-    func prepareToHide() {
+    func hideIfNeeded() {
+        guard !hidden else { return }
+        animationInProgress = true
+
+        let lockedFrame = frame
+        print("Current frame is", lockedFrame)
+        UIView.animateWithDuration(0.2, animations: {
+            self.frame = self.offScreen(lockedFrame)
+//            self.alpha = 0
+        }, completion: { _ in
+            print("Set frame to", self.frame)
+//            self.hidden = true
+            self.animationInProgress = false
+        })
     }
 
     func prepareToShow() {

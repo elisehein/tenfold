@@ -174,6 +174,10 @@ class GameGrid: Grid {
     }
 
     private func positionGridForGameplay() {
+        // This handler needs to be called *before* the animation block,
+        // otherwise it will for some reason push it to a later thread
+        onWillSnapToGameplayPosition?()
+
         // The reason this looks so obscure is because scroll views are SHIT.
         // This specific combination of setting an inset and offset is the only one
         // that results in an animation that STOPS when it reaches the top of the view
@@ -184,8 +188,6 @@ class GameGrid: Grid {
         }, completion: { _ in
             self.gridAtStartingPosition = false
         })
-
-        onWillSnapToGameplayPosition?()
     }
 
     private func prematurePullUpDistanceExceeds(threshold: CGFloat) -> Bool {
@@ -299,15 +301,9 @@ extension GameGrid: UICollectionViewDelegateFlowLayout {
 }
 
 extension GameGrid: UIScrollViewDelegate {
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        if shouldBouncePrematurely() {
-            interjectBounce(scrollView)
-        }
-        onScroll?()
-    }
-
     func scrollViewWillBeginDragging(scrollView: UIScrollView) {
         toggleBounce(true)
+        currentScrollCycleHandled = false
     }
 
     func scrollViewWillEndDragging(scrollView: UIScrollView,
@@ -319,8 +315,6 @@ extension GameGrid: UIScrollViewDelegate {
             targetContentOffset.memory.y = -contentInset.top
             onWillSnapToStartingPosition?()
             currentScrollCycleHandled = true
-        } else {
-            currentScrollCycleHandled = false
         }
     }
 
@@ -357,5 +351,13 @@ extension GameGrid: UIScrollViewDelegate {
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         toggleBounce(false)
         decelerationRate = UIScrollViewDecelerationRateNormal
+    }
+
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        if shouldBouncePrematurely() {
+            interjectBounce(scrollView)
+        }
+
+        onScroll?()
     }
 }

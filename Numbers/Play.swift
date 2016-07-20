@@ -104,6 +104,7 @@ class Play: UIViewController {
     // MARK: Positioning
 
     private func positionMenu() {
+        guard !menu.locked else { return }
         menu.frame = menuFrame()
     }
 
@@ -225,13 +226,13 @@ class Play: UIViewController {
     }
 
     private func handleWillSnapToGameplayPosition() {
-        menu.prepareToHide()
+        menu.hideIfNeeded()
     }
 
     private func handlePullUpThresholdExceeded() {
         nextRoundGrid?.hidden = true
         loadNextRound()
-        menu.prepareToHide()
+        menu.hideIfNeeded()
     }
 
     private func handleScroll() {
