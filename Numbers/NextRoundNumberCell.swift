@@ -35,7 +35,7 @@ class NextRoundNumberCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        dot.backgroundColor = UIColor.themeColor(.OffWhiteDark)
+        dot.backgroundColor = UIColor.themeColor(.OffBlack)
 
         let radius = NextRoundNumberCell.dotRadius
         dot.layer.cornerRadius = radius
@@ -45,7 +45,7 @@ class NextRoundNumberCell: UICollectionViewCell {
                            height: 2 * radius)
 
         numberLabel.textAlignment = .Center
-        numberLabel.textColor = UIColor.themeColor(.OffWhiteDark)
+        numberLabel.textColor = UIColor.themeColor(.OffBlack)
         numberLabel.frame = contentView.frame
         numberLabel.hidden = true
 
