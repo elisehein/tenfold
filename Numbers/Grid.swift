@@ -10,10 +10,12 @@ import Foundation
 import UIKit
 
 class Grid: UICollectionView {
+    static private let cellSpacing: CGFloat = 1
+
     let layout: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
-        l.minimumInteritemSpacing = 0
-        l.minimumLineSpacing = 0
+        l.minimumInteritemSpacing = Grid.cellSpacing
+        l.minimumLineSpacing = Grid.cellSpacing
         return l
     }()
 
@@ -22,12 +24,14 @@ class Grid: UICollectionView {
     }
 
     func heightForGame(withTotalRows totalRows: Int) -> CGFloat {
-        return CGFloat(totalRows) * cellSize().height
+        let heightForSpacing = CGFloat(totalRows - 1) * layout.minimumLineSpacing
+        return CGFloat(totalRows) * cellSize().height + heightForSpacing
     }
 
     func cellSize(forAvailableWidth availableWidth: CGFloat? = nil) -> CGSize {
-        let width = availableWidth == nil ? bounds.size.width : availableWidth
-        let cellWidth = width! / CGFloat(Game.numbersPerRow)
+        let fullWidth = availableWidth == nil ? bounds.size.width : availableWidth
+        let widthForSpacing = layout.minimumInteritemSpacing * CGFloat(Game.numbersPerRow - 1)
+        let cellWidth = floor((fullWidth! - widthForSpacing) / CGFloat(Game.numbersPerRow))
         return CGSize(width: cellWidth, height: cellWidth)
     }
 

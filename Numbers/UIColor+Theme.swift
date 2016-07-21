@@ -37,8 +37,7 @@ extension UIColor {
            return UIColor.themeColor(.Accent)
         case .OffWhite:
 //            return UIColor(hex: "#E6E4D0")
-//            return UIColor(hex: "#CFC1AC")
-            return UIColor(hex: "#90D1AC")
+            return UIColor(hex: "#CFC1AC")
         case .OffBlack:
             return UIColor.grayColor()
         }

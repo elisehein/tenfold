@@ -18,8 +18,8 @@ class GameNumberCell: UICollectionViewCell {
     private let defaultBackgroundColor = UIColor.themeColor(.OffWhite)
     private let crossedOutBackgroundColor = UIColor.themeColor(.OffBlack)
 
-    private let markerMargin: CGFloat = 3
-    private let markerDepth: CGFloat = 3.2
+    private let markerMargin: CGFloat = 3.5
+    private let markerDepth: CGFloat = 3
     private let markerLength: CGFloat = 8.5
 
     var animationDuration: NSTimeInterval = 0
@@ -28,7 +28,7 @@ class GameNumberCell: UICollectionViewCell {
         didSet {
             if selected {
                 UIView.animateWithDuration(animationDuration, animations: {
-                    self.contentView.backgroundColor = UIColor.themeColorHighlighted(.OffWhite)
+                    self.contentView.backgroundColor = UIColor.themeColor(.Accent)
                 })
             } else if shouldDeselectWithFailure {
                 indicateFailure()
