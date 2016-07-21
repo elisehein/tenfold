@@ -130,7 +130,7 @@ class GameGrid: Grid {
         let availableSize = CGSize(width: givenFrame.width - insets.left - insets.right,
                                    height: givenFrame.height - insets.top - insets.bottom)
         let size = optimalSize(forAvailableSize: availableSize)
-        let y = insets.top + (givenFrame.size.height - size.height) / 2.0
+        let y = floor(insets.top + (givenFrame.size.height - size.height) / 2.0)
 
         frame = CGRect(x: insets.left, y: y, width: size.width, height: size.height)
 
