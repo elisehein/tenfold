@@ -111,6 +111,7 @@ class GameGrid: Grid {
 
     func removeNumbers(atIndexPaths indexPaths: Array<NSIndexPath>) {
         deleteItemsAtIndexPaths(indexPaths)
+        reloadItemsAtIndexPaths([NSIndexPath(forItem: game.totalNumbers() - 1, inSection: 0)])
         adjustTopInset()
     }
 

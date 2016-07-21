@@ -193,7 +193,8 @@ class Play: UIViewController {
 
         for index in indeces {
             let rowIndeces = game.indecesOnRow(containingIndex: index)
-            if game.allCrossedOut(rowIndeces) {
+            if game.allCrossedOut(rowIndeces) &&
+               !Set(rowIndeces).isSubsetOf(Set(surplusIndeces)) {
                 surplusIndeces += rowIndeces
             }
         }

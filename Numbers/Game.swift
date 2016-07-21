@@ -74,6 +74,7 @@ class Game: NSObject, NSCoding {
     func removeNumbers(atIndeces indeces: Array<Int>) {
         let numbersToRemove = numbers.filter({ indeces.contains(numbers.indexOf($0)!) })
         numbers.removeObjects(numbersToRemove)
+        numbers.last.marksEndOfRound = true
     }
 
     func numbersRemaining() -> Int {
