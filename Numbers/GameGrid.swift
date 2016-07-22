@@ -102,11 +102,11 @@ class GameGrid: Grid {
 
         guard cell != nil && otherCell != nil else { return }
 
-        cell!.isCrossedOut = true
-        otherCell!.isCrossedOut = true
-
         deselectItemAtIndexPath(indexPath, animated: false)
+        cell!.crossOut()
+
         deselectItemAtIndexPath(otherIndexPath, animated: false)
+        otherCell!.crossOut()
     }
 
     func removeNumbers(atIndexPaths indexPaths: Array<NSIndexPath>) {
@@ -124,8 +124,8 @@ class GameGrid: Grid {
 
         for indexPath in selectedIndexPaths! {
             if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
-                cell.shouldDeselectWithFailure = true
-                deselectItemAtIndexPath(indexPath, animated: true)
+                self.deselectItemAtIndexPath(indexPath, animated: false)
+                cell.indicateSelectionFailure()
             }
         }
     }
@@ -269,9 +269,10 @@ extension GameGrid: UICollectionViewDataSource {
 
         if let cell = cell as? GameNumberCell {
             cell.value = game.valueAtIndex(indexPath.item)
-            cell.isCrossedOut = game.isCrossedOut(indexPath.item)
+            cell.crossedOut = game.isCrossedOut(indexPath.item)
             cell.marksEndOfRound = game.marksEndOfRound(indexPath.item)
             cell.animationDuration = GameGrid.cellAnimationDuration
+            cell.resetColors()
         }
 
         return cell
@@ -289,7 +290,11 @@ extension GameGrid: UICollectionViewDelegateFlowLayout {
         ensureGridPositionedForGameplay()
 
         let selectedIndexPaths = collectionView.indexPathsForSelectedItems()!
-        let latestSelectedIndexPath = indexPath
+//        let latestSelectedIndexPath = indexPath
+
+        if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
+            cell.select()
+        }
 
         if selectedIndexPaths.count == 2 {
             onPairingAttempt!(itemIndex: selectedIndexPaths[0].item,
@@ -298,11 +303,11 @@ extension GameGrid: UICollectionViewDelegateFlowLayout {
             return
         }
 
-        for selectedIndexPath in selectedIndexPaths {
-            if selectedIndexPath != latestSelectedIndexPath {
-                collectionView.deselectItemAtIndexPath(selectedIndexPath, animated: false)
-            }
-        }
+//        for selectedIndexPath in selectedIndexPaths {
+//            if selectedIndexPath != latestSelectedIndexPath {
+//                collectionView.deselectItemAtIndexPath(selectedIndexPath, animated: false)
+//            }
+//        }
     }
 
     func collectionView(collectionView: UICollectionView,

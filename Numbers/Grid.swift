@@ -34,7 +34,8 @@ class Grid: UICollectionView {
 
     func cellSize(forAvailableWidth availableWidth: CGFloat? = nil) -> CGSize {
         let fullWidth = availableWidth == nil ? bounds.size.width : availableWidth
-        let cellWidth = floor((fullWidth! - CGFloat(widthForSpacing())) / CGFloat(Game.numbersPerRow))
+        let widthForNumbers = fullWidth! - CGFloat(widthForSpacing())
+        let cellWidth = floor(widthForNumbers / CGFloat(Game.numbersPerRow))
         return CGSize(width: cellWidth, height: cellWidth)
     }
 

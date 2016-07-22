@@ -97,11 +97,9 @@ class Menu: UIView {
         hidden = false
         animationInProgress = true
 
-        UIView.animateWithDuration(0.5,
+        UIView.animateWithDuration(0.3,
                                    delay: 0,
-                                   usingSpringWithDamping: 0.7,
-                                   initialSpringVelocity: 0.4,
-                                   options: .CurveEaseIn,
+                                   options: .CurveEaseOut,
                                    animations: {
             self.frame = endPosition
         }, completion: { _ in
