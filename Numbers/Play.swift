@@ -76,8 +76,8 @@ class Play: UIViewController {
         positionMenu()
         initNextRoundMatrix()
 
-        gameGrid.snapToGameplayPositionThreshold = Play.hideMenuPullUpThreshold
         gameGrid.snapToStartingPositionThreshold = Play.showMenuPullDownThreshold
+        gameGrid.snapToGameplayPositionThreshold = Play.hideMenuPullUpThreshold
 
         viewHasLoaded = true
     }
