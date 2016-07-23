@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 class GameNumberCell: UICollectionViewCell {
-    private static let animationDuration = 0.2
+    private static let animationDuration = 1.0
 
     private let numberLabel = UILabel()
     private let endOfRoundMarker = CAShapeLayer()
@@ -56,7 +56,7 @@ class GameNumberCell: UICollectionViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        backgroundColorFiller.frame = centerPointFrame()
+        backgroundColorFiller.transform = CGAffineTransformMakeScale(0, 0)
         marksEndOfRound = false
         crossedOut = false
         resetColors()
@@ -64,8 +64,9 @@ class GameNumberCell: UICollectionViewCell {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        backgroundColorFiller.frame = centerPointFrame()
-        backgroundColorFiller.layer.cornerRadius = contentView.bounds.size.width / 2.0
+        backgroundColorFiller.frame = edgeToEdgeCircleFrame()
+        backgroundColorFiller.layer.cornerRadius = backgroundColorFiller.frame.size.width / 2.0
+        backgroundColorFiller.transform = CGAffineTransformMakeScale(0, 0)
         numberLabel.frame = contentView.bounds
         numberLabel.font = UIFont.themeFontWithSize(contentView.bounds.size.height * 0.45)
         drawEndOfRoundMarker()
@@ -86,6 +87,7 @@ class GameNumberCell: UICollectionViewCell {
 
     func indicateDeselection(withDelay delay: Double = 0) {
         backgroundColorFiller.backgroundColor = UIColor.themeColor(.Accent)
+        backgroundColorFiller.transform = CGAffineTransformMakeScale(1, 1)
         contentView.backgroundColor = defaultBackgroundColor
         deselectionInProgress = true
 
@@ -93,7 +95,7 @@ class GameNumberCell: UICollectionViewCell {
                                    delay: delay,
                                    options: .CurveEaseIn,
                                    animations: {
-            self.backgroundColorFiller.frame = self.centerPointFrame()
+            self.backgroundColorFiller.transform = CGAffineTransformMakeScale(0, 0)
         }, completion: { _ in
             self.deselectionInProgress = false
             self.contentView.backgroundColor = self.defaultBackgroundColor
@@ -119,12 +121,12 @@ class GameNumberCell: UICollectionViewCell {
                           completion: (() -> Void)? = nil) {
         if animated {
             backgroundColorFiller.backgroundColor = color
-            backgroundColorFiller.frame = centerPointFrame()
+            backgroundColorFiller.transform = CGAffineTransformMakeScale(0, 0)
             UIView.animateWithDuration(GameNumberCell.animationDuration,
                                        delay: 0,
                                        options: [.CurveEaseOut, .BeginFromCurrentState],
                                        animations: {
-                self.backgroundColorFiller.frame = self.edgeToEdgeCircleFrame()
+                self.backgroundColorFiller.transform = CGAffineTransformMakeScale(1, 1)
             }, completion: { (finished: Bool) in
                 if finished && !self.deselectionInProgress {
                     self.contentView.backgroundColor = color
@@ -135,13 +137,6 @@ class GameNumberCell: UICollectionViewCell {
             contentView.backgroundColor = color
             completion?()
         }
-    }
-
-    private func centerPointFrame() -> CGRect {
-        return CGRect(x: bounds.size.width / 2.0,
-                      y: bounds.size.width / 2.0,
-                      width: 0,
-                      height: 0)
     }
 
     private func edgeToEdgeCircleFrame() -> CGRect {
