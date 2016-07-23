@@ -147,8 +147,10 @@ class GameNumberCell: UICollectionViewCell {
             self.crossedOutColorFiller.transform = CGAffineTransformMakeScale(1, 1)
             self.contentView.backgroundColor = self.defaultBackgroundColor
 
-            UIView.animateWithDuration(0.17,
+            UIView.animateWithDuration(0.8,
                                        delay: 0,
+                                       usingSpringWithDamping: 0.7,
+                                       initialSpringVelocity: 0.2,
                                        options: .CurveEaseOut,
                                        animations: {
                 self.crossedOutColorFiller.transform = CGAffineTransformMakeScale(0.001, 0.001)
