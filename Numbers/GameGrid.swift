@@ -112,6 +112,9 @@ class GameGrid: Grid {
     }
 
     func removeNumbers(atIndexPaths indexPaths: Array<NSIndexPath>) {
+        // TODO should still work without this line
+        guard indexPaths.count > 0 else { return }
+
         adjustTopInset()
         if contentInset.top > 0 {
             setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: true)
