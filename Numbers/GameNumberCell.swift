@@ -100,7 +100,7 @@ class GameNumberCell: UICollectionViewCell {
     }
 
     func indicateSelectionFailure() {
-        indicateDeselection(withDelay: GameNumberCell.animationDuration + 0.15)
+        indicateDeselection(withDelay: 0.2)
     }
 
     func indicateSelection() {
@@ -129,7 +129,7 @@ class GameNumberCell: UICollectionViewCell {
         // http://stackoverflow.com/a/25966733/2026098
         UIView.animateWithDuration(GameNumberCell.animationDuration,
                                    delay: delay,
-                                   options: .CurveEaseIn,
+                                   options: [.CurveEaseIn, .BeginFromCurrentState],
                                    animations: {
             self.selectionColorFiller.transform = CGAffineTransformMakeScale(0.001, 0.001)
         }, completion: { _ in
