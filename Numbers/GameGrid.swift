@@ -119,8 +119,20 @@ class GameGrid: Grid {
             setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: true)
         }
 
-        deleteItemsAtIndexPaths(indexPaths)
-        reloadItemsAtIndexPaths([NSIndexPath(forItem: game.totalNumbers() - 1, inSection: 0)])
+        var removalHandled = false
+        for indexPath in indexPaths {
+            if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
+                cell.prepareForRemoval(completion: {
+                    if !removalHandled {
+                        self.deleteItemsAtIndexPaths(indexPaths)
+                        let lastItemIndexPath = NSIndexPath(forItem: self.game.totalNumbers() - 1,
+                                                            inSection: 0)
+                        self.reloadItemsAtIndexPaths([lastItemIndexPath])
+                        removalHandled = true
+                    }
+                })
+            }
+        }
     }
 
     func dismissSelection() {

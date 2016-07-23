@@ -74,7 +74,7 @@ class GameNumberCell: UICollectionViewCell {
 
         for colorFiller in [selectionColorFiller, crossedOutColorFiller] {
             colorFiller.frame = edgeToEdgeCircleFrame()
-            colorFiller.layer.cornerRadius = selectionColorFiller.frame.size.width / 2.0
+            colorFiller.layer.cornerRadius = colorFiller.frame.size.width / 2.0
             colorFiller.transform = CGAffineTransformMakeScale(0, 0)
         }
 
@@ -136,6 +136,26 @@ class GameNumberCell: UICollectionViewCell {
             self.deselectionInProgress = false
             self.selectionColorFiller.transform = CGAffineTransformMakeScale(0, 0)
         })
+    }
+
+    // We need to wait for whichever cell's selection triggered the removel to finish animating
+    func prepareForRemoval(completion completion: (() -> Void)) {
+        let delayTime = Int64((GameNumberCell.animationDuration + 0.1) * Double(NSEC_PER_SEC))
+        let dispatchTime = dispatch_time(DISPATCH_TIME_NOW, delayTime)
+        dispatch_after(dispatchTime, dispatch_get_main_queue()) {
+            self.crossedOutColorFiller.backgroundColor = self.crossedOutBackgroundColor
+            self.crossedOutColorFiller.transform = CGAffineTransformMakeScale(1, 1)
+            self.contentView.backgroundColor = self.defaultBackgroundColor
+
+            UIView.animateWithDuration(0.17,
+                                       delay: 0,
+                                       options: .CurveEaseOut,
+                                       animations: {
+                self.crossedOutColorFiller.transform = CGAffineTransformMakeScale(0.001, 0.001)
+            }, completion: { _ in
+                completion()
+            })
+        }
     }
 
     func resetColors() {
