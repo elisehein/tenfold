@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 class GameNumberCell: UICollectionViewCell {
-    private static let animationDuration = 1.0
+    private static let animationDuration = 0.2
 
     private let numberLabel = UILabel()
     private let endOfRoundMarker = CAShapeLayer()
@@ -87,17 +87,19 @@ class GameNumberCell: UICollectionViewCell {
 
     func indicateDeselection(withDelay delay: Double = 0) {
         backgroundColorFiller.backgroundColor = UIColor.themeColor(.Accent)
-        backgroundColorFiller.transform = CGAffineTransformMakeScale(1, 1)
         contentView.backgroundColor = defaultBackgroundColor
         deselectionInProgress = true
 
+        // Zero transforms cannot be animated; see
+        // http://stackoverflow.com/a/25966733/2026098
         UIView.animateWithDuration(GameNumberCell.animationDuration,
                                    delay: delay,
                                    options: .CurveEaseIn,
                                    animations: {
-            self.backgroundColorFiller.transform = CGAffineTransformMakeScale(0, 0)
+            self.backgroundColorFiller.transform = CGAffineTransformMakeScale(0.001, 0.001)
         }, completion: { _ in
             self.deselectionInProgress = false
+            self.backgroundColorFiller.transform = CGAffineTransformMakeScale(0, 0)
             self.contentView.backgroundColor = self.defaultBackgroundColor
         })
     }
