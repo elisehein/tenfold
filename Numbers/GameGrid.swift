@@ -37,6 +37,8 @@ class GameGrid: Grid {
     private var prevPrematureBounceOffset: CGFloat = 0
     private var totalPrematureBounceDistance: CGFloat = 0
 
+    private var latestSelectedIndexPath: NSIndexPath?
+
     init(game: Game) {
         self.game = game
 
@@ -125,6 +127,9 @@ class GameGrid: Grid {
         for indexPath in selectedIndexPaths! {
             if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
                 self.deselectItemAtIndexPath(indexPath, animated: false)
+                if indexPath == latestSelectedIndexPath {
+                    cell.indicateSelection()
+                }
                 cell.indicateSelectionFailure()
             }
         }
@@ -271,7 +276,6 @@ extension GameGrid: UICollectionViewDataSource {
             cell.value = game.valueAtIndex(indexPath.item)
             cell.crossedOut = game.isCrossedOut(indexPath.item)
             cell.marksEndOfRound = game.marksEndOfRound(indexPath.item)
-            cell.animationDuration = GameGrid.cellAnimationDuration
             cell.resetColors()
         }
 
@@ -290,24 +294,21 @@ extension GameGrid: UICollectionViewDelegateFlowLayout {
         ensureGridPositionedForGameplay()
 
         let selectedIndexPaths = collectionView.indexPathsForSelectedItems()!
-//        let latestSelectedIndexPath = indexPath
-
-        if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
-            cell.select()
-        }
+        latestSelectedIndexPath = indexPath
 
         if selectedIndexPaths.count == 2 {
             onPairingAttempt!(itemIndex: selectedIndexPaths[0].item,
                               otherItemIndex: selectedIndexPaths[1].item)
-        } else if selectedIndexPaths.count < 2 {
-            return
+        } else if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
+            cell.indicateSelection()
         }
+    }
 
-//        for selectedIndexPath in selectedIndexPaths {
-//            if selectedIndexPath != latestSelectedIndexPath {
-//                collectionView.deselectItemAtIndexPath(selectedIndexPath, animated: false)
-//            }
-//        }
+    func collectionView(collectionView: UICollectionView,
+                        didDeselectItemAtIndexPath indexPath: NSIndexPath) {
+        if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
+            cell.indicateDeselection()
+        }
     }
 
     func collectionView(collectionView: UICollectionView,

@@ -10,9 +10,11 @@ import Foundation
 import UIKit
 
 class GameNumberCell: UICollectionViewCell {
+    private static let animationDuration = 0.2
+
     private let numberLabel = UILabel()
     private let endOfRoundMarker = CAShapeLayer()
-    private let backgroundColorFiller = CAShapeLayer()
+    private let backgroundColorFiller = UIView()
 
     private let defaultBackgroundColor = UIColor.themeColor(.OffWhite)
     private let crossedOutBackgroundColor = UIColor.themeColor(.OffBlack)
@@ -21,9 +23,7 @@ class GameNumberCell: UICollectionViewCell {
     private let markerDepth: CGFloat = 3
     private let markerLength: CGFloat = 8.5
 
-    private var animationCompletionBlock: (() -> Void)?
-
-    var animationDuration: NSTimeInterval = 0
+    private var deselectionInProgress = false
 
     var crossedOut: Bool = false
 
@@ -49,15 +49,14 @@ class GameNumberCell: UICollectionViewCell {
 
         contentView.clipsToBounds = true
 
+        contentView.addSubview(backgroundColorFiller)
         contentView.addSubview(numberLabel)
-        contentView.layer.insertSublayer(backgroundColorFiller, below: numberLabel.layer)
         contentView.layer.addSublayer(endOfRoundMarker)
     }
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        backgroundColorFiller.path = circlePath(withRadius: 0).CGPath
-        animationDuration = 0
+        backgroundColorFiller.frame = centerPointFrame()
         marksEndOfRound = false
         crossedOut = false
         resetColors()
@@ -65,14 +64,11 @@ class GameNumberCell: UICollectionViewCell {
 
     override func layoutSubviews() {
         super.layoutSubviews()
+        backgroundColorFiller.frame = centerPointFrame()
+        backgroundColorFiller.layer.cornerRadius = contentView.bounds.size.width / 2.0
         numberLabel.frame = contentView.bounds
         numberLabel.font = UIFont.themeFontWithSize(contentView.bounds.size.height * 0.45)
-        drawBackgroundFiller()
         drawEndOfRoundMarker()
-    }
-
-    func select() {
-        resetColors(animated: true)
     }
 
     func crossOut() {
@@ -81,39 +77,79 @@ class GameNumberCell: UICollectionViewCell {
     }
 
     func indicateSelectionFailure() {
-        backgroundColorFiller.fillColor = UIColor.themeColor(.Accent).CGColor
-        let diagonal = ceil(bounds.size.width * sqrt(2))
-        backgroundColorFiller.path = circlePath(withRadius: diagonal / 2.0).CGPath
-        let animation = makeAnimation(circlePath(withRadius: 0).CGPath, delay: 3)
-        backgroundColorFiller.addAnimation(animation, forKey: nil)
-        animationCompletionBlock = { self.resetColors() }
+        indicateDeselection(withDelay: GameNumberCell.animationDuration + 0.15)
+    }
+
+    func indicateSelection() {
+        resetColors(animated: true)
+    }
+
+    func indicateDeselection(withDelay delay: Double = 0) {
+        backgroundColorFiller.backgroundColor = UIColor.themeColor(.Accent)
+        contentView.backgroundColor = defaultBackgroundColor
+        deselectionInProgress = true
+
+        UIView.animateWithDuration(GameNumberCell.animationDuration,
+                                   delay: delay,
+                                   options: .CurveEaseIn,
+                                   animations: {
+            self.backgroundColorFiller.frame = self.centerPointFrame()
+        }, completion: { _ in
+            self.deselectionInProgress = false
+            self.contentView.backgroundColor = self.defaultBackgroundColor
+        })
     }
 
     func resetColors(animated animated: Bool = false, delay: Double = 0) {
-        backgroundColorFiller.fillColor = UIColor.clearColor().CGColor
-        fillWith(backgroundColorForState(), animated: animated, delay: delay)
+        backgroundColorFiller.backgroundColor = UIColor.clearColor()
+        fillWith(backgroundColorForState(), animated: animated, completion: {
+            if self.crossedOut {
+                self.endOfRoundMarker.fillColor = self.defaultBackgroundColor.CGColor
+                self.numberLabel.textColor = UIColor.clearColor()
+            } else {
+                self.endOfRoundMarker.fillColor = self.crossedOutBackgroundColor.CGColor
+                self.numberLabel.textColor = self.crossedOutBackgroundColor
+            }
+        })
 
-        if crossedOut {
-            endOfRoundMarker.fillColor = defaultBackgroundColor.CGColor
-            numberLabel.textColor = UIColor.clearColor()
-        } else if selected {
-            endOfRoundMarker.fillColor = crossedOutBackgroundColor.CGColor
-            numberLabel.textColor = crossedOutBackgroundColor
+    }
+
+    private func fillWith(color: UIColor,
+                          animated: Bool,
+                          completion: (() -> Void)? = nil) {
+        if animated {
+            backgroundColorFiller.backgroundColor = color
+            backgroundColorFiller.frame = centerPointFrame()
+            UIView.animateWithDuration(GameNumberCell.animationDuration,
+                                       delay: 0,
+                                       options: [.CurveEaseOut, .BeginFromCurrentState],
+                                       animations: {
+                self.backgroundColorFiller.frame = self.edgeToEdgeCircleFrame()
+            }, completion: { (finished: Bool) in
+                if finished && !self.deselectionInProgress {
+                    self.contentView.backgroundColor = color
+                    completion?()
+                }
+            })
         } else {
-            endOfRoundMarker.fillColor = crossedOutBackgroundColor.CGColor
-            numberLabel.textColor = crossedOutBackgroundColor
+            contentView.backgroundColor = color
+            completion?()
         }
     }
 
-    private func fillWith(color: UIColor, animated: Bool, delay: Double = 0) {
-        if animated {
-            backgroundColorFiller.fillColor = color.CGColor
-            let diagonal = ceil(bounds.size.width * sqrt(2))
-            let animation = makeAnimation(circlePath(withRadius: diagonal / 2.0).CGPath)
-            backgroundColorFiller.addAnimation(animation, forKey: nil)
-        } else {
-            contentView.backgroundColor = color
-        }
+    private func centerPointFrame() -> CGRect {
+        return CGRect(x: bounds.size.width / 2.0,
+                      y: bounds.size.width / 2.0,
+                      width: 0,
+                      height: 0)
+    }
+
+    private func edgeToEdgeCircleFrame() -> CGRect {
+        let diagonal = ceil(contentView.bounds.size.width * sqrt(2))
+        return CGRect(x: -(diagonal - contentView.bounds.size.width) / 2.0,
+                      y: -(diagonal - contentView.bounds.size.height) / 2.0,
+                      width: diagonal,
+                      height: diagonal)
     }
 
     private func backgroundColorForState() -> UIColor {
@@ -124,34 +160,6 @@ class GameNumberCell: UICollectionViewCell {
         } else {
             return defaultBackgroundColor
         }
-    }
-
-    private func makeAnimation(withEndPath: CGPath, delay: Double = 0) -> CABasicAnimation {
-        let animation = CABasicAnimation(keyPath: "path")
-        animation.duration = 0.2
-        animation.beginTime = CACurrentMediaTime() + delay
-        animation.removedOnCompletion = false
-        animation.fillMode = kCAFillModeForwards
-        let diagonal = ceil(bounds.size.width * sqrt(2))
-        animation.toValue = circlePath(withRadius: diagonal / 2).CGPath
-        animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
-        animation.delegate = self
-        return animation
-    }
-
-    private func drawBackgroundFiller() {
-        backgroundColorFiller.lineWidth = 0
-        backgroundColorFiller.path = circlePath(withRadius: 0).CGPath
-    }
-
-    private func circlePath(withRadius radius: CGFloat) -> UIBezierPath {
-        let arcCenter = CGPoint(x: bounds.size.width / 2.0,
-                                y: bounds.size.height / 2.0)
-        return UIBezierPath(arcCenter: arcCenter,
-                            radius: radius,
-                            startAngle: 0,
-                            endAngle:CGFloat(M_PI * 2),
-                            clockwise: true)
     }
 
     private func drawEndOfRoundMarker() {
@@ -184,15 +192,6 @@ class GameNumberCell: UICollectionViewCell {
                              totalHeight - markerMargin)
         CGPathCloseSubpath(markerPath)
         endOfRoundMarker.path = markerPath
-    }
-
-    override func animationDidStop(anim: CAAnimation, finished flag: Bool) {
-        contentView.backgroundColor = backgroundColorForState()
-        animationCompletionBlock?()
-        animationCompletionBlock = nil
-        backgroundColorFiller.fillColor = UIColor.clearColor().CGColor
-        backgroundColorFiller.path = circlePath(withRadius: 0).CGPath
-        backgroundColorFiller.removeAllAnimations()
     }
 
     required init?(coder aDecoder: NSCoder) {
