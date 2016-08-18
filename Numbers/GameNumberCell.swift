@@ -149,8 +149,8 @@ class GameNumberCell: UICollectionViewCell {
 
             UIView.animateWithDuration(0.8,
                                        delay: 0,
-                                       usingSpringWithDamping: 0.7,
-                                       initialSpringVelocity: 0.2,
+                                       usingSpringWithDamping: 0.8,
+                                       initialSpringVelocity: 0.3,
                                        options: .CurveEaseOut,
                                        animations: {
                 self.crossedOutColorFiller.transform = CGAffineTransformMakeScale(0.001, 0.001)
