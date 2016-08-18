@@ -24,7 +24,7 @@ class Instructions: UIViewController {
         return l
     }()
 
-    private var instructionsData: NSArray? = {
+    private static var data: NSArray? = {
         var data: NSArray? = nil
 
         if let path = NSBundle.mainBundle().pathForResource("instructions", ofType: "json") {
@@ -51,6 +51,15 @@ class Instructions: UIViewController {
         return data
     }()
 
+    class func instructionItemAtSection(section: Int) -> NSDictionary? {
+        return Instructions.data![section] as? NSDictionary
+    }
+
+    class func instructionExampleAtIndexPath(indexPath: NSIndexPath) -> NSDictionary? {
+        let instructionItem = instructionItemAtSection(indexPath.section)
+        return (instructionItem!["examples"] as? NSArray)![indexPath.item] as? NSDictionary
+    }
+
     init() {
         instructionItems = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
 
@@ -62,7 +71,7 @@ class Instructions: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        title = "How to play"
+        title = "HOW TO PLAY"
         view.backgroundColor = UIColor.themeColor(.OffWhite)
 
 
@@ -85,7 +94,7 @@ class Instructions: UIViewController {
         navigationController?.navigationBar.translucent = true
 
         navigationController?.navigationBar.tintColor = UIColor.themeColor(.OffBlack)
-        let navigationTitleFont = UIFont.themeFontWithSize(14, weight: .Bold    )
+        let navigationTitleFont = UIFont.themeFontWithSize(14)
         let attributes = [NSFontAttributeName: navigationTitleFont]
         navigationController?.navigationBar.titleTextAttributes = attributes
 
@@ -111,13 +120,12 @@ class Instructions: UIViewController {
 
 extension Instructions: UICollectionViewDataSource {
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        return instructionsData!.count
+        return Instructions.data!.count
     }
 
     func collectionView(collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
-        let instructionItem = instructionsData![section] as? NSDictionary
-        return instructionItem!["examples"]!.count
+        return Instructions.instructionItemAtSection(section)!["examples"]!.count
     }
 
     func collectionView(collectionView: UICollectionView,
@@ -126,8 +134,7 @@ extension Instructions: UICollectionViewDataSource {
                                                                          forIndexPath: indexPath)
 
         if let cell = cell as? InstructionItemCell {
-            let instructionItem = instructionsData![indexPath.section] as? NSDictionary
-            let example = (instructionItem!["examples"] as? NSArray)![indexPath.item]
+            let example = Instructions.instructionExampleAtIndexPath(indexPath)!
             cell.instructionText = example["text"] as? String
             cell.detailText = example["detail"] as? String
         }
@@ -145,7 +152,7 @@ extension Instructions: UICollectionViewDataSource {
             let headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: headerReuseIdentifier, forIndexPath: indexPath)
 
             if let headerView = headerView as? InstructionItemHeader {
-                let instructionItem = instructionsData![indexPath.section] as? NSDictionary
+                let instructionItem = Instructions.instructionItemAtSection(indexPath.section)
                 headerView.text = instructionItem!["title"] as? String
             }
 
@@ -160,20 +167,30 @@ extension Instructions: UICollectionViewDelegateFlowLayout {
     func collectionView(collectionView: UICollectionView,
                         layout: UICollectionViewLayout,
                         sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        return CGSize(width: view.bounds.size.width, height: 120)
+        let example = Instructions.instructionExampleAtIndexPath(indexPath)!
+        let instructionText = example["text"] as? String
+        let detailText = example["detail"] as? String
+
+        let width = view.bounds.size.width
+        let height = InstructionItemCell.sizeOccupied(forAvailableWidth: width,
+                                                      usingInstructionText: instructionText!,
+                                                      detailText: detailText).height
+
+        print("We got height", height)
+
+        return CGSize(width: width, height: height)
     }
 
     func collectionView(collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         referenceSizeForHeaderInSection section: Int) -> CGSize {
 
-        let instructionItem = instructionsData![section] as? NSDictionary
+        let instructionItem = Instructions.instructionItemAtSection(section)
         let text = instructionItem!["title"] as? String
         let width = view.bounds.size.width
         let height = InstructionItemHeader.sizeOccupied(forAvailableWidth: width,
                                                         usingText: text!).height
 
-        print("Width", width, "Height", height)
         return CGSize(width: width, height: height)
     }
 }

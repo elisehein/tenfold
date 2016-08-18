@@ -14,27 +14,23 @@
       ]
     },
     {
-      "title": "For two numbers to pair, they have to be next to each other, or have no other numbers in between.",
+      "title": "Pair up numbers next to each other, or ones that have no other numbers in between.",
       "examples": [
         {
           "text": "These pairs are next to each other..."
         },
         {
-          "text": "...as are these."
+          "text": "...as are these. osidf isudn asdonf oduisfnioaunf duioanf odnf aisudfn sioufn oiasudnf siudofn a"
         }
       ]
     },
     {
-      "title": "Finally, numbers on separate rows can be paired up if everything in between them is crossed out.",
+      "title": "Numbers on separate rows can be paired up if everything in between them is crossed out.",
       "examples": [
         {
-          "detail": "Just think of the grid as one big continuous row!"
+          "text": "Just think of the grid as one big continuous row!"
         }
       ]
-    },
-    {
-      "title": "Here's another header!",
-      "examples": []
     }
   ]
 }
