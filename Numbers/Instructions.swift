@@ -176,8 +176,6 @@ extension Instructions: UICollectionViewDelegateFlowLayout {
                                                       usingInstructionText: instructionText!,
                                                       detailText: detailText).height
 
-        print("We got height", height)
-
         return CGSize(width: width, height: height)
     }
 

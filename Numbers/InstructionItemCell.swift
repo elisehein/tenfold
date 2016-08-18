@@ -56,15 +56,11 @@ class InstructionItemCell: UICollectionViewCell {
         var size = sizeOccupiedByInstructionLabel(forAvailableWidth: availableWidth,
                                                   usingText: instructionText)
 
-        print("Size just for instruction is", size)
         // The assumption is that the detail label never takes more
         // than one line of space
         if detailText != nil {
-            print("But we also have detail, whose size is 20")
             size.height += detailLabelHeight
         }
-
-        print(size)
 
         return size
     }
