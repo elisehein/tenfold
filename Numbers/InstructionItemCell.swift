@@ -18,8 +18,6 @@ class InstructionItemCell: UICollectionViewCell {
         didSet {
             if let instructionText = instructionText {
                 instructionLabel.text = instructionText
-            } else {
-                instructionLabel.text = ""
             }
         }
     }
@@ -71,11 +69,9 @@ class InstructionItemCell: UICollectionViewCell {
         detailLabel.textAlignment = .Center
         detailLabel.textColor = UIColor.themeColorHighlighted(.OffWhite)
         detailLabel.font = UIFont.themeFontWithSize(14)
-        detailLabel.backgroundColor = UIColor.blueColor()
 
         contentView.addSubview(instructionLabel)
         contentView.addSubview(detailLabel)
-        contentView.backgroundColor = UIColor.grayColor()
     }
 
     override func layoutSubviews() {
@@ -100,7 +96,6 @@ class InstructionItemCell: UICollectionViewCell {
         label.font = UIFont.themeFontWithSize(14)
         label.textAlignment = .Center
         label.textColor = UIColor.themeColor(.OffBlack)
-        label.backgroundColor = UIColor.redColor()
         return label
     }
 
