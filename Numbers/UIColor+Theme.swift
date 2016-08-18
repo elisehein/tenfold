@@ -19,7 +19,9 @@ extension UIColor {
     class func themeColor(themeColor: ThemeColor) -> UIColor {
         switch themeColor {
         case .Accent:
-            return UIColor(hex: "#90D1AC")
+//            return UIColor(hex: "#90D1AC") // Green
+            return UIColor(hex: "#F4AFAB") // Peachy
+//            return UIColor(hex: "#F4EEA9") // Yellow
         case .OffWhite:
             return UIColor(hex: "#FAF5EA")
         case .OffBlack:

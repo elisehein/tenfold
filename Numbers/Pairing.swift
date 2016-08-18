@@ -19,8 +19,9 @@ class Pairing: NSObject {
             return false
         }
 
-        return valuesCanPair (index, otherIndex: otherIndex, inGame: game) &&
-               positionsCanPair(index, otherIndex: otherIndex, inGame: game)
+        return true
+//        return valuesCanPair (index, otherIndex: otherIndex, inGame: game) &&
+//               positionsCanPair(index, otherIndex: otherIndex, inGame: game)
     }
 
     static private func valuesCanPair(index: Int, otherIndex: Int, inGame game: Game) -> Bool {
