@@ -1,5 +1,5 @@
 {
-  "instructions": [
+  "rules": [
     {
       "title": "Cross out numbers in pairs to clear the grid!",
       "examples": [

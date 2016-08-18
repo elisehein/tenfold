@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import SwiftyJSON
 
 class Instructions: UIViewController {
 
@@ -24,41 +25,20 @@ class Instructions: UIViewController {
         return l
     }()
 
-    private static var data: NSArray? = {
-        var data: NSArray? = nil
+    private static var data: JSON = {
+        var data: JSON?
 
         if let path = NSBundle.mainBundle().pathForResource("instructions", ofType: "json") {
             do {
                 let jsonData = try NSData(contentsOfFile: path, options: .DataReadingMappedIfSafe)
-                let parsed: NSDictionary
-
-                // swiftlint:disable force_cast
-                // swiftlint:disable line_length
-
-                parsed = try NSJSONSerialization.JSONObjectWithData(jsonData, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
-
-                // swiftlint:enable force_cast
-                // swiftlint:enable line_length
-
-                if let instructions: NSArray = parsed["instructions"] as? NSArray {
-                    data = instructions
-                }
+                data = JSON(data: jsonData)
             } catch {
-                print("Error parsing json")
+                print("Error retrieving JSON data")
             }
         }
 
-        return data
+        return data!
     }()
-
-    class func instructionItemAtSection(section: Int) -> NSDictionary? {
-        return Instructions.data![section] as? NSDictionary
-    }
-
-    class func instructionExampleAtIndexPath(indexPath: NSIndexPath) -> NSDictionary? {
-        let instructionItem = instructionItemAtSection(indexPath.section)
-        return (instructionItem!["examples"] as? NSArray)![indexPath.item] as? NSDictionary
-    }
 
     init() {
         instructionItems = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
@@ -120,12 +100,12 @@ class Instructions: UIViewController {
 
 extension Instructions: UICollectionViewDataSource {
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        return Instructions.data!.count
+        return Instructions.data["rules"].count
     }
 
     func collectionView(collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
-        return Instructions.instructionItemAtSection(section)!["examples"]!.count
+        return Instructions.data["rules"][section]["examples"].count
     }
 
     func collectionView(collectionView: UICollectionView,
@@ -134,9 +114,9 @@ extension Instructions: UICollectionViewDataSource {
                                                                          forIndexPath: indexPath)
 
         if let cell = cell as? InstructionItemCell {
-            let example = Instructions.instructionExampleAtIndexPath(indexPath)!
-            cell.instructionText = example["text"] as? String
-            cell.detailText = example["detail"] as? String
+            let example = Instructions.data["rules"][indexPath.section]["examples"][indexPath.item]
+            cell.instructionText = example["text"].string
+            cell.detailText = example["detail"].string
         }
 
         return cell
@@ -152,8 +132,8 @@ extension Instructions: UICollectionViewDataSource {
             let headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: headerReuseIdentifier, forIndexPath: indexPath)
 
             if let headerView = headerView as? InstructionItemHeader {
-                let instructionItem = Instructions.instructionItemAtSection(indexPath.section)
-                headerView.text = instructionItem!["title"] as? String
+                let instructionItem = Instructions.data["rules"][indexPath.section]
+                headerView.text = instructionItem["title"].string
             }
 
             return headerView
@@ -167,9 +147,9 @@ extension Instructions: UICollectionViewDelegateFlowLayout {
     func collectionView(collectionView: UICollectionView,
                         layout: UICollectionViewLayout,
                         sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        let example = Instructions.instructionExampleAtIndexPath(indexPath)!
-        let instructionText = example["text"] as? String
-        let detailText = example["detail"] as? String
+        let example = Instructions.data["rules"][indexPath.section]["examples"][indexPath.item]
+        let instructionText = example["text"].string
+        let detailText = example["detail"].string
 
         let width = view.bounds.size.width
         let height = InstructionItemCell.sizeOccupied(forAvailableWidth: width,
@@ -183,8 +163,7 @@ extension Instructions: UICollectionViewDelegateFlowLayout {
                         layout collectionViewLayout: UICollectionViewLayout,
                         referenceSizeForHeaderInSection section: Int) -> CGSize {
 
-        let instructionItem = Instructions.instructionItemAtSection(section)
-        let text = instructionItem!["title"] as? String
+        let text = Instructions.data["rules"][section]["title"].string
         let width = view.bounds.size.width
         let height = InstructionItemHeader.sizeOccupied(forAvailableWidth: width,
                                                         usingText: text!).height
