@@ -12,7 +12,7 @@ import SwiftyJSON
 
 class Instructions: UIViewController {
 
-    let instructionItems: UICollectionView
+    let sections: UICollectionView
 
     private let reuseIdentifier = "InstructionItemCell"
     private let headerReuseIdentifier = "InstructionItemHeader"
@@ -41,13 +41,13 @@ class Instructions: UIViewController {
     }()
 
     init() {
-        instructionItems = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
+        sections = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
 
-        instructionItems.registerClass(InstructionItemCell.self,
+        sections.registerClass(InstructionItemCell.self,
                                        forCellWithReuseIdentifier: reuseIdentifier)
 
         // swiftlint:disable:next line_length
-        instructionItems.registerClass(InstructionItemHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerReuseIdentifier)
+        sections.registerClass(InstructionItemHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerReuseIdentifier)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -55,12 +55,12 @@ class Instructions: UIViewController {
         view.backgroundColor = UIColor.themeColor(.OffWhite)
 
 
-        instructionItems.dataSource = self
-        instructionItems.delegate = self
-        instructionItems.backgroundColor = UIColor.clearColor()
-        instructionItems.contentInset = UIEdgeInsets(top: 80, left: 0, bottom: 0, right: 0)
+        sections.dataSource = self
+        sections.delegate = self
+        sections.backgroundColor = UIColor.clearColor()
+        sections.contentInset = UIEdgeInsets(top: 80, left: 0, bottom: 0, right: 0)
 
-        view.addSubview(instructionItems)
+        view.addSubview(sections)
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -86,11 +86,23 @@ class Instructions: UIViewController {
         let backButton = UIBarButtonItem(customView: button)
         navigationItem.leftBarButtonItem = backButton
 
-        instructionItems.frame = view.bounds
+        sections.frame = view.bounds
     }
 
     func goBack() {
         navigationController?.popViewControllerAnimated(true)
+    }
+
+    private func headerViewForIndexPath(indexPath: NSIndexPath) -> UICollectionReusableView {
+        // swiftlint:disable:next line_length
+        let headerView = sections.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionHeader, withReuseIdentifier: headerReuseIdentifier, forIndexPath: indexPath)
+
+        if let headerView = headerView as? InstructionItemHeader {
+            let instructionItem = Instructions.data["rules"][indexPath.section]
+            headerView.text = instructionItem["title"].string
+        }
+
+        return headerView
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -127,16 +139,7 @@ extension Instructions: UICollectionViewDataSource {
                         atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView {
         switch kind {
         case UICollectionElementKindSectionHeader:
-
-            // swiftlint:disable:next line_length
-            let headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: headerReuseIdentifier, forIndexPath: indexPath)
-
-            if let headerView = headerView as? InstructionItemHeader {
-                let instructionItem = Instructions.data["rules"][indexPath.section]
-                headerView.text = instructionItem["title"].string
-            }
-
-            return headerView
+            return headerViewForIndexPath(indexPath)
         default:
             assert(false, "Unexpected element kind")
         }
