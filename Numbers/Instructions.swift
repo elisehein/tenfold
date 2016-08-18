@@ -51,16 +51,13 @@ class Instructions: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        title = "HOW TO PLAY"
-        view.backgroundColor = UIColor.themeColor(.OffWhite)
-
-
         sections.dataSource = self
         sections.delegate = self
         sections.backgroundColor = UIColor.clearColor()
         sections.contentInset = UIEdgeInsets(top: 80, left: 0, bottom: 0, right: 0)
 
         view.addSubview(sections)
+        view.backgroundColor = UIColor.themeColor(.OffWhite)
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -74,9 +71,6 @@ class Instructions: UIViewController {
         navigationController?.navigationBar.translucent = true
 
         navigationController?.navigationBar.tintColor = UIColor.themeColor(.OffBlack)
-        let navigationTitleFont = UIFont.themeFontWithSize(14)
-        let attributes = [NSFontAttributeName: navigationTitleFont]
-        navigationController?.navigationBar.titleTextAttributes = attributes
 
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 20, height: 16))
         button.setBackgroundImage(UIImage(named: "back-arrow"), forState: .Normal)
@@ -86,7 +80,22 @@ class Instructions: UIViewController {
         let backButton = UIBarButtonItem(customView: button)
         navigationItem.leftBarButtonItem = backButton
 
+        navigationItem.titleView = makeTitleView()
+
         sections.frame = view.bounds
+    }
+
+    private func makeTitleView() -> UIView {
+        let label = UILabel()
+
+        let navigationTitleFont = UIFont.themeFontWithSize(14)
+        let attributes = [NSFontAttributeName: navigationTitleFont,
+                          NSForegroundColorAttributeName: UIColor.themeColor(.OffBlack),
+                          NSKernAttributeName: 2]
+
+        label.attributedText = NSAttributedString(string: "HOW TO PLAY", attributes: attributes)
+        label.sizeToFit()
+        return label
     }
 
     func goBack() {
