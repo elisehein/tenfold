@@ -1,36 +1,37 @@
-{
-  "rules": [
-    {
-      "title": "Cross out numbers in pairs to clear the grid!",
-      "examples": [
-        {
-          "text": "Two of the same numbers can pair up.",
-          "detail": "5 = 5"
-        },
-        {
-          "text": "Numbers can also pair if they add up 10.",
-          "detail": "2 + 8 = 10"
-        }
-      ]
-    },
-    {
-      "title": "Pair up numbers next to each other, or ones that have no other numbers in between.",
-      "examples": [
-        {
-          "text": "These pairs are next to each other..."
-        },
-        {
-          "text": "...as are these."
-        }
-      ]
-    },
-    {
-      "title": "Numbers on separate rows can be paired up if everything in between them is crossed out.",
-      "examples": [
-        {
-          "text": "Just think of the grid as one big continuous row!"
-        }
-      ]
-    }
-  ]
-}
+[
+  {
+    "title": "Cross out numbers in pairs to clear the grid!",
+    "examples": [
+      {
+        "text": "Two of the same numbers can pair up.",
+        "detail": "5 = 5"
+      },
+      {
+        "text": "Numbers can also pair if they add up 10.",
+        "detail": "2 + 8 = 10"
+      }
+    ]
+  },
+  {
+    "title": "Pair up numbers next to each other, or ones that have no other numbers in between.",
+    "examples": [
+      {
+        "text": "These pairs are next to each other..."
+      },
+      {
+        "text": "...as are these."
+      }
+    ]
+  },
+  {
+    "title": "Numbers on separate rows can be paired up if everything in between them is crossed out.",
+    "examples": [
+      {
+        "text": "Just think of the grid as one big continuous row!"
+      }
+    ]
+  },
+  {
+    "title": "When there’s nothing left to cross out, pull up for the next round of numbers!"
+  }
+]
