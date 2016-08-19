@@ -136,6 +136,7 @@ extension Instructions: UICollectionViewDataSource {
             let example = Instructions.rules[indexPath.section]["examples"][indexPath.item]
             cell.text = example["text"].string
             cell.detailText = example["detail"].string
+            cell.gridValues = example["values"].arrayValue.map({ $0.int })
         }
 
         return cell

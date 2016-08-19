@@ -14,9 +14,11 @@ class RuleExampleGrid: Grid {
     private var timer: NSTimer?
     private let reuseIdentifier = "GameNumberCell"
 
-    private let values: Array<Int?> = [nil, nil, nil, nil, nil, nil, nil, nil, nil,
-                                       nil, nil, 5, nil, nil, nil, nil, nil, nil,
-                                       nil, nil, 5, nil, nil, nil, nil, nil, nil]
+    var values: Array<Int?> = [] {
+        didSet {
+            reloadData()
+        }
+    }
 
     init() {
         super.init(frame: CGRect.zero)

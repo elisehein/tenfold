@@ -34,6 +34,12 @@ class RuleExampleCell: UICollectionViewCell {
         }
     }
 
+    var gridValues: Array<Int?> = [] {
+        didSet {
+            exampleGrid.values = gridValues
+        }
+    }
+
     private let label = RuleExampleCell.labelForText()
     private let detailLabel = UILabel()
     private let exampleGrid = RuleExampleGrid()

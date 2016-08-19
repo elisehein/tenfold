@@ -4,11 +4,17 @@
     "examples": [
       {
         "text": "Two of the same numbers can pair up.",
-        "detail": "5 = 5"
+        "detail": "5 = 5",
+        "values": [null, null, null, null, null, null, null, null, null,
+                   null, null, 5   , null, null, null, null, null, null,
+                   null, null, 5   , null, null, null, null, null, null]
       },
       {
         "text": "Numbers can also pair if they add up 10.",
-        "detail": "2 + 8 = 10"
+        "detail": "2 + 8 = 10",
+        "values": [null, null, null, null, null, null, null, null, null,
+                   null, null, 2   , 8   , null, null, null, null, null,
+                   null, null, null, null, null, null, null, null, null]
       }
     ]
   },
@@ -16,10 +22,16 @@
     "title": "Pair up numbers next to each other, or ones that have no other numbers in between.",
     "examples": [
       {
-        "text": "These pairs are next to each other..."
+        "text": "These pairs are next to each other...",
+        "values": [null, null, 3   , null, null, null, null, null, null,
+                   null, null, null, 2   , null, null, 8   , null, null,
+                   null, null, 7   , null, null, null, null, null, null]
       },
       {
-        "text": "...as are these."
+        "text": "...as are these.",
+        "values": [null, null, null, null, null, null, null, null, null,
+                   4   , null, null, null, null, null, null, null, 6   ,
+                   null, null, null, null, null, null, null, null, null]
       }
     ]
   },
@@ -27,7 +39,10 @@
     "title": "Numbers on separate rows can be paired up if everything in between them is crossed out.",
     "examples": [
       {
-        "text": "Just think of the grid as one big continuous row!"
+        "text": "Just think of the grid as one big continuous row!",
+        "values": [null, null, null, 3   , null, null, null, null, null,
+                   null, null, null, null, null, null, 7   , null, null,
+                   null, null, null, null, null, null, null, null, null]
       }
     ]
   },
