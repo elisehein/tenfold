@@ -20,8 +20,9 @@ extension UIColor {
         switch themeColor {
         case .Accent:
 //            return UIColor(hex: "#90D1AC") // Green
-            return UIColor(hex: "#F4AFAB") // Peachy
+//            return UIColor(hex: "#F4AFAB") // Peachy
 //            return UIColor(hex: "#F4EEA9") // Yellow
+            return UIColor(hex: "#DDD92A") // Pear
         case .OffWhite:
             return UIColor(hex: "#FAF5EA")
         case .OffBlack:
