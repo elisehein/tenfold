@@ -28,7 +28,7 @@ class Pairing: NSObject {
         let value = game.valueAtIndex(index)
         let otherValue = game.valueAtIndex(otherIndex)
 
-        return (value == otherValue) || (value + otherValue == 10)
+        return (value == otherValue) || (value! + otherValue! == 10)
     }
 
     static private func positionsCanPair(index: Int, otherIndex: Int, inGame game: Game) -> Bool {

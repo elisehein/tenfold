@@ -13,6 +13,7 @@ import SwiftyJSON
 class Instructions: UIViewController {
 
     let sections: UICollectionView
+    let exampleGrid = RuleExampleGrid()
 
     private let reuseIdentifier = "InstructionItemCell"
     private let headerReuseIdentifier = "InstructionItemHeader"
@@ -24,6 +25,25 @@ class Instructions: UIViewController {
         l.sectionInset = UIEdgeInsets(top: 30, left: 0, bottom: 50, right: 0)
         return l
     }()
+
+    override var title: String? {
+        didSet {
+            guard title != nil else { return }
+
+            let label = UILabel()
+
+            let navigationTitleFont = UIFont.themeFontWithSize(14)
+            let attributes = [NSFontAttributeName: navigationTitleFont,
+                              NSForegroundColorAttributeName: UIColor.themeColor(.OffBlack),
+                              NSKernAttributeName: 2]
+
+            label.attributedText = NSAttributedString(string: title!.uppercaseString,
+                                                      attributes: attributes)
+            label.sizeToFit()
+
+            navigationItem.titleView = label
+        }
+    }
 
     private static var rules: JSON = {
         var data: JSON?
@@ -51,13 +71,17 @@ class Instructions: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
+        title = "How to play"
+
         sections.dataSource = self
         sections.delegate = self
         sections.backgroundColor = UIColor.clearColor()
-        sections.contentInset = UIEdgeInsets(top: 80, left: 0, bottom: 0, right: 0)
+        sections.contentInset = UIEdgeInsets(top: 500, left: 0, bottom: 0, right: 0)
 
         view.addSubview(sections)
+        view.addSubview(exampleGrid)
         view.backgroundColor = UIColor.themeColor(.OffWhite)
+
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -65,37 +89,34 @@ class Instructions: UIViewController {
 
         navigationController?.setNavigationBarHidden(false, animated: true)
 
-
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), forBarMetrics: .Default)
-        navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.translucent = true
-
-        navigationController?.navigationBar.tintColor = UIColor.themeColor(.OffBlack)
-
-        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 20, height: 16))
-        button.setBackgroundImage(UIImage(named: "back-arrow"), forState: .Normal)
-        button.addTarget(self,
-                         action: #selector(Instructions.goBack),
-                         forControlEvents: .TouchUpInside)
-        let backButton = UIBarButtonItem(customView: button)
-        navigationItem.leftBarButtonItem = backButton
-
-        navigationItem.titleView = makeTitleView()
+        let backButton = UIButton(frame: CGRect(x: 0, y: 0, width: 20, height: 16))
+        backButton.setBackgroundImage(UIImage(named: "back-arrow"), forState: .Normal)
+        backButton.addTarget(self,
+                             action: #selector(Instructions.goBack),
+                             forControlEvents: .TouchUpInside)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
 
         sections.frame = view.bounds
+
+        let gridWidth = 0.8 * view.bounds.size.width
+        let approxGridHeight = gridWidth / 3 + 5
+        let frameForGrid = CGRect(x: (view.bounds.size.width - gridWidth) / 2,
+                                  y: 100,
+                                  width: gridWidth,
+                                  height: approxGridHeight)
+
+        exampleGrid.initialisePositionWithinFrame(frameForGrid,
+                                                  withInsets: UIEdgeInsetsZero)
     }
 
-    private func makeTitleView() -> UIView {
-        let label = UILabel()
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        exampleGrid.playLoop()
+    }
 
-        let navigationTitleFont = UIFont.themeFontWithSize(14)
-        let attributes = [NSFontAttributeName: navigationTitleFont,
-                          NSForegroundColorAttributeName: UIColor.themeColor(.OffBlack),
-                          NSKernAttributeName: 2]
-
-        label.attributedText = NSAttributedString(string: "HOW TO PLAY", attributes: attributes)
-        label.sizeToFit()
-        return label
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        exampleGrid.invalidateLoop()
     }
 
     func goBack() {

@@ -34,6 +34,11 @@ class Game: NSObject, NSCoding {
         super.init()
     }
 
+    init(numbers: Array<Number>) {
+        self.numbers = numbers
+        super.init()
+    }
+
     required init(coder aDecoder: NSCoder) {
         self.numbers = (aDecoder.decodeObjectForKey(Game.numbersCoderKey) as? Array<Number>)!
     }
@@ -54,7 +59,7 @@ class Game: NSObject, NSCoding {
         return nextRoundNumbers
     }
 
-    func nextRoundValues() -> Array<Int> {
+    func nextRoundValues() -> Array<Int?> {
         return remainingNumbers().map({ $0.value })
     }
 
@@ -100,7 +105,7 @@ class Game: NSObject, NSCoding {
                                              lastGameIndex: totalNumbers() - 1)
     }
 
-    func valueAtIndex(index: Int) -> Int {
+    func valueAtIndex(index: Int) -> Int? {
         return numbers[index].value
     }
 

@@ -9,7 +9,7 @@
 import Foundation
 
 class Number: NSObject, NSCopying, NSCoding {
-    var value: Int
+    var value: Int?
     var crossedOut: Bool
     var marksEndOfRound: Bool
 
@@ -17,7 +17,7 @@ class Number: NSObject, NSCopying, NSCoding {
     private static let crossedOutCoderKey = "gameNumberCrossedOutCoderKey"
     private static let marksEndOfRoundCoderKey = "gameNumberMarksEndOfRoundCoderKey"
 
-    init(value: Int, crossedOut: Bool, marksEndOfRound: Bool) {
+    init(value: Int?, crossedOut: Bool, marksEndOfRound: Bool) {
         self.value = value
         self.crossedOut = crossedOut
         self.marksEndOfRound = marksEndOfRound

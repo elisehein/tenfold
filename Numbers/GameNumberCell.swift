@@ -21,7 +21,7 @@ class GameNumberCell: UICollectionViewCell {
     private let selectionColorFiller = UIView()
     private let crossedOutColorFiller = UIView()
 
-    private let defaultBackgroundColor = UIColor.themeColor(.OffWhite)
+    var defaultBackgroundColor = UIColor.themeColor(.OffWhite)
     private let crossedOutBackgroundColor = UIColor.themeColor(.OffBlack)
 
     private let markerMargin: CGFloat = 3.5
@@ -34,9 +34,7 @@ class GameNumberCell: UICollectionViewCell {
 
     var value: Int? {
         didSet {
-            if let value = value {
-                numberLabel.text = String(value)
-            }
+            numberLabel.text = value != nil ? "\(value!)" : nil
         }
     }
 
@@ -66,6 +64,7 @@ class GameNumberCell: UICollectionViewCell {
         crossedOutColorFiller.transform = CGAffineTransformMakeScale(0, 0)
         marksEndOfRound = false
         crossedOut = false
+        value = nil
         resetColors()
     }
 
@@ -97,6 +96,11 @@ class GameNumberCell: UICollectionViewCell {
             self.resetColors()
             self.crossedOutColorFiller.transform = CGAffineTransformMakeScale(0, 0)
         })
+    }
+
+    func unCrossOut() {
+        crossedOut = false
+        self.resetColors()
     }
 
     func indicateSelectionFailure() {

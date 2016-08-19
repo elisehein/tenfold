@@ -11,7 +11,6 @@ import UIKit
 
 class GameGrid: Grid {
 
-    private static let cellAnimationDuration = 0.15
     private let reuseIdentifier = "GameNumberCell"
 
     private var game: Game
@@ -149,14 +148,9 @@ class GameGrid: Grid {
         }
     }
 
-    func initialisePositionWithinFrame(givenFrame: CGRect, withInsets insets: UIEdgeInsets) {
-        let availableSize = CGSize(width: givenFrame.width - insets.left - insets.right,
-                                   height: givenFrame.height - insets.top - insets.bottom)
-        let size = sizeSnappedToPixel(inAvailableSize: availableSize)
-        let x = floor(insets.left + (availableSize.width - size.width) / 2.0)
-        let y = floor(insets.top + (availableSize.height - size.height) / 2.0)
-
-        frame = CGRect(origin: CGPoint(x: x, y: y), size: size)
+    override func initialisePositionWithinFrame(givenFrame: CGRect,
+                                                withInsets insets: UIEdgeInsets) {
+        super.initialisePositionWithinFrame(givenFrame, withInsets: insets)
 
         // Whatever the game state, we initially start with 3 rows showing
         // in the bottom of the view
@@ -176,19 +170,6 @@ class GameGrid: Grid {
         } else {
             return max(0, frame.size.height - currentGameHeight())
         }
-    }
-
-    private func sizeSnappedToPixel(inAvailableSize availableSize: CGSize) -> CGSize {
-        // We want to get a width that is exactly divisible by the number of items per row,
-        // taking into account also spacing, so that we don't get any unequal spacing or cell widths
-        let widthForNumbers = availableSize.width - CGFloat(widthForSpacing())
-        let widthRemainder = widthForNumbers % CGFloat(Game.numbersPerRow)
-        let integerWidth = availableSize.width - widthRemainder
-
-        let cellHeight = cellSize(forAvailableWidth: availableSize.width).height
-        let heightRemainder = availableSize.height % cellHeight
-        let integerHeight = availableSize.height - heightRemainder
-        return CGSize(width: integerWidth, height: integerHeight)
     }
 
     private func initialGameHeight() -> CGFloat {

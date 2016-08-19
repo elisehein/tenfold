@@ -49,7 +49,7 @@ class NextRoundGrid: Grid {
     private let reuseIdentifier = "NextRoundNumberCell"
 
     private let cellsPerRow: Int
-    private var values: Array<Int>
+    private var values: Array<Int?>
     private var startIndex: Int
 
     var proportionVisible: CGFloat = 0 {
@@ -75,7 +75,7 @@ class NextRoundGrid: Grid {
 
     init(cellsPerRow: Int,
          startIndex: Int,
-         values: Array<Int>,
+         values: Array<Int?>,
          frame: CGRect) {
 
         self.cellsPerRow = cellsPerRow
@@ -91,7 +91,7 @@ class NextRoundGrid: Grid {
         delegate = self
     }
 
-    func update(startIndex startIndex: Int, values: Array<Int>) {
+    func update(startIndex startIndex: Int, values: Array<Int?>) {
         self.startIndex = startIndex
         self.values = values
         reloadData()

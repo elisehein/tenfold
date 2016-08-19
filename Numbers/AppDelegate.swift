@@ -19,6 +19,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         application.applicationSupportsShakeToEdit = true
 
+        setGlobalAppearance()
+
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
 
         if let window = window {
@@ -34,5 +36,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         return true
+    }
+
+    private func setGlobalAppearance() {
+        let proxy = UINavigationBar.appearance()
+
+        proxy.setBackgroundImage(UIImage(), forBarMetrics: .Default)
+        proxy.shadowImage = UIImage()
+        proxy.barStyle = UIBarStyle.BlackTranslucent
+        proxy.tintColor = UIColor.themeColor(.OffBlack)
     }
 }
