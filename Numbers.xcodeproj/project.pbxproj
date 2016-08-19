@@ -13,7 +13,7 @@
 		0C392BC91D65E24600294ACC /* SourceSansPro-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0C392BC81D65E23500294ACC /* SourceSansPro-Regular.otf */; };
 		0C39D3081D3AB48B0047CE74 /* UIScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39D3071D3AB48B0047CE74 /* UIScrollView.swift */; };
 		0C39D30A1D3BC3B90047CE74 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39D3091D3BC3B90047CE74 /* Grid.swift */; };
-		0C4F12611D65C58000AAEB54 /* InstructionItemHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4F12601D65C58000AAEB54 /* InstructionItemHeader.swift */; };
+		0C4F12611D65C58000AAEB54 /* RuleHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4F12601D65C58000AAEB54 /* RuleHeader.swift */; };
 		0C68BE7E1D3A4B3A00A6ACDC /* Instructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C68BE7D1D3A4B3A00A6ACDC /* Instructions.swift */; };
 		0C69CE4B1C6DCABA002E0D29 /* Number.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C69CE4A1C6DCABA002E0D29 /* Number.swift */; };
 		0C69CE4E1C6DCDE9002E0D29 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C69CE4D1C6DCDE9002E0D29 /* Array.swift */; };
@@ -33,7 +33,7 @@
 		0CB9388B1D2019A7005B81F4 /* Montserrat-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0CB9388A1D20199A005B81F4 /* Montserrat-Light.otf */; };
 		0CB9388D1D202832005B81F4 /* NextRoundNumberCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB9388C1D202832005B81F4 /* NextRoundNumberCell.swift */; };
 		0CB938911D20389C005B81F4 /* NextRoundGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB938901D20389C005B81F4 /* NextRoundGrid.swift */; };
-		0CFDE5BA1D65B2E2001F9DF5 /* InstructionItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CFDE5B91D65B2E2001F9DF5 /* InstructionItemCell.swift */; };
+		0CFDE5BA1D65B2E2001F9DF5 /* RuleExampleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CFDE5B91D65B2E2001F9DF5 /* RuleExampleCell.swift */; };
 		0CFDE5BC1D65B763001F9DF5 /* instructions.json in Resources */ = {isa = PBXBuildFile; fileRef = 0CFDE5BB1D65B763001F9DF5 /* instructions.json */; };
 		4EA695801D36992E00F9A315 /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA6957F1D36992E00F9A315 /* Menu.swift */; };
 		4EE46E201D22CD55005C4493 /* Matrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE46E1F1D22CD55005C4493 /* Matrix.swift */; };
@@ -46,7 +46,7 @@
 		0C392BC81D65E23500294ACC /* SourceSansPro-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-Regular.otf"; sourceTree = "<group>"; };
 		0C39D3071D3AB48B0047CE74 /* UIScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIScrollView.swift; sourceTree = "<group>"; };
 		0C39D3091D3BC3B90047CE74 /* Grid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
-		0C4F12601D65C58000AAEB54 /* InstructionItemHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstructionItemHeader.swift; sourceTree = "<group>"; };
+		0C4F12601D65C58000AAEB54 /* RuleHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RuleHeader.swift; sourceTree = "<group>"; };
 		0C68BE7D1D3A4B3A00A6ACDC /* Instructions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Instructions.swift; sourceTree = "<group>"; };
 		0C69CE4A1C6DCABA002E0D29 /* Number.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Number.swift; sourceTree = "<group>"; };
 		0C69CE4D1C6DCDE9002E0D29 /* Array.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
@@ -68,7 +68,7 @@
 		0CB9388A1D20199A005B81F4 /* Montserrat-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Light.otf"; sourceTree = "<group>"; };
 		0CB9388C1D202832005B81F4 /* NextRoundNumberCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextRoundNumberCell.swift; sourceTree = "<group>"; };
 		0CB938901D20389C005B81F4 /* NextRoundGrid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextRoundGrid.swift; sourceTree = "<group>"; };
-		0CFDE5B91D65B2E2001F9DF5 /* InstructionItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstructionItemCell.swift; sourceTree = "<group>"; };
+		0CFDE5B91D65B2E2001F9DF5 /* RuleExampleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RuleExampleCell.swift; sourceTree = "<group>"; };
 		0CFDE5BB1D65B763001F9DF5 /* instructions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = instructions.json; sourceTree = "<group>"; };
 		4EA6957F1D36992E00F9A315 /* Menu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
 		4EE46E1F1D22CD55005C4493 /* Matrix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Matrix.swift; sourceTree = "<group>"; };
@@ -150,12 +150,12 @@
 				0C90AEA41C6D1B0700E1E42E /* GameGrid.swift */,
 				0C34638E1C6F89B30086D3CC /* GameNumberCell.swift */,
 				0C39D3091D3BC3B90047CE74 /* Grid.swift */,
-				0CFDE5B91D65B2E2001F9DF5 /* InstructionItemCell.swift */,
-				0C4F12601D65C58000AAEB54 /* InstructionItemHeader.swift */,
 				4EA6957F1D36992E00F9A315 /* Menu.swift */,
 				0CB938901D20389C005B81F4 /* NextRoundGrid.swift */,
 				0CB9388C1D202832005B81F4 /* NextRoundNumberCell.swift */,
+				0CFDE5B91D65B2E2001F9DF5 /* RuleExampleCell.swift */,
 				0C710E251D6721DA0047F391 /* RuleExampleGrid.swift */,
+				0C4F12601D65C58000AAEB54 /* RuleHeader.swift */,
 			);
 			name = "UI Modules";
 			sourceTree = "<group>";
@@ -288,7 +288,7 @@
 				0C69CE4B1C6DCABA002E0D29 /* Number.swift in Sources */,
 				0C90AEA71C6D1BCF00E1E42E /* Game.swift in Sources */,
 				0C39D3081D3AB48B0047CE74 /* UIScrollView.swift in Sources */,
-				0C4F12611D65C58000AAEB54 /* InstructionItemHeader.swift in Sources */,
+				0C4F12611D65C58000AAEB54 /* RuleHeader.swift in Sources */,
 				0C90AEA01C6C7FDF00E1E42E /* UIFont+Theme.swift in Sources */,
 				0C90AEA51C6D1B0700E1E42E /* GameGrid.swift in Sources */,
 				0C34638F1C6F89B30086D3CC /* GameNumberCell.swift in Sources */,
@@ -301,7 +301,7 @@
 				0CB109341C7234FB00182663 /* UIColor.swift in Sources */,
 				0CB9388D1D202832005B81F4 /* NextRoundNumberCell.swift in Sources */,
 				0CA050A81C6B23D9006A42B9 /* UIColor+Theme.swift in Sources */,
-				0CFDE5BA1D65B2E2001F9DF5 /* InstructionItemCell.swift in Sources */,
+				0CFDE5BA1D65B2E2001F9DF5 /* RuleExampleCell.swift in Sources */,
 				0C738ADB1C69D811007C9548 /* AppDelegate.swift in Sources */,
 				0C710E261D6721DA0047F391 /* RuleExampleGrid.swift in Sources */,
 				0C3463931C6F8C340086D3CC /* Pairing.swift in Sources */,

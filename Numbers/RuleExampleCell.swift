@@ -9,17 +9,17 @@
 import Foundation
 import UIKit
 
-class InstructionItemCell: UICollectionViewCell {
+class RuleExampleCell: UICollectionViewCell {
 
     private static let widthFactor: CGFloat = 0.85
     private static let detailLabelHeight: CGFloat = 20
-    private static let instructionGridSpacing: CGFloat = 30
+    private static let textGridSpacing: CGFloat = 30
     private static let gridDetailSpacing: CGFloat = 10
 
-    var instructionText: String? {
+    var text: String? {
         didSet {
-            if let instructionText = instructionText {
-                instructionLabel.text = instructionText
+            if let text = text {
+                label.text = text
             }
         }
     }
@@ -34,15 +34,15 @@ class InstructionItemCell: UICollectionViewCell {
         }
     }
 
-    private let instructionLabel = InstructionItemCell.labelForInstructionText()
+    private let label = RuleExampleCell.labelForText()
     private let detailLabel = UILabel()
     private let exampleGrid = RuleExampleGrid()
 
-    class func sizeOccupiedByInstructionLabel(forAvailableWidth availableWidth: CGFloat,
-                                              usingText text: String) -> CGSize {
-        let width = InstructionItemCell.widthFactor * availableWidth
+    class func sizeOccupiedByLabel(forAvailableWidth availableWidth: CGFloat,
+                                   usingText text: String) -> CGSize {
+        let width = RuleExampleCell.widthFactor * availableWidth
         let availableSize = CGSize(width: width, height: CGFloat(MAXFLOAT))
-        let label = InstructionItemCell.labelForInstructionText()
+        let label = RuleExampleCell.labelForText()
         label.text = text
         var size = label.sizeThatFits(availableSize)
         size.width = min(width, availableSize.width)
@@ -51,19 +51,19 @@ class InstructionItemCell: UICollectionViewCell {
     }
 
     class func sizeOccupied(forAvailableWidth availableWidth: CGFloat,
-                            usingInstructionText instructionText: String,
+                            usingText givenText: String,
                             detailText: String?) -> CGSize {
 
-        var size = sizeOccupiedByInstructionLabel(forAvailableWidth: availableWidth,
-                                                  usingText: instructionText)
+        var size = sizeOccupiedByLabel(forAvailableWidth: availableWidth,
+                                       usingText: givenText)
 
-        size.height += InstructionItemCell.gridSize(forAvailableWidth: availableWidth).height
-        size.height += InstructionItemCell.instructionGridSpacing
+        size.height += RuleExampleCell.gridSize(forAvailableWidth: availableWidth).height
+        size.height += RuleExampleCell.textGridSpacing
 
         // The assumption is that the detail label never takes more
         // than one line of space
         if detailText != nil {
-            size.height += detailLabelHeight + InstructionItemCell.gridDetailSpacing
+            size.height += detailLabelHeight + RuleExampleCell.gridDetailSpacing
         }
 
         return size
@@ -76,7 +76,7 @@ class InstructionItemCell: UICollectionViewCell {
         detailLabel.textColor = UIColor.themeColorHighlighted(.OffWhite)
         detailLabel.font = UIFont.themeFontWithSize(14)
 
-        contentView.addSubview(instructionLabel)
+        contentView.addSubview(label)
         contentView.addSubview(exampleGrid)
         contentView.addSubview(detailLabel)
     }
@@ -86,16 +86,15 @@ class InstructionItemCell: UICollectionViewCell {
 
         let availableWidth = contentView.bounds.size.width
 
-        // swiftlint:disable:next line_length
-        let instructionLabelSize = InstructionItemCell.sizeOccupiedByInstructionLabel(forAvailableWidth: availableWidth, usingText: instructionText!)
+        let labelSize = RuleExampleCell.sizeOccupiedByLabel(forAvailableWidth: availableWidth,
+                                                            usingText: text!)
 
-        let x = contentView.bounds.size.width * 0.5 * (1 - InstructionItemCell.widthFactor)
-        instructionLabel.frame = CGRect(origin: CGPoint(x: x, y : 0),
-                                        size: instructionLabelSize)
+        let x = contentView.bounds.size.width * 0.5 * (1 - RuleExampleCell.widthFactor)
+        label.frame = CGRect(origin: CGPoint(x: x, y : 0), size: labelSize)
 
-        let gridSize = InstructionItemCell.gridSize(forAvailableWidth: availableWidth)
+        let gridSize = RuleExampleCell.gridSize(forAvailableWidth: availableWidth)
         let frameForGrid = CGRect(x: (availableWidth - gridSize.width) / 2,
-                                  y: instructionLabelSize.height + InstructionItemCell.instructionGridSpacing,
+                                  y: labelSize.height + RuleExampleCell.textGridSpacing,
                                   width: gridSize.width,
                                   height: gridSize.height)
 
@@ -104,27 +103,27 @@ class InstructionItemCell: UICollectionViewCell {
 
         let detailLabelY = exampleGrid.frame.origin.y
                            + exampleGrid.frame.size.height
-                           + InstructionItemCell.gridDetailSpacing
+                           + RuleExampleCell.gridDetailSpacing
 
         detailLabel.frame = CGRect(x: 0,
                                    y: detailLabelY,
                                    width: availableWidth,
-                                   height: InstructionItemCell.detailLabelHeight)
+                                   height: RuleExampleCell.detailLabelHeight)
     }
 
     class func gridSize(forAvailableWidth availableWidth: CGFloat) -> CGSize {
-        let width = InstructionItemCell.widthFactor * availableWidth
+        let width = RuleExampleCell.widthFactor * availableWidth
         let totalRows = Matrix(itemsPerRow: Game.numbersPerRow).totalRows(27) // TODO
         return CGSize(width: width, height: width / CGFloat(totalRows) + 5) // 5px for safety
     }
 
-    class func labelForInstructionText () -> UILabel {
-        let label = UILabel()
-        label.numberOfLines = 0
-        label.font = UIFont.themeFontWithSize(14)
-        label.textAlignment = .Center
-        label.textColor = UIColor.themeColor(.OffBlack)
-        return label
+    class func labelForText () -> UILabel {
+        let l = UILabel()
+        l.numberOfLines = 0
+        l.font = UIFont.themeFontWithSize(14)
+        l.textAlignment = .Center
+        l.textColor = UIColor.themeColor(.OffBlack)
+        return l
     }
 
     required init?(coder aDecoder: NSCoder) {

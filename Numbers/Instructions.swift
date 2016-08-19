@@ -14,8 +14,8 @@ class Instructions: UIViewController {
 
     let sections: UICollectionView
 
-    private let reuseIdentifier = "InstructionItemCell"
-    private let headerReuseIdentifier = "InstructionItemHeader"
+    private let reuseIdentifier = "RuleExampleCell"
+    private let headerReuseIdentifier = "RuleHeader"
 
     private let layout: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
@@ -62,11 +62,11 @@ class Instructions: UIViewController {
     init() {
         sections = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
 
-        sections.registerClass(InstructionItemCell.self,
-                                       forCellWithReuseIdentifier: reuseIdentifier)
+        sections.registerClass(RuleExampleCell.self,
+                               forCellWithReuseIdentifier: reuseIdentifier)
 
         // swiftlint:disable:next line_length
-        sections.registerClass(InstructionItemHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerReuseIdentifier)
+        sections.registerClass(RuleHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerReuseIdentifier)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -104,9 +104,9 @@ class Instructions: UIViewController {
         // swiftlint:disable:next line_length
         let headerView = sections.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionHeader, withReuseIdentifier: headerReuseIdentifier, forIndexPath: indexPath)
 
-        if let headerView = headerView as? InstructionItemHeader {
-            let instructionItem = Instructions.rules[indexPath.section]
-            headerView.text = instructionItem["title"].string
+        if let headerView = headerView as? RuleHeader {
+            let rule = Instructions.rules[indexPath.section]
+            headerView.text = rule["title"].string
         }
 
         return headerView
@@ -132,9 +132,9 @@ extension Instructions: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier,
                                                                          forIndexPath: indexPath)
 
-        if let cell = cell as? InstructionItemCell {
+        if let cell = cell as? RuleExampleCell {
             let example = Instructions.rules[indexPath.section]["examples"][indexPath.item]
-            cell.instructionText = example["text"].string
+            cell.text = example["text"].string
             cell.detailText = example["detail"].string
         }
 
@@ -158,13 +158,13 @@ extension Instructions: UICollectionViewDelegateFlowLayout {
                         layout: UICollectionViewLayout,
                         sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         let example = Instructions.rules[indexPath.section]["examples"][indexPath.item]
-        let instructionText = example["text"].string
+        let text = example["text"].string
         let detailText = example["detail"].string
 
         let width = view.bounds.size.width
-        let height = InstructionItemCell.sizeOccupied(forAvailableWidth: width,
-                                                      usingInstructionText: instructionText!,
-                                                      detailText: detailText).height
+        let height = RuleExampleCell.sizeOccupied(forAvailableWidth: width,
+                                                  usingText: text!,
+                                                  detailText: detailText).height
 
         return CGSize(width: width, height: height)
     }
@@ -175,8 +175,7 @@ extension Instructions: UICollectionViewDelegateFlowLayout {
 
         let text = Instructions.rules[section]["title"].string
         let width = view.bounds.size.width
-        let height = InstructionItemHeader.sizeOccupied(forAvailableWidth: width,
-                                                        usingText: text!).height
+        let height = RuleHeader.sizeOccupied(forAvailableWidth: width, usingText: text!).height
 
         return CGSize(width: width, height: height)
     }

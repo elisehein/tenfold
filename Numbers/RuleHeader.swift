@@ -1,5 +1,5 @@
 //
-//  InstructionItemHeader.swift
+//  RuleHeader.swift
 //  Numbers
 //
 //  Created by Elise Hein on 18/08/2016.
@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class InstructionItemHeader: UICollectionReusableView {
+class RuleHeader: UICollectionReusableView {
 
     private let label = UILabel()
     private static let widthFactor: CGFloat = 0.85
@@ -18,14 +18,14 @@ class InstructionItemHeader: UICollectionReusableView {
         didSet {
             if let text = text {
                 // swiftlint:disable:next line_length
-                label.attributedText = InstructionItemHeader.constructAttributedString(withText: text)
+                label.attributedText = RuleHeader.constructAttributedString(withText: text)
             }
         }
     }
 
     class func sizeOccupied(forAvailableWidth availableWidth: CGFloat,
                             usingText text: String) -> CGSize {
-        let width = InstructionItemHeader.widthFactor * availableWidth
+        let width = RuleHeader.widthFactor * availableWidth
         let availableSize = CGSize(width: width, height: CGFloat(MAXFLOAT))
         let label = UILabel()
         label.attributedText = constructAttributedString(withText: text)
@@ -68,10 +68,10 @@ class InstructionItemHeader: UICollectionReusableView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        let labelSize = InstructionItemHeader.sizeOccupied(forAvailableWidth: bounds.size.width,
+        let labelSize = RuleHeader.sizeOccupied(forAvailableWidth: bounds.size.width,
                                                            usingText: text!)
 
-        let x = bounds.size.width * 0.5 * (1 - InstructionItemHeader.widthFactor)
+        let x = bounds.size.width * 0.5 * (1 - RuleHeader.widthFactor)
         label.frame = CGRect(origin: CGPoint(x: x, y : 0),
                              size: labelSize)
     }
