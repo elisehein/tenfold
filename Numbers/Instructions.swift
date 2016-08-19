@@ -13,7 +13,6 @@ import SwiftyJSON
 class Instructions: UIViewController {
 
     let sections: UICollectionView
-    let exampleGrid = RuleExampleGrid()
 
     private let reuseIdentifier = "InstructionItemCell"
     private let headerReuseIdentifier = "InstructionItemHeader"
@@ -76,12 +75,10 @@ class Instructions: UIViewController {
         sections.dataSource = self
         sections.delegate = self
         sections.backgroundColor = UIColor.clearColor()
-        sections.contentInset = UIEdgeInsets(top: 500, left: 0, bottom: 0, right: 0)
+        sections.contentInset = UIEdgeInsets(top: 80, left: 0, bottom: 0, right: 0)
 
         view.addSubview(sections)
-        view.addSubview(exampleGrid)
         view.backgroundColor = UIColor.themeColor(.OffWhite)
-
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -97,26 +94,6 @@ class Instructions: UIViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
 
         sections.frame = view.bounds
-
-        let gridWidth = 0.8 * view.bounds.size.width
-        let approxGridHeight = gridWidth / 3 + 5
-        let frameForGrid = CGRect(x: (view.bounds.size.width - gridWidth) / 2,
-                                  y: 100,
-                                  width: gridWidth,
-                                  height: approxGridHeight)
-
-        exampleGrid.initialisePositionWithinFrame(frameForGrid,
-                                                  withInsets: UIEdgeInsetsZero)
-    }
-
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        exampleGrid.playLoop()
-    }
-
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
-        exampleGrid.invalidateLoop()
     }
 
     func goBack() {

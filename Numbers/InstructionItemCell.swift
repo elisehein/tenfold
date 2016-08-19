@@ -13,6 +13,8 @@ class InstructionItemCell: UICollectionViewCell {
 
     private static let widthFactor: CGFloat = 0.85
     private static let detailLabelHeight: CGFloat = 20
+    private static let instructionGridSpacing: CGFloat = 30
+    private static let gridDetailSpacing: CGFloat = 10
 
     var instructionText: String? {
         didSet {
@@ -34,6 +36,7 @@ class InstructionItemCell: UICollectionViewCell {
 
     private let instructionLabel = InstructionItemCell.labelForInstructionText()
     private let detailLabel = UILabel()
+    private let exampleGrid = RuleExampleGrid()
 
     class func sizeOccupiedByInstructionLabel(forAvailableWidth availableWidth: CGFloat,
                                               usingText text: String) -> CGSize {
@@ -54,10 +57,13 @@ class InstructionItemCell: UICollectionViewCell {
         var size = sizeOccupiedByInstructionLabel(forAvailableWidth: availableWidth,
                                                   usingText: instructionText)
 
+        size.height += InstructionItemCell.gridSize(forAvailableWidth: availableWidth).height
+        size.height += InstructionItemCell.instructionGridSpacing
+
         // The assumption is that the detail label never takes more
         // than one line of space
         if detailText != nil {
-            size.height += detailLabelHeight
+            size.height += detailLabelHeight + InstructionItemCell.gridDetailSpacing
         }
 
         return size
@@ -71,23 +77,45 @@ class InstructionItemCell: UICollectionViewCell {
         detailLabel.font = UIFont.themeFontWithSize(14)
 
         contentView.addSubview(instructionLabel)
+        contentView.addSubview(exampleGrid)
         contentView.addSubview(detailLabel)
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        // swiftlint:disable:next line_length
-        let instructionLabelSize = InstructionItemCell.sizeOccupiedByInstructionLabel(forAvailableWidth: bounds.size.width, usingText: instructionText!)
+        let availableWidth = contentView.bounds.size.width
 
-        let x = bounds.size.width * 0.5 * (1 - InstructionItemCell.widthFactor)
+        // swiftlint:disable:next line_length
+        let instructionLabelSize = InstructionItemCell.sizeOccupiedByInstructionLabel(forAvailableWidth: availableWidth, usingText: instructionText!)
+
+        let x = contentView.bounds.size.width * 0.5 * (1 - InstructionItemCell.widthFactor)
         instructionLabel.frame = CGRect(origin: CGPoint(x: x, y : 0),
                                         size: instructionLabelSize)
 
+        let gridSize = InstructionItemCell.gridSize(forAvailableWidth: availableWidth)
+        let frameForGrid = CGRect(x: (availableWidth - gridSize.width) / 2,
+                                  y: instructionLabelSize.height + InstructionItemCell.instructionGridSpacing,
+                                  width: gridSize.width,
+                                  height: gridSize.height)
+
+        exampleGrid.initialisePositionWithinFrame(frameForGrid,
+                                                  withInsets: UIEdgeInsetsZero)
+
+        let detailLabelY = exampleGrid.frame.origin.y
+                           + exampleGrid.frame.size.height
+                           + InstructionItemCell.gridDetailSpacing
+
         detailLabel.frame = CGRect(x: 0,
-                                   y: instructionLabelSize.height,
-                                   width: contentView.frame.size.width,
+                                   y: detailLabelY,
+                                   width: availableWidth,
                                    height: InstructionItemCell.detailLabelHeight)
+    }
+
+    class func gridSize(forAvailableWidth availableWidth: CGFloat) -> CGSize {
+        let width = InstructionItemCell.widthFactor * availableWidth
+        let totalRows = Matrix(itemsPerRow: Game.numbersPerRow).totalRows(27) // TODO
+        return CGSize(width: width, height: width / CGFloat(totalRows) + 5) // 5px for safety
     }
 
     class func labelForInstructionText () -> UILabel {
