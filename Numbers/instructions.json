@@ -23,7 +23,7 @@
     ]
   },
   {
-    "title": "Pair up numbers next to each other, or ones that have no other numbers in between.",
+    "title": "Pair up numbers next to each other.",
     "examples": [
       {
         "text": "These pairs are next to each other...",

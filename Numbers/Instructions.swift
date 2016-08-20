@@ -149,7 +149,11 @@ extension Instructions: UICollectionViewDataSource {
             cell.text = example["text"].string
             cell.detailText = example["detail"].string
             cell.gridValues = example["values"].arrayValue.map({ $0.int })
-            cell.crossedOutIndeces = example["crossedOut"].arrayValue.map({ $0.int! })
+            cell.gridCrossedOutIndeces = example["crossedOut"].arrayValue.map({ $0.int! })
+
+            cell.gridPairs = example["pairs"].arrayValue.map({ JSONPair in
+                JSONPair.arrayValue.map({ index in index.int! })
+            })
         }
 
         return cell

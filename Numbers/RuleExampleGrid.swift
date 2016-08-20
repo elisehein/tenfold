@@ -11,11 +11,14 @@ import UIKit
 
 class RuleExampleGrid: Grid {
 
-    private var timer: NSTimer?
+    private static let pairingLoopDuration: Double = 3
+
+    private var loopTimer: NSTimer?
     private let reuseIdentifier = "GameNumberCell"
 
     var values: Array<Int?> = []
     var crossedOutIndeces: Array<Int> = []
+    var pairs: Array<[Int]> = []
 
     init() {
         super.init(frame: CGRect.zero)
@@ -29,57 +32,76 @@ class RuleExampleGrid: Grid {
     }
 
     func playLoop() {
-        timer = NSTimer.scheduledTimerWithTimeInterval(3,
-                                                       target: self,
-                                                       selector: #selector(RuleExampleGrid.actions),
-                                                       userInfo: nil,
-                                                       repeats: true)
+        loopTimer = after(seconds: Double(pairs.count) * RuleExampleGrid.pairingLoopDuration,
+                          performSelector: #selector(RuleExampleGrid.actions),
+                          repeats: true)
     }
 
     func invalidateLoop() {
-        timer?.invalidate()
+        loopTimer?.invalidate()
     }
 
     func actions() {
-        print("Reload and run loop")
+        var delay = RuleExampleGrid.pairingLoopDuration
 
-        let indexPathInPair = NSIndexPath(forItem: 11, inSection: 0)
-        let otherIndexPathInPair = NSIndexPath(forItem: 20, inSection: 0)
+        for pair in pairs {
+            crossOutPair(pair[0], pair[1], reverse: true)
 
-        for indexPath in [indexPathInPair, otherIndexPathInPair] {
-            if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
-                cell.unCrossOut()
-            }
+            let userInfo: [String: Int] = ["index": pair[0], "otherIndex": pair[1]]
+            after(seconds: delay,
+                  performSelector: #selector(RuleExampleGrid.selectAndCrossOutPair(_:)),
+                  withUserInfo: userInfo)
+
+            delay += RuleExampleGrid.pairingLoopDuration
         }
-
-        NSTimer.scheduledTimerWithTimeInterval(1,
-                                               target: self,
-                                               selector: #selector(RuleExampleGrid.selectFirstCell),
-                                               userInfo: nil,
-                                               repeats: false)
-
-        NSTimer.scheduledTimerWithTimeInterval(2,
-                                               target: self,
-                                               selector: #selector(RuleExampleGrid.crossOutPair),
-                                               userInfo: nil,
-                                               repeats: false)
     }
 
-    func selectFirstCell() {
-        let indexPathInPair = NSIndexPath(forItem: 11, inSection: 0)
+    func selectAndCrossOutPair(timer: NSTimer) {
+        if let userInfo = timer.userInfo! as? [String: Int] {
+            selectCell(userInfo["index"]!)
+            after(seconds: 0.7,
+                  performSelector: #selector(RuleExampleGrid.crossOutPairWithUserInfo(_:)),
+                  withUserInfo: userInfo)
+        }
+    }
 
-        if let cell = cellForItemAtIndexPath(indexPathInPair) as? GameNumberCell {
+    func crossOutPairWithUserInfo(timer: NSTimer) {
+        if let userInfo = timer.userInfo! as? [String: Int] {
+            crossOutPair(userInfo["index"]!, userInfo["otherIndex"]!)
+        }
+    }
+
+    func after(seconds seconds: Double,
+               performSelector selector: Selector,
+               withUserInfo userInfo: [String: Int]? = nil,
+               repeats: Bool = false) -> NSTimer {
+        return NSTimer.scheduledTimerWithTimeInterval(seconds,
+                                                      target: self,
+                                                      selector: selector,
+                                                      userInfo: userInfo,
+                                                      repeats: repeats)
+
+    }
+
+    private func selectCell(index: Int) {
+       let indexPath = NSIndexPath(forItem: index, inSection: 0)
+
+        if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
             cell.indicateSelection()
         }
     }
 
-    func crossOutPair() {
-        let indexPathInPair = NSIndexPath(forItem: 11, inSection: 0)
-        let otherIndexPathInPair = NSIndexPath(forItem: 20, inSection: 0)
+    private func crossOutPair(index: Int, _ otherIndex: Int, reverse: Bool = false) {
+        let indexPath = NSIndexPath(forItem: index, inSection: 0)
+        let otherIndexPath = NSIndexPath(forItem: otherIndex, inSection: 0)
 
-        for indexPath in [indexPathInPair, otherIndexPathInPair] {
+        for indexPath in [indexPath, otherIndexPath] {
             if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
-                cell.crossOut()
+                if reverse {
+                    cell.unCrossOut()
+                } else {
+                    cell.crossOut()
+                }
             }
         }
     }
