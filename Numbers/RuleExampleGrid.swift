@@ -31,9 +31,12 @@ class RuleExampleGrid: Grid {
         registerClass(GameNumberCell.self, forCellWithReuseIdentifier: self.reuseIdentifier)
     }
 
+    // Because the timer interval doesn't allow for the first loop to run immediately,
+    // we fire the first one ourselves, and then set an interval for the rest.
     func playLoop() {
+        performPairings()
         loopTimer = after(seconds: Double(pairs.count) * RuleExampleGrid.pairingLoopDuration,
-                          performSelector: #selector(RuleExampleGrid.actions),
+                          performSelector: #selector(RuleExampleGrid.performPairings),
                           repeats: true)
     }
 
@@ -41,8 +44,8 @@ class RuleExampleGrid: Grid {
         loopTimer?.invalidate()
     }
 
-    func actions() {
-        var delay = RuleExampleGrid.pairingLoopDuration
+    func performPairings() {
+        var delay = 0.5
 
         for pair in pairs {
             crossOutPair(pair[0], pair[1], reverse: true)
