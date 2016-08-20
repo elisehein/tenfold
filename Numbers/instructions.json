@@ -4,17 +4,21 @@
     "examples": [
       {
         "text": "Two of the same numbers can pair up.",
-        "detail": "5 = 5",
-        "values": [null, null, null, null, null, null, null, null, null,
+        "detail": "5 = 5    |    3 = 3",
+        "values": [null, null, null, null, null, 3   , 3   , null, null,
                    null, null, 5   , null, null, null, null, null, null,
-                   null, null, 5   , null, null, null, null, null, null]
+                   null, null, 5   , null, null, null, null, null, null],
+        "crossedOut": [],
+        "pairs": [[11, 20], [5, 6]]
       },
       {
         "text": "Numbers can also pair if they add up 10.",
-        "detail": "2 + 8 = 10",
+        "detail": "2 + 8 = 10    |    1 + 9 = 10",
         "values": [null, null, null, null, null, null, null, null, null,
-                   null, null, 2   , 8   , null, null, null, null, null,
-                   null, null, null, null, null, null, null, null, null]
+                   null, null, 2   , 8   , null, null, null, null, 1   ,
+                   null, null, null, null, null, null, null, null, 9   ],
+        "crossedOut": [],
+        "pairs": [[11, 12], [17, 26]]
       }
     ]
   },
@@ -24,14 +28,18 @@
       {
         "text": "These pairs are next to each other...",
         "values": [null, null, 3   , null, null, null, null, null, null,
-                   null, null, null, 2   , null, null, 8   , null, null,
-                   null, null, 7   , null, null, null, null, null, null]
+                   null, null, 2   , null, null, null, 8   , null, null,
+                   null, null, 7   , null, null, null, null, null, null],
+        "crossedOut": [12, 13, 14],
+        "pairs": [[11, 15], [2, 24]]
       },
       {
         "text": "...as are these.",
         "values": [null, null, null, null, null, null, null, null, null,
                    4   , null, null, null, null, null, null, null, 6   ,
-                   null, null, null, null, null, null, null, null, null]
+                   null, null, null, null, null, null, null, null, null],
+        "crossedOut": [10, 11, 12, 13, 14, 15, 16],
+        "pairs": [[9, 17]]
       }
     ]
   },
@@ -40,9 +48,11 @@
     "examples": [
       {
         "text": "Just think of the grid as one big continuous row!",
-        "values": [null, null, null, 3   , null, null, null, null, null,
-                   null, null, null, null, null, null, 7   , null, null,
-                   null, null, null, null, null, null, null, null, null]
+        "values": [null, null, 5   , 3   , null, null, null, null, null,
+                   null, null, null, null, null, null, 7   , null, 5   ,
+                   null, null, null, null, null, null, null, null, null],
+        "crossedOut": [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16],
+        "pairs": [[3, 15]]
       }
     ]
   },

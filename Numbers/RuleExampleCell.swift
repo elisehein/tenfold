@@ -40,6 +40,12 @@ class RuleExampleCell: UICollectionViewCell {
         }
     }
 
+    var crossedOutIndeces: Array<Int> = [] {
+        didSet {
+            exampleGrid.crossedOutIndeces = crossedOutIndeces
+        }
+    }
+
     private let label = RuleExampleCell.labelForText()
     private let detailLabel = UILabel()
     private let exampleGrid = RuleExampleGrid()
@@ -115,6 +121,22 @@ class RuleExampleCell: UICollectionViewCell {
                                    y: detailLabelY,
                                    width: availableWidth,
                                    height: RuleExampleCell.detailLabelHeight)
+    }
+
+    func prepareGrid() {
+        exampleGrid.reloadData()
+    }
+
+    func playExampleLoop() {
+        exampleGrid.playLoop()
+    }
+
+    func stopExampleLoop() {
+        exampleGrid.invalidateLoop()
+    }
+
+    override func prepareForReuse() {
+        stopExampleLoop()
     }
 
     class func gridSize(forAvailableWidth availableWidth: CGFloat) -> CGSize {

@@ -14,11 +14,8 @@ class RuleExampleGrid: Grid {
     private var timer: NSTimer?
     private let reuseIdentifier = "GameNumberCell"
 
-    var values: Array<Int?> = [] {
-        didSet {
-            reloadData()
-        }
-    }
+    var values: Array<Int?> = []
+    var crossedOutIndeces: Array<Int> = []
 
     init() {
         super.init(frame: CGRect.zero)
@@ -72,13 +69,11 @@ class RuleExampleGrid: Grid {
         let indexPathInPair = NSIndexPath(forItem: 11, inSection: 0)
 
         if let cell = cellForItemAtIndexPath(indexPathInPair) as? GameNumberCell {
-            print("Indicating selection")
             cell.indicateSelection()
         }
     }
 
     func crossOutPair() {
-        print("Crossing out both in pair")
         let indexPathInPair = NSIndexPath(forItem: 11, inSection: 0)
         let otherIndexPathInPair = NSIndexPath(forItem: 20, inSection: 0)
 
@@ -111,7 +106,7 @@ extension RuleExampleGrid: UICollectionViewDataSource {
 
         if let cell = cell as? GameNumberCell {
             cell.value = values[indexPath.item]
-            cell.crossedOut = false
+            cell.crossedOut = crossedOutIndeces.contains(indexPath.item)
             cell.marksEndOfRound = false
             cell.defaultBackgroundColor = UIColor.themeColorHighlighted(.OffWhite)
             cell.resetColors()

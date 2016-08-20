@@ -96,6 +96,18 @@ class Instructions: UIViewController {
         sections.frame = view.bounds
     }
 
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        let visibleCells = sections.visibleCells()
+
+        for cell in visibleCells {
+            if let cell = cell as? RuleExampleCell {
+                cell.stopExampleLoop()
+            }
+        }
+    }
+
     func goBack() {
         navigationController?.popViewControllerAnimated(true)
     }
@@ -137,6 +149,7 @@ extension Instructions: UICollectionViewDataSource {
             cell.text = example["text"].string
             cell.detailText = example["detail"].string
             cell.gridValues = example["values"].arrayValue.map({ $0.int })
+            cell.crossedOutIndeces = example["crossedOut"].arrayValue.map({ $0.int! })
         }
 
         return cell
@@ -150,6 +163,24 @@ extension Instructions: UICollectionViewDataSource {
             return headerViewForIndexPath(indexPath)
         default:
             assert(false, "Unexpected element kind")
+        }
+    }
+}
+
+extension Instructions: UICollectionViewDelegate {
+    func collectionView(collectionView: UICollectionView,
+                        willDisplayCell cell: UICollectionViewCell,
+                        forItemAtIndexPath indexPath: NSIndexPath) {
+        if let cell = cell as? RuleExampleCell {
+            cell.prepareGrid()
+            cell.playExampleLoop()
+        }
+    }
+    func collectionView(collectionView: UICollectionView,
+                        didEndDisplayingCell cell: UICollectionViewCell,
+                        forItemAtIndexPath indexPath: NSIndexPath) {
+        if let cell = cell as? RuleExampleCell {
+            cell.stopExampleLoop()
         }
     }
 }
