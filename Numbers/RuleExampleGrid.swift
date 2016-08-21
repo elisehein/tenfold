@@ -13,7 +13,7 @@ class RuleExampleGrid: Grid {
 
     private static let pairingLoopDuration: Double = 3
 
-    private var loopTimer: NSTimer?
+    private var timers: Array<NSTimer> = []
     private let reuseIdentifier = "GameNumberCell"
 
     var values: Array<Int?> = []
@@ -35,13 +35,17 @@ class RuleExampleGrid: Grid {
     // we fire the first one ourselves, and then set an interval for the rest.
     func playLoop() {
         performPairings()
-        loopTimer = after(seconds: Double(pairs.count) * RuleExampleGrid.pairingLoopDuration,
-                          performSelector: #selector(RuleExampleGrid.performPairings),
-                          repeats: true)
+        after(seconds: Double(pairs.count) * RuleExampleGrid.pairingLoopDuration,
+              performSelector: #selector(RuleExampleGrid.performPairings),
+              repeats: true)
     }
 
     func invalidateLoop() {
-        loopTimer?.invalidate()
+        for timer in timers {
+            timer.invalidate()
+        }
+
+        timers = []
     }
 
     func performPairings() {
@@ -78,12 +82,14 @@ class RuleExampleGrid: Grid {
                performSelector selector: Selector,
                withUserInfo userInfo: [String: Int]? = nil,
                repeats: Bool = false) -> NSTimer {
-        return NSTimer.scheduledTimerWithTimeInterval(seconds,
-                                                      target: self,
-                                                      selector: selector,
-                                                      userInfo: userInfo,
-                                                      repeats: repeats)
+        let timer = NSTimer.scheduledTimerWithTimeInterval(seconds,
+                                                           target: self,
+                                                           selector: selector,
+                                                           userInfo: userInfo,
+                                                           repeats: repeats)
 
+        timers.append(timer)
+        return timer
     }
 
     private func selectCell(index: Int) {
