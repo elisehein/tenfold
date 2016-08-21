@@ -3,7 +3,7 @@
     "title": "Cross out numbers in pairs to clear the grid!",
     "examples": [
       {
-        "text": "Two of the same numbers can pair up.",
+        "text": "Two identical numbers can pair up.",
         "detail": "5 = 5    |    3 = 3",
         "values": [null, null, null, null, null, 3   , 3   , null, null,
                    null, null, 5   , null, null, null, null, null, null,
@@ -31,7 +31,7 @@
                    null, null, 2   , null, null, null, 8   , null, null,
                    null, null, 7   , null, null, null, null, null, null],
         "crossedOut": [12, 13, 14],
-        "pairs": [[11, 15], [2, 24]]
+        "pairs": [[11, 15], [2, 20]]
       },
       {
         "text": "...as are these.",
@@ -52,7 +52,7 @@
                    null, null, null, null, null, null, 7   , null, 5   ,
                    null, null, null, null, null, null, null, null, null],
         "crossedOut": [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16],
-        "pairs": [[3, 15]]
+        "pairs": [[3, 15], [2, 17]]
       }
     ]
   },
