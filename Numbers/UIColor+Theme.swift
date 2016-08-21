@@ -20,13 +20,11 @@ extension UIColor {
         switch themeColor {
         case .Accent:
 //            return UIColor(hex: "#90D1AC") // Green
-//            return UIColor(hex: "#F4AFAB") // Peachy
-//            return UIColor(hex: "#F4EEA9") // Yellow
-            return UIColor(hex: "#DDD92A") // Pear
+            return UIColor(hex: "#FFA987") // Vivid tangerine
         case .OffWhite:
-            return UIColor(hex: "#FAF5EA")
+            return UIColor(hex: "#FAF5EA") // Old lace
         case .OffBlack:
-            return UIColor(hex: "#02293D")
+            return UIColor(hex: "#02293D") // Maastricht blue
         }
     }
 
@@ -35,7 +33,7 @@ extension UIColor {
         case .Accent:
            return UIColor.themeColor(.Accent)
         case .OffWhite:
-            return UIColor(hex: "#CFC1AC")
+            return UIColor(hex: "#ECDCB0") // Wheat
         case .OffBlack:
             return UIColor.themeColor(.OffBlack)
         }
