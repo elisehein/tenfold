@@ -20,8 +20,8 @@ class Instructions: UIViewController {
     private let layout: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
         l.minimumInteritemSpacing = 0
-        l.minimumLineSpacing = 50
-        l.sectionInset = UIEdgeInsets(top: 30, left: 0, bottom: 50, right: 0)
+        l.minimumLineSpacing = 80
+        l.sectionInset = UIEdgeInsets(top: 30, left: 0, bottom: 80, right: 0)
         return l
     }()
 
