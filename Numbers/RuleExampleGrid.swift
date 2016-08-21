@@ -88,6 +88,10 @@ class RuleExampleGrid: Grid {
                                                            userInfo: userInfo,
                                                            repeats: repeats)
 
+        // This ensures timers are fired while scrolling
+        // http://stackoverflow.com/a/2742275/2026098
+        NSRunLoop.mainRunLoop().addTimer(timer, forMode: NSRunLoopCommonModes)
+
         timers.append(timer)
         return timer
     }
