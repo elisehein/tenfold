@@ -11,7 +11,7 @@ import UIKit
 
 class RuleExampleCell: UICollectionViewCell {
 
-    private static let widthFactor: CGFloat = 0.85
+    private static let widthFactor: CGFloat = 0.75
     private static let detailLabelHeight: CGFloat = 20
     private static let textGridSpacing: CGFloat = 30
     private static let gridDetailSpacing: CGFloat = 10

@@ -25,25 +25,6 @@ class Instructions: UIViewController {
         return l
     }()
 
-    override var title: String? {
-        didSet {
-            guard title != nil else { return }
-
-            let label = UILabel()
-
-            let navigationTitleFont = UIFont.themeFontWithSize(14)
-            let attributes = [NSFontAttributeName: navigationTitleFont,
-                              NSForegroundColorAttributeName: UIColor.themeColor(.OffBlack),
-                              NSKernAttributeName: 2]
-
-            label.attributedText = NSAttributedString(string: title!.uppercaseString,
-                                                      attributes: attributes)
-            label.sizeToFit()
-
-            navigationItem.titleView = label
-        }
-    }
-
     private static var rules: JSON = {
         var data: JSON?
 
@@ -70,8 +51,6 @@ class Instructions: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        title = "How to play"
-
         sections.dataSource = self
         sections.delegate = self
         sections.backgroundColor = UIColor.clearColor()
@@ -79,6 +58,8 @@ class Instructions: UIViewController {
 
         view.addSubview(sections)
         view.backgroundColor = UIColor.themeColor(.OffWhite)
+
+        automaticallyAdjustsScrollViewInsets = false
     }
 
     override func viewWillAppear(animated: Bool) {
