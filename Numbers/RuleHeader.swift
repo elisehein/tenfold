@@ -41,7 +41,7 @@ class RuleHeader: UICollectionReusableView {
         paragraphStyle.lineSpacing = 7
         paragraphStyle.alignment = .Center
 
-        let font = UIFont.themeFontWithSize(15, weight: .Bold)
+        let font = UIFont.themeFontWithSize(16, weight: .Bold)
 
         let attrString = NSMutableAttributedString(string: text)
 

@@ -20,8 +20,8 @@ class Instructions: UIViewController {
     private let layout: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
         l.minimumInteritemSpacing = 0
-        l.minimumLineSpacing = 80
-        l.sectionInset = UIEdgeInsets(top: 30, left: 0, bottom: 80, right: 0)
+        l.minimumLineSpacing = 60
+        l.sectionInset = UIEdgeInsets(top: 70, left: 0, bottom: 100, right: 0)
         return l
     }()
 
@@ -54,7 +54,7 @@ class Instructions: UIViewController {
         sections.dataSource = self
         sections.delegate = self
         sections.backgroundColor = UIColor.clearColor()
-        sections.contentInset = UIEdgeInsets(top: 80, left: 0, bottom: 0, right: 0)
+        sections.contentInset = UIEdgeInsets(top: 120, left: 0, bottom: 0, right: 0)
 
         view.addSubview(sections)
         view.backgroundColor = UIColor.themeColor(.OffWhite)
@@ -128,7 +128,6 @@ extension Instructions: UICollectionViewDataSource {
         if let cell = cell as? RuleExampleCell {
             let example = Instructions.rules[indexPath.section]["examples"][indexPath.item]
             cell.text = example["text"].string
-            cell.detailText = example["detail"].string
             cell.gridValues = example["values"].arrayValue.map({ $0.int })
             cell.gridCrossedOutIndeces = example["crossedOut"].arrayValue.map({ $0.int! })
 

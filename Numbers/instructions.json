@@ -4,7 +4,6 @@
     "examples": [
       {
         "text": "Two identical numbers can pair up.",
-        "detail": "5 = 5    |    3 = 3",
         "values": [null, null, null, null, null, 3   , 3   , null, null,
                    null, null, 5   , null, null, null, null, null, null,
                    null, null, 5   , null, null, null, null, null, null],
@@ -13,7 +12,6 @@
       },
       {
         "text": "Numbers can also pair if they add up 10.",
-        "detail": "2 + 8 = 10    |    1 + 9 = 10",
         "values": [null, null, null, null, null, null, null, null, null,
                    null, null, 2   , 8   , null, null, null, null, 1   ,
                    null, null, null, null, null, null, null, null, 9   ],

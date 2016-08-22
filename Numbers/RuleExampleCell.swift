@@ -12,25 +12,13 @@ import UIKit
 class RuleExampleCell: UICollectionViewCell {
 
     private static let widthFactor: CGFloat = 0.75
-    private static let detailLabelHeight: CGFloat = 20
     private static let textGridSpacing: CGFloat = 30
-    private static let gridDetailSpacing: CGFloat = 10
 
     var text: String? {
         didSet {
             if let text = text {
                 label.text = text
             }
-        }
-    }
-
-    var detailText: String? {
-        didSet {
-            if let detailText = detailText {
-                detailLabel.text = detailText
-            }
-
-            detailLabel.hidden = detailText == nil
         }
     }
 
@@ -78,25 +66,14 @@ class RuleExampleCell: UICollectionViewCell {
         size.height += RuleExampleCell.gridSize(forAvailableWidth: availableWidth).height
         size.height += RuleExampleCell.textGridSpacing
 
-        // The assumption is that the detail label never takes more
-        // than one line of space
-        if detailText != nil {
-            size.height += detailLabelHeight + RuleExampleCell.gridDetailSpacing
-        }
-
         return size
     }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        detailLabel.textAlignment = .Center
-        detailLabel.textColor = UIColor.themeColorHighlighted(.OffWhite)
-        detailLabel.font = UIFont.themeFontWithSize(14)
-
         contentView.addSubview(label)
         contentView.addSubview(exampleGrid)
-        contentView.addSubview(detailLabel)
     }
 
     override func layoutSubviews() {
@@ -118,15 +95,6 @@ class RuleExampleCell: UICollectionViewCell {
 
         exampleGrid.initialisePositionWithinFrame(frameForGrid,
                                                   withInsets: UIEdgeInsetsZero)
-
-        let detailLabelY = exampleGrid.frame.origin.y
-                           + exampleGrid.frame.size.height
-                           + RuleExampleCell.gridDetailSpacing
-
-        detailLabel.frame = CGRect(x: 0,
-                                   y: detailLabelY,
-                                   width: availableWidth,
-                                   height: RuleExampleCell.detailLabelHeight)
     }
 
     func prepareGrid() {
