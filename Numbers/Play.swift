@@ -17,7 +17,7 @@ class Play: UIViewController {
     private static let hideMenuPullUpThreshold: CGFloat = 50
     private static let showMenuPullDownThreshold: CGFloat = 70
 
-    private static let menuBlobMaxRadius: CGFloat = 40.0
+    private static let pullDownIndicatorMaxCurve: CGFloat = 60.0
 
     private var game: Game
 
@@ -249,17 +249,7 @@ class Play: UIViewController {
 
         if gameGrid.pullDownInProgress() {
             let pullDownRatio = gameGrid.distancePulledDown() / Play.showMenuPullDownThreshold
-            let proportionVisible = min(1, pullDownRatio)
-            let width = view.bounds.size.width
-
-            menuPullDownBlob.path = UIBezierPath(arcCenter: CGPoint(x: width / 2, y: 0),
-                                                 radius: proportionVisible * Play.menuBlobMaxRadius,
-                                                 startAngle: 0,
-                                                 endAngle:CGFloat(M_PI * 2),
-                                                 clockwise: true).CGPath
-            menuPullDownBlob.fillColor = proportionVisible == 1 ?
-                                         UIColor.themeColor(.Accent).CGColor :
-                                         UIColor.themeColorHighlighted(.OffWhite).CGColor
+            menuPullDownBlob.path = curvedIndicatorPath(pullDownRatio)
         }
 
         if gameGrid.pullUpInProgress() {
@@ -285,6 +275,27 @@ class Play: UIViewController {
         }
 
         positionMenu()
+    }
+
+    private func curvedIndicatorPath(proportionCurved: CGFloat) -> CGPath {
+        let y = min(1, proportionCurved) * Play.showMenuPullDownThreshold
+        var curvedY = y
+
+        if proportionCurved > 1 {
+            curvedY += Play.pullDownIndicatorMaxCurve * (proportionCurved - 1)
+        }
+
+        let path = UIBezierPath()
+        path.moveToPoint(CGPoint(x: 0, y: 0))
+        path.addLineToPoint(CGPoint(x: view.bounds.size.width, y: 0))
+        path.addLineToPoint(CGPoint(x: view.bounds.size.width, y: y))
+
+        let controlPoint2 = CGPoint(x: view.bounds.size.width / 2, y : curvedY)
+        path.addCurveToPoint(CGPoint(x: 0, y: y),
+                             controlPoint1: CGPoint(x: view.bounds.size.width, y: y),
+                             controlPoint2: controlPoint2)
+        path.closePath()
+        return path.CGPath
     }
 
     required init?(coder aDecoder: NSCoder) {
