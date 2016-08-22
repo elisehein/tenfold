@@ -17,8 +17,7 @@ class Play: UIViewController {
     private static let hideMenuPullUpThreshold: CGFloat = 50
     private static let showMenuPullDownThreshold: CGFloat = 70
 
-    private static let pullDownIndicatorMaxCurve: CGFloat = 50
-    private static let pullDownIndicatorBeginCurvingThreshold: CGFloat = 20
+    private static let pullDownIndicatorMaxCurve: CGFloat = 80
 
     private var game: Game
 
@@ -250,7 +249,8 @@ class Play: UIViewController {
 
         if gameGrid.pullDownInProgress() {
             let pullDownRatio = gameGrid.distancePulledDown() / Play.showMenuPullDownThreshold
-            menuPullDownBlob.path = curvedIndicatorPath(pullDownRatio)
+            let proportionVisible = min(1, pullDownRatio)
+            menuPullDownBlob.path = curvedIndicatorPath(proportionVisible)
         }
 
         if gameGrid.pullUpInProgress() {
@@ -279,21 +279,19 @@ class Play: UIViewController {
     }
 
     private func curvedIndicatorPath(proportionCurved: CGFloat) -> CGPath {
-        let y = min(1, proportionCurved) * Play.pullDownIndicatorBeginCurvingThreshold
-        var curvedY = y
+        let width = view.bounds.size.width
+        let y = Play.pullDownIndicatorMaxCurve * proportionCurved
 
-        if proportionCurved > 1 {
-            curvedY += Play.pullDownIndicatorMaxCurve * (proportionCurved - 1)
-        }
+        let topLeftCorner = CGPoint(x: width * 0.1, y: 0)
+        let topRightCorner = CGPoint(x: width * 0.9, y: 0)
 
         let path = UIBezierPath()
-        path.moveToPoint(CGPoint(x: 0, y: 0))
-        path.addLineToPoint(CGPoint(x: view.bounds.size.width, y: 0))
-        path.addLineToPoint(CGPoint(x: view.bounds.size.width, y: y))
+        path.moveToPoint(topLeftCorner)
+        path.addLineToPoint(topRightCorner)
 
-        let controlPoint2 = CGPoint(x: view.bounds.size.width / 2, y : curvedY)
-        path.addCurveToPoint(CGPoint(x: 0, y: y),
-                             controlPoint1: CGPoint(x: view.bounds.size.width, y: y),
+        let controlPoint2 = CGPoint(x: view.bounds.size.width / 2, y : y)
+        path.addCurveToPoint(topLeftCorner,
+                             controlPoint1: topRightCorner,
                              controlPoint2: controlPoint2)
         path.closePath()
         return path.CGPath
