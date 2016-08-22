@@ -17,7 +17,8 @@ class Play: UIViewController {
     private static let hideMenuPullUpThreshold: CGFloat = 50
     private static let showMenuPullDownThreshold: CGFloat = 70
 
-    private static let pullDownIndicatorMaxCurve: CGFloat = 60.0
+    private static let pullDownIndicatorMaxCurve: CGFloat = 50
+    private static let pullDownIndicatorBeginCurvingThreshold: CGFloat = 20
 
     private var game: Game
 
@@ -33,7 +34,7 @@ class Play: UIViewController {
         let blob = CAShapeLayer()
         blob.rasterizationScale = 2.0 * UIScreen.mainScreen().scale
         blob.shouldRasterize = true
-        blob.fillColor = UIColor.themeColorHighlighted(.OffWhite).CGColor
+        blob.fillColor = UIColor.themeColorDarker(.OffWhite).CGColor
         return blob
     }()
 
@@ -278,7 +279,7 @@ class Play: UIViewController {
     }
 
     private func curvedIndicatorPath(proportionCurved: CGFloat) -> CGPath {
-        let y = min(1, proportionCurved) * Play.showMenuPullDownThreshold
+        let y = min(1, proportionCurved) * Play.pullDownIndicatorBeginCurvingThreshold
         var curvedY = y
 
         if proportionCurved > 1 {

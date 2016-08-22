@@ -38,4 +38,16 @@ extension UIColor {
             return UIColor.themeColor(.OffBlack)
         }
     }
+
+    class func themeColorDarker(themeColor: ThemeColor) -> UIColor {
+        switch themeColor {
+        case .Accent:
+           return UIColor.themeColor(.Accent)
+        case .OffWhite:
+            return UIColor(hex: "#EAE3D3")
+        case .OffBlack:
+            return UIColor.themeColor(.OffBlack)
+        }
+
+    }
 }
