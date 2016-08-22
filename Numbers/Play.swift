@@ -17,6 +17,8 @@ class Play: UIViewController {
     private static let hideMenuPullUpThreshold: CGFloat = 50
     private static let showMenuPullDownThreshold: CGFloat = 70
 
+    private static let menuBlobMaxRadius: CGFloat = 40.0
+
     private var game: Game
 
     private let menu = Menu()
@@ -26,6 +28,14 @@ class Play: UIViewController {
     private var passedNextRoundThreshold = false
 
     private var viewHasLoaded = false
+
+    private let menuPullDownBlob: CAShapeLayer = {
+        let blob = CAShapeLayer()
+        blob.rasterizationScale = 2.0 * UIScreen.mainScreen().scale
+        blob.shouldRasterize = true
+        blob.fillColor = UIColor.themeColorHighlighted(.OffWhite).CGColor
+        return blob
+    }()
 
     private var blimpPlayer: AVAudioPlayer? = {
         var player = AVAudioPlayer()
@@ -67,6 +77,7 @@ class Play: UIViewController {
         view.addGestureRecognizer(swipe)
         view.addSubview(gameGrid)
         view.addSubview(menu)
+        view.layer.addSublayer(menuPullDownBlob)
     }
 
     override func viewDidLoad() {
@@ -212,8 +223,7 @@ class Play: UIViewController {
 
     private func updateState() {
         let nextRoundValues = game.nextRoundValues()
-        nextRoundGrid!.update(startIndex: nextRoundStartIndex(),
-                              values: nextRoundValues)
+        nextRoundGrid!.update(startIndex: nextRoundStartIndex(), values: nextRoundValues)
         gameGrid.pullUpThreshold = calcNextRoundPullUpThreshold(nextRoundValues.count)
         StorageService.saveGame(game)
     }
@@ -236,6 +246,21 @@ class Play: UIViewController {
 
     private func handleScroll() {
         guard viewHasLoaded else { return }
+
+        if gameGrid.pullDownInProgress() {
+            let pullDownRatio = gameGrid.distancePulledDown() / Play.showMenuPullDownThreshold
+            let proportionVisible = min(1, pullDownRatio)
+            let width = view.bounds.size.width
+
+            menuPullDownBlob.path = UIBezierPath(arcCenter: CGPoint(x: width / 2, y: 0),
+                                                 radius: proportionVisible * Play.menuBlobMaxRadius,
+                                                 startAngle: 0,
+                                                 endAngle:CGFloat(M_PI * 2),
+                                                 clockwise: true).CGPath
+            menuPullDownBlob.fillColor = proportionVisible == 1 ?
+                                         UIColor.themeColor(.Accent).CGColor :
+                                         UIColor.themeColorHighlighted(.OffWhite).CGColor
+        }
 
         if gameGrid.pullUpInProgress() {
             positionNextRoundMatrix()
