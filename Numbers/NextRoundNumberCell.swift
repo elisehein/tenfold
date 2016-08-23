@@ -31,7 +31,7 @@ class NextRoundNumberCell: UICollectionViewCell {
         didSet {
             contentView.backgroundColor = isSpacer ?
                                           UIColor.clearColor() :
-                                          UIColor.themeColor(.NeutralAccent)
+                                          UIColor.themeColor(.SecondaryAccent)
         }
     }
 
@@ -39,7 +39,7 @@ class NextRoundNumberCell: UICollectionViewCell {
         super.init(frame: frame)
 
         numberLabel.textAlignment = .Center
-        numberLabel.textColor = UIColor.themeColorDarker(.NeutralAccent)
+        numberLabel.textColor = UIColor.themeColorDarker(.SecondaryAccent)
         numberLabel.frame = contentView.frame
 
         // Set the font size to what I want it to be when it's at its largest,
@@ -57,7 +57,6 @@ class NextRoundNumberCell: UICollectionViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        contentView.backgroundColor = UIColor.clearColor()
         valueIsHidden = true
         value = nil
         isSpacer = true

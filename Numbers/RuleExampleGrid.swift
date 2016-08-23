@@ -143,7 +143,7 @@ extension RuleExampleGrid: UICollectionViewDataSource {
             cell.value = values[indexPath.item]
             cell.crossedOut = crossedOutIndeces.contains(indexPath.item)
             cell.marksEndOfRound = false
-            cell.defaultBackgroundColor = UIColor.themeColor(.NeutralAccent)
+            cell.defaultBackgroundColor = UIColor.themeColor(.OffWhiteShaded)
             cell.resetColors()
         }
 

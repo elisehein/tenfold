@@ -10,10 +10,11 @@ import Foundation
 import UIKit
 
 enum ThemeColor {
-    case OffWhite // Sand
-    case OffBlack // Dark blue
-    case Accent   // Mint green
-    case NeutralAccent // Dark dand
+    case OffWhite
+    case OffWhiteShaded
+    case OffBlack
+    case Accent
+    case SecondaryAccent
 }
 
 extension UIColor {
@@ -21,13 +22,14 @@ extension UIColor {
         switch themeColor {
         case .OffWhite:
             return UIColor(hex: "#FAF5EA") // Old lace
+        case .OffWhiteShaded:
+            return UIColor(hex: "#ECDCB0") // Wheat
         case .OffBlack:
             return UIColor(hex: "#02293D") // Maastricht blue
         case .Accent:
-//            return UIColor(hex: "#90D1AC") // Green
             return UIColor(hex: "#FFA987") // Vivid tangerine
-        case .NeutralAccent:
-            return UIColor(hex: "#ECDCB0") // Wheat
+        case .SecondaryAccent:
+            return UIColor(hex: "#D4E6B5") // Tea green
         }
     }
 
@@ -35,13 +37,14 @@ extension UIColor {
         switch themeColor {
         case .OffWhite:
             return UIColor(hex: "#EAE3D3")
+        case .OffWhiteShaded:
+            return UIColor(hex: "#8A7F60")
         case .OffBlack:
             return UIColor.themeColor(.OffBlack)
         case .Accent:
            return UIColor.themeColor(.Accent)
-        case .NeutralAccent:
-            return UIColor(hex: "#8A7F60")
+        case .SecondaryAccent:
+            return UIColor(hex: "#788462")
         }
-
     }
 }
