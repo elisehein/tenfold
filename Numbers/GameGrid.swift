@@ -80,6 +80,7 @@ class GameGrid: Grid {
     private func adjustTopInset(enforceStartingPosition enforceStartingPosition: Bool = false) {
         contentInset.top = topInset(atStartingPosition: enforceStartingPosition)
         gridAtStartingPosition = enforceStartingPosition
+        toggleBounce(contentInset.top > 0)
     }
 
     func loadNextRound(atIndeces indeces: Array<Int>, completion: ((Bool) -> Void)?) {
@@ -160,7 +161,6 @@ class GameGrid: Grid {
         // Whatever the game state, we initially start with 3 rows showing
         // in the bottom of the view
         adjustTopInset(enforceStartingPosition: true)
-        toggleBounce(true)
     }
 
     func emptySpaceVisible(atStartingPosition atStartingPosition: Bool = false) -> CGFloat {
