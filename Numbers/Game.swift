@@ -41,6 +41,10 @@ class Game: NSObject, NSCoding {
 
     required init(coder aDecoder: NSCoder) {
         self.numbers = (aDecoder.decodeObjectForKey(Game.numbersCoderKey) as? Array<Number>)!
+
+        if self.numbers.count == 0 {
+            self.numbers = Game.initialNumbers()
+        }
     }
 
     func crossOutPair(index: Int, otherIndex: Int) {
