@@ -22,12 +22,6 @@ class Menu: UIView {
 
     private static let buttonSize = CGSize(width: 100, height: 40)
 
-    var locked: Bool {
-        get {
-            return animationInProgress || hidden
-        }
-    }
-
     init() {
         super.init(frame: CGRect.zero)
 

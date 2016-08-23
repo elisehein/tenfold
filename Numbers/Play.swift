@@ -13,7 +13,7 @@ class Play: UIViewController {
 
     private static let gridInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
 
-    private static let maxNextRoundPullUpThreshold: CGFloat = 150
+    private static let maxNextRoundPullUpThreshold: CGFloat = 130
     private static let hideMenuPullUpThreshold: CGFloat = 50
     private static let showMenuPullDownThreshold: CGFloat = 70
 
@@ -24,6 +24,7 @@ class Play: UIViewController {
     private let menu = Menu()
     private let gameGrid: GameGrid
     private var nextRoundGrid: NextRoundGrid?
+    private var infoPopUp = PopUp()
 
     private var passedNextRoundThreshold = false
 
@@ -77,6 +78,7 @@ class Play: UIViewController {
         view.addGestureRecognizer(swipe)
         view.addSubview(gameGrid)
         view.addSubview(menu)
+        view.addSubview(infoPopUp)
         view.layer.addSublayer(menuPullDownBlob)
     }
 
@@ -85,6 +87,7 @@ class Play: UIViewController {
 
         gameGrid.initialisePositionWithinFrame(view.bounds, withInsets: Play.gridInsets)
         positionMenu()
+        positionInfoPopUp(0)
         initNextRoundMatrix()
 
         gameGrid.snapToStartingPositionThreshold = Play.showMenuPullDownThreshold
@@ -113,8 +116,19 @@ class Play: UIViewController {
     // MARK: Positioning
 
     private func positionMenu() {
-        guard !menu.locked else { return }
         menu.frame = menuFrame()
+    }
+
+    private func positionInfoPopUp(pullUpDistance: CGFloat) {
+        let topMargin: CGFloat = 30
+        let bottomMargin: CGFloat = 0
+        let height: CGFloat = 40
+        let maxBottomDistance = topMargin + bottomMargin + height
+        let y = view.bounds.size.height - min(pullUpDistance, maxBottomDistance)
+        infoPopUp.frame = CGRect(x: 0, y:
+                                 y + topMargin,
+                                 width: view.bounds.size.width,
+                                 height: height)
     }
 
     private func menuFrame(atStartingPosition atStartingPosition: Bool = false) -> CGRect {
@@ -263,12 +277,16 @@ class Play: UIViewController {
                 if !passedNextRoundThreshold {
                     blimpPlayer?.play()
                     passedNextRoundThreshold = true
+                    infoPopUp.toggleInfo(showNextRound: true)
                 }
             } else {
+                infoPopUp.toggleInfo(showNextRound: false)
                 passedNextRoundThreshold = false
             }
 
             nextRoundGrid?.proportionVisible = proportionVisible
+
+            positionInfoPopUp(gameGrid.distancePulledUp())
         } else {
             nextRoundGrid?.hide(animated: true)
             passedNextRoundThreshold = false
