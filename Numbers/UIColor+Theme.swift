@@ -44,7 +44,7 @@ extension UIColor {
         case .Accent:
            return UIColor.themeColor(.Accent)
         case .SecondaryAccent:
-            return UIColor(hex: "#788462")
+            return UIColor(hex: "#3D4431")
         }
     }
 }
