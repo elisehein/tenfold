@@ -69,7 +69,15 @@ class NextRoundGrid: Grid {
 
     private var revealValues: Bool = false {
         didSet {
-            reloadData()
+            for visibleCell in visibleCells() {
+                if let visibleCell = visibleCell as? NextRoundNumberCell {
+                    if revealValues {
+                        visibleCell.revealValue()
+                    } else {
+                        visibleCell.hideValue()
+                    }
+                }
+            }
         }
     }
 
@@ -139,14 +147,13 @@ extension NextRoundGrid: UICollectionViewDataSource {
                                                                          forIndexPath: indexPath)
         if let cell = cell as? NextRoundNumberCell {
             cell.isSpacer = indexPath.item < startIndex
+            cell.valueIsHidden = !revealValues
 
             if indexPath.item >= startIndex && indexPath.item < startIndex + values.count {
                 cell.value = values[indexPath.item - startIndex]
             } else {
                 cell.value = nil
             }
-
-            cell.shouldBlimp = revealValues
         }
 
         return cell

@@ -10,23 +10,17 @@ import Foundation
 import UIKit
 
 class NextRoundNumberCell: UICollectionViewCell {
-
-    private static let animationDuration: Double = 0.6
-    private static let animationDamping: CGFloat = 0.3
-    private static let animationVelocity: CGFloat = 0.6
-    private static let fontSizeFactor = GameNumberCell.fontSizeFactor
+    private static let fontSizeFactor: CGFloat = 0.4
 
     private let numberLabel = UILabel()
 
-    var shouldBlimp: Bool = false {
-        didSet {
-            blimp()
-        }
-    }
+    // Ensure valueIsHidden is set before value
+    var valueIsHidden: Bool = true
 
     var value: Int? = nil {
         didSet {
             numberLabel.text = value != nil ? "\(value!)" : nil
+            numberLabel.alpha = valueIsHidden ? 0 : 1
         }
     }
 
@@ -47,7 +41,6 @@ class NextRoundNumberCell: UICollectionViewCell {
         numberLabel.textAlignment = .Center
         numberLabel.textColor = UIColor.themeColorDarker(.NeutralAccent)
         numberLabel.frame = contentView.frame
-        numberLabel.hidden = true
 
         // Set the font size to what I want it to be when it's at its largest,
         // and scale it down later, so the scale up transformation won't look blurry
@@ -65,50 +58,31 @@ class NextRoundNumberCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         contentView.backgroundColor = UIColor.clearColor()
+        valueIsHidden = true
+        value = nil
         isSpacer = true
     }
 
-    private func blimp() {
+    func revealValue() {
         guard value != nil else { return }
+        guard valueIsHidden == true else { return }
 
-        if shouldBlimp {
-            numberLabel.transform = NextRoundNumberCell.shrink(numberLabel)
-            numberLabel.hidden = false
-
-            animateSpring({
-                self.numberLabel.transform = CGAffineTransformIdentity
-            })
-        } else {
-            animate({
-                self.numberLabel.transform = NextRoundNumberCell.shrink(self.numberLabel)
-            }, completion: { _ in
-                self.numberLabel.hidden = true
-            })
-        }
+        valueIsHidden = false
+        numberLabel.alpha = 1
     }
 
-    private func animateSpring(animations: () -> Void) {
-        UIView.animateWithDuration(NextRoundNumberCell.animationDuration,
+    func hideValue() {
+        guard value != nil else { return }
+        guard valueIsHidden == false else { return }
+
+        valueIsHidden = true
+
+        UIView.animateWithDuration(0.3,
                                    delay: 0,
-                                   usingSpringWithDamping: NextRoundNumberCell.animationDamping,
-                                   initialSpringVelocity: NextRoundNumberCell.animationVelocity,
                                    options: .CurveEaseInOut,
                                    animations: {
-            animations()
+            self.numberLabel.alpha = CGFloat(0)
         }, completion: nil)
-    }
-
-    private func animate(animations: () -> Void, completion: ((finished: Bool) -> Void)? = nil) {
-        UIView.animateWithDuration(NextRoundNumberCell.animationDuration,
-                                   delay: 0,
-                                   options: .CurveEaseInOut,
-                                   animations: {
-            animations()
-        }, completion: completion)
-    }
-
-    class func shrink(view: UIView) -> CGAffineTransform {
-        return CGAffineTransformScale(view.transform, 0.1, 0.1)
     }
 
     required init?(coder aDecoder: NSCoder) {
