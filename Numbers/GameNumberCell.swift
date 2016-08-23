@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 
 class GameNumberCell: UICollectionViewCell {
+    static let fontSizeFactor: CGFloat = 0.45
     private static let animationDuration = 0.2
 
     private let numberLabel = UILabel()
@@ -78,7 +79,10 @@ class GameNumberCell: UICollectionViewCell {
         }
 
         numberLabel.frame = contentView.bounds
-        numberLabel.font = UIFont.themeFontWithSize(contentView.bounds.size.height * 0.45)
+
+        let fontSize = contentView.bounds.size.height * GameNumberCell.fontSizeFactor
+        numberLabel.font = UIFont.themeFontWithSize(fontSize)
+
         drawEndOfRoundMarker()
     }
 

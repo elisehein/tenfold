@@ -11,13 +11,11 @@ import UIKit
 
 class NextRoundNumberCell: UICollectionViewCell {
 
-    private static let dotRadius: CGFloat = 1
     private static let animationDuration: Double = 0.6
     private static let animationDamping: CGFloat = 0.3
     private static let animationVelocity: CGFloat = 0.6
-    private static let fontSizeFactor: CGFloat = 0.3
+    private static let fontSizeFactor = GameNumberCell.fontSizeFactor
 
-    private let dot = UIView()
     private let numberLabel = UILabel()
 
     var shouldBlimp: Bool = false {
@@ -32,37 +30,42 @@ class NextRoundNumberCell: UICollectionViewCell {
         }
     }
 
+    // Cells which are below the final numbers of the actual game act only as spacers
+    // for ease of positioning; they should not have a background colour, because
+    // it would be visible from underneath the actual game.
+    var isSpacer: Bool = true {
+        didSet {
+            contentView.backgroundColor = isSpacer ?
+                                          UIColor.clearColor() :
+                                          UIColor.themeColor(.NeutralAccent)
+        }
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        dot.backgroundColor = UIColor.themeColor(.OffBlack)
-
-        let radius = NextRoundNumberCell.dotRadius
-        dot.layer.cornerRadius = radius
-        dot.frame = CGRect(x: (frame.size.width / 2.0) - radius,
-                           y: (frame.size.height / 2.0) - radius,
-                           width: 2 * radius,
-                           height: 2 * radius)
-
         numberLabel.textAlignment = .Center
-        numberLabel.textColor = UIColor.themeColor(.OffBlack)
+        numberLabel.textColor = UIColor.themeColorDarker(.NeutralAccent)
         numberLabel.frame = contentView.frame
         numberLabel.hidden = true
 
         // Set the font size to what I want it to be when it's at its largest,
         // and scale it down later, so the scale up transformation won't look blurry
         let fontSize = NextRoundNumberCell.fontSizeFactor * contentView.bounds.size.height
-        numberLabel.font = UIFont.themeFontWithSize(fontSize, weight: .Bold)
-
-        contentView.backgroundColor = UIColor.themeColorHighlighted(.OffWhite)
+        numberLabel.font = UIFont.themeFontWithSize(fontSize)
 
         contentView.addSubview(numberLabel)
-        contentView.addSubview(dot)
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
         numberLabel.frame = contentView.bounds
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        contentView.backgroundColor = UIColor.clearColor()
+        isSpacer = true
     }
 
     private func blimp() {
@@ -73,12 +76,10 @@ class NextRoundNumberCell: UICollectionViewCell {
             numberLabel.hidden = false
 
             animateSpring({
-                self.dot.alpha = 0
                 self.numberLabel.transform = CGAffineTransformIdentity
             })
         } else {
             animate({
-                self.dot.alpha = 1
                 self.numberLabel.transform = NextRoundNumberCell.shrink(self.numberLabel)
             }, completion: { _ in
                 self.numberLabel.hidden = true
