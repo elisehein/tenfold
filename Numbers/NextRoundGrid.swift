@@ -43,8 +43,6 @@ class NextRoundGrid: Grid {
 
     // We should store more or as many scale series numbers as there are rows
     private static let totalRows = 8
-    private static let scaleSeries: Array<CGFloat> = [0, 2, 4, 8, 16, 32, 64, 128, 256]
-    private static let rowSpacingFactor: CGFloat = 30.0
 
     private let reuseIdentifier = "NextRoundNumberCell"
 
@@ -88,7 +86,6 @@ class NextRoundGrid: Grid {
 
         backgroundColor = UIColor.clearColor()
         dataSource = self
-        delegate = self
     }
 
     func update(startIndex startIndex: Int, values: Array<Int?>) {
@@ -138,40 +135,5 @@ extension NextRoundGrid: UICollectionViewDataSource {
                         layout: UICollectionViewLayout,
                         sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         return cellSize()
-    }
-}
-
-extension NextRoundGrid: UICollectionViewDelegateFlowLayout {
-
-    func collectionView(collectionView: UICollectionView,
-                         layout collectionViewLayout: UICollectionViewLayout,
-                         insetForSectionAtIndex section: Int) -> UIEdgeInsets {
-        // Each row has an increasingly large bottom inset to start out with, eg
-        //
-        // |   |   |   |   |   |   |   |   |   |
-        //
-        // |   |   |   |   |   |   |   |   |   |
-        //
-        //
-        // |   |   |   |   |   |   |   |   |   |
-        //
-        //
-        //
-        // |   |   |   |   |   |   |   |   |   |
-        //
-        //
-        //
-        //
-        // |   |   |   |   |   |   |   |   |   |
-        //
-        // By the time proportionVisible is 1 (corresponding to the moment we need to
-        // reveal all the upcoming numbers), all of the insets must be zero. So,
-        // Each initial bottom inset should be mapped onto proportionVisible, so that
-        // when proportionVisible is 0, it has its original value, and when proportionVisible
-        // is 1, it equals 0.
-
-        let initialSpacing = NextRoundGrid.scaleSeries[section] * NextRoundGrid.rowSpacingFactor
-        let scaledSpacing = (1.0 - proportionVisible) * initialSpacing
-        return UIEdgeInsets(top: 0, left: 0, bottom: scaledSpacing, right: 0)
     }
 }

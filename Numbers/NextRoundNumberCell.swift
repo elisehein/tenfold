@@ -54,6 +54,8 @@ class NextRoundNumberCell: UICollectionViewCell {
         let fontSize = NextRoundNumberCell.fontSizeFactor * contentView.bounds.size.height
         numberLabel.font = UIFont.themeFontWithSize(fontSize, weight: .Bold)
 
+        contentView.backgroundColor = UIColor.themeColorHighlighted(.OffWhite)
+
         contentView.addSubview(numberLabel)
         contentView.addSubview(dot)
     }
