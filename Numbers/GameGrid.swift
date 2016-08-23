@@ -163,15 +163,19 @@ class GameGrid: Grid {
         adjustTopInset(enforceStartingPosition: true)
     }
 
+    // Empty space visible should be capped to depend on the initial game height (3 rows);
+    // it should still account for three game rows even if the actual game is only 1 or two
+    // This is why we don't simply call topInset() – top inset may be different than empty space
+    // visible at starting position
     func emptySpaceVisible(atStartingPosition atStartingPosition: Bool = false) -> CGFloat {
         return atStartingPosition ?
-               topInset(atStartingPosition: true) :
+               frame.size.height - initialGameHeight() :
                -contentOffset.y
     }
 
     private func topInset(atStartingPosition atStartingPosition: Bool = false) -> CGFloat {
         if atStartingPosition {
-            return frame.size.height - initialGameHeight()
+            return frame.size.height - min(initialGameHeight(), currentGameHeight())
         } else {
             return max(0, frame.size.height - currentGameHeight())
         }
