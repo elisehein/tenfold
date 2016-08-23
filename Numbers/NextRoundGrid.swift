@@ -48,8 +48,8 @@ class NextRoundGrid: Grid {
 
     private let reuseIdentifier = "NextRoundNumberCell"
 
+    var values: Array<Int?>
     private let cellsPerRow: Int
-    private var values: Array<Int?>
     private var startIndex: Int
 
     var proportionVisible: CGFloat = 0 {

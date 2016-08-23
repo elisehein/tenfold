@@ -90,6 +90,8 @@ class Play: UIViewController {
         positionInfoPopUp(0)
         initNextRoundMatrix()
 
+        updateInfoPopup(nextRoundGrid!.values.count)
+
         gameGrid.snapToStartingPositionThreshold = Play.showMenuPullDownThreshold
         gameGrid.snapToGameplayPositionThreshold = Play.hideMenuPullUpThreshold
 
@@ -228,7 +230,6 @@ class Play: UIViewController {
 
     private func removeNumbers(atIndeces indeces: Array<Int>) {
         game.removeNumbers(atIndeces: indeces)
-
         let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
         gameGrid.removeNumbers(atIndexPaths: indexPaths)
         updateState()
@@ -236,9 +237,15 @@ class Play: UIViewController {
 
     private func updateState() {
         let nextRoundValues = game.nextRoundValues()
+        updateInfoPopup(nextRoundValues.count)
         nextRoundGrid!.update(startIndex: nextRoundStartIndex(), values: nextRoundValues)
         gameGrid.pullUpThreshold = calcNextRoundPullUpThreshold(nextRoundValues.count)
         StorageService.saveGame(game)
+    }
+
+    private func updateInfoPopup(nextRoundValueCount: Int) {
+        infoPopUp.generalInfo = "\(game.numbersRemaining()) / \(game.totalNumbers()) remaining"
+        infoPopUp.nextRoundInfo = "+ \(nextRoundValueCount)"
     }
 
     // MARK: Scrolling interactions

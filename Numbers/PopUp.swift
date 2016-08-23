@@ -40,8 +40,6 @@ class PopUp: UIView {
 
         labelsContainer.clipsToBounds = true
 
-        generalLabel.text = "17 / 23 remaining"
-        nextRoundLabel.text = "+ 122"
         nextRoundLabel.alpha = 0
 
         layer.shadowColor = UIColor.blackColor().CGColor
