@@ -55,17 +55,18 @@ class GameGrid: Grid {
     }
 
     func restart(withGame newGame: Game, completion: (() -> Void)?) {
-        let originalFrame = frame
-
-        UIView.animateWithDuration(0.2, delay: 0, options: .CurveEaseIn, animations: {
+        UIView.animateWithDuration(0.2,
+                                   delay: 0,
+                                   options: .CurveEaseIn,
+                                   animations: {
             self.alpha = 0
-            var offScreenFrame = self.frame
-            offScreenFrame.origin.y += self.initialGameHeight() * 0.3
-            self.frame = offScreenFrame
+            self.transform = CGAffineTransformTranslate(CGAffineTransformIdentity,
+                                                        0,
+                                                        self.initialGameHeight() * 0.3)
         }, completion: { _ in
             self.game = newGame
             self.reloadData()
-            self.frame = originalFrame
+            self.transform = CGAffineTransformIdentity
             self.adjustTopInset()
 
             UIView.animateWithDuration(0.15, delay: 0.2, options: .CurveEaseIn, animations: {
