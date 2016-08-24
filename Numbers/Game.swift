@@ -21,8 +21,8 @@ class Game: NSObject, NSCoding {
                                               5, 1, 6, 1, 7, 1, 8, 1, 9]
 
     private var numbers: Array<Number> = []
-    private var historicNumberCount: Int = 0
-    private var currentRound: Int = 1
+    var historicNumberCount: Int = 0
+        var currentRound: Int = 1
 
     class func initialNumbers() -> Array<Number> {
         let initialNumbers: Array<Number> = initialNumberValues.map({ value in
@@ -91,6 +91,10 @@ class Game: NSObject, NSCoding {
         if numbers.count > 0 {
             numbers.last.marksEndOfRound = true
         }
+    }
+
+    func ended() -> Bool {
+        return numbersRemaining() == 0
     }
 
     func numbersRemaining() -> Int {

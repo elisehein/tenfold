@@ -70,7 +70,7 @@ class Play: UIViewController {
         gameGrid.onWillSnapToGameplayPosition = handleWillSnapToGameplayPosition
         gameGrid.onPairingAttempt = handlePairingAttempt
 
-        menu.onTapNewGame = handleTapNewGame
+        menu.onTapNewGame = restartGame
         menu.onTapInstructions = showInstructions
 
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.showInstructions))
@@ -196,11 +196,13 @@ class Play: UIViewController {
 
     // MARK: Menu interactions
 
-    private func handleTapNewGame() {
+    private func restartGame() {
         game = Game()
         gameGrid.restart(withGame: game, completion: {
             self.updateNotificationText()
             self.updateState()
+            self.nextRoundGrid?.hide(animated: false)
+            self.menu.showIfNeeded(atEndPosition: self.menuFrame(atStartingPosition: true))
         })
     }
 
@@ -262,8 +264,18 @@ class Play: UIViewController {
     private func removeNumbers(atIndeces indeces: Array<Int>) {
         game.removeNumbers(atIndeces: indeces)
         let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
-        gameGrid.removeNumbers(atIndexPaths: indexPaths)
-        updateState()
+
+        gameGrid.removeNumbers(atIndexPaths: indexPaths, completion: {
+            if self.game.ended() {
+                self.presentViewController(GameFinished(game: self.game),
+                                      animated: true,
+                                      completion: { _ in
+                    self.restartGame()
+                })
+            } else {
+                self.updateState()
+            }
+        })
     }
 
     private func updateState() {

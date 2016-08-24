@@ -112,7 +112,7 @@ class GameGrid: Grid {
         otherCell!.crossOut()
     }
 
-    func removeNumbers(atIndexPaths indexPaths: Array<NSIndexPath>) {
+    func removeNumbers(atIndexPaths indexPaths: Array<NSIndexPath>, completion: (() -> Void)) {
         guard indexPaths.count > 0 else { return }
 
         adjustTopInset()
@@ -134,6 +134,7 @@ class GameGrid: Grid {
                         }
 
                         removalHandled = true
+                        completion()
                     }
                 })
             }
