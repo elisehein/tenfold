@@ -13,6 +13,7 @@ class Game: NSObject, NSCoding {
     static let numbersPerRow = 9
 
     private static let numbersCoderKey = "gameNumbersCoderKey"
+    private static let historicNumberCountCoderKey = "gameHistoricNumberCountCoderKey"
     private static let currentRoundCoderKey = "gameCurrentRoundCoderKey"
 
     private static let initialNumberValues = [1, 2, 3, 4, 5, 6, 7, 8, 9,
@@ -20,7 +21,8 @@ class Game: NSObject, NSCoding {
                                               5, 1, 6, 1, 7, 1, 8, 1, 9]
 
     private var numbers: Array<Number> = []
-    var currentRound: Int = 1
+    private var historicNumberCount: Int = 0
+    private var currentRound: Int = 1
 
     class func initialNumbers() -> Array<Number> {
         let initialNumbers: Array<Number> = initialNumberValues.map({ value in
@@ -33,15 +35,18 @@ class Game: NSObject, NSCoding {
 
     override init() {
         numbers = Game.initialNumbers()
+        historicNumberCount = numbers.count
         super.init()
     }
 
     required init(coder aDecoder: NSCoder) {
         self.numbers = (aDecoder.decodeObjectForKey(Game.numbersCoderKey) as? Array<Number>)!
+        self.historicNumberCount = (aDecoder.decodeObjectForKey(Game.historicNumberCountCoderKey) as? Int)! // swiftlint:disable:this line_length
         self.currentRound = (aDecoder.decodeObjectForKey(Game.currentRoundCoderKey) as? Int)!
 
         if self.numbers.count == 0 {
             self.numbers = Game.initialNumbers()
+            self.historicNumberCount = self.numbers.count
         }
     }
 
@@ -72,6 +77,7 @@ class Game: NSObject, NSCoding {
     func makeNextRound(usingNumbers nextRoundNumbers: Array<Number>) -> Bool {
         if nextRoundNumbers.count > 0 {
             numbers += nextRoundNumbers
+            historicNumberCount += nextRoundNumbers.count
             currentRound += 1
             return true
         } else {
@@ -142,6 +148,7 @@ class Game: NSObject, NSCoding {
 
     func encodeWithCoder(aCoder: NSCoder) {
         aCoder.encodeObject(numbers, forKey: Game.numbersCoderKey)
+        aCoder.encodeObject(historicNumberCount, forKey: Game.historicNumberCountCoderKey)
         aCoder.encodeObject(currentRound, forKey: Game.currentRoundCoderKey)
     }
 
