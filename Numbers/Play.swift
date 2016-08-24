@@ -13,7 +13,7 @@ class Play: UIViewController {
 
     private static let gridInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
 
-    private static let maxNextRoundPullUpThreshold: CGFloat = 130
+    private static let maxNextRoundPullUpThreshold: CGFloat = 120
     private static let hideMenuPullUpThreshold: CGFloat = 50
     private static let showMenuPullDownThreshold: CGFloat = 70
 
@@ -146,19 +146,20 @@ class Play: UIViewController {
         }, completion: nil)
     }
 
-    private func dismissNotification() {
+    private func dismissNotification(completion: (() -> Void)) {
         notificationDismissalInProgress = true
-        UIView.animateWithDuration(0.7,
+        UIView.animateWithDuration(1.0,
                                    delay: 0,
                                    options: .CurveEaseOut,
                                    animations: {
             self.notification.alpha = 0
             var dismissedFrame = self.notification.frame
-            dismissedFrame.origin.y -= 80
+            dismissedFrame.origin.y -= 100
             self.notification.frame = dismissedFrame
         }, completion: { _ in
             self.notificationDismissalInProgress = false
             self.positionNotification(showing: false, animated: false)
+            completion()
         })
     }
 
@@ -265,7 +266,6 @@ class Play: UIViewController {
 
     private func updateState() {
         let nextRoundValues = game.nextRoundValues()
-        notification.text = "+ \(nextRoundValues.count)"
         nextRoundGrid!.update(startIndex: nextRoundStartIndex(), values: nextRoundValues)
         gameGrid.pullUpThreshold = calcNextRoundPullUpThreshold(nextRoundValues.count)
         StorageService.saveGame(game)
@@ -283,8 +283,10 @@ class Play: UIViewController {
 
     private func handlePullUpThresholdExceeded() {
         nextRoundGrid?.hide(animated: false)
+        dismissNotification({
+            self.notification.text = "+ \(self.game.numbersRemaining())"
+        })
         loadNextRound()
-        dismissNotification()
         menu.hideIfNeeded()
     }
 
