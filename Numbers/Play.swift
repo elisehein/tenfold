@@ -154,7 +154,7 @@ class Play: UIViewController {
                                    animations: {
             self.notification.alpha = 0
             var dismissedFrame = self.notification.frame
-            dismissedFrame.origin.y -= 50
+            dismissedFrame.origin.y -= 80
             self.notification.frame = dismissedFrame
         }, completion: { _ in
             self.notificationDismissalInProgress = false
