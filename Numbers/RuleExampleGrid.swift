@@ -11,7 +11,7 @@ import UIKit
 
 class RuleExampleGrid: Grid {
 
-    private static let pairingLoopDuration: Double = 3
+    private static let pairingLoopDuration: Double = 2.2
 
     private var timers: Array<NSTimer> = []
     private let reuseIdentifier = "GameNumberCell"
