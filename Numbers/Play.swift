@@ -218,6 +218,7 @@ class Play: UIViewController {
         if successfulPairing {
             game.crossOutPair(itemIndex, otherIndex: otherItemIndex)
             gameGrid.crossOutPair(itemIndex, otherIndex: otherItemIndex)
+            updateNotificationText()
             updateState()
             removeSurplusRows(containingIndeces: [itemIndex, otherItemIndex])
         } else {
