@@ -41,7 +41,6 @@ class RuleExampleCell: UICollectionViewCell {
     }
 
     private let label = RuleExampleCell.labelForText()
-    private let detailLabel = UILabel()
     private let exampleGrid = RuleExampleGrid()
 
     class func sizeOccupiedByLabel(forAvailableWidth availableWidth: CGFloat,
@@ -57,8 +56,7 @@ class RuleExampleCell: UICollectionViewCell {
     }
 
     class func sizeOccupied(forAvailableWidth availableWidth: CGFloat,
-                            usingText givenText: String,
-                            detailText: String?) -> CGSize {
+                            usingText givenText: String) -> CGSize {
 
         var size = sizeOccupiedByLabel(forAvailableWidth: availableWidth,
                                        usingText: givenText)

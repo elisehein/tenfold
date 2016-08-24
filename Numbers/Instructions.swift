@@ -179,8 +179,7 @@ extension Instructions: UICollectionViewDelegateFlowLayout {
 
         let width = view.bounds.size.width
         let height = RuleExampleCell.sizeOccupied(forAvailableWidth: width,
-                                                  usingText: text!,
-                                                  detailText: detailText).height
+                                                  usingText: text!).height
 
         return CGSize(width: width, height: height)
     }
