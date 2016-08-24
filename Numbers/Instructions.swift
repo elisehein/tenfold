@@ -175,7 +175,6 @@ extension Instructions: UICollectionViewDelegateFlowLayout {
                         sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         let example = Instructions.rules[indexPath.section]["examples"][indexPath.item]
         let text = example["text"].string
-        let detailText = example["detail"].string
 
         let width = view.bounds.size.width
         let height = RuleExampleCell.sizeOccupied(forAvailableWidth: width,
