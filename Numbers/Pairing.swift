@@ -36,8 +36,7 @@ class Pairing: NSObject {
             return true
         } else {
             let orderedIndeces = [index, otherIndex].sort { return $0 < $1 }
-            return enclosingCrossedOutNumbers(orderedIndeces[0], orderedIndeces[1], inGame: game) ||
-                   beginningAndEndOfRow(orderedIndeces[0], orderedIndeces[1], inGame: game)
+            return enclosingCrossedOutNumbers(orderedIndeces[0], orderedIndeces[1], inGame: game)
         }
     }
 
@@ -51,27 +50,5 @@ class Pairing: NSObject {
                                                             withIncrement: Game.numbersPerRow)
 
         return enclosingHorizontally || enclosingVertically
-    }
-
-    // This makes the game pretty easy. Could enable in easy mode
-    static private func beginningAndEndOfRow(index: Int,
-                                             _ laterIndex: Int,
-                                             inGame game: Game) -> Bool {
-        if !matrix.sameRow(index, laterIndex) {
-            return false
-        }
-
-        let firstIndexOfRow = matrix.firstIndexOfRow(containingIndex: index)
-        let lastIndexOfRow = matrix.lastIndexOfRow(containingIndex: index)
-
-        let firstIsBeginning = matrix.isFirstOnRow(index) ||
-                               game.allCrossedOutBetween(index: firstIndexOfRow - 1,
-                                                         laterIndex: index)
-
-        let secondIsEnd = matrix.isLastOnRow(laterIndex) ||
-                          game.allCrossedOutBetween(index: laterIndex,
-                                                    laterIndex: lastIndexOfRow + 1)
-
-        return firstIsBeginning && secondIsEnd
     }
 }
