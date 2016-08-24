@@ -111,7 +111,8 @@ class Play: UIViewController {
                                       frame: gameGrid.frame)
         nextRoundGrid?.hide(animated: false)
 
-        notification.text = "+ \(nextRoundValues.count)"
+        updateNotificationText()
+
         gameGrid.pullUpThreshold = calcNextRoundPullUpThreshold(nextRoundValues.count)
 
         view.insertSubview(nextRoundGrid!, belowSubview: gameGrid)
@@ -198,6 +199,7 @@ class Play: UIViewController {
     private func handleTapNewGame() {
         game = Game()
         gameGrid.restart(withGame: game, completion: {
+            self.updateNotificationText()
             self.updateState()
         })
     }
@@ -271,6 +273,10 @@ class Play: UIViewController {
         StorageService.saveGame(game)
     }
 
+    private func updateNotificationText() {
+        notification.text = "+ \(game.numbersRemaining())"
+    }
+
     // MARK: Scrolling interactions
 
     private func handleWillSnapToStartingPosition() {
@@ -283,9 +289,7 @@ class Play: UIViewController {
 
     private func handlePullUpThresholdExceeded() {
         nextRoundGrid?.hide(animated: false)
-        dismissNotification({
-            self.notification.text = "+ \(self.game.numbersRemaining())"
-        })
+        dismissNotification({ self.updateNotificationText() })
         loadNextRound()
         menu.hideIfNeeded()
     }
