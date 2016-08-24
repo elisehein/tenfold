@@ -16,16 +16,13 @@ class Notification: UIView {
 
     var text: String = "" {
         didSet {
-            label.text = text
+            label.attributedText = constructAttributedString(withText: text)
         }
     }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        label.textAlignment = .Center
-        label.font = UIFont.themeFontWithSize(15)
-        label.textColor = UIColor.themeColor(.OffWhite)
         label.backgroundColor = UIColor.themeColor(.OffBlack)
         label.layer.masksToBounds = true
 
@@ -52,6 +49,33 @@ class Notification: UIView {
         shadowLayer.frame = bounds
         shadowLayer.layer.shadowPath = UIBezierPath(roundedRect: labelFrame,
                                                     cornerRadius: label.layer.cornerRadius).CGPath
+    }
+
+    private func constructAttributedString(withText text: String) -> NSMutableAttributedString {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .Center
+
+        let font = UIFont.themeFontWithSize(13)
+        let textColor = UIColor.themeColor(.OffWhite)
+
+        let attrString = NSMutableAttributedString(string: text)
+        let fullRange = NSRange(location: 0, length: attrString.length)
+
+        attrString.addAttribute(NSKernAttributeName, value: 1.2, range: fullRange)
+        attrString.addAttribute(NSFontAttributeName, value: font, range: fullRange)
+        attrString.addAttribute(NSForegroundColorAttributeName, value: textColor, range: fullRange)
+
+        attrString.addAttribute(NSParagraphStyleAttributeName,
+                                value: paragraphStyle,
+                                range: fullRange)
+
+        if let barIndex = text.indexOfCharacter("|") {
+            attrString.addAttribute(NSForegroundColorAttributeName,
+                                    value: textColor.colorWithAlphaComponent(0.4),
+                                    range: NSRange(location: barIndex, length: 1))
+        }
+
+        return attrString
     }
 
     required init?(coder aDecoder: NSCoder) {

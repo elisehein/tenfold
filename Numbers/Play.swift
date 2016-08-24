@@ -286,7 +286,7 @@ class Play: UIViewController {
     }
 
     private func updateNotificationText() {
-        notification.text = "+ \(game.numbersRemaining())"
+        notification.text = "ROUND \(game.currentRound)   |   + \(game.numbersRemaining())"
     }
 
     // MARK: Scrolling interactions
