@@ -13,12 +13,14 @@ class Game: NSObject, NSCoding {
     static let numbersPerRow = 9
 
     private static let numbersCoderKey = "gameNumbersCoderKey"
+    private static let currentRoundCoderKey = "gameCurrentRoundCoderKey"
 
     private static let initialNumberValues = [1, 2, 3, 4, 5, 6, 7, 8, 9,
                                               1, 1, 1, 2, 1, 3, 1, 4, 1,
                                               5, 1, 6, 1, 7, 1, 8, 1, 9]
 
     private var numbers: Array<Number> = []
+    var currentRound: Int = 1
 
     class func initialNumbers() -> Array<Number> {
         let initialNumbers: Array<Number> = initialNumberValues.map({ value in
@@ -34,13 +36,9 @@ class Game: NSObject, NSCoding {
         super.init()
     }
 
-    init(numbers: Array<Number>) {
-        self.numbers = numbers
-        super.init()
-    }
-
     required init(coder aDecoder: NSCoder) {
         self.numbers = (aDecoder.decodeObjectForKey(Game.numbersCoderKey) as? Array<Number>)!
+        self.currentRound = (aDecoder.decodeObjectForKey(Game.currentRoundCoderKey) as? Int)!
 
         if self.numbers.count == 0 {
             self.numbers = Game.initialNumbers()
@@ -74,6 +72,7 @@ class Game: NSObject, NSCoding {
     func makeNextRound(usingNumbers nextRoundNumbers: Array<Number>) -> Bool {
         if nextRoundNumbers.count > 0 {
             numbers += nextRoundNumbers
+            currentRound += 1
             return true
         } else {
             return false
@@ -143,6 +142,7 @@ class Game: NSObject, NSCoding {
 
     func encodeWithCoder(aCoder: NSCoder) {
         aCoder.encodeObject(numbers, forKey: Game.numbersCoderKey)
+        aCoder.encodeObject(currentRound, forKey: Game.currentRoundCoderKey)
     }
 
     private func remainingNumbers() -> Array<Number> {
