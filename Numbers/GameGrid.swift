@@ -67,7 +67,7 @@ class GameGrid: Grid {
             self.game = newGame
             self.reloadData()
             self.transform = CGAffineTransformIdentity
-            self.adjustTopInset()
+            self.adjustTopInset(enforceStartingPosition: true)
 
             UIView.animateWithDuration(0.15, delay: 0.2, options: .CurveEaseIn, animations: {
                 self.alpha = 1
