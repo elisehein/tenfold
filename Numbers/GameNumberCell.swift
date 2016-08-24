@@ -151,17 +151,11 @@ class GameNumberCell: UICollectionViewCell {
         let delayTime = Int64((GameNumberCell.animationDuration + 0.1) * Double(NSEC_PER_SEC))
         let dispatchTime = dispatch_time(DISPATCH_TIME_NOW, delayTime)
         dispatch_after(dispatchTime, dispatch_get_main_queue()) {
-            self.crossedOutColorFiller.backgroundColor = self.crossedOutBackgroundColor
-            self.crossedOutColorFiller.transform = CGAffineTransformMakeScale(1, 1)
-            self.contentView.backgroundColor = self.defaultBackgroundColor
-
-            UIView.animateWithDuration(0.8,
+            UIView.animateWithDuration(0.15,
                                        delay: 0,
-                                       usingSpringWithDamping: 0.8,
-                                       initialSpringVelocity: 0.3,
                                        options: .CurveEaseOut,
                                        animations: {
-                self.crossedOutColorFiller.transform = CGAffineTransformMakeScale(0.001, 0.001)
+                self.contentView.backgroundColor = self.defaultBackgroundColor
             }, completion: { _ in
                 completion()
             })
