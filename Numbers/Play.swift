@@ -23,10 +23,11 @@ class Play: UIViewController {
 
     private let menu = Menu()
     private let gameGrid: GameGrid
+    private let notification: Notification
     private var nextRoundGrid: NextRoundGrid?
-    private var infoPopUp = PopUp()
 
     private var passedNextRoundThreshold = false
+    private var notificationDismissalInProgress = false
 
     private var viewHasLoaded = false
 
@@ -59,6 +60,7 @@ class Play: UIViewController {
 
         self.game = savedGame == nil ? Game() : savedGame!
         self.gameGrid = GameGrid(game: game)
+        self.notification = Notification()
 
         super.init(nibName: nil, bundle: nil)
 
@@ -78,7 +80,7 @@ class Play: UIViewController {
         view.addGestureRecognizer(swipe)
         view.addSubview(gameGrid)
         view.addSubview(menu)
-        view.addSubview(infoPopUp)
+        view.addSubview(notification)
         view.layer.addSublayer(menuPullDownBlob)
     }
 
@@ -87,10 +89,8 @@ class Play: UIViewController {
 
         gameGrid.initialisePositionWithinFrame(view.bounds, withInsets: Play.gridInsets)
         positionMenu()
-        positionInfoPopUp(0)
+        positionNotification()
         initNextRoundMatrix()
-
-        updateInfoPopup(nextRoundGrid!.values.count)
 
         gameGrid.snapToStartingPositionThreshold = Play.showMenuPullDownThreshold
         gameGrid.snapToGameplayPositionThreshold = Play.hideMenuPullUpThreshold
@@ -110,6 +110,8 @@ class Play: UIViewController {
                                       values: nextRoundValues,
                                       frame: gameGrid.frame)
         nextRoundGrid?.hide(animated: false)
+
+        notification.text = "+ \(nextRoundValues.count)"
         gameGrid.pullUpThreshold = calcNextRoundPullUpThreshold(nextRoundValues.count)
 
         view.insertSubview(nextRoundGrid!, belowSubview: gameGrid)
@@ -121,16 +123,43 @@ class Play: UIViewController {
         menu.frame = menuFrame()
     }
 
-    private func positionInfoPopUp(pullUpDistance: CGFloat) {
-        let topMargin: CGFloat = 30
-        let bottomMargin: CGFloat = 0
-        let height: CGFloat = 40
-        let maxBottomDistance = topMargin + bottomMargin + height
-        let y = view.bounds.size.height - min(pullUpDistance, maxBottomDistance)
-        infoPopUp.frame = CGRect(x: 0, y:
-                                 y + topMargin,
-                                 width: view.bounds.size.width,
-                                 height: height)
+    private func positionNotification(showing showing: Bool = false, animated: Bool = false) {
+        guard !notificationDismissalInProgress else { return }
+        let screenHeight = view.bounds.size.height
+        var notificationFrame = view.bounds
+        notificationFrame.size.height = 35
+
+        if showing {
+            notificationFrame.origin.y += screenHeight - notificationFrame.size.height - 15
+        } else {
+            notificationFrame.origin.y += screenHeight + 10
+        }
+
+        UIView.animateWithDuration(animated ? 0.6 : 0,
+                                   delay: 0,
+                                   usingSpringWithDamping: 0.7,
+                                   initialSpringVelocity: 0.3,
+                                   options: .CurveEaseIn,
+                                   animations: {
+            self.notification.alpha = showing ? 1 : 0
+            self.notification.frame = notificationFrame
+        }, completion: nil)
+    }
+
+    private func dismissNotification() {
+        notificationDismissalInProgress = true
+        UIView.animateWithDuration(0.7,
+                                   delay: 0,
+                                   options: .CurveEaseOut,
+                                   animations: {
+            self.notification.alpha = 0
+            var dismissedFrame = self.notification.frame
+            dismissedFrame.origin.y -= 50
+            self.notification.frame = dismissedFrame
+        }, completion: { _ in
+            self.notificationDismissalInProgress = false
+            self.positionNotification(showing: false, animated: false)
+        })
     }
 
     private func menuFrame(atStartingPosition atStartingPosition: Bool = false) -> CGRect {
@@ -202,7 +231,6 @@ class Play: UIViewController {
             let nextRoundEndIndex = nextRoundStartIndex + nextRoundNumbers.count - 1
             let nextRoundIndeces = Array(nextRoundStartIndex...nextRoundEndIndex)
             gameGrid.loadNextRound(atIndeces: nextRoundIndeces, completion: nil)
-
             updateState()
             return true
         } else {
@@ -237,15 +265,10 @@ class Play: UIViewController {
 
     private func updateState() {
         let nextRoundValues = game.nextRoundValues()
-        updateInfoPopup(nextRoundValues.count)
+        notification.text = "+ \(nextRoundValues.count)"
         nextRoundGrid!.update(startIndex: nextRoundStartIndex(), values: nextRoundValues)
         gameGrid.pullUpThreshold = calcNextRoundPullUpThreshold(nextRoundValues.count)
         StorageService.saveGame(game)
-    }
-
-    private func updateInfoPopup(nextRoundValueCount: Int) {
-        infoPopUp.generalInfo = "\(game.numbersRemaining()) / \(game.totalNumbers()) remaining"
-        infoPopUp.nextRoundInfo = "+ \(nextRoundValueCount)"
     }
 
     // MARK: Scrolling interactions
@@ -261,6 +284,7 @@ class Play: UIViewController {
     private func handlePullUpThresholdExceeded() {
         nextRoundGrid?.hide(animated: false)
         loadNextRound()
+        dismissNotification()
         menu.hideIfNeeded()
     }
 
@@ -284,16 +308,14 @@ class Play: UIViewController {
                 if !passedNextRoundThreshold {
                     blimpPlayer?.play()
                     passedNextRoundThreshold = true
-                    infoPopUp.toggleInfo(showNextRound: true)
+                    positionNotification(showing: true, animated: true)
                 }
             } else {
-                infoPopUp.toggleInfo(showNextRound: false)
+                positionNotification(showing: false, animated: true)
                 passedNextRoundThreshold = false
             }
 
             nextRoundGrid?.proportionVisible = proportionVisible
-
-            positionInfoPopUp(gameGrid.distancePulledUp())
         } else {
             nextRoundGrid?.hide(animated: true)
             passedNextRoundThreshold = false

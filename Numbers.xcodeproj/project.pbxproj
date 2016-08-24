@@ -28,7 +28,7 @@
 		0C90AEA71C6D1BCF00E1E42E /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C90AEA61C6D1BCF00E1E42E /* Game.swift */; };
 		0CA050A81C6B23D9006A42B9 /* UIColor+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA050A71C6B23D9006A42B9 /* UIColor+Theme.swift */; };
 		0CADBDF21D6C50CB0090C13F /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CADBDF11D6C50CB0090C13F /* Launch Screen.storyboard */; };
-		0CADBDF41D6C65110090C13F /* PopUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CADBDF31D6C65110090C13F /* PopUp.swift */; };
+		0CADBDF41D6C65110090C13F /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CADBDF31D6C65110090C13F /* Notification.swift */; };
 		0CB109341C7234FB00182663 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB109331C7234FB00182663 /* UIColor.swift */; };
 		0CB938831D1FE6DD005B81F4 /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB938821D1FE6DD005B81F4 /* StorageService.swift */; };
 		0CB938871D201188005B81F4 /* lsansuni.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0CB938861D20116E005B81F4 /* lsansuni.ttf */; };
@@ -65,7 +65,7 @@
 		0C90AEA61C6D1BCF00E1E42E /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		0CA050A71C6B23D9006A42B9 /* UIColor+Theme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Theme.swift"; sourceTree = "<group>"; };
 		0CADBDF11D6C50CB0090C13F /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
-		0CADBDF31D6C65110090C13F /* PopUp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopUp.swift; sourceTree = "<group>"; };
+		0CADBDF31D6C65110090C13F /* Notification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
 		0CB109331C7234FB00182663 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		0CB938821D1FE6DD005B81F4 /* StorageService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
 		0CB938861D20116E005B81F4 /* lsansuni.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = lsansuni.ttf; sourceTree = "<group>"; };
@@ -158,7 +158,7 @@
 				4EA6957F1D36992E00F9A315 /* Menu.swift */,
 				0CB938901D20389C005B81F4 /* NextRoundGrid.swift */,
 				0CB9388C1D202832005B81F4 /* NextRoundNumberCell.swift */,
-				0CADBDF31D6C65110090C13F /* PopUp.swift */,
+				0CADBDF31D6C65110090C13F /* Notification.swift */,
 				0CFDE5B91D65B2E2001F9DF5 /* RuleExampleCell.swift */,
 				0C710E251D6721DA0047F391 /* RuleExampleGrid.swift */,
 				0C4F12601D65C58000AAEB54 /* RuleHeader.swift */,
@@ -310,7 +310,7 @@
 				0CA050A81C6B23D9006A42B9 /* UIColor+Theme.swift in Sources */,
 				0CFDE5BA1D65B2E2001F9DF5 /* RuleExampleCell.swift in Sources */,
 				0C738ADB1C69D811007C9548 /* AppDelegate.swift in Sources */,
-				0CADBDF41D6C65110090C13F /* PopUp.swift in Sources */,
+				0CADBDF41D6C65110090C13F /* Notification.swift in Sources */,
 				0C710E261D6721DA0047F391 /* RuleExampleGrid.swift in Sources */,
 				0C3463931C6F8C340086D3CC /* Pairing.swift in Sources */,
 			);
