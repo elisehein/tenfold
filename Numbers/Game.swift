@@ -40,9 +40,11 @@ class Game: NSObject, NSCoding {
     }
 
     required init(coder aDecoder: NSCoder) {
-        self.numbers = (aDecoder.decodeObjectForKey(Game.numbersCoderKey) as? Array<Number>)!
         self.historicNumberCount = (aDecoder.decodeObjectForKey(Game.historicNumberCountCoderKey) as? Int)! // swiftlint:disable:this line_length
         self.currentRound = (aDecoder.decodeObjectForKey(Game.currentRoundCoderKey) as? Int)!
+
+        let storedNumbers = (aDecoder.decodeObjectForKey(Game.numbersCoderKey) as? Array<Number>)!
+        self.numbers = Game.removeSurplusRows(from: storedNumbers)
 
         if self.numbers.count == 0 {
             self.numbers = Game.initialNumbers()
@@ -154,6 +156,22 @@ class Game: NSObject, NSCoding {
         aCoder.encodeObject(numbers, forKey: Game.numbersCoderKey)
         aCoder.encodeObject(historicNumberCount, forKey: Game.historicNumberCountCoderKey)
         aCoder.encodeObject(currentRound, forKey: Game.currentRoundCoderKey)
+    }
+
+    class func removeSurplusRows(from givenNumbers: Array<Number>) -> Array<Number> {
+        var filtered: Array<Number> = []
+
+        for firstIndexOnRow in 0.stride(to: givenNumbers.count, by: Game.numbersPerRow) {
+            // swiftlint:disable:next line_length
+            let lastIndexOnRow = min(firstIndexOnRow + Game.numbersPerRow, givenNumbers.count) - 1
+            let row = givenNumbers[firstIndexOnRow...lastIndexOnRow]
+
+            if row.filter({ return !$0.crossedOut }).count > 0 {
+                filtered += row
+            }
+        }
+
+        return filtered
     }
 
     private func remainingNumbers() -> Array<Number> {
