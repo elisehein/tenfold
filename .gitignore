@@ -1,8 +1,5 @@
 .DS_Store
 Carthage/
-Numbers.xcodeproj/xcuserdata/
-Numbers.xcodeproj/project.xcproject/xcuserdata/
-Numbers.xcodeproj/project.xcworkspace/xcuserdata/
-Scalar\ Fields.xcodeproj/xcuserdata/
-Scalar\ Fields.xcodeproj/project.xcproject/xcuserdata/
-Scalar\ Fields.xcodeproj/project.xcworkspace/xcuserdata/
+Tenfold.xcodeproj/xcuserdata/
+Tenfold.xcodeproj/project.xcproject/xcuserdata/
+Tenfold.xcodeproj/project.xcworkspace/xcuserdata/
