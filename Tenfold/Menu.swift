@@ -80,7 +80,7 @@ class Menu: UIView {
         animationInProgress = true
 
         let lockedFrame = frame
-        UIView.animateWithDuration(0.2,
+        UIView.animateWithDuration(0.25,
                                    delay: 0,
                                    options: .CurveEaseIn,
                                    animations: {
