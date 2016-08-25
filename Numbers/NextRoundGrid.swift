@@ -99,6 +99,7 @@ class NextRoundGrid: Grid {
     func update(startIndex startIndex: Int, values: Array<Int?>) {
         self.startIndex = startIndex
         self.values = values
+        revealValues = false
         reloadData()
     }
 
