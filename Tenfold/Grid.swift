@@ -1,6 +1,6 @@
 //
 //  Grid.swift
-//  Numbers
+//  Tenfold
 //
 //  Created by Elise Hein on 17/07/2016.
 //  Copyright © 2016 Elise Hein. All rights reserved.
