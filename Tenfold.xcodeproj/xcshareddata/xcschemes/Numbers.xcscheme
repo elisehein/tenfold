@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0C738AD61C69D811007C9548"
-               BuildableName = "Numbers.app"
-               BlueprintName = "Numbers"
-               ReferencedContainer = "container:Numbers.xcodeproj">
+               BuildableName = "Tenfold.app"
+               BlueprintName = "Tenfold"
+               ReferencedContainer = "container:Tenfold.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0C738AD61C69D811007C9548"
-            BuildableName = "Numbers.app"
-            BlueprintName = "Numbers"
-            ReferencedContainer = "container:Numbers.xcodeproj">
+            BuildableName = "Tenfold.app"
+            BlueprintName = "Tenfold"
+            ReferencedContainer = "container:Tenfold.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -56,9 +56,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0C738AD61C69D811007C9548"
-            BuildableName = "Numbers.app"
-            BlueprintName = "Numbers"
-            ReferencedContainer = "container:Numbers.xcodeproj">
+            BuildableName = "Tenfold.app"
+            BlueprintName = "Tenfold"
+            ReferencedContainer = "container:Tenfold.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -75,9 +75,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0C738AD61C69D811007C9548"
-            BuildableName = "Numbers.app"
-            BlueprintName = "Numbers"
-            ReferencedContainer = "container:Numbers.xcodeproj">
+            BuildableName = "Tenfold.app"
+            BlueprintName = "Tenfold"
+            ReferencedContainer = "container:Tenfold.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
