@@ -14,7 +14,7 @@ class GameFinished: UIViewController {
     private let imageView = UIImageView()
     private let titleLabel = UILabel()
     private let statsLabel = UILabel()
-    private let closeButton = UIButton()
+    private let closeButton = Button()
 
     private let game: Game
 
@@ -43,9 +43,7 @@ class GameFinished: UIViewController {
         closeButton.addTarget(self,
                               action: #selector(GameFinished.dismiss),
                               forControlEvents: .TouchUpInside)
-        closeButton.setTitleColor(UIColor.themeColor(.OffBlack), forState: .Normal)
         closeButton.setTitle("TAKE ME BACK", forState: .Normal)
-        closeButton.titleLabel!.font = UIFont.themeFontWithSize(14)
 
         view.addSubview(imageView)
         view.addSubview(titleLabel)

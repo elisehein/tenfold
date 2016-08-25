@@ -7,59 +7,64 @@
 //
 
 import Foundation
+import PureLayout
 import UIKit
 
 class Menu: UIView {
 
-    let buttonsStackView = UIStackView()
-    let newGameButton = UIButton()
-    let instructionsButton = UIButton()
+    let logo = UIImageView()
+    let newGameButton = Button()
+    let instructionsButton = Button()
 
     var onTapNewGame: (() -> Void)?
     var onTapInstructions: (() -> Void)?
 
-    private var animationInProgress = false
+    var animationInProgress = false
 
-    private static let buttonSize = CGSize(width: 100, height: 40)
+    private var hasLoadedConstraints = false
 
     init() {
         super.init(frame: CGRect.zero)
 
-        newGameButton.frame = CGRect(origin: CGPoint.zero, size: Menu.buttonSize)
+        logo.image = UIImage(named: "tenfold-logo")
+        logo.contentMode = .ScaleAspectFit
+
         newGameButton.setTitle("Start over", forState: .Normal)
-        newGameButton.titleLabel!.font = UIFont.themeFontWithSize(16)
-        newGameButton.setTitleColor(UIColor.themeColor(.OffBlack), forState: .Normal)
         newGameButton.addTarget(self,
                                 action: #selector(Menu.didTapNewGame),
                                 forControlEvents: .TouchUpInside)
 
-        instructionsButton.frame = CGRect(origin: CGPoint.zero, size: Menu.buttonSize)
         instructionsButton.setTitle("How it works", forState: .Normal)
-        instructionsButton.titleLabel!.font = UIFont.themeFontWithSize(16)
-        instructionsButton.setTitleColor(UIColor.themeColor(.OffBlack), forState: .Normal)
         instructionsButton.addTarget(self,
                                      action: #selector(Menu.didTapInstructions),
                                      forControlEvents: .TouchUpInside)
 
-        buttonsStackView.axis = .Vertical
-        buttonsStackView.distribution = .FillEqually
-        buttonsStackView.alignment = .Fill
-        buttonsStackView.spacing = 5
-        buttonsStackView.addArrangedSubview(newGameButton)
-        buttonsStackView.addArrangedSubview(instructionsButton)
+        addSubview(logo)
+        addSubview(newGameButton)
+        addSubview(instructionsButton)
 
-        addSubview(buttonsStackView)
+        setNeedsUpdateConstraints()
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        let totalButtons = buttonsStackView.arrangedSubviews.count
-        let buttonsHeight = CGFloat(totalButtons) * Menu.buttonSize.height
-        let stackHeight = buttonsHeight + (CGFloat(totalButtons - 1) * buttonsStackView.spacing)
-        let stackViewFrame = CGRect(origin: CGPoint.zero,
-                                    size: CGSize(width: Menu.buttonSize.width, height: stackHeight))
-        buttonsStackView.frame = stackViewFrame
-        buttonsStackView.center = center
+    override func updateConstraints() {
+        if !hasLoadedConstraints {
+            logo.autoAlignAxisToSuperviewAxis(.Vertical)
+            logo.autoSetDimensionsToSize(CGSize(width: 150, height: 100))
+            logo.autoAlignAxis(.Horizontal, toSameAxisOfView: self, withOffset: -100)
+
+            for button in [newGameButton, instructionsButton] {
+                button.autoSetDimension(.Height, toSize: 50)
+            }
+
+            newGameButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: logo, withOffset: 80)
+            instructionsButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: newGameButton)
+
+            [logo, newGameButton, instructionsButton].autoAlignViewsToAxis(.Vertical)
+
+            hasLoadedConstraints = true
+        }
+
+        super.updateConstraints()
     }
 
     func didTapNewGame() {
@@ -80,6 +85,7 @@ class Menu: UIView {
                                    options: .CurveEaseIn,
                                    animations: {
             self.frame = self.offScreen(lockedFrame)
+            self.alpha = 0
         }, completion: { _ in
             self.hidden = true
             self.animationInProgress = false
@@ -96,6 +102,7 @@ class Menu: UIView {
                                    options: .CurveEaseOut,
                                    animations: {
             self.frame = endPosition
+            self.alpha = 1
         }, completion: { _ in
             self.animationInProgress = false
         })

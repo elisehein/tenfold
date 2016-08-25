@@ -35,6 +35,7 @@
 		0CB9388D1D202832005B81F4 /* NextRoundNumberCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB9388C1D202832005B81F4 /* NextRoundNumberCell.swift */; };
 		0CB938911D20389C005B81F4 /* NextRoundGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB938901D20389C005B81F4 /* NextRoundGrid.swift */; };
 		0CE682961D6DB46300CA5787 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CE682951D6DB46300CA5787 /* String.swift */; };
+		0CF5C54B1D6F76C5006D46B8 /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF5C54A1D6F76C5006D46B8 /* Button.swift */; };
 		0CFDE5BA1D65B2E2001F9DF5 /* RuleExampleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CFDE5B91D65B2E2001F9DF5 /* RuleExampleCell.swift */; };
 		0CFDE5BC1D65B763001F9DF5 /* instructions.json in Resources */ = {isa = PBXBuildFile; fileRef = 0CFDE5BB1D65B763001F9DF5 /* instructions.json */; };
 		4EA695801D36992E00F9A315 /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA6957F1D36992E00F9A315 /* Menu.swift */; };
@@ -72,6 +73,7 @@
 		0CB9388C1D202832005B81F4 /* NextRoundNumberCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextRoundNumberCell.swift; sourceTree = "<group>"; };
 		0CB938901D20389C005B81F4 /* NextRoundGrid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextRoundGrid.swift; sourceTree = "<group>"; };
 		0CE682951D6DB46300CA5787 /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
+		0CF5C54A1D6F76C5006D46B8 /* Button.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
 		0CFDE5B91D65B2E2001F9DF5 /* RuleExampleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RuleExampleCell.swift; sourceTree = "<group>"; };
 		0CFDE5BB1D65B763001F9DF5 /* instructions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = instructions.json; sourceTree = "<group>"; };
 		4EA6957F1D36992E00F9A315 /* Menu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
@@ -151,6 +153,7 @@
 		0C90AEA11C6D19AC00E1E42E /* UI Modules */ = {
 			isa = PBXGroup;
 			children = (
+				0CF5C54A1D6F76C5006D46B8 /* Button.swift */,
 				0C90AEA41C6D1B0700E1E42E /* GameGrid.swift */,
 				0C34638E1C6F89B30086D3CC /* GameNumberCell.swift */,
 				0C39D3091D3BC3B90047CE74 /* Grid.swift */,
@@ -299,6 +302,7 @@
 				0C34638F1C6F89B30086D3CC /* GameNumberCell.swift in Sources */,
 				0CADBDF61D6D92850090C13F /* GameFinished.swift in Sources */,
 				0C69CE4E1C6DCDE9002E0D29 /* Array.swift in Sources */,
+				0CF5C54B1D6F76C5006D46B8 /* Button.swift in Sources */,
 				0C68BE7E1D3A4B3A00A6ACDC /* Instructions.swift in Sources */,
 				0CB938911D20389C005B81F4 /* NextRoundGrid.swift in Sources */,
 				4EE46E201D22CD55005C4493 /* Matrix.swift in Sources */,

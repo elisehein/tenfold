@@ -121,6 +121,7 @@ class Play: UIViewController {
     // MARK: Positioning
 
     private func positionMenu() {
+        guard !menu.animationInProgress && !menu.hidden else { return }
         menu.frame = menuFrame()
     }
 
