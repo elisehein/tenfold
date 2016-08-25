@@ -17,16 +17,16 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" image="Launch Screen" translatesAutoresizingMaskIntoConstraints="NO" id="EGE-kg-lgi">
+                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" image="LaunchScreen" translatesAutoresizingMaskIntoConstraints="NO" id="ZNr-K3-XEg">
                                 <rect key="frame" x="20" y="0.0" width="560" height="600"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="0.98083418607711792" green="0.96064299345016479" blue="0.92278164625167847" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="EGE-kg-lgi" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" id="38J-yn-sxD"/>
-                            <constraint firstItem="EGE-kg-lgi" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="topMargin" id="8lB-PI-8Fa"/>
-                            <constraint firstAttribute="bottomMargin" secondItem="EGE-kg-lgi" secondAttribute="bottom" id="eTP-4N-wzh"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="EGE-kg-lgi" secondAttribute="trailing" id="rF0-tm-s4t"/>
+                            <constraint firstAttribute="bottomMargin" secondItem="ZNr-K3-XEg" secondAttribute="bottom" id="TkP-Pg-Mh3"/>
+                            <constraint firstItem="ZNr-K3-XEg" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" id="Z42-nO-PYK"/>
+                            <constraint firstItem="ZNr-K3-XEg" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="topMargin" id="hmz-3J-MRc"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="ZNr-K3-XEg" secondAttribute="trailing" id="xyW-Nm-SVV"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -36,6 +36,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Launch Screen" width="1080" height="1080"/>
+        <image name="LaunchScreen" width="1080" height="1080"/>
     </resources>
 </document>
