@@ -46,14 +46,6 @@ class Play: UIViewController {
 
     private var viewHasLoaded = false
 
-    private let menuPullDownBlob: CAShapeLayer = {
-        let blob = CAShapeLayer()
-        blob.rasterizationScale = 2.0 * UIScreen.mainScreen().scale
-        blob.shouldRasterize = true
-        blob.fillColor = UIColor.themeColorDarker(.OffWhite).CGColor
-        return blob
-    }()
-
     private var blimpPlayer: AVAudioPlayer? = {
         var player = AVAudioPlayer()
         if let sound = NSDataAsset(name: "blimp") {
@@ -96,7 +88,6 @@ class Play: UIViewController {
         view.addSubview(gameGrid)
         view.addSubview(menu)
         view.addSubview(notification)
-        view.layer.addSublayer(menuPullDownBlob)
     }
 
     override func viewDidLoad() {
@@ -328,12 +319,6 @@ class Play: UIViewController {
     private func handleScroll() {
         guard viewHasLoaded else { return }
 
-        if gameGrid.pullDownInProgress() {
-            let pullDownRatio = gameGrid.distancePulledDown() / Play.showMenuPullDownThreshold
-            let proportionVisible = min(1, pullDownRatio)
-            menuPullDownBlob.path = curvedIndicatorPath(proportionVisible)
-        }
-
         if gameGrid.pullUpInProgress() {
             positionNextRoundMatrix()
             nextRoundGrid?.show(animated: true)
@@ -359,25 +344,6 @@ class Play: UIViewController {
         }
 
         positionMenu()
-    }
-
-    private func curvedIndicatorPath(proportionCurved: CGFloat) -> CGPath {
-        let width = view.bounds.size.width
-        let y = Play.pullDownIndicatorMaxCurve * proportionCurved
-
-        let topLeftCorner = CGPoint(x: width * 0.1, y: 0)
-        let topRightCorner = CGPoint(x: width * 0.9, y: 0)
-
-        let path = UIBezierPath()
-        path.moveToPoint(topLeftCorner)
-        path.addLineToPoint(topRightCorner)
-
-        let controlPoint2 = CGPoint(x: view.bounds.size.width / 2, y : y)
-        path.addCurveToPoint(topLeftCorner,
-                             controlPoint1: topRightCorner,
-                             controlPoint2: controlPoint2)
-        path.closePath()
-        return path.CGPath
     }
 
     required init?(coder aDecoder: NSCoder) {
