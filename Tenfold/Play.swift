@@ -13,11 +13,26 @@ class Play: UIViewController {
 
     private static let gridInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
 
-    private static let maxNextRoundPullUpThreshold: CGFloat = 120
+    private static let maxNextRoundPullUpThreshold: CGFloat = {
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            return 160
+        } else {
+            return 120
+        }
+    }()
+
     private static let hideMenuPullUpThreshold: CGFloat = 50
     private static let showMenuPullDownThreshold: CGFloat = 70
 
     private static let pullDownIndicatorMaxCurve: CGFloat = 80
+
+    private static let notificationBottomSpacing: CGFloat = {
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            return 25
+        } else {
+            return 15
+        }
+    }()
 
     private var game: Game
 
@@ -134,10 +149,11 @@ class Play: UIViewController {
         guard !notificationDismissalInProgress else { return }
         let screenHeight = view.bounds.size.height
         var notificationFrame = view.bounds
-        notificationFrame.size.height = 35
+        notificationFrame.size.height = Notification.height
 
         if showing {
-            notificationFrame.origin.y += screenHeight - notificationFrame.size.height - 15
+            let y = screenHeight - notificationFrame.size.height - Play.notificationBottomSpacing
+            notificationFrame.origin.y += y
         } else {
             notificationFrame.origin.y += screenHeight + 10
         }

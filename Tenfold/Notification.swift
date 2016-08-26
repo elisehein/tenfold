@@ -11,6 +11,14 @@ import UIKit
 
 class Notification: UIView {
 
+    static let height: CGFloat = {
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            return 50
+        } else {
+            return 35
+        }
+    }()
+
     private let label = UILabel()
     private let shadowLayer = UIView()
 
@@ -40,8 +48,15 @@ class Notification: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
+
+        var widthAddition: CGFloat = 30
+
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            widthAddition = 50
+        }
+
         var labelFrame = bounds
-        labelFrame.size.width = label.intrinsicContentSize().width + 30
+        labelFrame.size.width = label.intrinsicContentSize().width + widthAddition
         labelFrame.origin.x += (bounds.size.width - labelFrame.size.width) / 2
         label.frame = labelFrame
         label.layer.cornerRadius = label.frame.size.height / 2
@@ -55,8 +70,12 @@ class Notification: UIView {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .Center
 
-        let font = UIFont.themeFontWithSize(13)
         let textColor = UIColor.themeColor(.OffWhite)
+        var font = UIFont.themeFontWithSize(13)
+
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            font = font.fontWithSize(16)
+        }
 
         let attrString = NSMutableAttributedString(string: text)
         let fullRange = NSRange(location: 0, length: attrString.length)

@@ -74,7 +74,10 @@ class Menu: UIView {
                 button.autoSetDimension(.Height, toSize: Menu.buttonHeight)
             }
 
-            newGameButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: logo, withOffset: buttonsTopSpacing)
+            newGameButton.autoPinEdge(.Top,
+                                      toEdge: .Bottom,
+                                      ofView: logo,
+                                      withOffset: buttonsTopSpacing)
             instructionsButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: newGameButton)
 
             [logo, newGameButton, instructionsButton].autoAlignViewsToAxis(.Vertical)
