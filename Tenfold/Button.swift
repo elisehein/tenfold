@@ -36,7 +36,11 @@ class Button: UIButton {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .Center
 
-        let font = UIFont.themeFontWithSize(14)
+        var font = UIFont.themeFontWithSize(14)
+
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            font = font.fontWithSize(18)
+        }
 
         let attrString = NSMutableAttributedString(string: (text?.uppercaseString)!)
         let fullRange = NSRange(location: 0, length: attrString.length)

@@ -12,6 +12,14 @@ import UIKit
 
 class Menu: UIView {
 
+    private static let buttonHeight: CGFloat = {
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            return 80
+        } else {
+            return 50
+        }
+    }()
+
     let logo = UIImageView()
     let newGameButton = Button()
     let instructionsButton = Button()
@@ -48,15 +56,25 @@ class Menu: UIView {
 
     override func updateConstraints() {
         if !hasLoadedConstraints {
-            logo.autoAlignAxisToSuperviewAxis(.Vertical)
-            logo.autoSetDimensionsToSize(CGSize(width: 150, height: 100))
-            logo.autoAlignAxis(.Horizontal, toSameAxisOfView: self, withOffset: -100)
+            var logoCenterOffset: CGFloat = -100
+            var logoSize = CGSize(width: 150, height: 100)
+            var buttonsTopSpacing: CGFloat = 80
 
-            for button in [newGameButton, instructionsButton] {
-                button.autoSetDimension(.Height, toSize: 50)
+            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+                logoCenterOffset = -180
+                logoSize = CGSize(width: 180, height: 120)
+                buttonsTopSpacing = 140
             }
 
-            newGameButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: logo, withOffset: 80)
+            logo.autoAlignAxisToSuperviewAxis(.Vertical)
+            logo.autoAlignAxis(.Horizontal, toSameAxisOfView: self, withOffset: logoCenterOffset)
+            logo.autoSetDimensionsToSize(logoSize)
+
+            for button in [newGameButton, instructionsButton] {
+                button.autoSetDimension(.Height, toSize: Menu.buttonHeight)
+            }
+
+            newGameButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: logo, withOffset: buttonsTopSpacing)
             instructionsButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: newGameButton)
 
             [logo, newGameButton, instructionsButton].autoAlignViewsToAxis(.Vertical)

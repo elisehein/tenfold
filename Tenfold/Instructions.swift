@@ -19,9 +19,16 @@ class Instructions: UIViewController {
 
     private let layout: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
-        l.minimumInteritemSpacing = 0
-        l.minimumLineSpacing = 60
-        l.sectionInset = UIEdgeInsets(top: 70, left: 0, bottom: 100, right: 0)
+
+        if UIScreen.mainScreen().bounds.size.width <= 450 {
+            l.minimumInteritemSpacing = 0
+            l.minimumLineSpacing = 60
+            l.sectionInset = UIEdgeInsets(top: 70, left: 0, bottom: 100, right: 0)
+        } else {
+            l.minimumInteritemSpacing = 0
+            l.minimumLineSpacing = 90
+            l.sectionInset = UIEdgeInsets(top: 90, left: 0, bottom: 150, right: 0)
+        }
         return l
     }()
 
@@ -54,7 +61,14 @@ class Instructions: UIViewController {
         sections.dataSource = self
         sections.delegate = self
         sections.backgroundColor = UIColor.clearColor()
-        sections.contentInset = UIEdgeInsets(top: 120, left: 0, bottom: 0, right: 0)
+
+        var topInset: CGFloat = 120
+
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            topInset = 200
+        }
+
+        sections.contentInset = UIEdgeInsets(top: topInset, left: 0, bottom: 0, right: 0)
 
         view.addSubview(sections)
         view.backgroundColor = UIColor.themeColor(.OffWhite)

@@ -12,7 +12,13 @@ import UIKit
 class RuleHeader: UICollectionReusableView {
 
     private let label = UILabel()
-    private static let widthFactor: CGFloat = 0.85
+    private static let widthFactor: CGFloat = {
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            return 0.6
+        } else {
+            return 0.85
+        }
+    }()
 
     var text: String? {
         didSet {
@@ -41,7 +47,11 @@ class RuleHeader: UICollectionReusableView {
         paragraphStyle.lineSpacing = 7
         paragraphStyle.alignment = .Center
 
-        let font = UIFont.themeFontWithSize(16, weight: .Bold)
+        var font = UIFont.themeFontWithSize(16, weight: .Bold)
+
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            font = font.fontWithSize(22)
+        }
 
         let attrString = NSMutableAttributedString(string: text)
 

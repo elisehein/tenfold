@@ -11,8 +11,22 @@ import UIKit
 
 class RuleExampleCell: UICollectionViewCell {
 
-    private static let widthFactor: CGFloat = 0.75
-    private static let textGridSpacing: CGFloat = 30
+    private static let widthFactor: CGFloat = {
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            return 0.5
+        } else {
+            return 0.75
+        }
+    }()
+
+    private static let textGridSpacing: CGFloat = {
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            return 40
+        } else {
+            return 30
+        }
+
+    }()
 
     var text: String? {
         didSet {
@@ -121,6 +135,11 @@ class RuleExampleCell: UICollectionViewCell {
         let l = UILabel()
         l.numberOfLines = 0
         l.font = UIFont.themeFontWithSize(14)
+
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            l.font = UIFont.themeFontWithSize(18)
+        }
+
         l.textAlignment = .Center
         l.textColor = UIColor.themeColor(.OffBlack)
         return l

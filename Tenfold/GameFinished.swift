@@ -29,7 +29,13 @@ class GameFinished: UIViewController {
         imageView.image = UIImage(named: "balloon")
         imageView.contentMode = .ScaleAspectFit
 
-        titleLabel.font = UIFont.themeFontWithSize(16, weight: .Bold)
+        var titleFont = UIFont.themeFontWithSize(16, weight: .Bold)
+
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            titleFont = titleFont.fontWithSize(22)
+        }
+
+        titleLabel.font = titleFont
         titleLabel.text = "OMG!"
         titleLabel.textColor = UIColor.themeColor(.OffBlack)
 
@@ -61,14 +67,34 @@ class GameFinished: UIViewController {
     override func updateViewConstraints() {
         if !hasLoadedConstraints {
 
-            imageView.autoSetDimensionsToSize(CGSize(width: 96, height: 187))
+            var imageSize = CGSize(width: 96, height: 187)
+            var imageCenterOffset: CGFloat = -100
+            var imageBottomSpacing: CGFloat = 70
+            var titleBottomSpacing: CGFloat = 30
+
+            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+                imageSize = CGSize(width: 120, height: 220)
+                imageCenterOffset = -150
+                imageBottomSpacing = 120
+                titleBottomSpacing = 60
+            }
+
+            imageView.autoSetDimensionsToSize(imageSize)
             imageView.autoAlignAxisToSuperviewAxis(.Vertical)
-            imageView.autoAlignAxis(.Horizontal, toSameAxisOfView: view, withOffset: -100)
+            imageView.autoAlignAxis(.Horizontal,
+                                    toSameAxisOfView: view,
+                                    withOffset: imageCenterOffset)
 
             titleLabel.autoAlignAxisToSuperviewAxis(.Vertical)
-            titleLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: imageView, withOffset: 70)
+            titleLabel.autoPinEdge(.Top,
+                                   toEdge: .Bottom,
+                                   ofView: imageView,
+                                   withOffset: imageBottomSpacing)
 
-            statsLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: titleLabel, withOffset: 30)
+            statsLabel.autoPinEdge(.Top,
+                                   toEdge: .Bottom,
+                                   ofView: titleLabel,
+                                   withOffset: titleBottomSpacing)
             statsLabel.autoMatchDimension(.Width,
                                           toDimension: .Width,
                                           ofView: view,
@@ -105,7 +131,11 @@ class GameFinished: UIViewController {
         paragraphStyle.lineSpacing = 4
         paragraphStyle.alignment = .Center
 
-        let font = UIFont.themeFontWithSize(14)
+        var font = UIFont.themeFontWithSize(14)
+
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            font = font.fontWithSize(18)
+        }
 
         let attrString = NSMutableAttributedString(string: text)
         let fullRange = NSRange(location: 0, length: attrString.length)

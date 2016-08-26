@@ -87,7 +87,12 @@ class Play: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        gameGrid.initialisePositionWithinFrame(view.bounds, withInsets: Play.gridInsets)
+        // Cap the width to 450 for larger screens
+        var gameGridFrame = view.bounds
+        gameGridFrame.size.width = min(500, gameGridFrame.size.width)
+        gameGridFrame.origin.x = (view.bounds.size.width - gameGridFrame.size.width) / 2
+        gameGrid.initialisePositionWithinFrame(gameGridFrame, withInsets: Play.gridInsets)
+
         positionMenu()
         positionNotification()
         initNextRoundMatrix()
@@ -180,13 +185,9 @@ class Play: UIViewController {
     }
 
     private func positionNextRoundMatrix() {
-        nextRoundGrid?.frame = nextRoundMatrixFrame()
-    }
-
-    private func nextRoundMatrixFrame() -> CGRect {
         var nextRoundMatrixFrame = gameGrid.frame
         nextRoundMatrixFrame.origin.y += gameGrid.bottomEdgeY() - gameGrid.cellSize().height
-        return nextRoundMatrixFrame
+        nextRoundGrid?.frame = nextRoundMatrixFrame
     }
 
     private func calcNextRoundPullUpThreshold(numberOfItemsInNextRound: Int) -> CGFloat {
