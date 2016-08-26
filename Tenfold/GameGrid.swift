@@ -27,6 +27,7 @@ class GameGrid: Grid {
     var snapToStartingPositionThreshold: CGFloat?
     var snapToGameplayPositionThreshold: CGFloat?
 
+    var snappingInProgress = false
     var gridAtStartingPosition = true
     var currentScrollCycleHandled = false
 
@@ -200,6 +201,13 @@ class GameGrid: Grid {
         // otherwise it will for some reason push it to a later thread
         onWillSnapToGameplayPosition?()
 
+        // We're not calling toggleBounce here because it overrides false
+        // whenever there is a top inset – which is always true in startingPosition.
+        // We simply want to disable bounce for the duration of the animation
+        // so that we don't flash the next round grid in the bottom of the screen.
+        bounces = false
+        snappingInProgress = true
+
         // The reason this looks so obscure is because scroll views are SHIT.
         // This specific combination of setting an inset and offset is the only one
         // that results in an animation that STOPS when it reaches the top of the view
@@ -208,6 +216,8 @@ class GameGrid: Grid {
             self.contentInset.top = nextTopInset
             self.setContentOffset(CGPoint(x: 0, y: -nextTopInset), animated: false)
         }, completion: { _ in
+            self.snappingInProgress = false
+            self.toggleBounce(self.contentInset.top > 0)
             self.gridAtStartingPosition = false
         })
     }
@@ -217,6 +227,8 @@ class GameGrid: Grid {
     }
 
     private func toggleBounce(shouldBounce: Bool) {
+        guard !snappingInProgress else { return }
+
         // We should *never* disable bounce if there is a top contentInset
         // otherwise we can't pull up from the first rounds where the grid isn't full screen yet
         bounces = contentInset.top > 0 || shouldBounce
