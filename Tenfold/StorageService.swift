@@ -37,14 +37,15 @@ class StorageService {
         }
     }
 
-    class func saveSoundPreference(soundOn: Bool) {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.setBool(soundOn, forKey:StorageService.soundPrefStorageKey)
-    }
-
-    class func restoreSoundPreference() -> Bool {
+    class func currentSoundPreference() -> Bool {
         let defaults = NSUserDefaults.standardUserDefaults()
         let soundPref = defaults.boolForKey(StorageService.soundPrefStorageKey)
         return soundPref
+    }
+
+    class func toggleSoundPreference() {
+        let currentPreference = currentSoundPreference()
+        let defaults = NSUserDefaults.standardUserDefaults()
+        defaults.setBool(!currentPreference, forKey:StorageService.soundPrefStorageKey)
     }
 }

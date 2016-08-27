@@ -11,6 +11,8 @@ import UIKit
 
 class Button: UIButton {
 
+    var strikeThrough = false
+
     override func setTitle(title: String?, forState state: UIControlState) {
         super.setAttributedTitle(constructAttributedString(withText: title,
                                                            color: UIColor.themeColor(.OffBlack)),
@@ -52,6 +54,10 @@ class Button: UIButton {
         attrString.addAttribute(NSParagraphStyleAttributeName,
                                 value: paragraphStyle,
                                 range: fullRange)
+
+        if strikeThrough {
+            attrString.addAttribute(NSStrikethroughStyleAttributeName, value: 1, range: fullRange)
+        }
 
         return attrString
     }

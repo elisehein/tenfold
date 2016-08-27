@@ -20,9 +20,10 @@ class Menu: UIView {
         }
     }()
 
-    let logo = UIImageView()
-    let newGameButton = Button()
-    let instructionsButton = Button()
+    private let logo = UIImageView()
+    private let newGameButton = Button()
+    private let instructionsButton = Button()
+    private let soundButton = Button()
 
     var onTapNewGame: (() -> Void)?
     var onTapInstructions: (() -> Void)?
@@ -47,9 +48,16 @@ class Menu: UIView {
                                      action: #selector(Menu.didTapInstructions),
                                      forControlEvents: .TouchUpInside)
 
+        soundButton.strikeThrough = !StorageService.currentSoundPreference()
+        soundButton.setTitle("Sound", forState: .Normal)
+        soundButton.addTarget(self,
+                              action: #selector(Menu.didTapSound),
+                              forControlEvents: .TouchUpInside)
+
         addSubview(logo)
         addSubview(newGameButton)
         addSubview(instructionsButton)
+        addSubview(soundButton)
 
         setNeedsUpdateConstraints()
     }
@@ -70,7 +78,7 @@ class Menu: UIView {
             logo.autoAlignAxis(.Horizontal, toSameAxisOfView: self, withOffset: logoCenterOffset)
             logo.autoSetDimensionsToSize(logoSize)
 
-            for button in [newGameButton, instructionsButton] {
+            for button in [newGameButton, instructionsButton, soundButton] {
                 button.autoSetDimension(.Height, toSize: Menu.buttonHeight)
             }
 
@@ -79,8 +87,9 @@ class Menu: UIView {
                                       ofView: logo,
                                       withOffset: buttonsTopSpacing)
             instructionsButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: newGameButton)
+            soundButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: instructionsButton)
 
-            [logo, newGameButton, instructionsButton].autoAlignViewsToAxis(.Vertical)
+            [logo, newGameButton, instructionsButton, soundButton].autoAlignViewsToAxis(.Vertical)
 
             hasLoadedConstraints = true
         }
@@ -94,6 +103,11 @@ class Menu: UIView {
 
     func didTapInstructions() {
         onTapInstructions!()
+    }
+
+    func didTapSound() {
+        StorageService.toggleSoundPreference()
+        soundButton.strikeThrough = !StorageService.currentSoundPreference()
     }
 
     func hideIfNeeded() {

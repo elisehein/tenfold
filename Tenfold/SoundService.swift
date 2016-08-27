@@ -56,7 +56,7 @@ class SoundService {
     }
 
     func playIfAllowed(sound: Sound) {
-        if StorageService.restoreSoundPreference() == true {
+        if StorageService.currentSoundPreference() == true {
             (players[sound]!)!.play()
         }
     }
