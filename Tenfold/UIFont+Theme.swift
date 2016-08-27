@@ -12,6 +12,7 @@ import UIKit
 enum FontWeight {
     case Regular
     case Bold
+    case Italic
 }
 
 extension UIFont {
@@ -25,6 +26,8 @@ extension UIFont {
             return UIFont(name: "SourceSansPro-Regular", size: fontSize)!
         case .Bold:
             return UIFont(name: "SourceSansPro-Semibold", size: fontSize)!
+        case .Italic:
+            return UIFont(name: "SourceSansPro-It", size: fontSize)!
         }
 
     }

@@ -16,6 +16,7 @@ class Instructions: UIViewController {
 
     private let reuseIdentifier = "RuleExampleCell"
     private let headerReuseIdentifier = "RuleHeader"
+    private let footerReuseIdentifier = "InstructionsFooter"
 
     private let layout: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
@@ -56,19 +57,22 @@ class Instructions: UIViewController {
         // swiftlint:disable:next line_length
         sections.registerClass(RuleHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerReuseIdentifier)
 
+        // swiftlint:disable:next line_length
+        sections.registerClass(InstructionsFooter.self, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: footerReuseIdentifier)
+
         super.init(nibName: nil, bundle: nil)
 
         sections.dataSource = self
         sections.delegate = self
         sections.backgroundColor = UIColor.clearColor()
 
-        var topInset: CGFloat = 120
+        var inset: CGFloat = 120
 
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            topInset = 200
+            inset = 200
         }
 
-        sections.contentInset = UIEdgeInsets(top: topInset, left: 0, bottom: 0, right: 0)
+        sections.contentInset = UIEdgeInsets(top: inset, left: 0, bottom: inset, right: 0)
 
         view.addSubview(sections)
         view.backgroundColor = UIColor.themeColor(.OffWhite)
@@ -159,6 +163,9 @@ extension Instructions: UICollectionViewDataSource {
         switch kind {
         case UICollectionElementKindSectionHeader:
             return headerViewForIndexPath(indexPath)
+        case UICollectionElementKindSectionFooter:
+            // swiftlint:disable:next line_length
+            return sections.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionFooter, withReuseIdentifier: footerReuseIdentifier, forIndexPath: indexPath)
         default:
             assert(false, "Unexpected element kind")
         }
@@ -206,5 +213,16 @@ extension Instructions: UICollectionViewDelegateFlowLayout {
         let height = RuleHeader.sizeOccupied(forAvailableWidth: width, usingText: text!).height
 
         return CGSize(width: width, height: height)
+    }
+
+    func collectionView(collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        referenceSizeForFooterInSection section: Int) -> CGSize {
+
+        if section == Instructions.rules.count - 1 {
+            return CGSize(width: view.bounds.size.width, height: 30)
+        } else {
+            return CGSize.zero
+        }
     }
 }

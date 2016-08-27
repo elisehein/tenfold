@@ -18,6 +18,8 @@
 		0C69CE4B1C6DCABA002E0D29 /* Number.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C69CE4A1C6DCABA002E0D29 /* Number.swift */; };
 		0C69CE4E1C6DCDE9002E0D29 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C69CE4D1C6DCDE9002E0D29 /* Array.swift */; };
 		0C70C3FB1D7186F400A9E8B8 /* SoundService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C70C3FA1D7186F400A9E8B8 /* SoundService.swift */; };
+		0C70C4011D71B4B700A9E8B8 /* SourceSansPro-It.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0C70C4001D71B49F00A9E8B8 /* SourceSansPro-It.otf */; };
+		0C70C4031D71B4D200A9E8B8 /* InstructionsFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C70C4021D71B4D200A9E8B8 /* InstructionsFooter.swift */; };
 		0C710E221D66012B0047F391 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C710E211D66012B0047F391 /* SwiftyJSON.framework */; };
 		0C710E261D6721DA0047F391 /* RuleExampleGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C710E251D6721DA0047F391 /* RuleExampleGrid.swift */; };
 		0C738ADB1C69D811007C9548 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C738ADA1C69D811007C9548 /* AppDelegate.swift */; };
@@ -55,6 +57,8 @@
 		0C69CE4A1C6DCABA002E0D29 /* Number.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Number.swift; sourceTree = "<group>"; };
 		0C69CE4D1C6DCDE9002E0D29 /* Array.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
 		0C70C3FA1D7186F400A9E8B8 /* SoundService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoundService.swift; sourceTree = "<group>"; };
+		0C70C4001D71B49F00A9E8B8 /* SourceSansPro-It.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-It.otf"; sourceTree = "<group>"; };
+		0C70C4021D71B4D200A9E8B8 /* InstructionsFooter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstructionsFooter.swift; sourceTree = "<group>"; };
 		0C710E211D66012B0047F391 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
 		0C710E251D6721DA0047F391 /* RuleExampleGrid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RuleExampleGrid.swift; sourceTree = "<group>"; };
 		0C738AD71C69D811007C9548 /* Tenfold.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tenfold.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -155,6 +159,7 @@
 		0C90AE991C6B29A700E1E42E /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				0C70C4001D71B49F00A9E8B8 /* SourceSansPro-It.otf */,
 				0C392BC81D65E23500294ACC /* SourceSansPro-Regular.otf */,
 				0C392BC61D65E1D400294ACC /* SourceSansPro-Semibold.otf */,
 			);
@@ -168,6 +173,7 @@
 				0C90AEA41C6D1B0700E1E42E /* GameGrid.swift */,
 				0C34638E1C6F89B30086D3CC /* GameNumberCell.swift */,
 				0C39D3091D3BC3B90047CE74 /* Grid.swift */,
+				0C70C4021D71B4D200A9E8B8 /* InstructionsFooter.swift */,
 				4EA6957F1D36992E00F9A315 /* Menu.swift */,
 				0CB938901D20389C005B81F4 /* NextRoundGrid.swift */,
 				0CB9388C1D202832005B81F4 /* NextRoundNumberCell.swift */,
@@ -269,6 +275,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C70C4011D71B4B700A9E8B8 /* SourceSansPro-It.otf in Resources */,
 				0C392BC91D65E24600294ACC /* SourceSansPro-Regular.otf in Resources */,
 				0C392BC71D65E1D800294ACC /* SourceSansPro-Semibold.otf in Resources */,
 				0CFDE5BC1D65B763001F9DF5 /* instructions.json in Resources */,
@@ -305,6 +312,7 @@
 				0C39D30A1D3BC3B90047CE74 /* Grid.swift in Sources */,
 				0C738ADD1C69D811007C9548 /* Play.swift in Sources */,
 				0C69CE4B1C6DCABA002E0D29 /* Number.swift in Sources */,
+				0C70C4031D71B4D200A9E8B8 /* InstructionsFooter.swift in Sources */,
 				0C90AEA71C6D1BCF00E1E42E /* Game.swift in Sources */,
 				0C39D3081D3AB48B0047CE74 /* UIScrollView.swift in Sources */,
 				0C4F12611D65C58000AAEB54 /* RuleHeader.swift in Sources */,
