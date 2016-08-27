@@ -251,7 +251,7 @@ class Play: UIViewController {
         let unrepresented = game.valueCounts.filter({ $1 == 0 }).map({ $0.0 })
 
         if unrepresented.count > 0 {
-            notification.text = "The \(unrepresented[0])s are gone!"
+//            notification.text = "The \(unrepresented[0])s are gone!"
 //            positionNotification(showing: true,
 //                                 animated: true,
 //                                 completion: {

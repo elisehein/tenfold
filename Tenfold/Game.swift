@@ -42,7 +42,6 @@ class Game: NSObject, NSCoding {
     override init() {
         numbers = Game.initialNumbers()
         historicNumberCount = numbers.count
-        currentRound = 1
         super.init()
     }
 
@@ -54,6 +53,7 @@ class Game: NSObject, NSCoding {
         self.numbers = Game.removeSurplusRows(from: storedNumbers)
 
         self.playingSince = (aDecoder.decodeObjectForKey(Game.playingSinceCoderKey) as? NSDate?)!
+        self.valueCounts = (aDecoder.decodeObjectForKey(Game.valueCountsCoderKey) as? [Int: Int])!
 
         if self.numbers.count == 0 {
             self.numbers = Game.initialNumbers()
@@ -177,13 +177,6 @@ class Game: NSObject, NSCoding {
         return true
     }
 
-    func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(numbers, forKey: Game.numbersCoderKey)
-        aCoder.encodeObject(historicNumberCount, forKey: Game.historicNumberCountCoderKey)
-        aCoder.encodeObject(currentRound, forKey: Game.currentRoundCoderKey)
-        aCoder.encodeObject(playingSince, forKey: Game.playingSinceCoderKey)
-    }
-
     class func removeSurplusRows(from givenNumbers: Array<Number>) -> Array<Number> {
         var filtered: Array<Number> = []
 
@@ -198,6 +191,14 @@ class Game: NSObject, NSCoding {
         }
 
         return filtered
+    }
+
+    func encodeWithCoder(aCoder: NSCoder) {
+        aCoder.encodeObject(numbers, forKey: Game.numbersCoderKey)
+        aCoder.encodeObject(historicNumberCount, forKey: Game.historicNumberCountCoderKey)
+        aCoder.encodeObject(currentRound, forKey: Game.currentRoundCoderKey)
+        aCoder.encodeObject(playingSince, forKey: Game.playingSinceCoderKey)
+        aCoder.encodeObject(valueCounts, forKey: Game.valueCountsCoderKey)
     }
 
     private func remainingNumbers() -> Array<Number> {
