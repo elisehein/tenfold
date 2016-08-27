@@ -50,7 +50,7 @@ class Play: UIViewController {
         gameGrid.onWillSnapToGameplayPosition = handleWillSnapToGameplayPosition
         gameGrid.onPairingAttempt = handlePairingAttempt
 
-        menu.onTapNewGame = restartGame
+        menu.onTapNewGame = confirmNewGame
         menu.onTapInstructions = showInstructions
 
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.showInstructions))
@@ -177,6 +177,19 @@ class Play: UIViewController {
     }
 
     // MARK: Menu interactions
+
+    private func confirmNewGame() {
+        if game.currentRound > 1 && game.playingSince != nil {
+            let modal = ConfirmationModal(game: game)
+            modal.onTapYes = {
+                self.restartGame()
+            }
+
+            presentViewController(modal, animated: true, completion: nil)
+        } else {
+            restartGame()
+        }
+    }
 
     private func restartGame() {
         game = Game()
