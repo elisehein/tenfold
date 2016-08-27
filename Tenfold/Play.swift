@@ -176,14 +176,8 @@ class Play: UIViewController {
             gameGrid.crossOutPair(index, otherIndex: otherIndex)
             updateNextRoundNotificationText()
             updateState()
-            let surplusIndeces = surplusIndecesOnRows(containingIndeces: [index, otherIndex])
-
-            if surplusIndeces.count > 0 {
-                SoundService.sharedService.playIfAllowed(.CrossOutRow)
-                removeNumbers(atIndeces: surplusIndeces)
-            } else {
-                SoundService.sharedService.playIfAllowed(.CrossOut)
-            }
+            removeSurplusRows(containingIndeces: index, otherIndex)
+            checkForNewlyUnrepresentedValues()
         } else {
             gameGrid.dismissSelection()
         }
@@ -225,6 +219,17 @@ class Play: UIViewController {
         return surplusIndeces
     }
 
+    private func removeSurplusRows(containingIndeces index: Int, _ otherIndex: Int) {
+        let surplusIndeces = surplusIndecesOnRows(containingIndeces: [index, otherIndex])
+
+        if surplusIndeces.count > 0 {
+            SoundService.sharedService.playIfAllowed(.CrossOutRow)
+            removeNumbers(atIndeces: surplusIndeces)
+        } else {
+            SoundService.sharedService.playIfAllowed(.CrossOut)
+        }
+    }
+
     private func removeNumbers(atIndeces indeces: Array<Int>) {
         game.removeNumbers(atIndeces: indeces)
         let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
@@ -240,6 +245,20 @@ class Play: UIViewController {
                 self.updateState()
             }
         })
+    }
+
+    private func checkForNewlyUnrepresentedValues() {
+        let unrepresented = game.valueCounts.filter({ $1 == 0 }).map({ $0.0 })
+
+        if unrepresented.count > 0 {
+            notification.text = "The \(unrepresented[0])s are gone!"
+//            positionNotification(showing: true,
+//                                 animated: true,
+//                                 completion: {
+//                self.game.pruneValueCounts()
+//                self.updateNotificationText()
+//            })
+        }
     }
 
     private func updateState() {
