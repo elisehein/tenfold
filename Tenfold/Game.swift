@@ -14,6 +14,7 @@ class Game: NSObject, NSCoding {
 
     private static let numbersCoderKey = "gameNumbersCoderKey"
     private static let historicNumberCountCoderKey = "gameHistoricNumberCountCoderKey"
+    private static let playingSinceCoderKey = "gamePlayingSinceCoderKey"
     private static let currentRoundCoderKey = "gameCurrentRoundCoderKey"
 
     private static let initialNumberValues = [1, 2, 3, 4, 5, 6, 7, 8, 9,
@@ -21,8 +22,10 @@ class Game: NSObject, NSCoding {
                                               5, 1, 6, 1, 7, 1, 8, 1, 9]
 
     private var numbers: Array<Number> = []
+
     var historicNumberCount: Int = 0
-        var currentRound: Int = 1
+    var currentRound: Int = 1
+    var playingSince: NSDate? = nil
 
     class func initialNumbers() -> Array<Number> {
         let initialNumbers: Array<Number> = initialNumberValues.map({ value in
@@ -36,6 +39,7 @@ class Game: NSObject, NSCoding {
     override init() {
         numbers = Game.initialNumbers()
         historicNumberCount = numbers.count
+        currentRound = 1
         super.init()
     }
 
@@ -46,6 +50,8 @@ class Game: NSObject, NSCoding {
         let storedNumbers = (aDecoder.decodeObjectForKey(Game.numbersCoderKey) as? Array<Number>)!
         self.numbers = Game.removeSurplusRows(from: storedNumbers)
 
+        self.playingSince = (aDecoder.decodeObjectForKey(Game.playingSinceCoderKey) as? NSDate?)!
+
         if self.numbers.count == 0 {
             self.numbers = Game.initialNumbers()
             self.historicNumberCount = self.numbers.count
@@ -53,6 +59,7 @@ class Game: NSObject, NSCoding {
     }
 
     func crossOutPair(index: Int, otherIndex: Int) {
+        playingSince = NSDate()
         numbers[index].crossedOut = true
         numbers[otherIndex].crossedOut = true
     }
@@ -156,6 +163,7 @@ class Game: NSObject, NSCoding {
         aCoder.encodeObject(numbers, forKey: Game.numbersCoderKey)
         aCoder.encodeObject(historicNumberCount, forKey: Game.historicNumberCountCoderKey)
         aCoder.encodeObject(currentRound, forKey: Game.currentRoundCoderKey)
+        aCoder.encodeObject(playingSince, forKey: Game.playingSinceCoderKey)
     }
 
     class func removeSurplusRows(from givenNumbers: Array<Number>) -> Array<Number> {
