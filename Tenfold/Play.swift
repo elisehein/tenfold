@@ -35,21 +35,9 @@ class Play: UIViewController {
 
     private var viewHasLoaded = false
 
-    private var blimpPlayer: AVAudioPlayer? = {
-        var player = AVAudioPlayer()
-        if let sound = NSDataAsset(name: "blimp") {
-            do {
-                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
-                try AVAudioSession.sharedInstance().setActive(true)
-                player = try AVAudioPlayer(data: sound.data, fileTypeHint: AVFileTypeWAVE)
-                player.prepareToPlay()
-            } catch {
-                print("Error initializing AVAudioPlayer")
-            }
-        }
-
-        return player
-    }()
+    private var crossOutSound = SoundService.player(.CrossOut)
+    private var crossOutRowSound = SoundService.player(.CrossOutRow)
+    private var nextRoundSound = SoundService.player(.NextRound)
 
     init() {
         let savedGame = StorageService.restoreGame()
@@ -201,6 +189,7 @@ class Play: UIViewController {
             self.updateState()
             self.nextRoundGrid?.hide(animated: false)
             self.menu.showIfNeeded(atEndPosition: self.menuFrame(atStartingPosition: true))
+            self.view.backgroundColor = Play.defaultBGColor
         })
     }
 
@@ -210,15 +199,22 @@ class Play: UIViewController {
 
     // MARK: Gameplay logic
 
-    private func handlePairingAttempt(itemIndex: Int, otherItemIndex: Int) {
-        let successfulPairing = Pairing.validate(itemIndex, otherItemIndex, inGame: game)
+    private func handlePairingAttempt(index: Int, otherIndex: Int) {
+        let successfulPairing = Pairing.validate(index, otherIndex, inGame: game)
 
         if successfulPairing {
-            game.crossOutPair(itemIndex, otherIndex: otherItemIndex)
-            gameGrid.crossOutPair(itemIndex, otherIndex: otherItemIndex)
+            game.crossOutPair(index, otherIndex: otherIndex)
+            gameGrid.crossOutPair(index, otherIndex: otherIndex)
             updateNotificationText()
             updateState()
-            removeSurplusRows(containingIndeces: [itemIndex, otherItemIndex])
+            let surplusIndeces = surplusIndecesOnRows(containingIndeces: [index, otherIndex])
+
+            if surplusIndeces.count > 0 {
+                crossOutRowSound?.play()
+                removeNumbers(atIndeces: surplusIndeces)
+            } else {
+                crossOutSound?.play()
+            }
         } else {
             gameGrid.dismissSelection()
         }
@@ -246,7 +242,7 @@ class Play: UIViewController {
         return game.lastNumberColumn() + 1
     }
 
-    private func removeSurplusRows(containingIndeces indeces: Array<Int>) {
+    private func surplusIndecesOnRows(containingIndeces indeces: Array<Int>) -> Array<Int> {
         var surplusIndeces: Array<Int> = []
 
         for index in indeces {
@@ -257,7 +253,7 @@ class Play: UIViewController {
             }
         }
 
-        removeNumbers(atIndeces: surplusIndeces)
+        return surplusIndeces
     }
 
     private func removeNumbers(atIndeces indeces: Array<Int>) {
@@ -320,7 +316,7 @@ class Play: UIViewController {
 
             if proportionVisible == 1 {
                 if !passedNextRoundThreshold {
-                    blimpPlayer?.play()
+                    nextRoundSound!.play()
                     passedNextRoundThreshold = true
                     positionNotification(showing: true, animated: true)
                 }

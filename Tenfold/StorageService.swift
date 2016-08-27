@@ -10,7 +10,8 @@ import Foundation
 
 class StorageService {
 
-    private static let gameStorageKey = "singularFieldsGameStorageKey"
+    private static let gameStorageKey = "tenfoldGameStorageKey"
+    private static let soundPrefStorageKey = "tenfoldSoundPrefStorageKey"
 
     class func saveGame(game: Game) {
         let gameData = NSKeyedArchiver.archivedDataWithRootObject(game)
@@ -28,5 +29,16 @@ class StorageService {
         } else {
             return nil
         }
+    }
+
+    class func saveSoundPreference(soundOn: Bool) {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        defaults.setBool(soundOn, forKey:StorageService.soundPrefStorageKey)
+    }
+
+    class func restoreSoundPreference() -> Bool {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        let soundPref = defaults.boolForKey(StorageService.soundPrefStorageKey)
+        return soundPref
     }
 }

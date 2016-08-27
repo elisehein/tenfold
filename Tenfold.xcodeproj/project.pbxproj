@@ -17,6 +17,7 @@
 		0C68BE7E1D3A4B3A00A6ACDC /* Instructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C68BE7D1D3A4B3A00A6ACDC /* Instructions.swift */; };
 		0C69CE4B1C6DCABA002E0D29 /* Number.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C69CE4A1C6DCABA002E0D29 /* Number.swift */; };
 		0C69CE4E1C6DCDE9002E0D29 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C69CE4D1C6DCDE9002E0D29 /* Array.swift */; };
+		0C70C3FB1D7186F400A9E8B8 /* SoundService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C70C3FA1D7186F400A9E8B8 /* SoundService.swift */; };
 		0C710E221D66012B0047F391 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C710E211D66012B0047F391 /* SwiftyJSON.framework */; };
 		0C710E261D6721DA0047F391 /* RuleExampleGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C710E251D6721DA0047F391 /* RuleExampleGrid.swift */; };
 		0C738ADB1C69D811007C9548 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C738ADA1C69D811007C9548 /* AppDelegate.swift */; };
@@ -53,6 +54,7 @@
 		0C68BE7D1D3A4B3A00A6ACDC /* Instructions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Instructions.swift; sourceTree = "<group>"; };
 		0C69CE4A1C6DCABA002E0D29 /* Number.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Number.swift; sourceTree = "<group>"; };
 		0C69CE4D1C6DCDE9002E0D29 /* Array.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
+		0C70C3FA1D7186F400A9E8B8 /* SoundService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoundService.swift; sourceTree = "<group>"; };
 		0C710E211D66012B0047F391 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
 		0C710E251D6721DA0047F391 /* RuleExampleGrid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RuleExampleGrid.swift; sourceTree = "<group>"; };
 		0C738AD71C69D811007C9548 /* Tenfold.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tenfold.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -104,6 +106,15 @@
 			name = Extensions;
 			sourceTree = "<group>";
 		};
+		0C70C3F91D71846B00A9E8B8 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				0C70C3FA1D7186F400A9E8B8 /* SoundService.swift */,
+				0CB938821D1FE6DD005B81F4 /* StorageService.swift */,
+			);
+			name = Services;
+			sourceTree = "<group>";
+		};
 		0C738ACE1C69D811007C9548 = {
 			isa = PBXGroup;
 			children = (
@@ -129,6 +140,7 @@
 				0C69CE4C1C6DCDDD002E0D29 /* Extensions */,
 				0C90AE991C6B29A700E1E42E /* Fonts */,
 				0C90AEA81C6D1BD200E1E42E /* Models */,
+				0C70C3F91D71846B00A9E8B8 /* Services */,
 				0C90AEA31C6D1AE800E1E42E /* Screens */,
 				0CA050A61C6B23AB006A42B9 /* Theming */,
 				0C90AEA11C6D19AC00E1E42E /* UI Modules */,
@@ -136,7 +148,6 @@
 				0C738AE61C69D811007C9548 /* Info.plist */,
 				0CFDE5BB1D65B763001F9DF5 /* instructions.json */,
 				0CADBDF11D6C50CB0090C13F /* Launch Screen.storyboard */,
-				0CB938821D1FE6DD005B81F4 /* StorageService.swift */,
 			);
 			path = Tenfold;
 			sourceTree = "<group>";
@@ -307,6 +318,7 @@
 				0CB938911D20389C005B81F4 /* NextRoundGrid.swift in Sources */,
 				4EE46E201D22CD55005C4493 /* Matrix.swift in Sources */,
 				0CB938831D1FE6DD005B81F4 /* StorageService.swift in Sources */,
+				0C70C3FB1D7186F400A9E8B8 /* SoundService.swift in Sources */,
 				4EA695801D36992E00F9A315 /* Menu.swift in Sources */,
 				0CB109341C7234FB00182663 /* UIColor.swift in Sources */,
 				0CE682961D6DB46300CA5787 /* String.swift in Sources */,
