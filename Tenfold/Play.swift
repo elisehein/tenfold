@@ -35,10 +35,6 @@ class Play: UIViewController {
 
     private var viewHasLoaded = false
 
-    private var crossOutSound = SoundService.player(.CrossOut)
-    private var crossOutRowSound = SoundService.player(.CrossOutRow)
-    private var nextRoundSound = SoundService.player(.NextRound)
-
     init() {
         let savedGame = StorageService.restoreGame()
 
@@ -210,10 +206,10 @@ class Play: UIViewController {
             let surplusIndeces = surplusIndecesOnRows(containingIndeces: [index, otherIndex])
 
             if surplusIndeces.count > 0 {
-                crossOutRowSound?.play()
+                SoundService.sharedService.playIfAllowed(.CrossOutRow)
                 removeNumbers(atIndeces: surplusIndeces)
             } else {
-                crossOutSound?.play()
+                SoundService.sharedService.playIfAllowed(.CrossOut)
             }
         } else {
             gameGrid.dismissSelection()
@@ -316,7 +312,7 @@ class Play: UIViewController {
 
             if proportionVisible == 1 {
                 if !passedNextRoundThreshold {
-                    nextRoundSound!.play()
+                    SoundService.sharedService.playIfAllowed(.NextRound)
                     passedNextRoundThreshold = true
                     positionNotification(showing: true, animated: true)
                 }
@@ -338,15 +334,22 @@ class Play: UIViewController {
         guard !gameGrid.snappingInProgress else { return }
 
         if gameGrid.pullDownInProgress() && !gameGrid.gridAtStartingPosition {
-            let fraction = min(1, gameGrid.distancePulledDown() / Play.showMenuPullDownThreshold)
-            view.backgroundColor = Play.gameplayBGColor.interpolateTo(Play.defaultBGColor,
-                                                                      fraction: fraction)
+            view.backgroundColor = interpolatedColor(from: Play.gameplayBGColor,
+                                                     to: Play.defaultBGColor,
+                                                     distance: gameGrid.distancePulledDown(),
+                                                     threshold: Play.showMenuPullDownThreshold)
         } else if gameGrid.pullUpFromStartingPositionInProgress() {
-            let pullUpDistance = gameGrid.pullUpDistanceFromStartingPosition()
-            let fraction = min(1, pullUpDistance / Play.hideMenuPullUpThreshold)
-            view.backgroundColor = Play.defaultBGColor.interpolateTo(Play.gameplayBGColor,
-                                                                     fraction: fraction)
+            // swiftlint:disable:next line_length
+            view.backgroundColor = interpolatedColor(from: Play.defaultBGColor, to: Play.gameplayBGColor, distance: gameGrid.pullUpDistanceFromStartingPosition(), threshold: Play.hideMenuPullUpThreshold)
         }
+    }
+
+    private func interpolatedColor(from sourceColor: UIColor,
+                                   to targetColor: UIColor,
+                                   distance: CGFloat,
+                                   threshold: CGFloat) -> UIColor {
+        let fraction = min(1, distance / threshold)
+        return sourceColor.interpolateTo(targetColor, fraction: fraction)
     }
 
     required init?(coder aDecoder: NSCoder) {

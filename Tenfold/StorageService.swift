@@ -13,6 +13,12 @@ class StorageService {
     private static let gameStorageKey = "tenfoldGameStorageKey"
     private static let soundPrefStorageKey = "tenfoldSoundPrefStorageKey"
 
+    class func registerDefaults() {
+        NSUserDefaults.standardUserDefaults().registerDefaults([
+            soundPrefStorageKey: true
+        ])
+    }
+
     class func saveGame(game: Game) {
         let gameData = NSKeyedArchiver.archivedDataWithRootObject(game)
         let defaults = NSUserDefaults.standardUserDefaults()

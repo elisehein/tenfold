@@ -16,9 +16,20 @@ enum Sound {
 }
 
 class SoundService {
+    static let sharedService = SoundService.init()
+
+    var players: [Sound: AVAudioPlayer?] = [:]
+
+    init() {
+        players[.CrossOut] = SoundService.player(.CrossOut)
+        players[.CrossOutRow] = SoundService.player(.CrossOutRow)
+        players[.NextRound] = SoundService.player(.NextRound)
+    }
+
     class func player(sound: Sound) -> AVAudioPlayer? {
         let sound = NSDataAsset(name: SoundService.assetName(sound))
         var player: AVAudioPlayer? = nil
+
         guard sound != nil else { return nil }
 
         do {
@@ -41,6 +52,12 @@ class SoundService {
             return "crossOutRow"
         case .NextRound:
             return "nextRound"
+        }
+    }
+
+    func playIfAllowed(sound: Sound) {
+        if StorageService.restoreSoundPreference() == true {
+            (players[sound]!)!.play()
         }
     }
 }
