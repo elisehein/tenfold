@@ -13,11 +13,7 @@ import UIKit
 class Menu: UIView {
 
     private static let buttonHeight: CGFloat = {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            return 80
-        } else {
-            return 50
-        }
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 80 : 40
     }()
 
     private let logo = UIImageView()
@@ -64,30 +60,24 @@ class Menu: UIView {
 
     override func updateConstraints() {
         if !hasLoadedConstraints {
-            var logoCenterOffset: CGFloat = -100
-            var logoSize = CGSize(width: 150, height: 100)
-            var buttonsTopSpacing: CGFloat = 80
+            var logoWidth: CGFloat = 140
 
             if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-                logoCenterOffset = -180
-                logoSize = CGSize(width: 180, height: 120)
-                buttonsTopSpacing = 140
+                logoWidth = 180
             }
-
-            logo.autoAlignAxisToSuperviewAxis(.Vertical)
-            logo.autoAlignAxis(.Horizontal, toSameAxisOfView: self, withOffset: logoCenterOffset)
-            logo.autoSetDimensionsToSize(logoSize)
 
             for button in [newGameButton, instructionsButton, soundButton] {
                 button.autoSetDimension(.Height, toSize: Menu.buttonHeight)
             }
 
-            newGameButton.autoPinEdge(.Top,
-                                      toEdge: .Bottom,
-                                      ofView: logo,
-                                      withOffset: buttonsTopSpacing)
-            instructionsButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: newGameButton)
+            instructionsButton.autoAlignAxis(.Horizontal, toSameAxisOfView: self, withOffset: 60)
+            newGameButton.autoPinEdge(.Bottom, toEdge: .Top, ofView: instructionsButton)
             soundButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: instructionsButton)
+
+            logo.autoPinEdgeToSuperviewEdge(.Top)
+            logo.autoPinEdge(.Bottom, toEdge: .Top, ofView: newGameButton)
+            logo.autoAlignAxisToSuperviewAxis(.Vertical)
+            logo.autoSetDimension(.Width, toSize: logoWidth)
 
             [logo, newGameButton, instructionsButton, soundButton].autoAlignViewsToAxis(.Vertical)
 
