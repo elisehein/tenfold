@@ -16,20 +16,19 @@ class GameGrid: Grid {
     private var game: Game
 
     private var bouncingInProgress = false
+    var snappingInProgress = false
+    var gridAtStartingPosition = true
+    var currentScrollCycleHandled = false
+
+    var pullUpThreshold: CGFloat?
+    var snapToStartingPositionThreshold: CGFloat?
+    var snapToGameplayPositionThreshold: CGFloat?
 
     var onScroll: (() -> Void)?
     var onPullUpThresholdExceeded: (() -> Void)?
     var onWillSnapToGameplayPosition: (() -> Void)?
     var onWillSnapToStartingPosition: (() -> Void)?
     var onPairingAttempt: ((itemIndex: Int, otherItemIndex: Int) -> Void)?
-
-    var pullUpThreshold: CGFloat?
-    var snapToStartingPositionThreshold: CGFloat?
-    var snapToGameplayPositionThreshold: CGFloat?
-
-    var snappingInProgress = false
-    var gridAtStartingPosition = true
-    var currentScrollCycleHandled = false
 
     private static let scaleFactor = UIScreen.mainScreen().scale
     private static let prematureBounceReductionFactor: CGFloat = 0.2
@@ -175,6 +174,14 @@ class GameGrid: Grid {
                -contentOffset.y
     }
 
+    func pullUpFromStartingPositionInProgress() -> Bool {
+        return gridAtStartingPosition && (pullUpInProgress() || prematurePullUpInProgress())
+    }
+
+    func pullUpDistanceFromStartingPosition() -> CGFloat {
+        return prematurePullUpInProgress() ? contentDistanceFromTopEdge() : distancePulledUp()
+    }
+
     private func topInset(atStartingPosition atStartingPosition: Bool = false) -> CGFloat {
         if atStartingPosition {
             return frame.size.height - min(initialGameHeight(), currentGameHeight())
@@ -223,7 +230,7 @@ class GameGrid: Grid {
     }
 
     private func prematurePullUpDistanceExceeds(threshold: CGFloat) -> Bool {
-        return shouldBouncePrematurely() && contentDistanceFromTopEdge() > threshold
+        return prematurePullUpInProgress() && contentDistanceFromTopEdge() > threshold
     }
 
     private func toggleBounce(shouldBounce: Bool) {
@@ -260,7 +267,7 @@ class GameGrid: Grid {
     // and show a bounce effect instead. This essentially allows a bounce effect to happen
     // even though we haven't reached the bottom of the content yet.
     // http://stackoverflow.com/questions/20437657/increasing-uiscrollview-rubber-banding-resistance
-    private func shouldBouncePrematurely () -> Bool {
+    private func prematurePullUpInProgress() -> Bool {
         // We only want to create a simulated bounce if we would see extra content underneath
         // the "fold". If the current content size isn't big enough to show anything
         // extra, we would get a native bounce anyway.
@@ -348,6 +355,7 @@ extension GameGrid: UIScrollViewDelegate {
             adjustTopInset(enforceStartingPosition: true)
             decelerationRate = UIScrollViewDecelerationRateFast
             targetContentOffset.memory.y = -contentInset.top
+            snappingInProgress = true
             onWillSnapToStartingPosition?()
             currentScrollCycleHandled = true
         }
@@ -363,7 +371,7 @@ extension GameGrid: UIScrollViewDelegate {
             return
         }
 
-        guard shouldBouncePrematurely() else { return }
+        guard prematurePullUpInProgress() else { return }
 
         if prematurePullUpDistanceExceeds(snapToGameplayPositionThreshold!) {
             positionGridForGameplay()
@@ -378,18 +386,19 @@ extension GameGrid: UIScrollViewDelegate {
             toggleBounce(false)
         }
 
-        if !currentScrollCycleHandled && shouldBouncePrematurely() {
+        if !currentScrollCycleHandled && prematurePullUpInProgress() {
             bounceBack()
         }
     }
 
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        snappingInProgress = false
         toggleBounce(false)
         decelerationRate = UIScrollViewDecelerationRateNormal
     }
 
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        if shouldBouncePrematurely() {
+        if prematurePullUpInProgress() {
             interjectBounce(scrollView)
         }
 

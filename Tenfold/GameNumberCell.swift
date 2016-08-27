@@ -22,7 +22,7 @@ class GameNumberCell: UICollectionViewCell {
     private let selectionColorFiller = UIView()
     private let crossedOutColorFiller = UIView()
 
-    var defaultBackgroundColor = UIColor.themeColor(.OffWhite)
+    var defaultBackgroundColor = UIColor.clearColor()
     private let crossedOutBackgroundColor = UIColor.themeColor(.OffBlack)
 
     private let markerMargin: CGFloat = 3.5

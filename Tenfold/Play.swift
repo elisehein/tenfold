@@ -11,27 +11,16 @@ import AVFoundation
 
 class Play: UIViewController {
 
-    private static let gridInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+    private static let defaultBGColor = UIColor.themeColor(.OffWhite)
+    private static let gameplayBGColor = UIColor.themeColor(.OffWhiteShaded)
 
-    private static let maxNextRoundPullUpThreshold: CGFloat = {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            return 160
-        } else {
-            return 120
-        }
-    }()
+    private static let gridInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
 
     private static let hideMenuPullUpThreshold: CGFloat = 50
     private static let showMenuPullDownThreshold: CGFloat = 70
 
-    private static let pullDownIndicatorMaxCurve: CGFloat = 80
-
-    private static let notificationBottomSpacing: CGFloat = {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            return 25
-        } else {
-            return 15
-        }
+    private static let maxNextRoundPullUpThreshold: CGFloat = {
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 160 : 120
     }()
 
     private var game: Game
@@ -83,7 +72,7 @@ class Play: UIViewController {
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.showInstructions))
         swipe.direction = .Left
 
-        view.backgroundColor = UIColor.themeColor(.OffWhite)
+        view.backgroundColor = Play.defaultBGColor
         view.addGestureRecognizer(swipe)
         view.addSubview(gameGrid)
         view.addSubview(menu)
@@ -143,7 +132,7 @@ class Play: UIViewController {
         notificationFrame.size.height = Notification.height
 
         if showing {
-            let y = screenHeight - notificationFrame.size.height - Play.notificationBottomSpacing
+            let y = screenHeight - notificationFrame.size.height - Notification.preferredMargin
             notificationFrame.origin.y += y
         } else {
             notificationFrame.origin.y += screenHeight + 10
@@ -302,10 +291,12 @@ class Play: UIViewController {
     // MARK: Scrolling interactions
 
     private func handleWillSnapToStartingPosition() {
+        view.backgroundColor = Play.defaultBGColor
         menu.showIfNeeded(atEndPosition: menuFrame(atStartingPosition: true))
     }
 
     private func handleWillSnapToGameplayPosition() {
+        view.backgroundColor = Play.gameplayBGColor
         menu.hideIfNeeded()
     }
 
@@ -319,12 +310,13 @@ class Play: UIViewController {
     private func handleScroll() {
         guard viewHasLoaded else { return }
 
+        interpolateBackgroundColour()
+
         if gameGrid.pullUpInProgress() {
             positionNextRoundMatrix()
             nextRoundGrid?.show(animated: true)
 
-            let pullUpRatio = gameGrid.distancePulledUp() / gameGrid.pullUpThreshold!
-            let proportionVisible = min(1, pullUpRatio)
+            let proportionVisible = min(1, gameGrid.distancePulledUp() / gameGrid.pullUpThreshold!)
 
             if proportionVisible == 1 {
                 if !passedNextRoundThreshold {
@@ -344,6 +336,21 @@ class Play: UIViewController {
         }
 
         positionMenu()
+    }
+
+    private func interpolateBackgroundColour() {
+        guard !gameGrid.snappingInProgress else { return }
+
+        if gameGrid.pullDownInProgress() && !gameGrid.gridAtStartingPosition {
+            let fraction = min(1, gameGrid.distancePulledDown() / Play.showMenuPullDownThreshold)
+            view.backgroundColor = Play.gameplayBGColor.interpolateTo(Play.defaultBGColor,
+                                                                      fraction: fraction)
+        } else if gameGrid.pullUpFromStartingPositionInProgress() {
+            let pullUpDistance = gameGrid.pullUpDistanceFromStartingPosition()
+            let fraction = min(1, pullUpDistance / Play.hideMenuPullUpThreshold)
+            view.backgroundColor = Play.defaultBGColor.interpolateTo(Play.gameplayBGColor,
+                                                                     fraction: fraction)
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -11,12 +11,12 @@ import UIKit
 
 class Notification: UIView {
 
+    static let preferredMargin: CGFloat = {
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 25 : 15
+    }()
+
     static let height: CGFloat = {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            return 50
-        } else {
-            return 35
-        }
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 50 : 35
     }()
 
     private let label = UILabel()
