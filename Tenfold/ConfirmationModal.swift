@@ -57,26 +57,15 @@ class ConfirmationModal: UIViewController {
 
         titleLabel.text = "Are you sure?"
         titleLabel.font = UIFont.themeFontWithSize(15, weight: .Bold)
+
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            titleLabel.font = UIFont.themeFontWithSize(22, weight: .Bold)
+        }
+
         titleLabel.textColor = UIColor.themeColor(.OffBlack)
         titleLabel.textAlignment = .Center
 
-        let numbersRemaining = game.numbersRemaining()
-        let numbersCrossedOut = game.historicNumberCount - numbersRemaining
-
-        if game.numbersRemaining() <= 20 {
-            // swiftlint:disable:next line_length
-            textLabel.text = "You've only got \(numbersRemaining) to go. " + randomMotivationalQuote()
-        } else if numbersCrossedOut > 10 {
-            // swiftlint:disable:next line_length
-            textLabel.text = "You've gotten rid of \(game.historicNumberCount - game.numbersRemaining()) numbers already. " + randomMotivationalQuote()
-        } else {
-            // swiftlint:disable:next line_length
-            textLabel.text = "You're only on round \(game.currentRound). " + randomMotivationalQuote()
-        }
-
-        textLabel.font = UIFont.themeFontWithSize(14)
-        textLabel.textColor = UIColor.themeColor(.OffBlack)
-        textLabel.textAlignment = .Center
+        setText()
         textLabel.numberOfLines = 0
 
         yesButton.setTitle("Start over", forState: .Normal)
@@ -106,24 +95,38 @@ class ConfirmationModal: UIViewController {
     override func updateViewConstraints() {
         if !hasLoadedConstraints {
 
-            modal.autoPinEdgeToSuperviewEdge(.Left, withInset: 15)
-            modal.autoPinEdgeToSuperviewEdge(.Bottom, withInset: 15)
-            modal.autoPinEdgeToSuperviewEdge(.Right, withInset: 15)
+            var innerPadding: CGFloat = 30
+
+            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+                innerPadding = 40
+            }
+
+            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+                modal.autoSetDimension(.Width, toSize: 500)
+                modal.autoCenterInSuperview()
+            } else {
+                modal.autoPinEdgeToSuperviewEdge(.Left, withInset: 15)
+                modal.autoPinEdgeToSuperviewEdge(.Bottom, withInset: 15)
+                modal.autoPinEdgeToSuperviewEdge(.Right, withInset: 15)
+            }
 
             titleLabel.autoAlignAxisToSuperviewAxis(.Vertical)
             titleLabel.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
-            titleLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: 30)
+            titleLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: innerPadding)
 
-            textLabel.autoPinEdgeToSuperviewEdge(.Left, withInset: 30)
-            textLabel.autoPinEdgeToSuperviewEdge(.Right, withInset: 30)
-            textLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: titleLabel, withOffset: 30)
+            textLabel.autoPinEdgeToSuperviewEdge(.Left, withInset: innerPadding)
+            textLabel.autoPinEdgeToSuperviewEdge(.Right, withInset: innerPadding)
+            textLabel.autoPinEdge(.Top,
+                                  toEdge: .Bottom,
+                                  ofView: titleLabel,
+                                  withOffset: innerPadding)
             textLabel.autoPinEdge(.Bottom, toEdge: .Top, ofView: yesButton, withOffset: -30)
 
-            yesButton.autoPinEdgeToSuperviewEdge(.Bottom, withInset: 30)
-            yesButton.autoPinEdgeToSuperviewEdge(.Left, withInset: 30)
+            yesButton.autoPinEdgeToSuperviewEdge(.Bottom, withInset: innerPadding)
+            yesButton.autoPinEdgeToSuperviewEdge(.Left, withInset: innerPadding)
 
-            cancelButton.autoPinEdgeToSuperviewEdge(.Bottom, withInset: 30)
-            cancelButton.autoPinEdgeToSuperviewEdge(.Right, withInset: 30)
+            cancelButton.autoPinEdgeToSuperviewEdge(.Bottom, withInset: innerPadding)
+            cancelButton.autoPinEdgeToSuperviewEdge(.Right, withInset: innerPadding)
 
             hasLoadedConstraints = true
         }
@@ -131,6 +134,23 @@ class ConfirmationModal: UIViewController {
         super.updateViewConstraints()
     }
 
+    private func setText() {
+        let numbersRemaining = game.numbersRemaining()
+        let numbersCrossedOut = game.historicNumberCount - numbersRemaining
+
+        var text = ""
+
+        if game.numbersRemaining() <= 20 {
+            text = "You've only got \(numbersRemaining) numbers to go. " + randomMotivationalQuote()
+        } else if numbersCrossedOut > 10 {
+            // swiftlint:disable:next line_length
+            text = "You've gotten rid of \(game.historicNumberCount - game.numbersRemaining()) numbers already. " + randomMotivationalQuote()
+        } else {
+            text = "You're only on round \(game.currentRound). " + randomMotivationalQuote()
+        }
+
+        textLabel.attributedText = constructAttributedString(withText: text)
+    }
 
     func didTapYes() {
         dismissViewControllerAnimated(true, completion: { _ in
@@ -153,6 +173,36 @@ class ConfirmationModal: UIViewController {
                 }
             }
         }
+    }
+
+    private func constructAttributedString(withText text: String) -> NSMutableAttributedString {
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 4
+        paragraphStyle.alignment = .Center
+
+        var font = UIFont.themeFontWithSize(14)
+
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            font = UIFont.themeFontWithSize(18)
+            paragraphStyle.lineSpacing = 7
+        }
+
+        let attrString = NSMutableAttributedString(string: text)
+        let fullRange = NSRange(location: 0, length: attrString.length)
+
+        attrString.addAttribute(NSParagraphStyleAttributeName,
+                                value: paragraphStyle,
+                                range: fullRange)
+
+        attrString.addAttribute(NSFontAttributeName,
+                                value: font,
+                                range: fullRange)
+
+        attrString.addAttribute(NSForegroundColorAttributeName,
+                                value: UIColor.themeColor(.OffBlack),
+                                range: fullRange)
+        return attrString
     }
 
     private func randomMotivationalQuote() -> String {
