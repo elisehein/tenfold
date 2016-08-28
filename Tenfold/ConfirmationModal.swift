@@ -69,16 +69,21 @@ class ConfirmationModal: UIViewController {
         textLabel.numberOfLines = 0
 
         yesButton.setTitle("Start over", forState: .Normal)
-        yesButton.titleLabel?.textAlignment = .Left
+        yesButton.backgroundColor = UIColor.themeColor(.OffWhiteShaded)
         yesButton.addTarget(self,
                             action: #selector(ConfirmationModal.didTapYes),
                             forControlEvents: .TouchUpInside)
 
         cancelButton.setTitle("Keep going", forState: .Normal)
-        cancelButton.titleLabel?.textAlignment = .Right
+        cancelButton.backgroundColor = UIColor.themeColor(.SecondaryAccent)
         cancelButton.addTarget(self,
                                action: #selector(ConfirmationModal.didTapCancel),
                                forControlEvents: .TouchUpInside)
+
+        for button in [yesButton, cancelButton] {
+            button.layer.borderColor = modal.backgroundColor?.CGColor
+            button.layer.borderWidth = 2.0
+        }
 
         view.addSubview(modal)
         modal.addSubview(titleLabel)
@@ -105,28 +110,35 @@ class ConfirmationModal: UIViewController {
                 modal.autoSetDimension(.Width, toSize: 500)
                 modal.autoCenterInSuperview()
             } else {
-                modal.autoPinEdgeToSuperviewEdge(.Left, withInset: 15)
-                modal.autoPinEdgeToSuperviewEdge(.Bottom, withInset: 15)
-                modal.autoPinEdgeToSuperviewEdge(.Right, withInset: 15)
+                modal.autoPinEdgeToSuperviewEdge(.Left, withInset: 10)
+                modal.autoPinEdgeToSuperviewEdge(.Bottom, withInset: 10)
+                modal.autoPinEdgeToSuperviewEdge(.Right, withInset: 10)
             }
 
             titleLabel.autoAlignAxisToSuperviewAxis(.Vertical)
             titleLabel.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
-            titleLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: innerPadding)
+            titleLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: 40)
 
             textLabel.autoPinEdgeToSuperviewEdge(.Left, withInset: innerPadding)
             textLabel.autoPinEdgeToSuperviewEdge(.Right, withInset: innerPadding)
             textLabel.autoPinEdge(.Top,
                                   toEdge: .Bottom,
                                   ofView: titleLabel,
-                                  withOffset: innerPadding)
-            textLabel.autoPinEdge(.Bottom, toEdge: .Top, ofView: yesButton, withOffset: -30)
+                                  withOffset: 15)
+            textLabel.autoPinEdge(.Bottom, toEdge: .Top, ofView: yesButton, withOffset: -40)
 
-            yesButton.autoPinEdgeToSuperviewEdge(.Bottom, withInset: innerPadding)
-            yesButton.autoPinEdgeToSuperviewEdge(.Left, withInset: innerPadding)
+            yesButton.autoPinEdgeToSuperviewEdge(.Bottom)
+            yesButton.autoPinEdgeToSuperviewEdge(.Left)
+            yesButton.autoSetDimension(.Height, toSize: 60)
+            yesButton.autoMatchDimension(.Width,
+                                         toDimension: .Width,
+                                         ofView: modal,
+                                         withMultiplier: 0.5)
 
-            cancelButton.autoPinEdgeToSuperviewEdge(.Bottom, withInset: innerPadding)
-            cancelButton.autoPinEdgeToSuperviewEdge(.Right, withInset: innerPadding)
+            cancelButton.autoPinEdgeToSuperviewEdge(.Bottom)
+            cancelButton.autoPinEdgeToSuperviewEdge(.Right)
+            cancelButton.autoSetDimension(.Height, toSize: 60)
+            cancelButton.autoPinEdge(.Left, toEdge: .Right, ofView: yesButton, withOffset: -2)
 
             hasLoadedConstraints = true
         }
