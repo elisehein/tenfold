@@ -11,7 +11,7 @@ import UIKit
 
 class Notification: UIView {
 
-    static let preferredMargin: CGFloat = {
+    static let bottomMargin: CGFloat = {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 25 : 15
     }()
 
@@ -27,6 +27,8 @@ class Notification: UIView {
             label.attributedText = constructAttributedString(withText: text)
         }
     }
+
+    private var dismissalInProgress = false
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -95,6 +97,53 @@ class Notification: UIView {
         }
 
         return attrString
+    }
+
+    func toggle(inFrame parentFrame: CGRect, showing: Bool = false, animated: Bool = false) {
+        guard !dismissalInProgress else { return }
+
+        UIView.animateWithDuration(animated ? 0.6 : 0,
+                                   delay: 0,
+                                   usingSpringWithDamping: 0.7,
+                                   initialSpringVelocity: 0.3,
+                                   options: .CurveEaseIn,
+                                   animations: {
+            self.alpha = showing ? 1 : 0
+            self.frame = self.frameInside(frame: parentFrame, showing: showing)
+        }, completion: nil)
+    }
+
+    func dismiss(inFrame parentFrame: CGRect, completion: (() -> Void)) {
+        dismissalInProgress = true
+
+        UIView.animateWithDuration(1.0,
+                                   delay: 0,
+                                   options: .CurveEaseOut,
+                                   animations: {
+            self.alpha = 0
+            var dismissedFrame = self.frame
+            dismissedFrame.origin.y -= 100
+            self.frame = dismissedFrame
+        }, completion: { _ in
+            self.dismissalInProgress = false
+            self.toggle(inFrame: parentFrame, showing: false)
+            completion()
+        })
+    }
+
+    private func frameInside(frame parentFrame: CGRect, showing: Bool) -> CGRect {
+        let parentHeight = parentFrame.size.height
+        var notificationFrame = parentFrame
+        notificationFrame.size.height = Notification.height
+
+        if showing {
+            let y = parentHeight - notificationFrame.size.height - Notification.bottomMargin
+            notificationFrame.origin.y += y
+        } else {
+            notificationFrame.origin.y += parentHeight + 10
+        }
+
+        return notificationFrame
     }
 
     required init?(coder aDecoder: NSCoder) {

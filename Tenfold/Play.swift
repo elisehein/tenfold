@@ -31,7 +31,6 @@ class Play: UIViewController {
     private var nextRoundGrid: NextRoundGrid?
 
     private var passedNextRoundThreshold = false
-    private var notificationDismissalInProgress = false
 
     private var viewHasLoaded = false
 
@@ -73,7 +72,7 @@ class Play: UIViewController {
         gameGrid.initialisePositionWithinFrame(gameGridFrame, withInsets: Play.gridInsets)
 
         positionMenu()
-        positionNotification()
+        notification.toggle(inFrame: view.bounds, showing: false)
         initNextRoundMatrix()
 
         gameGrid.snapToStartingPositionThreshold = Play.showMenuPullDownThreshold
@@ -107,47 +106,6 @@ class Play: UIViewController {
     private func positionMenu() {
         guard !menu.animationInProgress && !menu.hidden else { return }
         menu.frame = menuFrame()
-    }
-
-    private func positionNotification(showing showing: Bool = false, animated: Bool = false) {
-        guard !notificationDismissalInProgress else { return }
-        let screenHeight = view.bounds.size.height
-        var notificationFrame = view.bounds
-        notificationFrame.size.height = Notification.height
-
-        if showing {
-            let y = screenHeight - notificationFrame.size.height - Notification.preferredMargin
-            notificationFrame.origin.y += y
-        } else {
-            notificationFrame.origin.y += screenHeight + 10
-        }
-
-        UIView.animateWithDuration(animated ? 0.6 : 0,
-                                   delay: 0,
-                                   usingSpringWithDamping: 0.7,
-                                   initialSpringVelocity: 0.3,
-                                   options: .CurveEaseIn,
-                                   animations: {
-            self.notification.alpha = showing ? 1 : 0
-            self.notification.frame = notificationFrame
-        }, completion: nil)
-    }
-
-    private func dismissNotification(completion: (() -> Void)) {
-        notificationDismissalInProgress = true
-        UIView.animateWithDuration(1.0,
-                                   delay: 0,
-                                   options: .CurveEaseOut,
-                                   animations: {
-            self.notification.alpha = 0
-            var dismissedFrame = self.notification.frame
-            dismissedFrame.origin.y -= 100
-            self.notification.frame = dismissedFrame
-        }, completion: { _ in
-            self.notificationDismissalInProgress = false
-            self.positionNotification(showing: false, animated: false)
-            completion()
-        })
     }
 
     private func menuFrame(atStartingPosition atStartingPosition: Bool = false) -> CGRect {
@@ -307,7 +265,10 @@ class Play: UIViewController {
 
     private func handlePullUpThresholdExceeded() {
         nextRoundGrid?.hide(animated: false)
-        dismissNotification({ self.updateNotificationText() })
+        notification.dismiss(inFrame: view.bounds,
+                             completion: {
+            self.updateNotificationText()
+        })
         loadNextRound()
         menu.hideIfNeeded()
     }
@@ -327,10 +288,10 @@ class Play: UIViewController {
                 if !passedNextRoundThreshold {
                     SoundService.sharedService.playIfAllowed(.NextRound)
                     passedNextRoundThreshold = true
-                    positionNotification(showing: true, animated: true)
+                    notification.toggle(inFrame: view.bounds, showing: true, animated: true)
                 }
             } else {
-                positionNotification(showing: false, animated: true)
+                notification.toggle(inFrame: view.bounds, showing: false, animated: true)
                 passedNextRoundThreshold = false
             }
 
