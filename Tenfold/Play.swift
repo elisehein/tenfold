@@ -59,8 +59,8 @@ class Play: UIViewController {
         view.addGestureRecognizer(swipe)
         view.addSubview(gameGrid)
         view.addSubview(menu)
-        view.addSubview(nextRoundNotification)
         view.addSubview(gamePlayMessageNotification)
+        view.addSubview(nextRoundNotification)
     }
 
     override func viewDidLoad() {
@@ -237,8 +237,8 @@ class Play: UIViewController {
         gameGrid.removeNumbers(atIndexPaths: indexPaths, completion: {
             if self.game.ended() {
                 self.presentViewController(GameFinished(game: self.game),
-                                      animated: true,
-                                      completion: { _ in
+                                           animated: true,
+                                           completion: { _ in
                     self.restartGame()
                 })
             } else {
@@ -250,14 +250,15 @@ class Play: UIViewController {
     private func checkForNewlyUnrepresentedValues() {
         let unrepresented = game.valueCounts.filter({ $1 == 0 }).map({ $0.0 })
 
-        if unrepresented.count > 0 {
-//            notification.text = "The \(unrepresented[0])s are gone!"
-//            positionNotification(showing: true,
-//                                 animated: true,
-//                                 completion: {
-//                self.game.pruneValueCounts()
-//                self.updateNotificationText()
-//            })
+        if unrepresented.count > 0 && game.numbersRemaining() > 10 {
+            gamePlayMessageNotification.newlyUnrepresentedNumber = unrepresented[0]
+            gamePlayMessageNotification.flash(forSeconds: 3,
+                                              inFrame: view.bounds,
+                                              completion: {
+                self.game.pruneValueCounts()
+            })
+        } else {
+            game.pruneValueCounts()
         }
     }
 
@@ -310,6 +311,7 @@ class Play: UIViewController {
                 if !passedNextRoundThreshold {
                     SoundService.sharedService.playIfAllowed(.NextRound)
                     passedNextRoundThreshold = true
+                    gamePlayMessageNotification.toggle(inFrame: view.bounds, showing: false)
                     nextRoundNotification.toggle(inFrame: view.bounds,
                                                  showing: true,
                                                  animated: true)

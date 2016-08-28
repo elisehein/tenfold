@@ -7,17 +7,20 @@
 //
 
 import Foundation
+import SwiftyJSON
 import UIKit
 
 class Notification: UIView {
 
-    static let bottomMargin: CGFloat = {
+    private static let bottomMargin: CGFloat = {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 25 : 15
     }()
 
-    static let height: CGFloat = {
+    private static let height: CGFloat = {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 50 : 35
     }()
+
+    private static let newlyUnrepresentedPhrases = JSON.initFromFile("lastNumberCrossedOutPhrases")!
 
     private let label = UILabel()
     private let shadowLayer = UIView()
@@ -25,21 +28,34 @@ class Notification: UIView {
     var text: String = "" {
         didSet {
             label.attributedText = constructAttributedString(withText: text)
+            setNeedsLayout()
+        }
+    }
+
+    var newlyUnrepresentedNumber: Int? {
+        didSet {
+            if let number = newlyUnrepresentedNumber {
+                let phrases = Notification.newlyUnrepresentedPhrases.arrayValue
+                let phrase = phrases.randomElement().string
+                text = String(format: phrase!, number.asWord())
+            }
         }
     }
 
     private var dismissalInProgress = false
+    private var flashInProgress = false
+    private var flashCompletion: (() -> Void)?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        label.backgroundColor = UIColor.themeColor(.OffBlack)
+        label.backgroundColor = UIColor.themeColor(.OffBlack).colorWithAlphaComponent(0.92)
         label.layer.masksToBounds = true
 
         shadowLayer.backgroundColor = UIColor.clearColor()
         shadowLayer.layer.shadowColor = UIColor.blackColor().CGColor
-        shadowLayer.layer.shadowOffset = CGSize(width: 0, height: 1)
-        shadowLayer.layer.shadowOpacity = 0.2
+        shadowLayer.layer.shadowOffset = CGSize(width: 1, height: 1)
+        shadowLayer.layer.shadowOpacity = 0.5
         shadowLayer.layer.shadowRadius = 2
         shadowLayer.layer.masksToBounds = true
         shadowLayer.clipsToBounds = false
@@ -99,18 +115,53 @@ class Notification: UIView {
         return attrString
     }
 
-    func toggle(inFrame parentFrame: CGRect, showing: Bool, animated: Bool = false) {
+    func flash(forSeconds seconds: Double,
+               inFrame parentFrame: CGRect,
+               completion: (() -> Void)) {
+        guard !flashInProgress else { return }
+
+        flashInProgress = true
+        flashCompletion = completion
+
+        toggle(inFrame: parentFrame,
+               showing: true,
+               animated: true)
+
+        let triggerTime = dispatch_time(DISPATCH_TIME_NOW, Int64(seconds * Double(NSEC_PER_SEC)))
+        dispatch_after(triggerTime,
+                       dispatch_get_main_queue(), { () -> Void in
+            self.toggle(inFrame: parentFrame,
+                        showing: false,
+                        animated: true,
+                        completion: {
+                self.triggerPendingFlashCompletion()
+            })
+        })
+    }
+
+    func toggle(inFrame parentFrame: CGRect,
+                showing: Bool,
+                animated: Bool = false,
+                completion: (() -> Void)? = nil) {
+
+        // In case we were interrupted before we reached the flash completion block before
+        triggerPendingFlashCompletion()
+
         guard !dismissalInProgress else { return }
+        guard !CGRectEqualToRect(frame, frameInside(frame: parentFrame,
+                                                    showing: showing)) else { return }
 
         UIView.animateWithDuration(animated ? 0.6 : 0,
                                    delay: 0,
                                    usingSpringWithDamping: 0.7,
                                    initialSpringVelocity: 0.3,
-                                   options: .CurveEaseIn,
+                                   options: [.CurveEaseIn, .BeginFromCurrentState],
                                    animations: {
             self.alpha = showing ? 1 : 0
             self.frame = self.frameInside(frame: parentFrame, showing: showing)
-        }, completion: nil)
+        }, completion: { _ in
+            completion?()
+        })
     }
 
     func dismiss(inFrame parentFrame: CGRect, completion: (() -> Void)) {
@@ -144,6 +195,12 @@ class Notification: UIView {
         }
 
         return notificationFrame
+    }
+
+    private func triggerPendingFlashCompletion() {
+        flashInProgress = false
+        flashCompletion?()
+        flashCompletion = nil
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -33,20 +33,7 @@ class Instructions: UIViewController {
         return l
     }()
 
-    private static var rules: JSON = {
-        var data: JSON?
-
-        if let path = NSBundle.mainBundle().pathForResource("instructions", ofType: "json") {
-            do {
-                let jsonData = try NSData(contentsOfFile: path, options: .DataReadingMappedIfSafe)
-                data = JSON(data: jsonData)
-            } catch {
-                print("Error retrieving JSON data")
-            }
-        }
-
-        return data!
-    }()
+    private static var rules = JSON.initFromFile("instructions")!
 
     init() {
         sections = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)

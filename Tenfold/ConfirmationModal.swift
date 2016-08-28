@@ -25,20 +25,7 @@ class ConfirmationModal: UIViewController {
 
     var hasLoadedConstraints = false
 
-    private static var quotes: JSON = {
-        var data: JSON?
-
-        if let path = NSBundle.mainBundle().pathForResource("motivationalPhrases", ofType: "json") {
-            do {
-                let jsonData = try NSData(contentsOfFile: path, options: .DataReadingMappedIfSafe)
-                data = JSON(data: jsonData)
-            } catch {
-                print("Error retrieving JSON data")
-            }
-        }
-
-        return data!
-    }()
+    private static var quotes = JSON.initFromFile("motivationalPhrases")!
 
     init(game: Game) {
         self.game = game
@@ -222,8 +209,7 @@ class ConfirmationModal: UIViewController {
     }
 
     private func randomMotivationalQuote() -> String {
-        let randomIndex = Int(arc4random_uniform(UInt32(ConfirmationModal.quotes.count)))
-        return ConfirmationModal.quotes.arrayValue[randomIndex].string!
+        return ConfirmationModal.quotes.arrayValue.randomElement().string!
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -28,4 +28,9 @@ extension Array where Element: Equatable {
             self.removeObject(object)
         }
     }
+
+    func randomElement() -> Element {
+        let randomIndex = Int(arc4random_uniform(UInt32(count)))
+        return self[randomIndex]
+    }
 }
