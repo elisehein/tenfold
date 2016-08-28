@@ -250,6 +250,7 @@ class Play: UIViewController {
     }
 
     private func updateNextRoundNotificationText() {
+        // swiftlint:disable:next line_length
         nextRoundNotification.text = "ROUND \(game.currentRound + 1)   |   + \(game.numbersRemaining())"
     }
 
@@ -290,7 +291,9 @@ class Play: UIViewController {
                 if !passedNextRoundThreshold {
                     SoundService.sharedService.playIfAllowed(.NextRound)
                     passedNextRoundThreshold = true
-                    nextRoundNotification.toggle(inFrame: view.bounds, showing: true, animated: true)
+                    nextRoundNotification.toggle(inFrame: view.bounds,
+                                                 showing: true,
+                                                 animated: true)
                 }
             } else {
                 nextRoundNotification.toggle(inFrame: view.bounds, showing: false, animated: true)
