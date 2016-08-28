@@ -27,8 +27,9 @@ class Play: UIViewController {
 
     private let menu = Menu()
     private let gameGrid: GameGrid
-    private let notification: Notification
     private var nextRoundGrid: NextRoundGrid?
+    private let nextRoundNotification = Notification()
+    private let gamePlayMessageNotification = Notification()
 
     private var passedNextRoundThreshold = false
 
@@ -39,7 +40,6 @@ class Play: UIViewController {
 
         self.game = savedGame == nil ? Game() : savedGame!
         self.gameGrid = GameGrid(game: game)
-        self.notification = Notification()
 
         super.init(nibName: nil, bundle: nil)
 
@@ -59,7 +59,8 @@ class Play: UIViewController {
         view.addGestureRecognizer(swipe)
         view.addSubview(gameGrid)
         view.addSubview(menu)
-        view.addSubview(notification)
+        view.addSubview(nextRoundNotification)
+        view.addSubview(gamePlayMessageNotification)
     }
 
     override func viewDidLoad() {
@@ -72,7 +73,8 @@ class Play: UIViewController {
         gameGrid.initialisePositionWithinFrame(gameGridFrame, withInsets: Play.gridInsets)
 
         positionMenu()
-        notification.toggle(inFrame: view.bounds, showing: false)
+        nextRoundNotification.toggle(inFrame: view.bounds, showing: false)
+        gamePlayMessageNotification.toggle(inFrame: view.bounds, showing: false)
         initNextRoundMatrix()
 
         gameGrid.snapToStartingPositionThreshold = Play.showMenuPullDownThreshold
@@ -94,7 +96,7 @@ class Play: UIViewController {
                                       frame: gameGrid.frame)
         nextRoundGrid?.hide(animated: false)
 
-        updateNotificationText()
+        updateNextRoundNotificationText()
 
         gameGrid.pullUpThreshold = calcNextRoundPullUpThreshold(nextRoundValues.count)
 
@@ -152,7 +154,7 @@ class Play: UIViewController {
     private func restartGame() {
         game = Game()
         gameGrid.restart(withGame: game, completion: {
-            self.updateNotificationText()
+            self.updateNextRoundNotificationText()
             self.updateState()
             self.nextRoundGrid?.hide(animated: false)
             self.menu.showIfNeeded(atEndPosition: self.menuFrame(atStartingPosition: true))
@@ -172,7 +174,7 @@ class Play: UIViewController {
         if successfulPairing {
             game.crossOutPair(index, otherIndex: otherIndex)
             gameGrid.crossOutPair(index, otherIndex: otherIndex)
-            updateNotificationText()
+            updateNextRoundNotificationText()
             updateState()
             let surplusIndeces = surplusIndecesOnRows(containingIndeces: [index, otherIndex])
 
@@ -247,8 +249,8 @@ class Play: UIViewController {
         StorageService.saveGame(game)
     }
 
-    private func updateNotificationText() {
-        notification.text = "ROUND \(game.currentRound + 1)   |   + \(game.numbersRemaining())"
+    private func updateNextRoundNotificationText() {
+        nextRoundNotification.text = "ROUND \(game.currentRound + 1)   |   + \(game.numbersRemaining())"
     }
 
     // MARK: Scrolling interactions
@@ -265,9 +267,9 @@ class Play: UIViewController {
 
     private func handlePullUpThresholdExceeded() {
         nextRoundGrid?.hide(animated: false)
-        notification.dismiss(inFrame: view.bounds,
-                             completion: {
-            self.updateNotificationText()
+        nextRoundNotification.dismiss(inFrame: view.bounds,
+                                      completion: {
+            self.updateNextRoundNotificationText()
         })
         loadNextRound()
         menu.hideIfNeeded()
@@ -288,10 +290,10 @@ class Play: UIViewController {
                 if !passedNextRoundThreshold {
                     SoundService.sharedService.playIfAllowed(.NextRound)
                     passedNextRoundThreshold = true
-                    notification.toggle(inFrame: view.bounds, showing: true, animated: true)
+                    nextRoundNotification.toggle(inFrame: view.bounds, showing: true, animated: true)
                 }
             } else {
-                notification.toggle(inFrame: view.bounds, showing: false, animated: true)
+                nextRoundNotification.toggle(inFrame: view.bounds, showing: false, animated: true)
                 passedNextRoundThreshold = false
             }
 

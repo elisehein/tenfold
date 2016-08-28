@@ -99,7 +99,7 @@ class Notification: UIView {
         return attrString
     }
 
-    func toggle(inFrame parentFrame: CGRect, showing: Bool = false, animated: Bool = false) {
+    func toggle(inFrame parentFrame: CGRect, showing: Bool, animated: Bool = false) {
         guard !dismissalInProgress else { return }
 
         UIView.animateWithDuration(animated ? 0.6 : 0,
