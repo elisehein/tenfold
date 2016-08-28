@@ -55,16 +55,15 @@ class ConfirmationModal: UIViewController {
         setText()
         textLabel.numberOfLines = 0
 
+        setButtonBackgroundColorWithHighlight(yesButton, color: UIColor.themeColor(.OffWhiteShaded))
         yesButton.setTitle("Start over", forState: .Normal)
-        yesButton.setBackgroundImage(UIImage.imageWithColor(UIColor.themeColor(.OffWhiteShaded)), forState: .Normal)
-        yesButton.setBackgroundImage(UIImage.imageWithColor(UIColor.themeColor(.OffWhiteShaded).colorWithAlphaComponent(0.8)), forState: .Highlighted)
         yesButton.addTarget(self,
                             action: #selector(ConfirmationModal.didTapYes),
                             forControlEvents: .TouchUpInside)
 
+        setButtonBackgroundColorWithHighlight(cancelButton,
+                                              color: UIColor.themeColor(.SecondaryAccent))
         cancelButton.setTitle("Keep going", forState: .Normal)
-        cancelButton.setBackgroundImage(UIImage.imageWithColor(UIColor.themeColor(.SecondaryAccent)), forState: .Normal)
-        cancelButton.setBackgroundImage(UIImage.imageWithColor(UIColor.themeColor(.SecondaryAccent).colorWithAlphaComponent(0.6)), forState: .Highlighted)
         cancelButton.addTarget(self,
                                action: #selector(ConfirmationModal.didTapCancel),
                                forControlEvents: .TouchUpInside)
@@ -139,17 +138,19 @@ class ConfirmationModal: UIViewController {
 
     private func setText() {
         let numbersRemaining = game.numbersRemaining()
-        let numbersCrossedOut = game.historicNumberCount - numbersRemaining
 
         var text = ""
 
-        if game.numbersRemaining() <= 20 {
-            text = "You've only got \(numbersRemaining) numbers to go. " + randomMotivationalQuote()
-        } else if numbersCrossedOut > 10 {
-            // swiftlint:disable:next line_length
-            text = "You've gotten rid of \(game.historicNumberCount - game.numbersRemaining()) numbers already. " + randomMotivationalQuote()
+        if numbersRemaining <= 20 {
+            let toGoPhrase = numbersRemaining > 1 ? "numbers to go." : "number left!"
+            text = "You've only got \(numbersRemaining) \(toGoPhrase) " +
+                   randomMotivationalQuote()
+        } else if game.historicNumberCount - numbersRemaining > 10 {
+            text = "You've gotten rid of \(game.historicNumberCount - numbersRemaining) " +
+                   "numbers already. " + randomMotivationalQuote()
         } else {
-            text = "You're only on round \(game.currentRound). " + randomMotivationalQuote()
+            text = "You're only on round \(game.currentRound.asWord()). " +
+                   randomMotivationalQuote()
         }
 
         textLabel.attributedText = constructAttributedString(withText: text)
@@ -210,6 +211,11 @@ class ConfirmationModal: UIViewController {
 
     private func randomMotivationalQuote() -> String {
         return ConfirmationModal.quotes.arrayValue.randomElement().string!
+    }
+
+    private func setButtonBackgroundColorWithHighlight(button: UIButton, color: UIColor) {
+        button.setBackgroundImage(UIImage.imageWithColor(color), forState: .Normal)
+        button.setBackgroundImage(UIImage.imageWithColor(color.darken()), forState: .Highlighted)
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -12,6 +12,7 @@ import UIKit
 class Button: UIButton {
 
     var strikeThrough = false
+    var highlightText = true
 
     override func setTitle(title: String?, forState state: UIControlState) {
         super.setAttributedTitle(constructAttributedString(withText: title,
@@ -19,8 +20,16 @@ class Button: UIButton {
                                  forState: state)
     }
 
+    override func setBackgroundImage(image: UIImage?, forState state: UIControlState) {
+        super.setBackgroundImage(image, forState: state)
+        highlightText = false
+    }
+
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         super.touchesBegan(touches, withEvent: event)
+
+        guard highlightText else { return }
+
         setAttributedTitle(constructAttributedString(withText: titleLabel?.text,
                                                      color: UIColor.themeColor(.Accent)),
                            forState: .Normal)
@@ -28,6 +37,9 @@ class Button: UIButton {
 
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         super.touchesEnded(touches, withEvent: event)
+
+        guard highlightText else { return }
+
         setAttributedTitle(constructAttributedString(withText: titleLabel?.text,
                                                      color: UIColor.themeColor(.OffBlack)),
                            forState: .Normal)
