@@ -21,7 +21,6 @@
 		0C70C4011D71B4B700A9E8B8 /* SourceSansPro-It.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0C70C4001D71B49F00A9E8B8 /* SourceSansPro-It.otf */; };
 		0C70C4031D71B4D200A9E8B8 /* InstructionsFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C70C4021D71B4D200A9E8B8 /* InstructionsFooter.swift */; };
 		0C70C4051D71B95500A9E8B8 /* ConfirmationModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C70C4041D71B95500A9E8B8 /* ConfirmationModal.swift */; };
-		0C70C4071D71C11500A9E8B8 /* NSDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C70C4061D71C11500A9E8B8 /* NSDate.swift */; };
 		0C70C4091D71C62800A9E8B8 /* motivationalPhrases.json in Resources */ = {isa = PBXBuildFile; fileRef = 0C70C4081D71C62800A9E8B8 /* motivationalPhrases.json */; };
 		0C710E221D66012B0047F391 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C710E211D66012B0047F391 /* SwiftyJSON.framework */; };
 		0C710E261D6721DA0047F391 /* RuleExampleGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C710E251D6721DA0047F391 /* RuleExampleGrid.swift */; };
@@ -64,7 +63,6 @@
 		0C70C4001D71B49F00A9E8B8 /* SourceSansPro-It.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-It.otf"; sourceTree = "<group>"; };
 		0C70C4021D71B4D200A9E8B8 /* InstructionsFooter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstructionsFooter.swift; sourceTree = "<group>"; };
 		0C70C4041D71B95500A9E8B8 /* ConfirmationModal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfirmationModal.swift; sourceTree = "<group>"; };
-		0C70C4061D71C11500A9E8B8 /* NSDate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDate.swift; sourceTree = "<group>"; };
 		0C70C4081D71C62800A9E8B8 /* motivationalPhrases.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = motivationalPhrases.json; sourceTree = "<group>"; };
 		0C710E211D66012B0047F391 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
 		0C710E251D6721DA0047F391 /* RuleExampleGrid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RuleExampleGrid.swift; sourceTree = "<group>"; };
@@ -111,7 +109,6 @@
 			isa = PBXGroup;
 			children = (
 				0C69CE4D1C6DCDE9002E0D29 /* Array.swift */,
-				0C70C4061D71C11500A9E8B8 /* NSDate.swift */,
 				0CE682951D6DB46300CA5787 /* String.swift */,
 				0CB109331C7234FB00182663 /* UIColor.swift */,
 				CBB3C9C51D72E00B00551E03 /* UIImage.swift */,
@@ -326,7 +323,6 @@
 				0C738ADD1C69D811007C9548 /* Play.swift in Sources */,
 				0C69CE4B1C6DCABA002E0D29 /* Number.swift in Sources */,
 				0C70C4031D71B4D200A9E8B8 /* InstructionsFooter.swift in Sources */,
-				0C70C4071D71C11500A9E8B8 /* NSDate.swift in Sources */,
 				0C90AEA71C6D1BCF00E1E42E /* Game.swift in Sources */,
 				0C39D3081D3AB48B0047CE74 /* UIScrollView.swift in Sources */,
 				0C4F12611D65C58000AAEB54 /* RuleHeader.swift in Sources */,
