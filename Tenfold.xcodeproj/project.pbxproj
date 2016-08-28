@@ -46,6 +46,7 @@
 		0CFDE5BC1D65B763001F9DF5 /* instructions.json in Resources */ = {isa = PBXBuildFile; fileRef = 0CFDE5BB1D65B763001F9DF5 /* instructions.json */; };
 		4EA695801D36992E00F9A315 /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA6957F1D36992E00F9A315 /* Menu.swift */; };
 		4EE46E201D22CD55005C4493 /* Matrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE46E1F1D22CD55005C4493 /* Matrix.swift */; };
+		CBB3C9C61D72E00B00551E03 /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBB3C9C51D72E00B00551E03 /* UIImage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -90,6 +91,7 @@
 		0CFDE5BB1D65B763001F9DF5 /* instructions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = instructions.json; sourceTree = "<group>"; };
 		4EA6957F1D36992E00F9A315 /* Menu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
 		4EE46E1F1D22CD55005C4493 /* Matrix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Matrix.swift; sourceTree = "<group>"; };
+		CBB3C9C51D72E00B00551E03 /* UIImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +114,7 @@
 				0C70C4061D71C11500A9E8B8 /* NSDate.swift */,
 				0CE682951D6DB46300CA5787 /* String.swift */,
 				0CB109331C7234FB00182663 /* UIColor.swift */,
+				CBB3C9C51D72E00B00551E03 /* UIImage.swift */,
 				0C39D3071D3AB48B0047CE74 /* UIScrollView.swift */,
 			);
 			name = Extensions;
@@ -332,6 +335,7 @@
 				0C90AEA51C6D1B0700E1E42E /* GameGrid.swift in Sources */,
 				0C34638F1C6F89B30086D3CC /* GameNumberCell.swift in Sources */,
 				0CADBDF61D6D92850090C13F /* GameFinished.swift in Sources */,
+				CBB3C9C61D72E00B00551E03 /* UIImage.swift in Sources */,
 				0C69CE4E1C6DCDE9002E0D29 /* Array.swift in Sources */,
 				0CF5C54B1D6F76C5006D46B8 /* Button.swift in Sources */,
 				0C68BE7E1D3A4B3A00A6ACDC /* Instructions.swift in Sources */,

@@ -69,13 +69,15 @@ class ConfirmationModal: UIViewController {
         textLabel.numberOfLines = 0
 
         yesButton.setTitle("Start over", forState: .Normal)
-        yesButton.backgroundColor = UIColor.themeColor(.OffWhiteShaded)
+        yesButton.setBackgroundImage(UIImage.imageWithColor(UIColor.themeColor(.OffWhiteShaded)), forState: .Normal)
+        yesButton.setBackgroundImage(UIImage.imageWithColor(UIColor.themeColor(.OffWhiteShaded).colorWithAlphaComponent(0.8)), forState: .Highlighted)
         yesButton.addTarget(self,
                             action: #selector(ConfirmationModal.didTapYes),
                             forControlEvents: .TouchUpInside)
 
         cancelButton.setTitle("Keep going", forState: .Normal)
-        cancelButton.backgroundColor = UIColor.themeColor(.SecondaryAccent)
+        cancelButton.setBackgroundImage(UIImage.imageWithColor(UIColor.themeColor(.SecondaryAccent)), forState: .Normal)
+        cancelButton.setBackgroundImage(UIImage.imageWithColor(UIColor.themeColor(.SecondaryAccent).colorWithAlphaComponent(0.6)), forState: .Highlighted)
         cancelButton.addTarget(self,
                                action: #selector(ConfirmationModal.didTapCancel),
                                forControlEvents: .TouchUpInside)
@@ -100,13 +102,15 @@ class ConfirmationModal: UIViewController {
     override func updateViewConstraints() {
         if !hasLoadedConstraints {
 
-            var innerPadding: CGFloat = 30
+            var horizontalInset: CGFloat = 30
+            var contentPadding: CGFloat = 40
+            var buttonHeight: CGFloat = 60
 
             if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-                innerPadding = 40
-            }
+                horizontalInset = 40
+                contentPadding = 70
+                buttonHeight = 90
 
-            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
                 modal.autoSetDimension(.Width, toSize: 500)
                 modal.autoCenterInSuperview()
             } else {
@@ -117,28 +121,28 @@ class ConfirmationModal: UIViewController {
 
             titleLabel.autoAlignAxisToSuperviewAxis(.Vertical)
             titleLabel.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
-            titleLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: 40)
+            titleLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: contentPadding)
 
-            textLabel.autoPinEdgeToSuperviewEdge(.Left, withInset: innerPadding)
-            textLabel.autoPinEdgeToSuperviewEdge(.Right, withInset: innerPadding)
+            textLabel.autoPinEdgeToSuperviewEdge(.Left, withInset: horizontalInset)
+            textLabel.autoPinEdgeToSuperviewEdge(.Right, withInset: horizontalInset)
             textLabel.autoPinEdge(.Top,
                                   toEdge: .Bottom,
                                   ofView: titleLabel,
                                   withOffset: 15)
-            textLabel.autoPinEdge(.Bottom, toEdge: .Top, ofView: yesButton, withOffset: -40)
+            textLabel.autoPinEdge(.Bottom,
+                                  toEdge: .Top,
+                                  ofView: yesButton,
+                                  withOffset: -contentPadding)
 
-            yesButton.autoPinEdgeToSuperviewEdge(.Bottom)
-            yesButton.autoPinEdgeToSuperviewEdge(.Left)
-            yesButton.autoSetDimension(.Height, toSize: 60)
-            yesButton.autoMatchDimension(.Width,
-                                         toDimension: .Width,
-                                         ofView: modal,
-                                         withMultiplier: 0.5)
+            yesButton.autoAlignAxisToSuperviewAxis(.Vertical)
+            yesButton.autoPinEdge(.Bottom, toEdge: .Top, ofView: cancelButton, withOffset: 2)
+            yesButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
+            yesButton.autoSetDimension(.Height, toSize: buttonHeight)
 
+            cancelButton.autoAlignAxisToSuperviewAxis(.Vertical)
             cancelButton.autoPinEdgeToSuperviewEdge(.Bottom)
-            cancelButton.autoPinEdgeToSuperviewEdge(.Right)
-            cancelButton.autoSetDimension(.Height, toSize: 60)
-            cancelButton.autoPinEdge(.Left, toEdge: .Right, ofView: yesButton, withOffset: -2)
+            cancelButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
+            cancelButton.autoSetDimension(.Height, toSize: buttonHeight)
 
             hasLoadedConstraints = true
         }

@@ -16,6 +16,7 @@ class Game: NSObject, NSCoding {
     private static let historicNumberCountCoderKey = "gameHistoricNumberCountCoderKey"
     private static let playingSinceCoderKey = "gamePlayingSinceCoderKey"
     private static let currentRoundCoderKey = "gameCurrentRoundCoderKey"
+    private static let valueCountsCoderKey = "gameValueCountsCoderKey"
 
     private static let initialNumberValues = [1, 2, 3, 4, 5, 6, 7, 8, 9,
                                               1, 1, 1, 2, 1, 3, 1, 4, 1,
