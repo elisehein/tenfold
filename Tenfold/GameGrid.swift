@@ -11,14 +11,15 @@ import UIKit
 
 class GameGrid: Grid {
 
-    private let reuseIdentifier = "GameNumberCell"
+    internal let reuseIdentifier = "GameNumberCell"
 
-    private var game: Game
+    internal var game: Game
 
-    private var bouncingInProgress = false
-    var snappingInProgress = false
     var gridAtStartingPosition = true
-    var currentScrollCycleHandled = false
+    var snappingInProgress = false
+
+    internal var bouncingInProgress = false
+    internal var currentScrollCycleHandled = false
 
     var pullUpThreshold: CGFloat?
     var snapToStartingPositionThreshold: CGFloat?
@@ -33,14 +34,14 @@ class GameGrid: Grid {
     private static let scaleFactor = UIScreen.mainScreen().scale
     private static let prematureBounceReductionFactor: CGFloat = 0.2
 
-    private var prevPrematureBounceOffset: CGFloat = 0
-    private var totalPrematureBounceDistance: CGFloat = 0
+    internal var prevPrematureBounceOffset: CGFloat = 0
+    internal var totalPrematureBounceDistance: CGFloat = 0
 
     // Selection and deselection are the core of the game. But because a UICollectionView
     // cannot deselect items that are not currently visible (which can often be required for us,
     // say when pairing two items so far from each other that they cannot be seen on screen
     // at the same time), it's easier to keep track of selection ourselves, rather than natively
-    private var selectedIndexPaths: Array<NSIndexPath> = []
+    internal var selectedIndexPaths: Array<NSIndexPath> = []
 
     init(game: Game) {
         self.game = game
@@ -56,6 +57,17 @@ class GameGrid: Grid {
         showsVerticalScrollIndicator = false
         alwaysBounceVertical = true
     }
+
+    override func initialisePositionWithinFrame(givenFrame: CGRect,
+                                                withInsets insets: UIEdgeInsets) {
+        super.initialisePositionWithinFrame(givenFrame, withInsets: insets)
+
+        // Whatever the game state, we initially start with 3 rows showing
+        // in the bottom of the view
+        adjustTopInset(enforceStartingPosition: true)
+    }
+
+    // MARK: Gameplay logic
 
     func restart(withGame newGame: Game, completion: (() -> Void)?) {
         UIView.animateWithDuration(0.2,
@@ -78,12 +90,6 @@ class GameGrid: Grid {
                 completion?()
             })
         })
-    }
-
-    private func adjustTopInset(enforceStartingPosition enforceStartingPosition: Bool = false) {
-        contentInset.top = topInset(atStartingPosition: enforceStartingPosition)
-        gridAtStartingPosition = enforceStartingPosition
-        toggleBounce(contentInset.top > 0)
     }
 
     func loadNextRound(atIndeces indeces: Array<Int>, completion: ((Bool) -> Void)?) {
@@ -113,35 +119,6 @@ class GameGrid: Grid {
         if otherCell != nil { otherCell!.crossOut() }
     }
 
-    func removeNumbers(atIndexPaths indexPaths: Array<NSIndexPath>, completion: (() -> Void)) {
-        guard indexPaths.count > 0 else { return }
-
-        adjustTopInset()
-        if contentInset.top > 0 {
-            setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: true)
-        }
-
-        var removalHandled = false
-        for indexPath in indexPaths {
-            if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
-                cell.prepareForRemoval(completion: {
-                    if !removalHandled {
-                        self.deleteItemsAtIndexPaths(indexPaths)
-
-                        if self.game.totalNumbers() > 0 {
-                            let lastIndexPath = NSIndexPath(forItem: self.game.totalNumbers() - 1,
-                                                            inSection: 0)
-                            self.reloadItemsAtIndexPaths([lastIndexPath])
-                        }
-
-                        removalHandled = true
-                        completion()
-                    }
-                })
-            }
-        }
-    }
-
     func dismissSelection() {
         for indexPath in selectedIndexPaths {
             if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
@@ -153,14 +130,42 @@ class GameGrid: Grid {
         }
     }
 
-    override func initialisePositionWithinFrame(givenFrame: CGRect,
-                                                withInsets insets: UIEdgeInsets) {
-        super.initialisePositionWithinFrame(givenFrame, withInsets: insets)
+    func removeNumbers(atIndexPaths indexPaths: Array<NSIndexPath>, completion: (() -> Void)) {
+        guard indexPaths.count > 0 else { return }
 
-        // Whatever the game state, we initially start with 3 rows showing
-        // in the bottom of the view
-        adjustTopInset(enforceStartingPosition: true)
+        adjustTopInset()
+        if contentInset.top > 0 {
+            setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: true)
+        }
+
+        var removalHandled = false
+        prepareForRemoval(indexPaths, completion: {
+            if !removalHandled {
+                self.deleteItemsAtIndexPaths(indexPaths)
+
+                if self.game.totalNumbers() > 0 {
+                    let lastIndexPath = NSIndexPath(forItem: self.game.totalNumbers() - 1,
+                        inSection: 0)
+                    self.reloadItemsAtIndexPaths([lastIndexPath])
+                }
+
+                removalHandled = true
+                completion()
+            }
+        })
     }
+
+    private func prepareForRemoval(indexPaths: Array<NSIndexPath>, completion: (() -> Void)) {
+        for indexPath in indexPaths {
+            if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
+                cell.prepareForRemoval(completion: completion)
+            } else {
+                completion()
+            }
+        }
+    }
+
+    // MARK: Top insets and visible space considering scroll state
 
     // Empty space visible should be capped to depend on the initial game height (3 rows);
     // it should still account for three game rows even if the actual game is only 1 or two
@@ -180,6 +185,12 @@ class GameGrid: Grid {
         return prematurePullUpInProgress() ? contentDistanceFromTopEdge() : distancePulledUp()
     }
 
+    internal func adjustTopInset(enforceStartingPosition enforceStartingPosition: Bool = false) {
+        contentInset.top = topInset(atStartingPosition: enforceStartingPosition)
+        gridAtStartingPosition = enforceStartingPosition
+        toggleBounce(contentInset.top > 0)
+    }
+
     private func topInset(atStartingPosition atStartingPosition: Bool = false) -> CGFloat {
         if atStartingPosition {
             return frame.size.height - min(initialGameHeight(), currentGameHeight())
@@ -196,12 +207,12 @@ class GameGrid: Grid {
         return heightForGame(withTotalRows: game.totalRows())
     }
 
-    private func ensureGridPositionedForGameplay() {
+    internal func ensureGridPositionedForGameplay() {
         guard gridAtStartingPosition else { return }
         positionGridForGameplay()
     }
 
-    private func positionGridForGameplay() {
+    internal func positionGridForGameplay() {
         // This handler needs to be called *before* the animation block,
         // otherwise it will for some reason push it to a later thread
         onWillSnapToGameplayPosition?()
@@ -227,11 +238,11 @@ class GameGrid: Grid {
         })
     }
 
-    private func prematurePullUpDistanceExceeds(threshold: CGFloat) -> Bool {
+    internal func prematurePullUpDistanceExceeds(threshold: CGFloat) -> Bool {
         return prematurePullUpInProgress() && contentDistanceFromTopEdge() > threshold
     }
 
-    private func toggleBounce(shouldBounce: Bool) {
+    internal func toggleBounce(shouldBounce: Bool) {
         guard !snappingInProgress else { return }
 
         // We should *never* disable bounce if there is a top contentInset
@@ -239,7 +250,7 @@ class GameGrid: Grid {
         bounces = contentInset.top > 0 || shouldBounce
     }
 
-    private func interjectBounce (scrollView: UIScrollView) {
+    internal func interjectBounce (scrollView: UIScrollView) {
         let currentOffset = round(contentOffset.y + contentInset.top)
         guard currentOffset > 0 else { return }
 
@@ -257,7 +268,7 @@ class GameGrid: Grid {
         }
     }
 
-    private func bounceBack() {
+    internal func bounceBack() {
         setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: true)
     }
 
@@ -265,7 +276,7 @@ class GameGrid: Grid {
     // and show a bounce effect instead. This essentially allows a bounce effect to happen
     // even though we haven't reached the bottom of the content yet.
     // http://stackoverflow.com/questions/20437657/increasing-uiscrollview-rubber-banding-resistance
-    private func prematurePullUpInProgress() -> Bool {
+    internal func prematurePullUpInProgress() -> Bool {
         // We only want to create a simulated bounce if we would see extra content underneath
         // the "fold". If the current content size isn't big enough to show anything
         // extra, we would get a native bounce anyway.
@@ -276,135 +287,5 @@ class GameGrid: Grid {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-}
-
-extension GameGrid: UICollectionViewDataSource {
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        return 1
-    }
-
-    func collectionView(collectionView: UICollectionView,
-                        numberOfItemsInSection section: Int) -> Int {
-        return game.totalNumbers()
-    }
-
-    func collectionView(collectionView: UICollectionView,
-                        cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier,
-                                                                         forIndexPath: indexPath)
-
-        if let cell = cell as? GameNumberCell {
-            cell.value = game.valueAtIndex(indexPath.item)
-            cell.crossedOut = game.isCrossedOut(indexPath.item)
-            cell.marksEndOfRound = game.marksEndOfRound(indexPath.item)
-            cell.useClearBackground = true
-            cell.selectedForPairing = selectedIndexPaths.contains(indexPath)
-            cell.resetColors()
-        }
-
-        return cell
-    }
-}
-
-extension GameGrid: UICollectionViewDelegateFlowLayout {
-    func collectionView(collectionView: UICollectionView,
-                        shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return !game.isCrossedOut(indexPath.item)
-    }
-
-    func collectionView(collectionView: UICollectionView,
-                        didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        ensureGridPositionedForGameplay()
-
-        // Deselection
-        if selectedIndexPaths.contains(indexPath) {
-            if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
-                cell.indicateDeselection()
-            }
-
-            selectedIndexPaths.removeAll()
-            return
-        }
-
-        selectedIndexPaths.append(indexPath)
-
-        if selectedIndexPaths.count == 2 {
-            onPairingAttempt!(itemIndex: selectedIndexPaths[0].item,
-                              otherItemIndex: selectedIndexPaths[1].item)
-            selectedIndexPaths.removeAll()
-        } else if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
-            cell.indicateSelection()
-        }
-    }
-
-    func collectionView(collectionView: UICollectionView,
-                        layout: UICollectionViewLayout,
-                        sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        return cellSize()
-    }
-}
-
-extension GameGrid: UIScrollViewDelegate {
-    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
-        toggleBounce(true)
-        currentScrollCycleHandled = false
-    }
-
-    func scrollViewWillEndDragging(scrollView: UIScrollView,
-                                   withVelocity velocity: CGPoint,
-                                   targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        if pullDownDistanceExceeds(snapToStartingPositionThreshold!) {
-            adjustTopInset(enforceStartingPosition: true)
-            decelerationRate = UIScrollViewDecelerationRateFast
-            targetContentOffset.memory.y = -contentInset.top
-            snappingInProgress = true
-            onWillSnapToStartingPosition?()
-            currentScrollCycleHandled = true
-        }
-    }
-
-    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        bouncingInProgress = pullUpInProgress() || pullDownInProgress()
-
-        guard !currentScrollCycleHandled else { return }
-
-        if pullUpDistanceExceeds(pullUpThreshold!) {
-            onPullUpThresholdExceeded?()
-            return
-        }
-
-        guard prematurePullUpInProgress() else { return }
-
-        if prematurePullUpDistanceExceeds(snapToGameplayPositionThreshold!) {
-            positionGridForGameplay()
-            return
-        }
-
-        bounceBack()
-    }
-
-    func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
-        if !bouncingInProgress {
-            toggleBounce(false)
-        }
-
-        if !currentScrollCycleHandled && prematurePullUpInProgress() {
-            bounceBack()
-        }
-    }
-
-    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        snappingInProgress = false
-        toggleBounce(false)
-        decelerationRate = UIScrollViewDecelerationRateNormal
-    }
-
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        if prematurePullUpInProgress() {
-            interjectBounce(scrollView)
-        }
-
-        onScroll?()
     }
 }
