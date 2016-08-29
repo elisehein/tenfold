@@ -17,7 +17,7 @@ extension GameGrid: UICollectionViewDelegateFlowLayout {
 
     func collectionView(collectionView: UICollectionView,
                         didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        let numberCell = cellForItemAtIndexPath(indexPath) as? GameNumberCell
+        let numberCell = cellForItemAtIndexPath(indexPath) as? GameGridCell
         guard numberCell != nil else { return }
 
         ensureGridPositionedForGameplay()

@@ -11,7 +11,7 @@ import UIKit
 
 class GameGrid: Grid {
 
-    internal let reuseIdentifier = "GameNumberCell"
+    internal let reuseIdentifier = "GameGridCell"
 
     internal var game: Game
 
@@ -48,7 +48,7 @@ class GameGrid: Grid {
 
         super.init(frame: CGRect.zero)
 
-        registerClass(GameNumberCell.self,
+        registerClass(GameGridCell.self,
                       forCellWithReuseIdentifier: self.reuseIdentifier)
         backgroundColor = UIColor.clearColor()
         dataSource = self
@@ -109,8 +109,8 @@ class GameGrid: Grid {
     func crossOutPair(index: Int, otherIndex: Int) {
         let indexPath = NSIndexPath(forItem: index, inSection: 0)
         let otherIndexPath = NSIndexPath(forItem: otherIndex, inSection: 0)
-        let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell
-        let otherCell = cellForItemAtIndexPath(otherIndexPath) as? GameNumberCell
+        let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell
+        let otherCell = cellForItemAtIndexPath(otherIndexPath) as? GameGridCell
 
         // These need to be checked separately, as one cell may be visible
         // while the other is not (in which case it is nil). We still want to
@@ -121,7 +121,7 @@ class GameGrid: Grid {
 
     func dismissSelection() {
         for indexPath in selectedIndexPaths {
-            if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
+            if let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell {
                 if indexPath == selectedIndexPaths.last {
                     cell.indicateSelection()
                 }
@@ -157,7 +157,7 @@ class GameGrid: Grid {
 
     private func prepareForRemoval(indexPaths: Array<NSIndexPath>, completion: (() -> Void)) {
         for indexPath in indexPaths {
-            if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
+            if let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell {
                 cell.prepareForRemoval(completion: completion)
             } else {
                 completion()

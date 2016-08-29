@@ -46,7 +46,7 @@ class NextRoundGrid: Grid {
     // We should store more or as many scale series numbers as there are rows
     private static let totalRows = 8
 
-    private let reuseIdentifier = "NextRoundNumberCell"
+    private let reuseIdentifier = "NextRoundCell"
 
     var values: Array<Int?>
     private let cellsPerRow: Int
@@ -70,7 +70,7 @@ class NextRoundGrid: Grid {
     private var revealValues: Bool = false {
         didSet {
             for visibleCell in visibleCells() {
-                if let visibleCell = visibleCell as? NextRoundNumberCell {
+                if let visibleCell = visibleCell as? NextRoundCell {
                     if revealValues {
                         visibleCell.revealValue()
                     } else {
@@ -88,8 +88,7 @@ class NextRoundGrid: Grid {
         self.startIndex = startIndex
 
         super.init(frame: frame)
-        registerClass(NextRoundNumberCell.self,
-                      forCellWithReuseIdentifier: self.reuseIdentifier)
+        registerClass(NextRoundCell.self, forCellWithReuseIdentifier: self.reuseIdentifier)
 
         backgroundColor = UIColor.clearColor()
         dataSource = self
@@ -146,7 +145,7 @@ extension NextRoundGrid: UICollectionViewDataSource {
                         cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier,
                                                                          forIndexPath: indexPath)
-        if let cell = cell as? NextRoundNumberCell {
+        if let cell = cell as? NextRoundCell {
             cell.isSpacer = indexPath.item < startIndex
             cell.valueIsHidden = !revealValues
 

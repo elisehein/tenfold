@@ -14,7 +14,7 @@ class RuleExampleGrid: Grid {
     private static let pairingLoopDuration: Double = 2.2
 
     private var timers: Array<NSTimer> = []
-    private let reuseIdentifier = "GameNumberCell"
+    private let reuseIdentifier = "GameGridCell"
 
     var values: Array<Int?> = []
     var crossedOutIndeces: Array<Int> = []
@@ -28,7 +28,7 @@ class RuleExampleGrid: Grid {
         dataSource = self
         userInteractionEnabled = false
 
-        registerClass(GameNumberCell.self, forCellWithReuseIdentifier: self.reuseIdentifier)
+        registerClass(GameGridCell.self, forCellWithReuseIdentifier: self.reuseIdentifier)
     }
 
     // Because the timer interval doesn't allow for the first loop to run immediately,
@@ -99,7 +99,7 @@ class RuleExampleGrid: Grid {
     private func selectCell(index: Int) {
        let indexPath = NSIndexPath(forItem: index, inSection: 0)
 
-        if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
+        if let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell {
             cell.indicateSelection()
         }
     }
@@ -109,7 +109,7 @@ class RuleExampleGrid: Grid {
         let otherIndexPath = NSIndexPath(forItem: otherIndex, inSection: 0)
 
         for indexPath in [indexPath, otherIndexPath] {
-            if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
+            if let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell {
                 if reverse {
                     cell.unCrossOut()
                 } else {
@@ -139,7 +139,7 @@ extension RuleExampleGrid: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier,
                                                                          forIndexPath: indexPath)
 
-        if let cell = cell as? GameNumberCell {
+        if let cell = cell as? GameGridCell {
             cell.value = values[indexPath.item]
             cell.crossedOut = crossedOutIndeces.contains(indexPath.item)
             cell.marksEndOfRound = false

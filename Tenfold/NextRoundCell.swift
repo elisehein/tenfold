@@ -1,5 +1,5 @@
 //
-//  NextRoundNumberCell.swift
+//  NextRoundCell.swift
 //  Tenfold
 //
 //  Created by Elise Hein on 26/06/2016.
@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class NextRoundNumberCell: UICollectionViewCell {
+class NextRoundCell: UICollectionViewCell {
     private static let fontSizeFactor: CGFloat = 0.4
 
     private let numberLabel = UILabel()
@@ -44,7 +44,7 @@ class NextRoundNumberCell: UICollectionViewCell {
 
         // Set the font size to what I want it to be when it's at its largest,
         // and scale it down later, so the scale up transformation won't look blurry
-        let fontSize = NextRoundNumberCell.fontSizeFactor * contentView.bounds.size.height
+        let fontSize = NextRoundCell.fontSizeFactor * contentView.bounds.size.height
         numberLabel.font = UIFont.themeFontWithSize(fontSize)
 
         contentView.addSubview(numberLabel)

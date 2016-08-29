@@ -24,7 +24,7 @@ extension GameGrid: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier,
                                                                          forIndexPath: indexPath)
 
-        if let cell = cell as? GameNumberCell {
+        if let cell = cell as? GameGridCell {
             cell.value = game.valueAtIndex(indexPath.item)
             cell.crossedOut = game.isCrossedOut(indexPath.item)
             cell.marksEndOfRound = game.marksEndOfRound(indexPath.item)

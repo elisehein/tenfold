@@ -1,5 +1,5 @@
 //
-//  GameNumberCell.swift
+//  GameGridCell.swift
 //  Tenfold
 //
 //  Created by Elise Hein on 13/02/2016.
@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class GameNumberCell: UICollectionViewCell {
+class GameGridCell: UICollectionViewCell {
     static let fontSizeFactor: CGFloat = 0.45
     private static let animationDuration = 0.2
 
@@ -83,7 +83,7 @@ class GameNumberCell: UICollectionViewCell {
 
         numberLabel.frame = contentView.bounds
 
-        let fontSize = contentView.bounds.size.height * GameNumberCell.fontSizeFactor
+        let fontSize = contentView.bounds.size.height * GameGridCell.fontSizeFactor
         numberLabel.font = UIFont.themeFontWithSize(fontSize)
 
         drawEndOfRoundMarker()
@@ -94,7 +94,7 @@ class GameNumberCell: UICollectionViewCell {
         crossedOutColorFiller.backgroundColor = crossedOutBackgroundColor
         crossedOutColorFiller.transform = CGAffineTransformMakeScale(0, 0)
 
-        UIView.animateWithDuration(GameNumberCell.animationDuration,
+        UIView.animateWithDuration(GameGridCell.animationDuration,
                                    delay: 0,
                                    options: .CurveEaseOut,
                                    animations: {
@@ -117,7 +117,7 @@ class GameNumberCell: UICollectionViewCell {
     func indicateSelection() {
         selectionColorFiller.backgroundColor = UIColor.themeColor(.Accent)
         selectionColorFiller.transform = CGAffineTransformMakeScale(0, 0)
-        UIView.animateWithDuration(GameNumberCell.animationDuration,
+        UIView.animateWithDuration(GameGridCell.animationDuration,
                                    delay: 0,
                                    options: [.CurveEaseOut, .BeginFromCurrentState],
                                    animations: {
@@ -138,7 +138,7 @@ class GameNumberCell: UICollectionViewCell {
 
         // Zero transforms cannot be animated; see
         // http://stackoverflow.com/a/25966733/2026098
-        UIView.animateWithDuration(GameNumberCell.animationDuration,
+        UIView.animateWithDuration(GameGridCell.animationDuration,
                                    delay: delay,
                                    options: [.CurveEaseIn, .BeginFromCurrentState],
                                    animations: {
@@ -151,7 +151,7 @@ class GameNumberCell: UICollectionViewCell {
 
     // We need to wait for whichever cell's selection triggered the removel to finish animating
     func prepareForRemoval(completion completion: (() -> Void)) {
-        let delayTime = Int64((GameNumberCell.animationDuration + 0.1) * Double(NSEC_PER_SEC))
+        let delayTime = Int64((GameGridCell.animationDuration + 0.1) * Double(NSEC_PER_SEC))
         let dispatchTime = dispatch_time(DISPATCH_TIME_NOW, delayTime)
         dispatch_after(dispatchTime, dispatch_get_main_queue()) {
             UIView.animateWithDuration(0.15,
