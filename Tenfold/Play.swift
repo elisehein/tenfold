@@ -68,7 +68,7 @@ class Play: UIViewController {
 
         // Cap the width to 450 for larger screens
         var gameGridFrame = view.bounds
-        gameGridFrame.size.width = min(500, gameGridFrame.size.width)
+        gameGridFrame.size.width = min(540, gameGridFrame.size.width)
         gameGridFrame.origin.x = (view.bounds.size.width - gameGridFrame.size.width) / 2
         gameGrid.initialisePositionWithinFrame(gameGridFrame, withInsets: Play.gridInsets)
 

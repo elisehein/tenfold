@@ -46,7 +46,7 @@ class ConfirmationModal: UIViewController {
         titleLabel.font = UIFont.themeFontWithSize(15, weight: .Bold)
 
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            titleLabel.font = UIFont.themeFontWithSize(22, weight: .Bold)
+            titleLabel.font = UIFont.themeFontWithSize(20, weight: .Bold)
         }
 
         titleLabel.textColor = UIColor.themeColor(.OffBlack)
@@ -88,16 +88,18 @@ class ConfirmationModal: UIViewController {
     override func updateViewConstraints() {
         if !hasLoadedConstraints {
 
-            var horizontalInset: CGFloat = 30
+            var horizontalInset: CGFloat = 40
             var contentPadding: CGFloat = 40
             var buttonHeight: CGFloat = 60
+            var titleTextSpacing: CGFloat = 15
 
             if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-                horizontalInset = 40
+                horizontalInset = 80
                 contentPadding = 70
-                buttonHeight = 90
+                buttonHeight = 80
+                titleTextSpacing = 25
 
-                modal.autoSetDimension(.Width, toSize: 500)
+                modal.autoSetDimension(.Width, toSize: 460)
                 modal.autoCenterInSuperview()
             } else {
                 modal.autoPinEdgeToSuperviewEdge(.Left, withInset: 10)
@@ -114,7 +116,7 @@ class ConfirmationModal: UIViewController {
             textLabel.autoPinEdge(.Top,
                                   toEdge: .Bottom,
                                   ofView: titleLabel,
-                                  withOffset: 15)
+                                  withOffset: titleTextSpacing)
             textLabel.autoPinEdge(.Bottom,
                                   toEdge: .Top,
                                   ofView: yesButton,
@@ -182,7 +184,7 @@ class ConfirmationModal: UIViewController {
     private func constructAttributedString(withText text: String) -> NSMutableAttributedString {
 
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 4
+        paragraphStyle.lineSpacing = 5
         paragraphStyle.alignment = .Center
 
         var font = UIFont.themeFontWithSize(14)

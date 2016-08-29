@@ -61,16 +61,20 @@ class Menu: UIView {
     override func updateConstraints() {
         if !hasLoadedConstraints {
             var logoWidth: CGFloat = 140
+            var centerPointOffset: CGFloat = 60
 
             if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
                 logoWidth = 180
+                centerPointOffset = 100
             }
 
             for button in [newGameButton, instructionsButton, soundButton] {
                 button.autoSetDimension(.Height, toSize: Menu.buttonHeight)
             }
 
-            instructionsButton.autoAlignAxis(.Horizontal, toSameAxisOfView: self, withOffset: 60)
+            instructionsButton.autoAlignAxis(.Horizontal,
+                                             toSameAxisOfView: self,
+                                             withOffset: centerPointOffset)
             newGameButton.autoPinEdge(.Bottom, toEdge: .Top, ofView: instructionsButton)
             soundButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: instructionsButton)
 
