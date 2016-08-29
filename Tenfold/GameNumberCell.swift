@@ -164,6 +164,7 @@ class GameNumberCell: UICollectionViewCell {
     }
 
     func resetColors() {
+        print("Resetting colors, selected?", selected)
         selectionColorFiller.backgroundColor = UIColor.clearColor()
         crossedOutColorFiller.backgroundColor = UIColor.clearColor()
 

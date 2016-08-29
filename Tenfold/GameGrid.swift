@@ -36,7 +36,9 @@ class GameGrid: Grid {
     private var prevPrematureBounceOffset: CGFloat = 0
     private var totalPrematureBounceDistance: CGFloat = 0
 
+    private var selectedIndexPaths: Array<NSIndexPath> = []
     private var latestSelectedIndexPath: NSIndexPath?
+    private var indexPathsPendingDeselection = Set<NSIndexPath>()
 
     init(game: Game) {
         self.game = game
@@ -109,11 +111,15 @@ class GameGrid: Grid {
         if cell != nil {
             deselectItemAtIndexPath(indexPath, animated: false)
             cell!.crossOut()
+        } else {
+            indexPathsPendingDeselection.insert(indexPath)
         }
 
         if otherCell != nil {
             deselectItemAtIndexPath(otherIndexPath, animated: false)
             otherCell!.crossOut()
+        } else {
+            indexPathsPendingDeselection.insert(otherIndexPath)
         }
     }
 
@@ -150,12 +156,17 @@ class GameGrid: Grid {
         let selectedIndexPaths = indexPathsForSelectedItems()
 
         for indexPath in selectedIndexPaths! {
+            // If the cell is currently visible, deselect it visibly, otherwise
+            // store indexpath for later deselection (it's impossible to deselect invisible cells)
             if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
                 self.deselectItemAtIndexPath(indexPath, animated: false)
                 if indexPath == latestSelectedIndexPath {
                     cell.indicateSelection()
                 }
                 cell.indicateSelectionFailure()
+            } else {
+                print("Adding", indexPath, "to pending deselection")
+                indexPathsPendingDeselection.insert(indexPath)
             }
         }
     }
@@ -309,6 +320,8 @@ extension GameGrid: UICollectionViewDataSource {
             cell.resetColors()
         }
 
+        print("Cell for item..", indexPath)
+
         return cell
     }
 
@@ -316,11 +329,15 @@ extension GameGrid: UICollectionViewDataSource {
     // where sometimes crossed out cells remain selected. If this is the case,
     // deselect them immediately when they become visible
     func collectionView(collectionView: UICollectionView,
-                        didEndDisplayingCell cell: UICollectionViewCell,
+                        willDisplayCell cell: UICollectionViewCell,
                         forItemAtIndexPath indexPath: NSIndexPath) {
         if let cell = cell as? GameNumberCell {
-            if cell.crossedOut {
+            if indexPathsPendingDeselection.contains(indexPath) {
+                print("Deselecting, because it needed to be deselected earlier", indexPath)
                 deselectItemAtIndexPath(indexPath, animated: false)
+                indexPathsPendingDeselection.remove(indexPath)
+                print("Selected index paths now", collectionView.indexPathsForSelectedItems())
+                cell.resetColors()
             }
         }
     }
@@ -343,8 +360,11 @@ extension GameGrid: UICollectionViewDelegateFlowLayout {
         var prunedSelectedIndexPaths: Array<NSIndexPath> = []
 
         for selectedIndexPath in selectedIndexPaths {
-            if !game.isCrossedOut(selectedIndexPath.item) {
+            if !game.isCrossedOut(selectedIndexPath.item) ||
+               !indexPathsPendingDeselection.contains(selectedIndexPath) {
                 prunedSelectedIndexPaths.append(selectedIndexPath)
+            } else {
+                print("Pruning", selectedIndexPath, "because it was already dismissed")
             }
         }
 
