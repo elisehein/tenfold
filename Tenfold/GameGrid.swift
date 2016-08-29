@@ -36,9 +36,11 @@ class GameGrid: Grid {
     private var prevPrematureBounceOffset: CGFloat = 0
     private var totalPrematureBounceDistance: CGFloat = 0
 
+    // Selection and deselection are the core of the game. But because a UICollectionView
+    // cannot deselect items that are not currently visible (which can often be required for us,
+    // say when pairing two items so far from each other that they cannot be seen on screen
+    // at the same time), it's easier to keep track of selection ourselves, rather than natively
     private var selectedIndexPaths: Array<NSIndexPath> = []
-    private var latestSelectedIndexPath: NSIndexPath?
-    private var indexPathsPendingDeselection = Set<NSIndexPath>()
 
     init(game: Game) {
         self.game = game
@@ -47,7 +49,6 @@ class GameGrid: Grid {
 
         registerClass(GameNumberCell.self,
                       forCellWithReuseIdentifier: self.reuseIdentifier)
-        allowsMultipleSelection = true
         backgroundColor = UIColor.clearColor()
         dataSource = self
         delegate = self
@@ -108,19 +109,8 @@ class GameGrid: Grid {
         // These need to be checked separately, as one cell may be visible
         // while the other is not (in which case it is nil). We still want to
         // cross out the visible one
-        if cell != nil {
-            deselectItemAtIndexPath(indexPath, animated: false)
-            cell!.crossOut()
-        } else {
-            indexPathsPendingDeselection.insert(indexPath)
-        }
-
-        if otherCell != nil {
-            deselectItemAtIndexPath(otherIndexPath, animated: false)
-            otherCell!.crossOut()
-        } else {
-            indexPathsPendingDeselection.insert(otherIndexPath)
-        }
+        if cell != nil { cell!.crossOut() }
+        if otherCell != nil { otherCell!.crossOut() }
     }
 
     func removeNumbers(atIndexPaths indexPaths: Array<NSIndexPath>, completion: (() -> Void)) {
@@ -153,20 +143,12 @@ class GameGrid: Grid {
     }
 
     func dismissSelection() {
-        let selectedIndexPaths = indexPathsForSelectedItems()
-
-        for indexPath in selectedIndexPaths! {
-            // If the cell is currently visible, deselect it visibly, otherwise
-            // store indexpath for later deselection (it's impossible to deselect invisible cells)
+        for indexPath in selectedIndexPaths {
             if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
-                self.deselectItemAtIndexPath(indexPath, animated: false)
-                if indexPath == latestSelectedIndexPath {
+                if indexPath == selectedIndexPaths.last {
                     cell.indicateSelection()
                 }
                 cell.indicateSelectionFailure()
-            } else {
-                print("Adding", indexPath, "to pending deselection")
-                indexPathsPendingDeselection.insert(indexPath)
             }
         }
     }
@@ -317,29 +299,11 @@ extension GameGrid: UICollectionViewDataSource {
             cell.crossedOut = game.isCrossedOut(indexPath.item)
             cell.marksEndOfRound = game.marksEndOfRound(indexPath.item)
             cell.useClearBackground = true
+            cell.selectedForPairing = selectedIndexPaths.contains(indexPath)
             cell.resetColors()
         }
 
-        print("Cell for item..", indexPath)
-
         return cell
-    }
-
-    // We can't deselect cells while they're invisible, which leaves us in a situation
-    // where sometimes crossed out cells remain selected. If this is the case,
-    // deselect them immediately when they become visible
-    func collectionView(collectionView: UICollectionView,
-                        willDisplayCell cell: UICollectionViewCell,
-                        forItemAtIndexPath indexPath: NSIndexPath) {
-        if let cell = cell as? GameNumberCell {
-            if indexPathsPendingDeselection.contains(indexPath) {
-                print("Deselecting, because it needed to be deselected earlier", indexPath)
-                deselectItemAtIndexPath(indexPath, animated: false)
-                indexPathsPendingDeselection.remove(indexPath)
-                print("Selected index paths now", collectionView.indexPathsForSelectedItems())
-                cell.resetColors()
-            }
-        }
     }
 }
 
@@ -353,35 +317,24 @@ extension GameGrid: UICollectionViewDelegateFlowLayout {
                         didSelectItemAtIndexPath indexPath: NSIndexPath) {
         ensureGridPositionedForGameplay()
 
-        // Filter crossed out items from selected index paths (see above; cells not
-        // currently visible cannot be deselected). They will be periodically pruned
-        // when they become visible
-        let selectedIndexPaths = collectionView.indexPathsForSelectedItems()!
-        var prunedSelectedIndexPaths: Array<NSIndexPath> = []
-
-        for selectedIndexPath in selectedIndexPaths {
-            if !game.isCrossedOut(selectedIndexPath.item) ||
-               !indexPathsPendingDeselection.contains(selectedIndexPath) {
-                prunedSelectedIndexPaths.append(selectedIndexPath)
-            } else {
-                print("Pruning", selectedIndexPath, "because it was already dismissed")
+        // Deselection
+        if selectedIndexPaths.contains(indexPath) {
+            if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
+                cell.indicateDeselection()
             }
+
+            selectedIndexPaths.removeAll()
+            return
         }
 
-        latestSelectedIndexPath = indexPath
+        selectedIndexPaths.append(indexPath)
 
-        if prunedSelectedIndexPaths.count == 2 {
-            onPairingAttempt!(itemIndex: prunedSelectedIndexPaths[0].item,
-                              otherItemIndex: prunedSelectedIndexPaths[1].item)
+        if selectedIndexPaths.count == 2 {
+            onPairingAttempt!(itemIndex: selectedIndexPaths[0].item,
+                              otherItemIndex: selectedIndexPaths[1].item)
+            selectedIndexPaths.removeAll()
         } else if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
             cell.indicateSelection()
-        }
-    }
-
-    func collectionView(collectionView: UICollectionView,
-                        didDeselectItemAtIndexPath indexPath: NSIndexPath) {
-        if let cell = cellForItemAtIndexPath(indexPath) as? GameNumberCell {
-            cell.indicateDeselection()
         }
     }
 

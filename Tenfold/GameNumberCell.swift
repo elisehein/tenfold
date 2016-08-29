@@ -33,6 +33,7 @@ class GameNumberCell: UICollectionViewCell {
     private var deselectionInProgress = false
 
     var crossedOut: Bool = false
+    var selectedForPairing: Bool = false
 
     var value: Int? {
         didSet {
@@ -66,6 +67,7 @@ class GameNumberCell: UICollectionViewCell {
         crossedOutColorFiller.transform = CGAffineTransformMakeScale(0, 0)
         marksEndOfRound = false
         crossedOut = false
+        selectedForPairing = false
         value = nil
         resetColors()
     }
@@ -164,7 +166,6 @@ class GameNumberCell: UICollectionViewCell {
     }
 
     func resetColors() {
-        print("Resetting colors, selected?", selected)
         selectionColorFiller.backgroundColor = UIColor.clearColor()
         crossedOutColorFiller.backgroundColor = UIColor.clearColor()
 
@@ -175,7 +176,7 @@ class GameNumberCell: UICollectionViewCell {
         } else {
             endOfRoundMarker.fillColor = crossedOutBackgroundColor.CGColor
             numberLabel.textColor = crossedOutBackgroundColor
-            contentView.backgroundColor = selected ?
+            contentView.backgroundColor = selectedForPairing ?
                                           UIColor.themeColor(.Accent) :
                                           cellBackgroundColor()
         }
