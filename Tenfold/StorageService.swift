@@ -55,7 +55,10 @@ class StorageService {
     }
 
     class func saveFinishedGameStats(game: Game) {
+        // Simple heuristics to avoid storing every trivial game on device
         guard game.playingSince != nil else { return }
+        guard game.currentRound > 3 else { return }
+        guard game.historicNumberCount - game.numbersRemaining() > 20 else { return }
 
         var stats = restorePreviousGameStats()
         stats!["playingSince"] = game.playingSince
