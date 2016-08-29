@@ -300,6 +300,7 @@ extension GameGrid: UICollectionViewDataSource {
             cell.value = game.valueAtIndex(indexPath.item)
             cell.crossedOut = game.isCrossedOut(indexPath.item)
             cell.marksEndOfRound = game.marksEndOfRound(indexPath.item)
+            cell.useClearBackground = true
             cell.resetColors()
         }
 

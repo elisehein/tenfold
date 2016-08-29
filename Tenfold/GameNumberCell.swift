@@ -22,7 +22,8 @@ class GameNumberCell: UICollectionViewCell {
     private let selectionColorFiller = UIView()
     private let crossedOutColorFiller = UIView()
 
-    var defaultBackgroundColor = UIColor.clearColor()
+    var useClearBackground = false
+    var defaultBackgroundColor = UIColor.themeColor(.OffWhite)
     private let crossedOutBackgroundColor = UIColor.themeColor(.OffBlack)
 
     private let markerMargin: CGFloat = 3.5
@@ -130,7 +131,7 @@ class GameNumberCell: UICollectionViewCell {
     func indicateDeselection(withDelay delay: Double = 0) {
         selectionColorFiller.backgroundColor = UIColor.themeColor(.Accent)
         selectionColorFiller.transform = CGAffineTransformMakeScale(1, 1)
-        contentView.backgroundColor = defaultBackgroundColor
+        contentView.backgroundColor = cellBackgroundColor()
         deselectionInProgress = true
 
         // Zero transforms cannot be animated; see
@@ -155,7 +156,7 @@ class GameNumberCell: UICollectionViewCell {
                                        delay: 0,
                                        options: .CurveEaseOut,
                                        animations: {
-                self.contentView.backgroundColor = self.defaultBackgroundColor
+                self.contentView.backgroundColor = self.cellBackgroundColor()
             }, completion: { _ in
                 completion()
             })
@@ -175,8 +176,12 @@ class GameNumberCell: UICollectionViewCell {
             numberLabel.textColor = crossedOutBackgroundColor
             contentView.backgroundColor = selected ?
                                           UIColor.themeColor(.Accent) :
-                                          defaultBackgroundColor
+                                          cellBackgroundColor()
         }
+    }
+
+    private func cellBackgroundColor() -> UIColor {
+        return useClearBackground ? UIColor.clearColor() : defaultBackgroundColor
     }
 
     private func edgeToEdgeCircleFrame() -> CGRect {
