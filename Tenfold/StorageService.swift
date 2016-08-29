@@ -11,6 +11,7 @@ import Foundation
 class StorageService {
 
     private static let gameStorageKey = "tenfoldGameStorageKey"
+    private static let previousGameStatsStorageKey = "previousGameStatsStorageKey"
     private static let soundPrefStorageKey = "tenfoldSoundPrefStorageKey"
 
     class func registerDefaults() {
@@ -35,6 +36,35 @@ class StorageService {
         } else {
             return nil
         }
+    }
+
+    class func restorePreviousGameStats() -> [String: AnyObject]? {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        let statsData = defaults.objectForKey(StorageService.previousGameStatsStorageKey)
+
+        if let statsData = statsData as? NSData {
+            let gameStats = NSKeyedUnarchiver.unarchiveObjectWithData(statsData)
+            if let stats = gameStats as? [String: AnyObject] {
+                return stats
+            } else {
+                return [:]
+            }
+        } else {
+            return [:]
+        }
+    }
+
+    class func saveFinishedGameStats(game: Game) {
+        guard game.playingSince != nil else { return }
+
+        var stats = restorePreviousGameStats()
+        stats!["playingSince"] = game.playingSince
+        stats!["historicNumberCount"] = game.historicNumberCount
+        stats!["numbersRemaining"] = game.numbersRemaining()
+
+        let statsData = NSKeyedArchiver.archivedDataWithRootObject(stats!)
+        let defaults = NSUserDefaults.standardUserDefaults()
+        defaults.setObject(statsData, forKey: StorageService.previousGameStatsStorageKey)
     }
 
     class func currentSoundPreference() -> Bool {

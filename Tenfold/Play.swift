@@ -152,6 +152,7 @@ class Play: UIViewController {
     }
 
     private func restartGame() {
+        StorageService.saveFinishedGameStats(game)
         game = Game()
         gameGrid.restart(withGame: game, completion: {
             self.updateNextRoundNotificationText()
