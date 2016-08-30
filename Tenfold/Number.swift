@@ -25,9 +25,9 @@ class Number: NSObject, NSCopying, NSCoding {
     }
 
     required init(coder aDecoder: NSCoder) {
-        value = (aDecoder.decodeObjectForKey(Number.valueCoderKey) as? Int)!
-        crossedOut = (aDecoder.decodeObjectForKey(Number.crossedOutCoderKey) as? Bool)!
-        marksEndOfRound = (aDecoder.decodeObjectForKey(Number.marksEndOfRoundCoderKey) as? Bool)!
+        value = Int(aDecoder.decodeIntForKey(Number.valueCoderKey))
+        crossedOut = aDecoder.decodeBoolForKey(Number.crossedOutCoderKey)
+        marksEndOfRound = aDecoder.decodeBoolForKey(Number.marksEndOfRoundCoderKey)
     }
 
     func copyWithZone(zone: NSZone) -> AnyObject {
@@ -36,8 +36,8 @@ class Number: NSObject, NSCopying, NSCoding {
     }
 
     func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(value, forKey: Number.valueCoderKey)
-        aCoder.encodeObject(crossedOut, forKey: Number.crossedOutCoderKey)
-        aCoder.encodeObject(marksEndOfRound, forKey: Number.marksEndOfRoundCoderKey)
+        aCoder.encodeInt(Int32(value!), forKey: Number.valueCoderKey)
+        aCoder.encodeBool(crossedOut, forKey: Number.crossedOutCoderKey)
+        aCoder.encodeBool(marksEndOfRound, forKey: Number.marksEndOfRoundCoderKey)
     }
 }
