@@ -38,34 +38,37 @@ class StorageService {
         }
     }
 
-    class func restorePreviousGameStats() -> [String: AnyObject]? {
+    class func restorePreviousGameStats() -> Array<[String: AnyObject]> {
         let defaults = NSUserDefaults.standardUserDefaults()
         let statsData = defaults.objectForKey(StorageService.previousGameStatsStorageKey)
 
         if let statsData = statsData as? NSData {
             let gameStats = NSKeyedUnarchiver.unarchiveObjectWithData(statsData)
-            if let stats = gameStats as? [String: AnyObject] {
+            if let stats = gameStats as? Array<[String: AnyObject]> {
                 return stats
             } else {
-                return [:]
+                return []
             }
         } else {
-            return [:]
+            return []
         }
     }
 
     class func saveFinishedGameStats(game: Game) {
         // Simple heuristics to avoid storing every trivial game on device
-        guard game.playingSince != nil else { return }
+        guard game.startTime != nil else { return }
         guard game.currentRound > 3 else { return }
         guard game.historicNumberCount - game.numbersRemaining() > 20 else { return }
 
         var stats = restorePreviousGameStats()
-        stats!["playingSince"] = game.playingSince
-        stats!["historicNumberCount"] = game.historicNumberCount
-        stats!["numbersRemaining"] = game.numbersRemaining()
+        var currentStats: [String: AnyObject] = [:]
+        currentStats["startTime"] = game.startTime
+        currentStats["endTime"] = NSDate()
+        currentStats["historicNumberCount"] = game.historicNumberCount
+        currentStats["numbersRemaining"] = game.numbersRemaining()
+        stats.append(currentStats)
 
-        let statsData = NSKeyedArchiver.archivedDataWithRootObject(stats!)
+        let statsData = NSKeyedArchiver.archivedDataWithRootObject(stats)
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setObject(statsData, forKey: StorageService.previousGameStatsStorageKey)
     }

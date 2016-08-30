@@ -14,9 +14,9 @@ class Game: NSObject, NSCoding {
 
     private static let numbersCoderKey = "gameNumbersCoderKey"
     private static let historicNumberCountCoderKey = "gameHistoricNumberCountCoderKey"
-    private static let playingSinceCoderKey = "gamePlayingSinceCoderKey"
     private static let currentRoundCoderKey = "gameCurrentRoundCoderKey"
     private static let valueCountsCoderKey = "gameValueCountsCoderKey"
+    private static let startTimeCoderKey = "gameStartTimeCoderKey"
 
     private static let initialNumberValues = [1, 2, 3, 4, 5, 6, 7, 8, 9,
                                               1, 1, 1, 2, 1, 3, 1, 4, 1,
@@ -28,7 +28,7 @@ class Game: NSObject, NSCoding {
 
     var historicNumberCount: Int = 0
     var currentRound: Int = 1
-    var playingSince: NSDate? = nil
+    var startTime: NSDate? = nil
 
     class func initialNumbers() -> Array<Number> {
         let initialNumbers: Array<Number> = initialNumberValues.map({ value in
@@ -46,14 +46,13 @@ class Game: NSObject, NSCoding {
     }
 
     required init(coder aDecoder: NSCoder) {
-        self.historicNumberCount = (aDecoder.decodeObjectForKey(Game.historicNumberCountCoderKey) as? Int)! // swiftlint:disable:this line_length
-        self.currentRound = (aDecoder.decodeObjectForKey(Game.currentRoundCoderKey) as? Int)!
-
         let storedNumbers = (aDecoder.decodeObjectForKey(Game.numbersCoderKey) as? Array<Number>)!
         self.numbers = Game.removeSurplusRows(from: storedNumbers)
 
-        self.playingSince = (aDecoder.decodeObjectForKey(Game.playingSinceCoderKey) as? NSDate?)!
+        self.historicNumberCount = (aDecoder.decodeObjectForKey(Game.historicNumberCountCoderKey) as? Int)! // swiftlint:disable:this line_length
+        self.currentRound = (aDecoder.decodeObjectForKey(Game.currentRoundCoderKey) as? Int)!
         self.valueCounts = (aDecoder.decodeObjectForKey(Game.valueCountsCoderKey) as? [Int: Int])!
+        self.startTime = (aDecoder.decodeObjectForKey(Game.startTimeCoderKey) as? NSDate?)!
 
         if self.numbers.count == 0 {
             self.numbers = Game.initialNumbers()
@@ -62,7 +61,7 @@ class Game: NSObject, NSCoding {
     }
 
     func crossOutPair(index: Int, otherIndex: Int) {
-        playingSince = NSDate()
+        startTime = NSDate()
         numbers[index].crossedOut = true
         numbers[otherIndex].crossedOut = true
         valueCounts[numbers[index].value!]! -= 1
@@ -197,7 +196,7 @@ class Game: NSObject, NSCoding {
         aCoder.encodeObject(numbers, forKey: Game.numbersCoderKey)
         aCoder.encodeObject(historicNumberCount, forKey: Game.historicNumberCountCoderKey)
         aCoder.encodeObject(currentRound, forKey: Game.currentRoundCoderKey)
-        aCoder.encodeObject(playingSince, forKey: Game.playingSinceCoderKey)
+        aCoder.encodeObject(startTime, forKey: Game.startTimeCoderKey)
         aCoder.encodeObject(valueCounts, forKey: Game.valueCountsCoderKey)
     }
 

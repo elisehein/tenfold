@@ -139,7 +139,7 @@ class Play: UIViewController {
     // MARK: Menu interactions
 
     private func confirmNewGame() {
-        if game.currentRound > 1 && game.playingSince != nil {
+        if game.currentRound > 1 && game.startTime != nil {
             let modal = ConfirmationModal(game: game)
             modal.onTapYes = {
                 self.restartGame()
