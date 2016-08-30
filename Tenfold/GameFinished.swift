@@ -14,6 +14,7 @@ class GameFinished: UIViewController {
     private let imageView = UIImageView()
     private let titleLabel = UILabel()
     private let statsLabel = UILabel()
+    private let rankingTable: HistoricRankingTable
     private let closeButton = Button()
 
     private let game: Game
@@ -22,6 +23,7 @@ class GameFinished: UIViewController {
 
     init(game: Game) {
         self.game = game
+        self.rankingTable = HistoricRankingTable(game: game)
         super.init(nibName: nil, bundle: nil)
 
         modalTransitionStyle = .CrossDissolve
@@ -42,7 +44,6 @@ class GameFinished: UIViewController {
         statsLabel.numberOfLines = 0
         statsLabel.attributedText = constructAttributedString(withText: statsText())
 
-
         closeButton.addTarget(self,
                               action: #selector(GameFinished.dismiss),
                               forControlEvents: .TouchUpInside)
@@ -51,6 +52,7 @@ class GameFinished: UIViewController {
         view.addSubview(imageView)
         view.addSubview(titleLabel)
         view.addSubview(statsLabel)
+        view.addSubview(rankingTable)
         view.addSubview(closeButton)
 
         view.backgroundColor = UIColor.themeColor(.OffWhite)
@@ -64,16 +66,18 @@ class GameFinished: UIViewController {
     override func updateViewConstraints() {
         if !hasLoadedConstraints {
 
-            var imageSize = CGSize(width: 96, height: 187)
-            var imageCenterOffset: CGFloat = -100
-            var imageBottomSpacing: CGFloat = 70
+            var imageSize = CGSize(width: 80, height: 150)
+            var imageCenterOffset: CGFloat = -150
+            var imageBottomSpacing: CGFloat = 40
             var titleBottomSpacing: CGFloat = 10
+            var tableTopSpacing: CGFloat = 50
 
             if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
                 imageSize = CGSize(width: 120, height: 220)
-                imageCenterOffset = -150
-                imageBottomSpacing = 120
+                imageCenterOffset = -200
+                imageBottomSpacing = 70
                 titleBottomSpacing = 20
+                tableTopSpacing = 80
             }
 
             imageView.autoSetDimensionsToSize(imageSize)
@@ -97,6 +101,18 @@ class GameFinished: UIViewController {
                                           ofView: view,
                                           withMultiplier: 0.8)
             statsLabel.autoAlignAxisToSuperviewAxis(.Vertical)
+
+            rankingTable.autoMatchDimension(.Width,
+                                            toDimension: .Width,
+                                            ofView: view,
+                                            withMultiplier: 0.5)
+            rankingTable.autoPinEdge(.Top,
+                                     toEdge: .Bottom,
+                                     ofView: statsLabel,
+                                     withOffset: tableTopSpacing)
+
+            rankingTable.autoSetDimension(.Height, toSize: rankingTable.heightOccupied())
+            rankingTable.autoAlignAxisToSuperviewAxis(.Vertical)
 
             closeButton.autoAlignAxisToSuperviewAxis(.Vertical)
             closeButton.autoPinEdgeToSuperviewEdge(.Bottom, withInset: 30)
@@ -124,41 +140,22 @@ class GameFinished: UIViewController {
     }
 
     private func statsText() -> String {
-        let previousStats = StorageService.restorePreviousGameStats()
 
-        if firstEverFinishedGame(previousStats) {
+        if StatsService.firstEverFinishedGame(game) {
             return "It took you \(game.historicNumberCount) numbers " +
                    "and \(game.currentRound) rounds to empty the grid."
         } else {
             var text = ""
 
-            if shortestGameToDate(previousStats) {
+            if StatsService.shortestGameToDate(game) {
                 text += "This is your shortest game to date! "
-            } else if longestGameToDate(previousStats) {
+            } else if StatsService.longestGameToDate(game) {
                 text += "This is your longest game to date! "
             }
 
-            text += "Here's how you fared against your previous attempts."
+            text += "Here's how you fared against your previous games."
             return text
         }
-    }
-
-    private func firstEverFinishedGame(stats: Array<[String: AnyObject]>) -> Bool {
-        print(stats)
-        return stats.filter({ ($0["numbersRemaining"] as? Int)! == 0 }).count == 0
-    }
-
-    private func longestGameToDate(stats: Array<[String: AnyObject]>) -> Bool {
-        var gameLengths = stats.map({ ($0["historicNumberCount"] as? Int)! })
-        gameLengths = gameLengths.sort()
-        return game.historicNumberCount > gameLengths.last
-    }
-
-    private func shortestGameToDate(stats: Array<[String: AnyObject]>) -> Bool {
-        let finishedGames = stats.filter({ ($0["numbersRemaining"] as? Int)! == 0 })
-        var gameLengths = finishedGames.map({ ($0["historicNumberCount"] as? Int)! })
-        gameLengths = gameLengths.sort()
-        return game.historicNumberCount < gameLengths.first
     }
 
     private func constructAttributedString(withText text: String) -> NSMutableAttributedString {
@@ -179,9 +176,7 @@ class GameFinished: UIViewController {
                                 value: paragraphStyle,
                                 range: fullRange)
 
-        attrString.addAttribute(NSFontAttributeName,
-                                value: font,
-                                range: fullRange)
+        attrString.addAttribute(NSFontAttributeName, value: font, range: fullRange)
 
         attrString.addAttribute(NSForegroundColorAttributeName,
                                 value: UIColor.themeColor(.OffBlack),

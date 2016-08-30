@@ -45,6 +45,9 @@
 		0CB9388D1D202832005B81F4 /* NextRoundCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB9388C1D202832005B81F4 /* NextRoundCell.swift */; };
 		0CB938911D20389C005B81F4 /* NextRoundGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB938901D20389C005B81F4 /* NextRoundGrid.swift */; };
 		0CC94F6D1D74B68800FAF4B2 /* GameGrid+ScrollViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC94F6C1D74B68800FAF4B2 /* GameGrid+ScrollViewDelegate.swift */; };
+		0CC94F6F1D75866600FAF4B2 /* StatsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC94F6E1D75866600FAF4B2 /* StatsService.swift */; };
+		0CC94F711D7588AF00FAF4B2 /* HistoricRankingTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC94F701D7588AF00FAF4B2 /* HistoricRankingTable.swift */; };
+		0CC94F731D75D09E00FAF4B2 /* GameStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC94F721D75D09E00FAF4B2 /* GameStats.swift */; };
 		0CE682961D6DB46300CA5787 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CE682951D6DB46300CA5787 /* String.swift */; };
 		0CF5C54B1D6F76C5006D46B8 /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF5C54A1D6F76C5006D46B8 /* Button.swift */; };
 		0CFDE5BA1D65B2E2001F9DF5 /* RuleExampleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CFDE5B91D65B2E2001F9DF5 /* RuleExampleCell.swift */; };
@@ -95,6 +98,9 @@
 		0CB9388C1D202832005B81F4 /* NextRoundCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextRoundCell.swift; sourceTree = "<group>"; };
 		0CB938901D20389C005B81F4 /* NextRoundGrid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextRoundGrid.swift; sourceTree = "<group>"; };
 		0CC94F6C1D74B68800FAF4B2 /* GameGrid+ScrollViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "GameGrid+ScrollViewDelegate.swift"; sourceTree = "<group>"; };
+		0CC94F6E1D75866600FAF4B2 /* StatsService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatsService.swift; sourceTree = "<group>"; };
+		0CC94F701D7588AF00FAF4B2 /* HistoricRankingTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistoricRankingTable.swift; sourceTree = "<group>"; };
+		0CC94F721D75D09E00FAF4B2 /* GameStats.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameStats.swift; sourceTree = "<group>"; };
 		0CE682951D6DB46300CA5787 /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		0CF5C54A1D6F76C5006D46B8 /* Button.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
 		0CFDE5B91D65B2E2001F9DF5 /* RuleExampleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RuleExampleCell.swift; sourceTree = "<group>"; };
@@ -135,6 +141,7 @@
 			isa = PBXGroup;
 			children = (
 				0C70C3FA1D7186F400A9E8B8 /* SoundService.swift */,
+				0CC94F6E1D75866600FAF4B2 /* StatsService.swift */,
 				0CB938821D1FE6DD005B81F4 /* StorageService.swift */,
 			);
 			name = Services;
@@ -207,6 +214,7 @@
 				0C70C4161D74B5C300A9E8B8 /* GameGrid */,
 				0CF5C54A1D6F76C5006D46B8 /* Button.swift */,
 				0C39D3091D3BC3B90047CE74 /* Grid.swift */,
+				0CC94F701D7588AF00FAF4B2 /* HistoricRankingTable.swift */,
 				0C70C4021D71B4D200A9E8B8 /* InstructionsFooter.swift */,
 				4EA6957F1D36992E00F9A315 /* Menu.swift */,
 				0CB938901D20389C005B81F4 /* NextRoundGrid.swift */,
@@ -234,6 +242,7 @@
 			isa = PBXGroup;
 			children = (
 				0C90AEA61C6D1BCF00E1E42E /* Game.swift */,
+				0CC94F721D75D09E00FAF4B2 /* GameStats.swift */,
 				4EE46E1F1D22CD55005C4493 /* Matrix.swift */,
 				0C69CE4A1C6DCABA002E0D29 /* Number.swift */,
 				0C3463921C6F8C340086D3CC /* Pairing.swift */,
@@ -347,6 +356,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C39D30A1D3BC3B90047CE74 /* Grid.swift in Sources */,
+				0CC94F6F1D75866600FAF4B2 /* StatsService.swift in Sources */,
 				0C738ADD1C69D811007C9548 /* Play.swift in Sources */,
 				0C69CE4B1C6DCABA002E0D29 /* Number.swift in Sources */,
 				0C70C4031D71B4D200A9E8B8 /* InstructionsFooter.swift in Sources */,
@@ -354,10 +364,12 @@
 				0C39D3081D3AB48B0047CE74 /* UIScrollView.swift in Sources */,
 				0C70C4131D74B4EE00A9E8B8 /* GameGrid+DataSource.swift in Sources */,
 				0C4F12611D65C58000AAEB54 /* RuleHeader.swift in Sources */,
+				0CC94F731D75D09E00FAF4B2 /* GameStats.swift in Sources */,
 				0C70C4051D71B95500A9E8B8 /* ConfirmationModal.swift in Sources */,
 				0C70C40F1D73486500A9E8B8 /* JSON.swift in Sources */,
 				0C90AEA01C6C7FDF00E1E42E /* UIFont+Theme.swift in Sources */,
 				0C90AEA51C6D1B0700E1E42E /* GameGrid.swift in Sources */,
+				0CC94F711D7588AF00FAF4B2 /* HistoricRankingTable.swift in Sources */,
 				0C34638F1C6F89B30086D3CC /* GameGridCell.swift in Sources */,
 				0CC94F6D1D74B68800FAF4B2 /* GameGrid+ScrollViewDelegate.swift in Sources */,
 				0CADBDF61D6D92850090C13F /* GameFinished.swift in Sources */,

@@ -38,13 +38,13 @@ class StorageService {
         }
     }
 
-    class func restorePreviousGameStats() -> Array<[String: AnyObject]> {
+    class func restorePreviousGameStats() -> Array<GameStats> {
         let defaults = NSUserDefaults.standardUserDefaults()
         let statsData = defaults.objectForKey(StorageService.previousGameStatsStorageKey)
 
         if let statsData = statsData as? NSData {
             let gameStats = NSKeyedUnarchiver.unarchiveObjectWithData(statsData)
-            if let stats = gameStats as? Array<[String: AnyObject]> {
+            if let stats = gameStats as? Array<GameStats> {
                 return stats
             } else {
                 return []
@@ -61,14 +61,11 @@ class StorageService {
         guard game.historicNumberCount - game.numbersRemaining() > 20 else { return }
 
         var stats = restorePreviousGameStats()
-        var currentStats: [String: AnyObject] = [:]
-        currentStats["startTime"] = game.startTime
-        currentStats["endTime"] = NSDate()
-        currentStats["historicNumberCount"] = game.historicNumberCount
-        currentStats["numbersRemaining"] = game.numbersRemaining()
+        let currentStats = StatsService.constructGameStats(game)
         stats.append(currentStats)
+        let rankedStats = StatsService.ranked(stats)
 
-        let statsData = NSKeyedArchiver.archivedDataWithRootObject(stats)
+        let statsData = NSKeyedArchiver.archivedDataWithRootObject(rankedStats)
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setObject(statsData, forKey: StorageService.previousGameStatsStorageKey)
     }

@@ -142,17 +142,18 @@ class Play: UIViewController {
         if game.currentRound > 1 && game.startTime != nil {
             let modal = ConfirmationModal(game: game)
             modal.onTapYes = {
+                StorageService.saveFinishedGameStats(self.game)
                 self.restartGame()
             }
 
             presentViewController(modal, animated: true, completion: nil)
         } else {
+            StorageService.saveFinishedGameStats(game)
             restartGame()
         }
     }
 
     private func restartGame() {
-        StorageService.saveFinishedGameStats(game)
         game = Game()
         gameGrid.restart(withGame: game, completion: {
             self.updateNextRoundNotificationText()
@@ -237,6 +238,7 @@ class Play: UIViewController {
 
         gameGrid.removeNumbers(atIndexPaths: indexPaths, completion: {
             if self.game.ended() {
+                StorageService.saveFinishedGameStats(self.game)
                 self.presentViewController(GameFinished(game: self.game),
                                            animated: true,
                                            completion: { _ in

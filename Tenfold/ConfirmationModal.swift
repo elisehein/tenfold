@@ -143,7 +143,7 @@ class ConfirmationModal: UIViewController {
 
         var text = ""
 
-        if longestGameToDate() {
+        if StatsService.longestGameToDate(game) {
            text = "This is your longest game to date! Do you really want to give up now?"
         } else if numbersRemaining <= 20 {
             let toGoPhrase = numbersRemaining > 1 ? "numbers to go." : "number left!"
@@ -211,13 +211,6 @@ class ConfirmationModal: UIViewController {
                                 value: UIColor.themeColor(.OffBlack),
                                 range: fullRange)
         return attrString
-    }
-
-    private func longestGameToDate() -> Bool {
-        let stats = StorageService.restorePreviousGameStats()
-        var gameLengths = stats.map({ ($0["historicNumberCount"] as? Int)! })
-        gameLengths = gameLengths.sort()
-        return game.historicNumberCount > gameLengths.last
     }
 
     private func randomMotivationalQuote() -> String {
