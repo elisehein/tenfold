@@ -1,5 +1,10 @@
 .DS_Store
+.bundle
+fastlane/metadata
+fastlane/screenshots
 Carthage/
+Tenfold.app.dsym.zip
+Tenfold.ipa
 Tenfold.xcodeproj/xcuserdata/
 Tenfold.xcodeproj/xcshareddata/
 Tenfold.xcodeproj/project.xcproject/xcuserdata/

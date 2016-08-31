@@ -1,0 +1,7 @@
+app_identifier "com.elisehein.Tenfold" # The bundle identifier of your app
+apple_id "elisehein@gmail.com" # Your Apple email address
+
+team_id "DTLCNBMGZU"  # Developer Portal Team ID
+
+# you can even provide different app identifiers, Apple IDs and team names per lane:
+# More information: https://github.com/fastlane/fastlane/blob/master/fastlane/docs/Appfile.md
