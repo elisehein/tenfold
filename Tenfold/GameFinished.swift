@@ -23,7 +23,9 @@ class GameFinished: UIViewController {
 
     init(game: Game) {
         self.game = game
-        self.rankingTable = RankingTable(data: StatsService.latestGameRankingContext())
+
+        let topRankedGames = RankingService.sharedService.topRankedGames(cappedTo: 4)
+        self.rankingTable = RankingTable(rankedGames: topRankedGames)
         super.init(nibName: nil, bundle: nil)
 
         modalTransitionStyle = .CrossDissolve
@@ -140,22 +142,22 @@ class GameFinished: UIViewController {
     }
 
     private func statsText() -> String {
+        var text = ""
 
-        if StatsService.numberOfFinishedGames() == 1 {
-            return "And it's a first! It took you \(game.historicNumberCount) numbers " +
-                   "and \(game.currentRound) rounds to empty the grid. "
+        if RankingService.sharedService.numberOfWinningGames() == 1 {
+            text += "And it's a first! It took you \(game.historicNumberCount) numbers " +
+                    "and \(game.currentRound) rounds to empty the grid. "
         } else {
-            var text = ""
-
-            if StatsService.latestGameIsShortestFinishedGame() {
-                text += "This is your shortest game to date! "
-            } else if StatsService.latestGameIsLongest() {
-                text += "This is your longest game to date! "
+            if RankingService.sharedService.latestGameIsShortestWinningGame() {
+                text += "And it's your shortest game to date! "
+            } else if RankingService.sharedService.latestGameIsLongest() {
+                text += "This is your longest game to date – you got there in the end! "
             }
 
             text += "Here's how you fared against your previous games."
-            return text
         }
+
+        return text
     }
 
     private func constructAttributedString(withText text: String) -> NSMutableAttributedString {

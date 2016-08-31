@@ -141,14 +141,14 @@ class ConfirmationModal: UIViewController {
     private func setText() {
         let numbersRemaining = game.numbersRemaining()
 
-        var text = ""
+        var text: String
 
-        if StatsService.latestGameIsLongest() {
-           text = "This is your longest game to date! Do you really want to give up now?"
-        } else if numbersRemaining <= 20 {
+        if numbersRemaining <= 20 {
             let toGoPhrase = numbersRemaining > 1 ? "numbers to go." : "number left!"
             text = "You've only got \(numbersRemaining) \(toGoPhrase) " +
                    randomMotivationalQuote()
+        } else if RankingService.sharedService.gameIsLongerThanCurrentLongest(game) {
+           text = "This is your longest game to date. Do you really want to quit now?"
         } else if game.historicNumberCount - numbersRemaining > 10 {
             text = "You've gotten rid of \(game.historicNumberCount - numbersRemaining) " +
                    "numbers already. " + randomMotivationalQuote()

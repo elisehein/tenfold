@@ -12,10 +12,10 @@ import UIKit
 class RankingTable: UIView {
 
     private static let rowHeight: CGFloat = 25
-    private let data: Array<GameRanking>
+    private let rankedGames: Array<RankedGame>
 
-    init(data: Array<GameRanking>) {
-        self.data = data
+    init(rankedGames: Array<RankedGame>) {
+        self.rankedGames = rankedGames
 
         super.init(frame: CGRect.zero)
 
@@ -42,12 +42,13 @@ class RankingTable: UIView {
             let roundsLabel = row.subviews[2]
 
             var labelFrame = row.bounds
-            labelFrame.size.width *= 0.3
-            labelFrame.origin.x += 20 // For padding
+            let labelFrameInset: CGFloat = 20
+            labelFrame.size.width = 0.35 * labelFrame.size.width - labelFrameInset
+            labelFrame.origin.x += labelFrameInset
             rankingLabel.frame = labelFrame
 
             labelFrame.origin.x += labelFrame.size.width
-            labelFrame.size.width = 0.4 * rowFrame.size.width
+            labelFrame.size.width = 0.35 * rowFrame.size.width
             numbersLabel.frame = labelFrame
 
             labelFrame.origin.x += labelFrame.size.width
@@ -87,32 +88,35 @@ class RankingTable: UIView {
     private func tableRows() -> Array<UIView> {
         var rows = Array<UIView>()
 
-        for gameRanking in data {
-            rows.append(tableRow(gameRanking))
+        for rankedGame in rankedGames {
+            rows.append(tableRow(rankedGame))
         }
 
        return rows
     }
 
-    private func tableRow(gameRanking: GameRanking) -> UIView {
+    private func tableRow(rankedGame: RankedGame) -> UIView {
         let rowView = UIView()
 
         let rankLabel = UILabel()
-        rankLabel.text = "# \(gameRanking.rank)"
+        rankLabel.text = "# \(rankedGame.rank)"
 
         let numbersLabel = UILabel()
-        numbersLabel.text = String(gameRanking.gameStats.historicNumberCount)
+        numbersLabel.text = String(rankedGame.gameSnapshot.historicNumberCount)
 
         let roundsLabel = UILabel()
-        roundsLabel.text = String(gameRanking.gameStats.totalRounds)
+        roundsLabel.text = String(rankedGame.gameSnapshot.totalRounds)
 
         for label in [rankLabel, numbersLabel, roundsLabel] {
             label.textColor = UIColor.themeColor(.OffBlack).colorWithAlphaComponent(0.8)
-            label.font = UIFont.themeFontWithSize(14, weight: gameRanking.isLatestGame ? .Bold : .Regular)
+            label.font = UIFont.themeFontWithSize(14,
+                                                  weight: rankedGame.isLatestGame ?
+                                                          .Bold :
+                                                          .Regular)
             label.textAlignment = .Left
         }
 
-        if gameRanking.isLatestGame {
+        if rankedGame.isLatestGame {
             rowView.backgroundColor = UIColor.themeColor(.OffWhiteShaded)
         }
 

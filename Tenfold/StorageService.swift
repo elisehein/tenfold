@@ -11,7 +11,7 @@ import Foundation
 class StorageService {
 
     private static let gameStorageKey = "tenfoldGameStorageKey"
-    private static let previousGameStatsStorageKey = "previousGameStatsStorageKey"
+    private static let orderedGameSnapshotsStorageKey = "orderedGameSnapshotsStorageKey"
     private static let soundPrefStorageKey = "tenfoldSoundPrefStorageKey"
 
     class func registerDefaults() {
@@ -38,13 +38,13 @@ class StorageService {
         }
     }
 
-    class func restorePreviousGameStats() -> Array<GameStats> {
+    class func restoreOrderedGameSnapshots() -> Array<GameSnapshot> {
         let defaults = NSUserDefaults.standardUserDefaults()
-        let statsData = defaults.objectForKey(StorageService.previousGameStatsStorageKey)
+        let statsData = defaults.objectForKey(StorageService.orderedGameSnapshotsStorageKey)
 
         if let statsData = statsData as? NSData {
             let gameStats = NSKeyedUnarchiver.unarchiveObjectWithData(statsData)
-            if let stats = gameStats as? Array<GameStats> {
+            if let stats = gameStats as? Array<GameSnapshot> {
                 return stats
             } else {
                 return []
@@ -56,7 +56,7 @@ class StorageService {
 
     // If a game was finished, we want to save the stats in all cases,
     // even if the criteria goes against our triviality heuristics
-    class func saveFinishedGameStats(game: Game, forced: Bool = false) {
+    class func saveGameSnapshot(game: Game, forced: Bool = false) {
         if !forced {
             // Simple heuristics to avoid storing every trivial game on device
             guard game.startTime != nil else { return }
@@ -64,17 +64,19 @@ class StorageService {
             guard game.historicNumberCount - game.numbersRemaining() > 20 else { return }
         }
 
-        var stats = restorePreviousGameStats()
-        let currentStats = GameStats(game: game)
+        var snapshots = restoreOrderedGameSnapshots()
+        let currentSnapshot = GameSnapshot(game: game)
 
         // This ensures preference to the latest game in the case of equal scoring
-        stats.insert(currentStats, atIndex: 0)
-        let rankedStats = StatsService.ranked(stats)
-        print("Storing ranked stats", rankedStats)
+        snapshots.insert(currentSnapshot, atIndex: 0)
+        let orderedSnapshots = RankingService.order(snapshots)
+        print("Storing ranked stats", orderedSnapshots)
 
-        let statsData = NSKeyedArchiver.archivedDataWithRootObject(rankedStats)
+        let orderedSnapshotsData = NSKeyedArchiver.archivedDataWithRootObject(orderedSnapshots)
         let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.setObject(statsData, forKey: StorageService.previousGameStatsStorageKey)
+        defaults.setObject(orderedSnapshotsData,
+                           forKey: StorageService.orderedGameSnapshotsStorageKey)
+        RankingService.sharedService.orderedGameSnapshots = orderedSnapshots
     }
 
     class func currentSoundPreference() -> Bool {

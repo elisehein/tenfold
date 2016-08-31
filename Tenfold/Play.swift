@@ -142,13 +142,13 @@ class Play: UIViewController {
         if game.currentRound > 1 && game.startTime != nil {
             let modal = ConfirmationModal(game: game)
             modal.onTapYes = {
-                StorageService.saveFinishedGameStats(self.game)
+                StorageService.saveGameSnapshot(self.game)
                 self.restartGame()
             }
 
             presentViewController(modal, animated: true, completion: nil)
         } else {
-            StorageService.saveFinishedGameStats(game)
+            StorageService.saveGameSnapshot(game)
             restartGame()
         }
     }
@@ -238,7 +238,7 @@ class Play: UIViewController {
 
         gameGrid.removeNumbers(atIndexPaths: indexPaths, completion: {
             if self.game.ended() {
-                StorageService.saveFinishedGameStats(self.game, forced: true)
+                StorageService.saveGameSnapshot(self.game, forced: true)
                 self.presentViewController(GameFinished(game: self.game),
                                            animated: true,
                                            completion: { _ in
