@@ -154,7 +154,7 @@ extension Instructions: UICollectionViewDataSource {
             // swiftlint:disable:next line_length
             return sections.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionFooter, withReuseIdentifier: footerReuseIdentifier, forIndexPath: indexPath)
         default:
-            assert(false, "Unexpected element kind")
+            fatalError("Unexpected element kind")
         }
     }
 }
