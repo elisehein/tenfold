@@ -22,9 +22,11 @@ class Game: NSObject, NSCoding {
                                               1, 1, 1, 2, 1, 3, 1, 4, 1,
                                               5, 1, 6, 1, 7, 1, 8, 1, 9]
 
-    var valueCounts: [Int: Int] = [1: 11, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2, 7: 2, 8: 2, 9: 2]
+    // swiftlint:disable:next line_length
+    private static let initialValueCounts: [Int: Int] = [1: 11, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2, 7: 2, 8: 2, 9: 2]
 
     private var numbers: Array<Number> = []
+    private var valueCounts: [Int: Int]
 
     var historicNumberCount: Int = 0
     var currentRound: Int = 1
@@ -42,6 +44,7 @@ class Game: NSObject, NSCoding {
     override init() {
         numbers = Game.initialNumbers()
         historicNumberCount = numbers.count
+        valueCounts = Game.initialValueCounts
         super.init()
     }
 
@@ -109,6 +112,10 @@ class Game: NSObject, NSCoding {
         if numbers.count > 0 {
             numbers.last.marksEndOfRound = true
         }
+    }
+
+    func unrepresentedValues() -> Array<Int> {
+        return valueCounts.filter({ $1 == 0 }).map({ $0.0 })
     }
 
     func pruneValueCounts() {

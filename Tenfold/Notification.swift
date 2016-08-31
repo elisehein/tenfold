@@ -37,7 +37,7 @@ class Notification: UIView {
             if let number = newlyUnrepresentedNumber {
                 let phrases = Notification.newlyUnrepresentedPhrases.arrayValue
                 let phrase = phrases.randomElement().string
-                text = String(format: phrase!, number.asWord())
+                text = String(format: phrase!, number)
             }
         }
     }

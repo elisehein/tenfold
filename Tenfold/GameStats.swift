@@ -34,6 +34,14 @@ class GameStats: NSObject, NSCoding {
         super.init()
     }
 
+    convenience init(game: Game) {
+        self.init(historicNumberCount: game.historicNumberCount,
+                  numbersRemaining: game.numbersRemaining(),
+                  totalRounds: game.currentRound,
+                  startTime: game.startTime,
+                  endTime: NSDate())
+    }
+
     required init?(coder aDecoder: NSCoder) {
         // swiftlint:disable:next line_length
         self.historicNumberCount = Int(aDecoder.decodeIntForKey(GameStats.historicNumberCountCoderKey))

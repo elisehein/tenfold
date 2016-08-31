@@ -10,7 +10,7 @@ import Foundation
 
 extension Array {
     var last: Element {
-        return self[self.endIndex - 1]
+        return self[max(0, self.endIndex - 1)]
     }
 }
 

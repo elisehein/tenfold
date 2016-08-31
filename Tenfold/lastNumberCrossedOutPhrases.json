@@ -1,12 +1,11 @@
 [
-  "You crossed out the last %@!",
-  "That's the final %@ gone!",
-  "Last %@ crossed out!",
-  "Final %@ gone!",
-  "That's the last %@ you'll ever see!",
-  "%@ is no more.",
-  "Last %@ gone",
-  "That was the very last %@!",
-  "That was the final %@!",
-  "You won't see a single %@ again!"
+  "You crossed out the last %i!",
+  "That's the final %i gone!",
+  "Last %i crossed out!",
+  "Final %i gone!",
+  "That's the last %i you'll ever see!",
+  "Last %i gone",
+  "That was the very last %i!",
+  "That was the final %i!",
+  "You won't see a single %i again!"
 ]

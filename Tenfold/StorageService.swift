@@ -54,16 +54,23 @@ class StorageService {
         }
     }
 
-    class func saveFinishedGameStats(game: Game) {
-        // Simple heuristics to avoid storing every trivial game on device
-        guard game.startTime != nil else { return }
-        guard game.currentRound > 3 else { return }
-        guard game.historicNumberCount - game.numbersRemaining() > 20 else { return }
+    // If a game was finished, we want to save the stats in all cases,
+    // even if the criteria goes against our triviality heuristics
+    class func saveFinishedGameStats(game: Game, forced: Bool = false) {
+        if !forced {
+            // Simple heuristics to avoid storing every trivial game on device
+            guard game.startTime != nil else { return }
+            guard game.currentRound > 3 else { return }
+            guard game.historicNumberCount - game.numbersRemaining() > 20 else { return }
+        }
 
         var stats = restorePreviousGameStats()
-        let currentStats = StatsService.constructGameStats(game)
-        stats.append(currentStats)
+        let currentStats = GameStats(game: game)
+
+        // This ensures preference to the latest game in the case of equal scoring
+        stats.insert(currentStats, atIndex: 0)
         let rankedStats = StatsService.ranked(stats)
+        print("Storing ranked stats", rankedStats)
 
         let statsData = NSKeyedArchiver.archivedDataWithRootObject(rankedStats)
         let defaults = NSUserDefaults.standardUserDefaults()

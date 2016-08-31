@@ -238,7 +238,7 @@ class Play: UIViewController {
 
         gameGrid.removeNumbers(atIndexPaths: indexPaths, completion: {
             if self.game.ended() {
-                StorageService.saveFinishedGameStats(self.game)
+                StorageService.saveFinishedGameStats(self.game, forced: true)
                 self.presentViewController(GameFinished(game: self.game),
                                            animated: true,
                                            completion: { _ in
@@ -251,7 +251,7 @@ class Play: UIViewController {
     }
 
     private func checkForNewlyUnrepresentedValues() {
-        let unrepresented = game.valueCounts.filter({ $1 == 0 }).map({ $0.0 })
+        let unrepresented = game.unrepresentedValues()
 
         if unrepresented.count > 0 && game.numbersRemaining() > 10 {
             gamePlayMessageNotification.newlyUnrepresentedNumber = unrepresented[0]

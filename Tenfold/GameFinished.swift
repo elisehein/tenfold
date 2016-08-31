@@ -14,7 +14,7 @@ class GameFinished: UIViewController {
     private let imageView = UIImageView()
     private let titleLabel = UILabel()
     private let statsLabel = UILabel()
-    private let rankingTable: HistoricRankingTable
+    private let rankingTable: RankingTable
     private let closeButton = Button()
 
     private let game: Game
@@ -23,7 +23,7 @@ class GameFinished: UIViewController {
 
     init(game: Game) {
         self.game = game
-        self.rankingTable = HistoricRankingTable(game: game)
+        self.rankingTable = RankingTable(data: StatsService.latestGameRankingContext())
         super.init(nibName: nil, bundle: nil)
 
         modalTransitionStyle = .CrossDissolve
@@ -141,15 +141,15 @@ class GameFinished: UIViewController {
 
     private func statsText() -> String {
 
-        if StatsService.firstEverFinishedGame(game) {
-            return "It took you \(game.historicNumberCount) numbers " +
-                   "and \(game.currentRound) rounds to empty the grid."
+        if StatsService.numberOfFinishedGames() == 1 {
+            return "And it's a first! It took you \(game.historicNumberCount) numbers " +
+                   "and \(game.currentRound) rounds to empty the grid. "
         } else {
             var text = ""
 
-            if StatsService.shortestGameToDate(game) {
+            if StatsService.latestGameIsShortestFinishedGame() {
                 text += "This is your shortest game to date! "
-            } else if StatsService.longestGameToDate(game) {
+            } else if StatsService.latestGameIsLongest() {
                 text += "This is your longest game to date! "
             }
 

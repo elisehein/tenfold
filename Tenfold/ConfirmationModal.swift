@@ -143,7 +143,7 @@ class ConfirmationModal: UIViewController {
 
         var text = ""
 
-        if StatsService.longestGameToDate(game) {
+        if StatsService.latestGameIsLongest() {
            text = "This is your longest game to date! Do you really want to give up now?"
         } else if numbersRemaining <= 20 {
             let toGoPhrase = numbersRemaining > 1 ? "numbers to go." : "number left!"
@@ -153,7 +153,7 @@ class ConfirmationModal: UIViewController {
             text = "You've gotten rid of \(game.historicNumberCount - numbersRemaining) " +
                    "numbers already. " + randomMotivationalQuote()
         } else {
-            text = "You're only on round \(game.currentRound.asWord()). " +
+            text = "You're only on round \(game.currentRound). " +
                    randomMotivationalQuote()
         }
 

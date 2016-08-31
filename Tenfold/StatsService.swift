@@ -8,27 +8,39 @@
 
 import Foundation
 
+struct GameRanking {
+    let gameStats: GameStats
+    let rank: Int
+    let isLatestGame: Bool
+}
+
 class StatsService {
 
-    class func constructGameStats(game: Game) -> GameStats {
-        return GameStats(historicNumberCount: game.historicNumberCount,
-                         numbersRemaining: game.numbersRemaining(),
-                         totalRounds: game.currentRound,
-                         startTime: game.startTime,
-                         endTime: NSDate())
+    class func numberOfFinishedGames() -> Int {
+        let stats = allGameStats()
+        return stats.filter({ $0.numbersRemaining == 0 }).count
     }
 
-    class func firstEverFinishedGame(game: Game) -> Bool {
-        let stats = fetchStats()
-        return stats.filter({ $0.numbersRemaining == 0 }).count == 0
+    class func latestGameIsLongest() -> Bool {
+        let sortedLengths = sortedGameLengths()
+
+        guard sortedLengths.count > 0 else {
+            return false
+        }
+
+        let allStats = allGameStats()
+        return allStats[latestGameStatsIndex(amongGameStats: allStats)].historicNumberCount == sortedLengths.last
     }
 
-    class func longestGameToDate(game: Game) -> Bool {
-        return game.historicNumberCount > sortedGameLengths().last
-    }
+    class func latestGameIsShortestFinishedGame() -> Bool {
+        let sortedLengths = sortedFinishedGameLengths()
 
-    class func shortestGameToDate(game: Game) -> Bool {
-        return game.historicNumberCount < sortedFinishedGameLengths().first
+        guard sortedLengths.count > 0 else {
+            return false
+        }
+
+        let stats = finishedGameStats()
+        return stats[latestGameStatsIndex(amongGameStats: stats)].historicNumberCount == sortedLengths.first
     }
 
     class func ranked(gameStats: Array<GameStats>) -> Array<GameStats> {
@@ -38,22 +50,50 @@ class StatsService {
     }
 
     class func finishedGameStats() -> Array<GameStats> {
-        let stats = fetchStats()
+        let stats = allGameStats()
         return stats.filter({ $0.numbersRemaining == 0 })
     }
 
-    class func latestGameStatsIndex() -> Int {
-        let stats = fetchStats()
-        let endTimes: Array<NSDate> = stats.map({ $0.endTime })
-        let latestEndTime = endTimes.sort({ pairOfDates in
-            pairOfDates.0.compare(pairOfDates.1) == .OrderedAscending
-        }).first
+    // Need of better naming.
+    // This function returns the top three game stats based on our ranking criteria
+    // (currently historicNumberCount); if the latest (i.e. current game)
+    // isn't a part of the top three, it's appended as the fourth, with the
+    // Int key signifying the rank of the specific game (e.g, 1, 2, 3, 8)
+    class func latestGameRankingContext() -> Array<GameRanking> {
+        var rankingContext: Array<GameRanking> = Array()
 
-        return endTimes.indexOf(latestEndTime!)!
+        let rankedStats = finishedGameStats()
+        let latestGameRank = latestGameStatsIndex(amongGameStats: rankedStats) + 1
+
+        for rank in Array(0...min(3, rankedStats.count)) {
+            print("Adding", rank, "to ranking context")
+            let gameStats = rankedStats[rank]
+            rankingContext.append(GameRanking(gameStats: gameStats,
+                                              rank: rank,
+                                              isLatestGame: rank == latestGameRank))
+        }
+
+        if latestGameRank > 3 {
+            let latestGameStats = GameRanking(gameStats: rankedStats[latestGameRank - 1],
+                                              rank: latestGameRank,
+                                              isLatestGame: true)
+            rankingContext.append(latestGameStats)
+        }
+
+        return rankingContext
+    }
+
+    class func latestGameStatsIndex(amongGameStats gameStats: Array<GameStats>) -> Int {
+        let endTimes: Array<NSDate> = gameStats.map({ $0.endTime })
+        let sortedEndTimes = endTimes.sort({ pairOfDates in
+            pairOfDates.0.compare(pairOfDates.1) == .OrderedAscending
+        })
+
+        return endTimes.indexOf(sortedEndTimes.last!)!
     }
 
     private class func sortedGameLengths() -> Array<Int> {
-        let gameLengths = fetchStats().map({ $0.historicNumberCount })
+        let gameLengths = allGameStats().map({ $0.historicNumberCount })
         return gameLengths.sort()
     }
 
@@ -62,7 +102,7 @@ class StatsService {
         return gameLengths.sort()
     }
 
-    private class func fetchStats() -> Array<GameStats> {
+    private class func allGameStats() -> Array<GameStats> {
         return StorageService.restorePreviousGameStats()
     }
 }
