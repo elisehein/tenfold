@@ -491,7 +491,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.elisehein.Tenfold;
 				PRODUCT_NAME = Tenfold;
-				PROVISIONING_PROFILE = "fe0d017b-485f-4a6b-b4ed-7dfe6bc57773";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
