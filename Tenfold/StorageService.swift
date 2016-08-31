@@ -70,7 +70,6 @@ class StorageService {
         // This ensures preference to the latest game in the case of equal scoring
         snapshots.insert(currentSnapshot, atIndex: 0)
         let orderedSnapshots = RankingService.order(snapshots)
-        print("Storing ranked stats", orderedSnapshots)
 
         let orderedSnapshotsData = NSKeyedArchiver.archivedDataWithRootObject(orderedSnapshots)
         let defaults = NSUserDefaults.standardUserDefaults()
