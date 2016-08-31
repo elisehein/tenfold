@@ -69,30 +69,26 @@ class GameFinished: UIViewController {
         if !hasLoadedConstraints {
 
             var imageSize = CGSize(width: 80, height: 150)
-            var imageCenterOffset: CGFloat = -150
-            var imageBottomSpacing: CGFloat = 40
+            var imageBottomSpacing: CGFloat = 30
             var titleBottomSpacing: CGFloat = 10
-            var tableTopSpacing: CGFloat = 50
+            var tableTopSpacing: CGFloat = 40
 
             if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
                 imageSize = CGSize(width: 120, height: 220)
-                imageCenterOffset = -200
                 imageBottomSpacing = 70
                 titleBottomSpacing = 20
                 tableTopSpacing = 80
             }
 
+            titleLabel.autoAlignAxisToSuperviewAxis(.Vertical)
+            titleLabel.autoAlignAxis(.Horizontal, toSameAxisOfView: view, withOffset: -30)
+
             imageView.autoSetDimensionsToSize(imageSize)
             imageView.autoAlignAxisToSuperviewAxis(.Vertical)
-            imageView.autoAlignAxis(.Horizontal,
-                                    toSameAxisOfView: view,
-                                    withOffset: imageCenterOffset)
-
-            titleLabel.autoAlignAxisToSuperviewAxis(.Vertical)
-            titleLabel.autoPinEdge(.Top,
-                                   toEdge: .Bottom,
-                                   ofView: imageView,
-                                   withOffset: imageBottomSpacing)
+            imageView.autoPinEdge(.Bottom,
+                                  toEdge: .Top,
+                                  ofView: titleLabel,
+                                  withOffset: -imageBottomSpacing)
 
             statsLabel.autoPinEdge(.Top,
                                    toEdge: .Bottom,
@@ -101,7 +97,7 @@ class GameFinished: UIViewController {
             statsLabel.autoMatchDimension(.Width,
                                           toDimension: .Width,
                                           ofView: view,
-                                          withMultiplier: 0.8)
+                                          withMultiplier: 0.85)
             statsLabel.autoAlignAxisToSuperviewAxis(.Vertical)
 
             rankingTable.autoMatchDimension(.Width,
@@ -136,7 +132,7 @@ class GameFinished: UIViewController {
                                              .AllowUserInteraction],
                                    animations: {
             var imageFrame = self.imageView.frame
-            imageFrame.origin.y -= 40
+            imageFrame.origin.y -= 30
             self.imageView.frame = imageFrame
         }, completion: nil)
     }
