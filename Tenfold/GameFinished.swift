@@ -21,6 +21,32 @@ class GameFinished: UIViewController {
 
     private var hasLoadedConstraints = false
 
+    private static let imageSize: CGSize = {
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ?
+               CGSize(width: 120, height: 220) :
+               CGSize(width: 80, height: 150)
+    }()
+
+    private static let imageBottomSpacing: CGFloat = {
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 70 : 30
+    }()
+
+    private static let titleBottomSpacing: CGFloat = {
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 20 : 10
+    }()
+
+    private static let tableTopSpacing: CGFloat = {
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 80 : 40
+    }()
+
+    private static let statsLabelWidthFactor: CGFloat = {
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 0.65 : 0.85
+    }()
+
+    private static let closeButtonBottomInset: CGFloat = {
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 60 : 30
+    }()
+
     init(game: Game) {
         self.game = game
 
@@ -49,7 +75,7 @@ class GameFinished: UIViewController {
         closeButton.addTarget(self,
                               action: #selector(GameFinished.dismiss),
                               forControlEvents: .TouchUpInside)
-        closeButton.setTitle("TAKE ME BACK", forState: .Normal)
+        closeButton.setTitle("Take me back", forState: .Normal)
 
         view.addSubview(imageView)
         view.addSubview(titleLabel)
@@ -67,38 +93,23 @@ class GameFinished: UIViewController {
 
     override func updateViewConstraints() {
         if !hasLoadedConstraints {
-
-            var imageSize = CGSize(width: 80, height: 150)
-            var imageBottomSpacing: CGFloat = 30
-            var titleBottomSpacing: CGFloat = 10
-            var tableTopSpacing: CGFloat = 40
-
-            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-                imageSize = CGSize(width: 120, height: 220)
-                imageBottomSpacing = 70
-                titleBottomSpacing = 20
-                tableTopSpacing = 80
-            }
-
             titleLabel.autoAlignAxisToSuperviewAxis(.Vertical)
             titleLabel.autoAlignAxis(.Horizontal, toSameAxisOfView: view, withOffset: -30)
 
-            imageView.autoSetDimensionsToSize(imageSize)
-            imageView.autoAlignAxisToSuperviewAxis(.Vertical)
+            imageView.autoSetDimensionsToSize(GameFinished.imageSize)
             imageView.autoPinEdge(.Bottom,
                                   toEdge: .Top,
                                   ofView: titleLabel,
-                                  withOffset: -imageBottomSpacing)
+                                  withOffset: -GameFinished.imageBottomSpacing)
 
             statsLabel.autoPinEdge(.Top,
                                    toEdge: .Bottom,
                                    ofView: titleLabel,
-                                   withOffset: titleBottomSpacing)
+                                   withOffset: GameFinished.titleBottomSpacing)
             statsLabel.autoMatchDimension(.Width,
                                           toDimension: .Width,
                                           ofView: view,
-                                          withMultiplier: 0.85)
-            statsLabel.autoAlignAxisToSuperviewAxis(.Vertical)
+                                          withMultiplier: GameFinished.statsLabelWidthFactor)
 
             rankingTable.autoMatchDimension(.Width,
                                             toDimension: .Width,
@@ -107,13 +118,14 @@ class GameFinished: UIViewController {
             rankingTable.autoPinEdge(.Top,
                                      toEdge: .Bottom,
                                      ofView: statsLabel,
-                                     withOffset: tableTopSpacing)
-
+                                     withOffset: GameFinished.tableTopSpacing)
             rankingTable.autoSetDimension(.Height, toSize: rankingTable.heightOccupied())
-            rankingTable.autoAlignAxisToSuperviewAxis(.Vertical)
 
-            closeButton.autoAlignAxisToSuperviewAxis(.Vertical)
-            closeButton.autoPinEdgeToSuperviewEdge(.Bottom, withInset: 30)
+            closeButton.autoPinEdgeToSuperviewEdge(.Bottom,
+                                                   withInset: GameFinished.closeButtonBottomInset)
+
+            // swiftlint:disable:next line_length
+            [titleLabel, imageView, statsLabel, rankingTable, closeButton].autoAlignViewsToAxis(.Vertical)
 
             hasLoadedConstraints = true
         }
@@ -132,7 +144,7 @@ class GameFinished: UIViewController {
                                              .AllowUserInteraction],
                                    animations: {
             var imageFrame = self.imageView.frame
-            imageFrame.origin.y -= 30
+            imageFrame.origin.y -= 35
             self.imageView.frame = imageFrame
         }, completion: nil)
     }
@@ -157,15 +169,13 @@ class GameFinished: UIViewController {
     }
 
     private func constructAttributedString(withText text: String) -> NSMutableAttributedString {
+        let isIPad = UIDevice.currentDevice().userInterfaceIdiom == .Pad
+
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 4
+        paragraphStyle.lineSpacing = isIPad ? 7 : 4
         paragraphStyle.alignment = .Center
 
-        var font = UIFont.themeFontWithSize(14)
-
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            font = font.fontWithSize(18)
-        }
+        let font = UIFont.themeFontWithSize(isIPad ? 18 : 14)
 
         let attrString = NSMutableAttributedString(string: text)
         let fullRange = NSRange(location: 0, length: attrString.length)

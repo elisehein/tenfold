@@ -11,7 +11,10 @@ import UIKit
 
 class RankingTable: UIView {
 
-    private static let rowHeight: CGFloat = 25
+    private static let rowHeight: CGFloat = {
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 45 : 25
+    }()
+
     private let rankedGames: Array<RankedGame>
 
     init(rankedGames: Array<RankedGame>) {
@@ -73,7 +76,8 @@ class RankingTable: UIView {
         roundsLabel.text = "Rounds"
 
         for label in [numbersLabel, roundsLabel] {
-            label.font = UIFont.themeFontWithSize(12)
+            let fontSize: CGFloat = UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 16 : 12
+            label.font = UIFont.themeFontWithSize(fontSize)
             label.textAlignment = .Left
             label.textColor = UIColor.themeColor(.OffBlack).colorWithAlphaComponent(0.8)
         }
@@ -109,7 +113,8 @@ class RankingTable: UIView {
 
         for label in [rankLabel, numbersLabel, roundsLabel] {
             label.textColor = UIColor.themeColor(.OffBlack).colorWithAlphaComponent(0.8)
-            label.font = UIFont.themeFontWithSize(14,
+            let fontSize: CGFloat = UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 18 : 14
+            label.font = UIFont.themeFontWithSize(fontSize,
                                                   weight: rankedGame.isLatestGame ?
                                                           .Bold :
                                                           .Regular)
