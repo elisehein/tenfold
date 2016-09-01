@@ -44,6 +44,25 @@ class Rules: UIViewController {
 
     private static var data = JSON.initFromFile("rules")!
 
+    override var title: String? {
+        didSet {
+            guard title != nil else { return }
+
+            let label = UILabel()
+
+            let navigationTitleFont = UIFont.themeFontWithSize(14)
+            let attributes = [NSFontAttributeName: navigationTitleFont,
+                              NSForegroundColorAttributeName: UIColor.themeColor(.OffBlack),
+                              NSKernAttributeName: 2]
+
+            label.attributedText = NSAttributedString(string: title!.uppercaseString,
+                                                      attributes: attributes)
+            label.sizeToFit()
+
+            navigationItem.titleView = label
+        }
+    }
+
     init() {
         sections = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
 
@@ -60,6 +79,8 @@ class Rules: UIViewController {
         sections.registerClass(PageDownIndicator.self, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: pageDownIndicatorReuseIdentifier)
 
         super.init(nibName: nil, bundle: nil)
+
+        title = "How to play"
 
         sections.dataSource = self
         sections.delegate = self

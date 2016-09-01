@@ -24,7 +24,7 @@ class PageDownIndicator: UICollectionReusableView {
         super.layoutSubviews()
 
         var iconViewFrame = bounds
-        iconViewFrame.size.height = 90
+        iconViewFrame.size.height = 70
         iconViewFrame.origin.y += bounds.size.height - iconViewFrame.size.height
         iconView.frame = iconViewFrame
     }

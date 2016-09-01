@@ -39,7 +39,7 @@ class Menu: UIView {
                                 action: #selector(Menu.didTapNewGame),
                                 forControlEvents: .TouchUpInside)
 
-        instructionsButton.setTitle("How it works", forState: .Normal)
+        instructionsButton.setTitle("How to play", forState: .Normal)
         instructionsButton.addTarget(self,
                                      action: #selector(Menu.didTapInstructions),
                                      forControlEvents: .TouchUpInside)
