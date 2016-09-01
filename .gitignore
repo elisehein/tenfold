@@ -2,6 +2,7 @@
 .bundle
 fastlane/metadata
 fastlane/screenshots
+fastlane/report.xml
 Carthage/
 Tenfold.app.dsym.zip
 Tenfold.ipa
