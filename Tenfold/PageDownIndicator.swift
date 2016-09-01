@@ -11,7 +11,7 @@ import UIKit
 
 class PageDownIndicator: UICollectionReusableView {
 
-    let iconView = UIImageView(image: UIImage(named: "chevron-down"))
+    let iconView = UIImageView(image: UIImage(named: "chevron-down-black"))
 
     override init(frame: CGRect) {
         super.init(frame: frame)
