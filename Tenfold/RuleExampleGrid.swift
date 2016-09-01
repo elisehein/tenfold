@@ -17,8 +17,15 @@ class RuleExampleGrid: Grid {
     private let reuseIdentifier = "GameGridCell"
 
     var values: Array<Int?> = []
+
     var crossedOutIndeces: Array<Int> = []
     var pairs: Array<[Int]> = []
+
+    // These must match the vocabulary used in instructions.json
+    static let animationTypePairings = "PAIRINGS"
+    static let animationTypePullUp = "PULL_UP"
+
+    var animationType: String = RuleExampleGrid.animationTypePairings
 
     init() {
         super.init(frame: CGRect.zero)
@@ -27,17 +34,26 @@ class RuleExampleGrid: Grid {
         delegate = self
         dataSource = self
         userInteractionEnabled = false
+        clipsToBounds = true
 
         registerClass(GameGridCell.self, forCellWithReuseIdentifier: self.reuseIdentifier)
     }
 
-    // Because the timer interval doesn't allow for the first loop to run immediately,
-    // we fire the first one ourselves, and then set an interval for the rest.
     func playLoop() {
-        performPairings()
-        after(seconds: Double(pairs.count) * RuleExampleGrid.pairingLoopDuration,
-              performSelector: #selector(RuleExampleGrid.performPairings),
-              repeats: true)
+        if animationType == RuleExampleGrid.animationTypePairings {
+            // Because the timer interval doesn't allow for the first loop to run immediately,
+            // we fire the first one ourselves, and then set an interval for the rest.
+            // (We only care about this in the case of pairing animations)
+            performPairings()
+            after(seconds: Double(pairs.count) * RuleExampleGrid.pairingLoopDuration,
+                  performSelector: #selector(RuleExampleGrid.performPairings),
+                  repeats: true)
+        } else {
+            positionGridForPullUp()
+            after(seconds: 4,
+                  performSelector: #selector(RuleExampleGrid.pullUp),
+                  repeats: true)
+        }
     }
 
     func invalidateLoop() {
@@ -46,6 +62,21 @@ class RuleExampleGrid: Grid {
         }
 
         timers = []
+    }
+
+    func pullUp() {
+        setContentOffset(CGPoint(x: 0, y: Grid.cellSpacing), animated: true)
+        after(seconds: 2.5, performSelector: #selector(RuleExampleGrid.releasePullUp))
+    }
+
+    func releasePullUp() {
+        setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: true)
+    }
+
+    private func positionGridForPullUp() {
+        let cellHeight = Grid.cellSize(forAvailableWidth: bounds.size.width).height
+        contentInset.top = cellHeight
+        setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: false)
     }
 
     func performPairings() {
@@ -144,6 +175,17 @@ extension RuleExampleGrid: UICollectionViewDataSource {
             cell.crossedOut = crossedOutIndeces.contains(indexPath.item)
             cell.marksEndOfRound = false
             cell.defaultBackgroundColor = UIColor.themeColor(.OffWhiteShaded)
+
+            // We are dependent on the fact that Pairing animation type example values
+            // always has three rows, and PullUp animation type example always has four.
+            if animationType == RuleExampleGrid.animationTypePullUp {
+                if indexPath.item == 26 {
+                   cell.marksEndOfRound = true
+                } else if indexPath.item > 26 {
+                   cell.defaultBackgroundColor = UIColor.themeColor(.SecondaryAccent)
+                }
+            }
+
             cell.resetColors()
         }
 
@@ -156,6 +198,6 @@ extension RuleExampleGrid: UICollectionViewDelegateFlowLayout {
     func collectionView(collectionView: UICollectionView,
                         layout: UICollectionViewLayout,
                         sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        return cellSize()
+        return Grid.cellSize(forAvailableWidth: bounds.size.width)
     }
 }

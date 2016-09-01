@@ -14,7 +14,7 @@ class Play: UIViewController {
     private static let defaultBGColor = UIColor.themeColor(.OffWhite)
     private static let gameplayBGColor = UIColor.themeColor(.OffWhiteShaded)
 
-    private static let gridInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+    private static let gridInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
 
     private static let hideMenuPullUpThreshold: CGFloat = 50
     private static let showMenuPullDownThreshold: CGFloat = 70
@@ -126,14 +126,16 @@ class Play: UIViewController {
 
     private func positionNextRoundMatrix() {
         var nextRoundMatrixFrame = gameGrid.frame
-        nextRoundMatrixFrame.origin.y += gameGrid.bottomEdgeY() - gameGrid.cellSize().height
+        let cellHeight = Grid.cellSize(forAvailableWidth: nextRoundMatrixFrame.size.width).height
+        nextRoundMatrixFrame.origin.y += gameGrid.bottomEdgeY() - cellHeight
         nextRoundGrid?.frame = nextRoundMatrixFrame
     }
 
     private func calcNextRoundPullUpThreshold(numberOfItemsInNextRound: Int) -> CGFloat {
         let rowsInNextRound = Matrix.singleton.totalRows(numberOfItemsInNextRound)
-        let threshold = nextRoundGrid?.heightForGame(withTotalRows: rowsInNextRound)
-        return min(threshold!, Play.maxNextRoundPullUpThreshold)
+        let threshold = Grid.heightForGame(withTotalRows: rowsInNextRound,
+                                           availableWidth: nextRoundGrid!.bounds.size.width)
+        return min(threshold, Play.maxNextRoundPullUpThreshold)
     }
 
     // MARK: Menu interactions

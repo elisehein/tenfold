@@ -40,6 +40,6 @@ extension GameGrid: UICollectionViewDelegateFlowLayout {
     func collectionView(collectionView: UICollectionView,
                         layout: UICollectionViewLayout,
                         sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        return cellSize()
+        return Grid.cellSize(forAvailableWidth: bounds.size.width)
     }
 }

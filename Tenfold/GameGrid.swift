@@ -200,11 +200,12 @@ class GameGrid: Grid {
     }
 
     private func initialGameHeight() -> CGFloat {
-        return heightForGame(withTotalRows: 3)
+        return Grid.heightForGame(withTotalRows: 3, availableWidth: bounds.size.width)
     }
 
     private func currentGameHeight() -> CGFloat {
-        return heightForGame(withTotalRows: game.totalRows())
+        return Grid.heightForGame(withTotalRows: game.totalRows(),
+                                  availableWidth: bounds.size.width)
     }
 
     internal func ensureGridPositionedForGameplay() {

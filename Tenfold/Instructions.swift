@@ -21,14 +21,14 @@ class Instructions: UIViewController {
     private let layout: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
 
-        if UIScreen.mainScreen().bounds.size.width <= 450 {
-            l.minimumInteritemSpacing = 0
-            l.minimumLineSpacing = 60
-            l.sectionInset = UIEdgeInsets(top: 70, left: 0, bottom: 100, right: 0)
-        } else {
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
             l.minimumInteritemSpacing = 0
             l.minimumLineSpacing = 90
             l.sectionInset = UIEdgeInsets(top: 90, left: 0, bottom: 150, right: 0)
+        } else {
+            l.minimumInteritemSpacing = 0
+            l.minimumLineSpacing = 40
+            l.sectionInset = UIEdgeInsets(top: 50, left: 0, bottom: 120, right: 0)
         }
         return l
     }()
@@ -135,6 +135,7 @@ extension Instructions: UICollectionViewDataSource {
             cell.text = example["text"].string
             cell.gridValues = example["values"].arrayValue.map({ $0.int })
             cell.gridCrossedOutIndeces = example["crossedOut"].arrayValue.map({ $0.int! })
+            cell.gridAnimationType = example["animationType"].string!
 
             cell.gridPairs = example["pairs"].arrayValue.map({ JSONPair in
                 JSONPair.arrayValue.map({ index in index.int! })
@@ -183,10 +184,12 @@ extension Instructions: UICollectionViewDelegateFlowLayout {
                         sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         let example = Instructions.rules[indexPath.section]["examples"][indexPath.item]
         let text = example["text"].string
+        let numberOfGridValues = example["values"].count
 
         let width = view.bounds.size.width
         let height = RuleExampleCell.sizeOccupied(forAvailableWidth: width,
-                                                  usingText: text!).height
+                                                  usingText: text!,
+                                                  numberOfGridValues: numberOfGridValues).height
 
         return CGSize(width: width, height: height)
     }
