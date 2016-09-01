@@ -15,9 +15,9 @@ class RulesFooter: UICollectionReusableView {
     let label = UILabel()
 
     override init(frame: CGRect) {
-        super.init(frame: CGRect.zero)
+        super.init(frame: frame)
 
-        label.text = "Swipe right any time for instructions."
+        label.text = "Swipe right any time to see these instructions."
         label.textColor = UIColor.themeColor(.OffBlack)
         label.font = UIFont.themeFontWithSize(13, weight: .Italic)
         label.textAlignment = .Center
@@ -28,7 +28,11 @@ class RulesFooter: UICollectionReusableView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        label.frame = bounds
+
+        var labelFrame = bounds
+        labelFrame.size.height = 80
+        labelFrame.origin.y += bounds.size.height - labelFrame.size.height
+        label.frame = labelFrame
     }
 
     required init?(coder aDecoder: NSCoder) {

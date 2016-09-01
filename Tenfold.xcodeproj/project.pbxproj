@@ -47,6 +47,7 @@
 		0CC94F6F1D75866600FAF4B2 /* RankingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC94F6E1D75866600FAF4B2 /* RankingService.swift */; };
 		0CC94F711D7588AF00FAF4B2 /* RankingTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC94F701D7588AF00FAF4B2 /* RankingTable.swift */; };
 		0CC94F731D75D09E00FAF4B2 /* GameSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC94F721D75D09E00FAF4B2 /* GameSnapshot.swift */; };
+		0CD93E821D78A14900D7DF96 /* PageDownIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD93E811D78A14900D7DF96 /* PageDownIndicator.swift */; };
 		0CE682961D6DB46300CA5787 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CE682951D6DB46300CA5787 /* String.swift */; };
 		0CF5C54B1D6F76C5006D46B8 /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF5C54A1D6F76C5006D46B8 /* Button.swift */; };
 		0CFDE5BA1D65B2E2001F9DF5 /* RuleExampleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CFDE5B91D65B2E2001F9DF5 /* RuleExampleCell.swift */; };
@@ -99,6 +100,7 @@
 		0CC94F6E1D75866600FAF4B2 /* RankingService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RankingService.swift; sourceTree = "<group>"; };
 		0CC94F701D7588AF00FAF4B2 /* RankingTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RankingTable.swift; sourceTree = "<group>"; };
 		0CC94F721D75D09E00FAF4B2 /* GameSnapshot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameSnapshot.swift; sourceTree = "<group>"; };
+		0CD93E811D78A14900D7DF96 /* PageDownIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageDownIndicator.swift; sourceTree = "<group>"; };
 		0CE682951D6DB46300CA5787 /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		0CF5C54A1D6F76C5006D46B8 /* Button.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
 		0CFDE5B91D65B2E2001F9DF5 /* RuleExampleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RuleExampleCell.swift; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 				0CB938901D20389C005B81F4 /* NextRoundGrid.swift */,
 				0CB9388C1D202832005B81F4 /* NextRoundCell.swift */,
 				0CADBDF31D6C65110090C13F /* Notification.swift */,
+				0CD93E811D78A14900D7DF96 /* PageDownIndicator.swift */,
 				0CC94F701D7588AF00FAF4B2 /* RankingTable.swift */,
 				0CFDE5B91D65B2E2001F9DF5 /* RuleExampleCell.swift */,
 				0C710E251D6721DA0047F391 /* RuleExampleGrid.swift */,
@@ -360,6 +363,7 @@
 				0C90AEA71C6D1BCF00E1E42E /* Game.swift in Sources */,
 				0C39D3081D3AB48B0047CE74 /* UIScrollView.swift in Sources */,
 				0C70C4131D74B4EE00A9E8B8 /* GameGrid+DataSource.swift in Sources */,
+				0CD93E821D78A14900D7DF96 /* PageDownIndicator.swift in Sources */,
 				0C4F12611D65C58000AAEB54 /* RuleHeader.swift in Sources */,
 				0CC94F731D75D09E00FAF4B2 /* GameSnapshot.swift in Sources */,
 				0C70C4051D71B95500A9E8B8 /* ConfirmationModal.swift in Sources */,

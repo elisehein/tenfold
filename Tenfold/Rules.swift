@@ -10,6 +10,14 @@ import Foundation
 import UIKit
 import SwiftyJSON
 
+// Because we want the collectionview to page, size calculations in this class
+// have been pushed to the limits.
+//
+// We need each section to take up exactly one screen's worth of height. To
+// avoid messing with section and content insets, each section's header and
+// footer are sized to act as the insets themselves, with their content positioned
+// to the bottom edge of their frame.
+
 class Rules: UIViewController {
 
     let sections: UICollectionView
@@ -17,6 +25,7 @@ class Rules: UIViewController {
     private let reuseIdentifier = "RuleExampleCell"
     private let headerReuseIdentifier = "RuleHeader"
     private let footerReuseIdentifier = "RulesFooter"
+    private let pageDownIndicatorReuseIdentifier = "PageDownIndicator"
 
     private let layout: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
@@ -24,9 +33,11 @@ class Rules: UIViewController {
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
             l.minimumInteritemSpacing = 0
             l.minimumLineSpacing = 90
+            l.sectionInset = UIEdgeInsets(top: 90, left: 0, bottom: 0, right: 0)
         } else {
             l.minimumInteritemSpacing = 0
             l.minimumLineSpacing = 40
+            l.sectionInset = UIEdgeInsets(top: 40, left: 0, bottom: 0, right: 0)
         }
         return l
     }()
@@ -44,6 +55,9 @@ class Rules: UIViewController {
 
         // swiftlint:disable:next line_length
         sections.registerClass(RulesFooter.self, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: footerReuseIdentifier)
+
+        // swiftlint:disable:next line_length
+        sections.registerClass(PageDownIndicator.self, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: pageDownIndicatorReuseIdentifier)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -103,8 +117,7 @@ class Rules: UIViewController {
 
     private func contentHeight(forSectionAtIndex sectionIndex: Int) -> CGFloat {
         let headerHeight = sizeForHeaderInSection(withIndex: sectionIndex).height
-        let footerHeight = sizeForFooterInSection(withIndex: sectionIndex).height
-        var contentHeight = headerHeight + footerHeight
+        var contentHeight = headerHeight
 
         let examples = Rules.data[sectionIndex]["examples"]
 
@@ -113,10 +126,7 @@ class Rules: UIViewController {
                                                                    inSection: sectionIndex)).height
         }
 
-        // Add 50 for section top index (actually the header bottom spacing)
-        contentHeight += 50
-
-        // Add linespacing for each example - 1
+        contentHeight += layout.sectionInset.top
         contentHeight += CGFloat(examples.count - 1) * layout.minimumLineSpacing
 
         return contentHeight
@@ -130,11 +140,8 @@ class Rules: UIViewController {
     }
 
     private func sizeForFooterInSection(withIndex sectionIndex: Int) -> CGSize {
-        if sectionIndex == Rules.data.count - 1 {
-            return CGSize(width: view.bounds.size.width, height: 80)
-        } else {
-            return CGSize.zero
-        }
+        return CGSize(width: sections.bounds.size.width,
+                      height: pageInset(forSectionAtIndex: sectionIndex))
     }
 
     private func sizeForExampleAtIndexPath(indexPath: NSIndexPath) -> CGSize {
@@ -198,8 +205,13 @@ extension Rules: UICollectionViewDataSource {
         case UICollectionElementKindSectionHeader:
             return headerViewForIndexPath(indexPath)
         case UICollectionElementKindSectionFooter:
-            // swiftlint:disable:next line_length
-            return sections.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionFooter, withReuseIdentifier: footerReuseIdentifier, forIndexPath: indexPath)
+            if indexPath.section == Rules.data.count - 1 {
+                // swiftlint:disable:next line_length
+                return sections.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionFooter, withReuseIdentifier: footerReuseIdentifier, forIndexPath: indexPath)
+            } else {
+                // swiftlint:disable:next line_length
+                return sections.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionFooter, withReuseIdentifier: pageDownIndicatorReuseIdentifier, forIndexPath: indexPath)
+            }
         default:
             fatalError("Unexpected element kind")
         }
@@ -235,14 +247,7 @@ extension Rules: UICollectionViewDelegateFlowLayout {
                         layout collectionViewLayout: UICollectionViewLayout,
                         referenceSizeForHeaderInSection section: Int) -> CGSize {
         var headerSize = sizeForHeaderInSection(withIndex: section)
-
-        // We need overall top padding to the entire scroll view to act as the inset for
-        // the first page (sectionInsets apply to the cells, not the header). A more logical way
-        // of doing this would be to use contentInset, but this would mess up paging. So,
-        // we add the heigh to the first header view.
-        if section == 0 {
-            headerSize.height += pageInset(forSectionAtIndex: 0)
-        }
+        headerSize.height += pageInset(forSectionAtIndex: section)
 
         return headerSize
     }
@@ -251,25 +256,5 @@ extension Rules: UICollectionViewDelegateFlowLayout {
                         layout collectionViewLayout: UICollectionViewLayout,
                         referenceSizeForFooterInSection section: Int) -> CGSize {
         return sizeForFooterInSection(withIndex: section)
-    }
-
-    // We want the collectionview to page per section, but because each section has a different
-    // content size, we adjust the insets so that a secion always takes up the full height of the
-    // screen.
-    //
-    // All sections get a bottom inset which takes care of the bottom inset for the page the
-    // section is on, plus the top inset of the next section. The top inset for the first page
-    // is set by overall contentInsets.
-    func collectionView(collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        insetForSectionAtIndex section: Int) -> UIEdgeInsets {
-        var inset = pageInset(forSectionAtIndex: section)
-
-        if section + 1 < Rules.data.count {
-            inset += pageInset(forSectionAtIndex: section + 1)
-        }
-
-        // 50 / 90
-        return UIEdgeInsets(top: 50, left: 0, bottom: inset, right: 0)
     }
 }
