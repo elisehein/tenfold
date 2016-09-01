@@ -50,10 +50,11 @@ class Rules: UIViewController {
 
             let label = UILabel()
 
-            let navigationTitleFont = UIFont.themeFontWithSize(14)
-            let attributes = [NSFontAttributeName: navigationTitleFont,
+            let isIPad = UIDevice.currentDevice().userInterfaceIdiom == .Pad
+
+            let attributes = [NSFontAttributeName: UIFont.themeFontWithSize(isIPad ? 18 : 14),
                               NSForegroundColorAttributeName: UIColor.themeColor(.OffBlack),
-                              NSKernAttributeName: 2]
+                              NSKernAttributeName: 2.2]
 
             label.attributedText = NSAttributedString(string: title!.uppercaseString,
                                                       attributes: attributes)
