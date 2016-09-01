@@ -82,7 +82,12 @@ class RuleHeader: UICollectionReusableView {
                                                            usingText: text!)
 
         let x = bounds.size.width * 0.5 * (1 - RuleHeader.widthFactor)
-        label.frame = CGRect(origin: CGPoint(x: x, y : 0),
+
+        // Ensure the label is always pushed to the bottom of the frame.
+        // See header size calculations in Rules.swift for more details
+        let y = bounds.size.height - labelSize.height
+
+        label.frame = CGRect(origin: CGPoint(x: x, y : y),
                              size: labelSize)
     }
 

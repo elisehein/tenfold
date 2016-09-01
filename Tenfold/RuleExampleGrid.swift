@@ -44,6 +44,7 @@ class RuleExampleGrid: Grid {
             // Because the timer interval doesn't allow for the first loop to run immediately,
             // we fire the first one ourselves, and then set an interval for the rest.
             // (We only care about this in the case of pairing animations)
+            positionGridForPairing()
             performPairings()
             after(seconds: Double(pairs.count) * RuleExampleGrid.pairingLoopDuration,
                   performSelector: #selector(RuleExampleGrid.performPairings),
@@ -77,6 +78,11 @@ class RuleExampleGrid: Grid {
         let cellHeight = Grid.cellSize(forAvailableWidth: bounds.size.width).height
         contentInset.top = cellHeight
         setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: false)
+    }
+
+    private func positionGridForPairing() {
+        contentInset.top = 0
+        setContentOffset(CGPoint.zero, animated: false)
     }
 
     func performPairings() {

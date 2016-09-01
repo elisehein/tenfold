@@ -167,7 +167,7 @@ class Play: UIViewController {
     }
 
     func showInstructions() {
-        navigationController?.pushViewController(Instructions(), animated: true)
+        navigationController?.pushViewController(Rules(), animated: true)
     }
 
     // MARK: Gameplay logic

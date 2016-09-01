@@ -1,5 +1,5 @@
 //
-//  InstructionsFooter.swift
+//  RulesFooter.swift
 //  Tenfold
 //
 //  Created by Elise Hein on 27/08/2016.
@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 
-class InstructionsFooter: UICollectionReusableView {
+class RulesFooter: UICollectionReusableView {
 
     let label = UILabel()
 

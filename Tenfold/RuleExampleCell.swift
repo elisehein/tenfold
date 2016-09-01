@@ -78,11 +78,11 @@ class RuleExampleCell: UICollectionViewCell {
     class func sizeOccupied(forAvailableWidth availableWidth: CGFloat,
                             usingText givenText: String,
                             numberOfGridValues: Int) -> CGSize {
-
         var size = RuleExampleCell.sizeOccupiedByLabel(forAvailableWidth: availableWidth,
                                                        usingText: givenText)
 
-        size.height += RuleExampleCell.gridSize(forAvailableWidth: availableWidth,
+        let gridWidth = RuleExampleCell.widthFactor * availableWidth
+        size.height += RuleExampleCell.gridSize(forAvailableWidth: gridWidth,
                                                 gridValueCount: numberOfGridValues).height
         size.height += RuleExampleCell.textGridSpacing
 
@@ -110,6 +110,7 @@ class RuleExampleCell: UICollectionViewCell {
         let gridWidth = RuleExampleCell.widthFactor * availableWidth
         let gridSize = RuleExampleCell.gridSize(forAvailableWidth: gridWidth,
                                                 gridValueCount: gridValues.count)
+
         let frameForGrid = CGRect(x: (availableWidth - gridSize.width) / 2,
                                   y: labelSize.height + RuleExampleCell.textGridSpacing,
                                   width: gridSize.width,
