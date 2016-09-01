@@ -168,28 +168,20 @@ class GameFinished: UIViewController {
         return text
     }
 
-    private func constructAttributedString(withText text: String) -> NSMutableAttributedString {
+    private func constructAttributedString(withText text: String) -> NSAttributedString {
         let isIPad = UIDevice.currentDevice().userInterfaceIdiom == .Pad
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = isIPad ? 7 : 4
         paragraphStyle.alignment = .Center
 
-        let font = UIFont.themeFontWithSize(isIPad ? 18 : 14)
+        let attributes = [
+            NSParagraphStyleAttributeName: paragraphStyle,
+            NSFontAttributeName: UIFont.themeFontWithSize(isIPad ? 18 : 14),
+            NSForegroundColorAttributeName: UIColor.themeColor(.OffBlack)
+        ]
 
-        let attrString = NSMutableAttributedString(string: text)
-        let fullRange = NSRange(location: 0, length: attrString.length)
-
-        attrString.addAttribute(NSParagraphStyleAttributeName,
-                                value: paragraphStyle,
-                                range: fullRange)
-
-        attrString.addAttribute(NSFontAttributeName, value: font, range: fullRange)
-
-        attrString.addAttribute(NSForegroundColorAttributeName,
-                                value: UIColor.themeColor(.OffBlack),
-                                range: fullRange)
-        return attrString
+        return NSAttributedString(string: text, attributes: attributes)
     }
 
     func dismiss() {

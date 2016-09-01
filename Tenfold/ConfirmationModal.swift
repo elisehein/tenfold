@@ -183,7 +183,7 @@ class ConfirmationModal: UIViewController {
         }
     }
 
-    private func constructAttributedString(withText text: String) -> NSMutableAttributedString {
+    private func constructAttributedString(withText text: String) -> NSAttributedString {
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 5
@@ -196,21 +196,13 @@ class ConfirmationModal: UIViewController {
             paragraphStyle.lineSpacing = 7
         }
 
-        let attrString = NSMutableAttributedString(string: text)
-        let fullRange = NSRange(location: 0, length: attrString.length)
+        let attributes = [
+            NSParagraphStyleAttributeName: paragraphStyle,
+            NSFontAttributeName: font,
+            NSForegroundColorAttributeName: UIColor.themeColor(.OffBlack)
+        ]
 
-        attrString.addAttribute(NSParagraphStyleAttributeName,
-                                value: paragraphStyle,
-                                range: fullRange)
-
-        attrString.addAttribute(NSFontAttributeName,
-                                value: font,
-                                range: fullRange)
-
-        attrString.addAttribute(NSForegroundColorAttributeName,
-                                value: UIColor.themeColor(.OffBlack),
-                                range: fullRange)
-        return attrString
+        return NSAttributedString(string: text, attributes: attributes)
     }
 
     private func randomMotivationalQuote() -> String {

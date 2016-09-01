@@ -42,7 +42,7 @@ class RuleHeader: UICollectionReusableView {
     }
 
 
-    class func constructAttributedString(withText text: String) -> NSMutableAttributedString {
+    class func constructAttributedString(withText text: String) -> NSAttributedString {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 7
         paragraphStyle.alignment = .Center
@@ -53,17 +53,12 @@ class RuleHeader: UICollectionReusableView {
             font = font.fontWithSize(22)
         }
 
-        let attrString = NSMutableAttributedString(string: text)
+        let attributes = [
+            NSParagraphStyleAttributeName: paragraphStyle,
+            NSFontAttributeName: font
+        ]
 
-        attrString.addAttribute(NSParagraphStyleAttributeName,
-                                value:paragraphStyle,
-                                range:NSRange(location: 0, length: attrString.length))
-
-        attrString.addAttribute(NSFontAttributeName,
-                                value:font,
-                                range:NSRange(location: 0, length: attrString.length))
-
-        return attrString
+        return NSAttributedString(string: text, attributes: attributes)
     }
 
     override init(frame: CGRect) {

@@ -46,7 +46,7 @@ class Button: UIButton {
     }
 
     private func constructAttributedString(withText text: String?,
-                                           color: UIColor) -> NSMutableAttributedString {
+                                           color: UIColor) -> NSAttributedString {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .Center
 
@@ -56,21 +56,14 @@ class Button: UIButton {
             font = font.fontWithSize(18)
         }
 
-        let attrString = NSMutableAttributedString(string: (text?.uppercaseString)!)
-        let fullRange = NSRange(location: 0, length: attrString.length)
+        let attributes = [
+            NSKernAttributeName: 2.2,
+            NSFontAttributeName: font,
+            NSForegroundColorAttributeName: color,
+            NSParagraphStyleAttributeName: paragraphStyle,
+            NSStrikethroughStyleAttributeName: strikeThrough ? 1 : 0
+        ]
 
-        attrString.addAttribute(NSKernAttributeName, value: 2.2, range: fullRange)
-        attrString.addAttribute(NSFontAttributeName, value: font, range: fullRange)
-        attrString.addAttribute(NSForegroundColorAttributeName, value: color, range: fullRange)
-
-        attrString.addAttribute(NSParagraphStyleAttributeName,
-                                value: paragraphStyle,
-                                range: fullRange)
-
-        if strikeThrough {
-            attrString.addAttribute(NSStrikethroughStyleAttributeName, value: 1, range: fullRange)
-        }
-
-        return attrString
+        return NSAttributedString(string: (text?.uppercaseString)!, attributes: attributes)
     }
 }
