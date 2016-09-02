@@ -25,7 +25,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
 
         if let window = window {
-            let navigationController = UINavigationController(rootViewController: Play())
+            // swiftlint:disable:next line_length
+            let navigationController = UINavigationController(rootViewController: Play(shouldLaunchOnboarding: true, isOnboarding: false))
             navigationController.navigationBarHidden = true
 
             // The following hacks the interactive pop gesture to work with a hidden nav bar

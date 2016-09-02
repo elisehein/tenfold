@@ -10,85 +10,135 @@ import Foundation
 import PureLayout
 import UIKit
 
+enum MenuState {
+    case Default
+    case Onboarding
+}
+
 class Menu: UIView {
 
-    private static let buttonHeight: CGFloat = {
+    static let buttonHeight: CGFloat = {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 80 : 40
+    }()
+
+    private static let logoWidth: CGFloat = {
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 180 : 140
+    }()
+
+    private static let centerPointOffset: CGFloat = {
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 100 : 20
     }()
 
     private let logo = UIImageView()
     private let newGameButton = Button()
     private let instructionsButton = Button()
     private let soundButton = Button()
+    private let onboardingSteps = OnboardingSteps()
 
     var onTapNewGame: (() -> Void)?
     var onTapInstructions: (() -> Void)?
 
+    var onDismissOnboarding: (() -> Void)? {
+        didSet {
+            if let handler = onDismissOnboarding {
+                if state == .Onboarding {
+                    onboardingSteps.onDismiss = handler
+                }
+            }
+        }
+    }
+
     var animationInProgress = false
 
     private var hasLoadedConstraints = false
+    private let state: MenuState
 
-    init() {
+    init(state: MenuState = .Default) {
+        self.state = state
+
         super.init(frame: CGRect.zero)
 
         logo.image = UIImage(named: "tenfold-logo")
         logo.contentMode = .ScaleAspectFit
-
-        newGameButton.setTitle("Start over", forState: .Normal)
-        newGameButton.addTarget(self,
-                                action: #selector(Menu.didTapNewGame),
-                                forControlEvents: .TouchUpInside)
-
-        instructionsButton.setTitle("How to play", forState: .Normal)
-        instructionsButton.addTarget(self,
-                                     action: #selector(Menu.didTapInstructions),
-                                     forControlEvents: .TouchUpInside)
-
-        soundButton.strikeThrough = !StorageService.currentSoundPreference()
-        soundButton.setTitle("Sound", forState: .Normal)
-        soundButton.addTarget(self,
-                              action: #selector(Menu.didTapSound),
-                              forControlEvents: .TouchUpInside)
-
         addSubview(logo)
-        addSubview(newGameButton)
-        addSubview(instructionsButton)
-        addSubview(soundButton)
+
+        if state == .Onboarding {
+            addSubview(onboardingSteps)
+        } else {
+            newGameButton.hidden = true
+            newGameButton.setTitle("Start over", forState: .Normal)
+            newGameButton.addTarget(self,
+                                    action: #selector(Menu.didTapNewGame),
+                                    forControlEvents: .TouchUpInside)
+
+            instructionsButton.hidden = true
+            instructionsButton.setTitle("How to play", forState: .Normal)
+            instructionsButton.addTarget(self,
+                                         action: #selector(Menu.didTapInstructions),
+                                         forControlEvents: .TouchUpInside)
+
+            soundButton.hidden = true
+            soundButton.strikeThrough = !StorageService.currentSoundPreference()
+            soundButton.setTitle("Sound", forState: .Normal)
+            soundButton.addTarget(self,
+                                  action: #selector(Menu.didTapSound),
+                                  forControlEvents: .TouchUpInside)
+
+            addSubview(newGameButton)
+            addSubview(instructionsButton)
+            addSubview(soundButton)
+        }
 
         setNeedsUpdateConstraints()
     }
 
     override func updateConstraints() {
         if !hasLoadedConstraints {
-            var logoWidth: CGFloat = 140
-            var centerPointOffset: CGFloat = 60
-
-            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-                logoWidth = 180
-                centerPointOffset = 100
+            if state == .Onboarding {
+                loadOnboardingStateConstraints()
+            } else {
+                loadDefaultStateConstraints()
             }
-
-            for button in [newGameButton, instructionsButton, soundButton] {
-                button.autoSetDimension(.Height, toSize: Menu.buttonHeight)
-            }
-
-            instructionsButton.autoAlignAxis(.Horizontal,
-                                             toSameAxisOfView: self,
-                                             withOffset: centerPointOffset)
-            newGameButton.autoPinEdge(.Bottom, toEdge: .Top, ofView: instructionsButton)
-            soundButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: instructionsButton)
-
-            logo.autoPinEdgeToSuperviewEdge(.Top)
-            logo.autoPinEdge(.Bottom, toEdge: .Top, ofView: newGameButton)
-            logo.autoAlignAxisToSuperviewAxis(.Vertical)
-            logo.autoSetDimension(.Width, toSize: logoWidth)
-
-            [logo, newGameButton, instructionsButton, soundButton].autoAlignViewsToAxis(.Vertical)
 
             hasLoadedConstraints = true
         }
 
         super.updateConstraints()
+    }
+
+    private func loadOnboardingStateConstraints() {
+        logo.autoPinEdgeToSuperviewEdge(.Top)
+        logo.autoPinEdge(.Bottom, toEdge: .Top, ofView: onboardingSteps)
+        logo.autoAlignAxisToSuperviewAxis(.Vertical)
+        logo.autoSetDimension(.Width, toSize: Menu.logoWidth)
+
+        onboardingSteps.autoAlignAxisToSuperviewAxis(.Vertical)
+        onboardingSteps.autoConstrainAttribute(.Top,
+                                               toAttribute: .Horizontal,
+                                               ofView: self,
+                                               withOffset: -Menu.centerPointOffset)
+        onboardingSteps.autoMatchDimension(.Width, toDimension: .Width, ofView: self)
+        onboardingSteps.autoPinEdgeToSuperviewEdge(.Bottom)
+    }
+
+    private func loadDefaultStateConstraints() {
+        for button in [newGameButton, instructionsButton, soundButton] {
+            button.autoSetDimension(.Height, toSize: Menu.buttonHeight)
+        }
+
+        newGameButton.autoConstrainAttribute(.Top,
+                                             toAttribute: .Horizontal,
+                                             ofView: self,
+                                             withOffset: -Menu.centerPointOffset)
+        instructionsButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: newGameButton)
+        soundButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: instructionsButton)
+
+        logo.autoPinEdgeToSuperviewEdge(.Top)
+        logo.autoPinEdge(.Bottom, toEdge: .Top, ofView: newGameButton)
+        logo.autoAlignAxisToSuperviewAxis(.Vertical)
+        logo.autoSetDimension(.Width, toSize: Menu.logoWidth)
+
+        [logo, newGameButton, instructionsButton, soundButton].autoAlignViewsToAxis(.Vertical)
     }
 
     func didTapNewGame() {
@@ -102,6 +152,16 @@ class Menu: UIView {
     func didTapSound() {
         StorageService.toggleSoundPreference()
         soundButton.strikeThrough = !StorageService.currentSoundPreference()
+    }
+
+    func beginOnboarding() {
+        onboardingSteps.transitionToStep(0)
+    }
+
+    func showDefaultView() {
+        for button in [newGameButton, instructionsButton, soundButton] {
+            button.hidden = false
+        }
     }
 
     func hideIfNeeded() {
@@ -144,7 +204,7 @@ class Menu: UIView {
     }
 
     override func hitTest(point: CGPoint, withEvent event: UIEvent?) -> UIView? {
-        let hitCapturingViews = [newGameButton, instructionsButton, soundButton]
+        let hitCapturingViews = [newGameButton, instructionsButton, soundButton, onboardingSteps]
 
         for view in hitCapturingViews {
             if CGRectContainsPoint(view.frame, point) {

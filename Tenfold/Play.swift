@@ -25,7 +25,7 @@ class Play: UIViewController {
 
     private var game: Game
 
-    private let menu = Menu()
+    let menu: Menu
     private let gameGrid: GameGrid
     private var nextRoundGrid: NextRoundGrid?
     private let nextRoundNotification = Notification()
@@ -34,8 +34,15 @@ class Play: UIViewController {
     private var passedNextRoundThreshold = false
 
     private var viewHasLoaded = false
+    private var shouldLaunchOnboarding: Bool
+    private var isOnboarding: Bool
+    private var onboardingCompleted = false
 
-    init() {
+    init(shouldLaunchOnboarding: Bool, isOnboarding: Bool) {
+        self.shouldLaunchOnboarding = shouldLaunchOnboarding
+        self.isOnboarding = isOnboarding
+        self.menu = Menu(state: isOnboarding ? .Onboarding : .Default)
+
         let savedGame = StorageService.restoreGame()
 
         self.game = savedGame == nil ? Game() : savedGame!
@@ -86,6 +93,19 @@ class Play: UIViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if shouldLaunchOnboarding && !onboardingCompleted {
+            presentViewController(Onboarding(), animated: false, completion: nil)
+            onboardingCompleted = true
+        } else if isOnboarding {
+            menu.beginOnboarding()
+        } else {
+            menu.showDefaultView()
+        }
     }
 
     private func initNextRoundMatrix() {
