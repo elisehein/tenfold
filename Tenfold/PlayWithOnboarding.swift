@@ -84,6 +84,9 @@ class PlayWithOnboarding: Play {
         if menu.onboardingSteps.currentStep == .CrossOutIdentical &&
            game.totalNumbers() - game.numbersRemaining() <= 2 {
             hintAtPairing([9, 11])
+        } else if menu.onboardingSteps.currentStep == .CrossOutSummandsOfTen &&
+                  game.totalNumbers() - game.numbersRemaining() <= 6 {
+           hintAtPairing([25, 26])
         } else {
             menu.onboardingSteps.transitionToNextStep()
         }

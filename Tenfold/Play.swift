@@ -421,6 +421,9 @@ class Play: UIViewController {
         view.backgroundColor = Play.gameplayBGColor
         restart(withGame: onboardingGame, inGameplayPosition: true)
 
+        // The menu frame hasn't had updates because it hasn't been in view
+        positionMenu()
+
         // Not entirely sure why these pop up.. seems it's because the scroll view fires
         // some scrolling events. In any case, just hide them.
         nextRoundGrid?.hide(animated: false)
