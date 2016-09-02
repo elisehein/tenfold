@@ -42,6 +42,8 @@ class Rules: UIViewController {
         return l
     }()
 
+    private static let centerOffset: CGFloat = -20
+
     private static var data = JSON.initFromFile("rules")!
 
     override var title: String? {
@@ -269,7 +271,7 @@ extension Rules: UICollectionViewDelegateFlowLayout {
                         layout collectionViewLayout: UICollectionViewLayout,
                         referenceSizeForHeaderInSection section: Int) -> CGSize {
         var headerSize = sizeForHeaderInSection(withIndex: section)
-        headerSize.height += pageInset(forSectionAtIndex: section)
+        headerSize.height += pageInset(forSectionAtIndex: section) + Rules.centerOffset
 
         return headerSize
     }
@@ -277,6 +279,8 @@ extension Rules: UICollectionViewDelegateFlowLayout {
     func collectionView(collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         referenceSizeForFooterInSection section: Int) -> CGSize {
-        return sizeForFooterInSection(withIndex: section)
+        var footerSize = sizeForFooterInSection(withIndex: section)
+        footerSize.height -= Rules.centerOffset
+        return footerSize
     }
 }

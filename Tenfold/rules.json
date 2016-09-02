@@ -1,6 +1,6 @@
 [
   {
-    "title": "Cross out numbers in pairs to empty the grid!",
+    "title": "Cross out numbers in pairs to empty\u00a0the\u00a0grid!",
     "examples": [
       {
         "animationType": "PAIRINGS",
@@ -60,11 +60,11 @@
     ]
   },
   {
-    "title": "When there’s nothing left to cross out, pull up for the next round of numbers.",
+    "title": "Out of numbers? Pull up for the\u00a0next\u00a0round.",
     "examples": [
       {
         "animationType": "PULL_UP",
-        "text": "Any numbers still remaining in the grid will added to the game.",
+        "text": "Any numbers left over will be added to\u00a0the\u00a0game.",
         "values": [1   , null, null, null, 5   , 6   , 7   , null, null,
                    null, null, null, 2   , 1   , null, null, null, null,
                    null, null, 2   , null, null, null, null, null, null,

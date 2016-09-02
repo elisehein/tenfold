@@ -51,7 +51,7 @@ class RuleExampleGrid: Grid {
                   repeats: true)
         } else {
             positionGridForPullUp()
-            after(seconds: 4,
+            after(seconds: 3,
                   performSelector: #selector(RuleExampleGrid.pullUp),
                   repeats: true)
         }
@@ -67,7 +67,7 @@ class RuleExampleGrid: Grid {
 
     func pullUp() {
         setContentOffset(CGPoint(x: 0, y: Grid.cellSpacing), animated: true)
-        after(seconds: 2.5, performSelector: #selector(RuleExampleGrid.releasePullUp))
+        after(seconds: 2, performSelector: #selector(RuleExampleGrid.releasePullUp))
     }
 
     func releasePullUp() {
