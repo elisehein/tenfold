@@ -31,7 +31,7 @@ class RuleExampleCell: UICollectionViewCell {
     var text: String? {
         didSet {
             if let text = text {
-                label.text = text
+                label.attributedText = RuleExampleCell.constructAttributedString(withText: text)
             }
         }
     }
@@ -60,15 +60,14 @@ class RuleExampleCell: UICollectionViewCell {
         }
     }
 
-    private let label = RuleExampleCell.labelForText()
+    private let label = RuleExampleCell.labelWithAttributedText()
     private let exampleGrid = RuleExampleGrid()
 
     class func sizeOccupiedByLabel(forAvailableWidth availableWidth: CGFloat,
                                    usingText text: String) -> CGSize {
         let width = RuleExampleCell.widthFactor * availableWidth
         let availableSize = CGSize(width: width, height: CGFloat(MAXFLOAT))
-        let label = RuleExampleCell.labelForText()
-        label.text = text
+        let label = RuleExampleCell.labelWithAttributedText(text)
         var size = label.sizeThatFits(availableSize)
         size.width = min(width, availableSize.width)
 
@@ -143,18 +142,28 @@ class RuleExampleCell: UICollectionViewCell {
         return CGSize(width: availableWidth, height: height)
     }
 
-    class func labelForText () -> UILabel {
+    class func labelWithAttributedText(text: String? = nil) -> UILabel {
         let l = UILabel()
         l.numberOfLines = 0
-        l.font = UIFont.themeFontWithSize(14)
-
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            l.font = UIFont.themeFontWithSize(18)
-        }
-
-        l.textAlignment = .Center
-        l.textColor = UIColor.themeColor(.OffBlack)
+        l.attributedText = constructAttributedString(withText: text)
         return l
+
+    }
+
+    class func constructAttributedString(withText text: String?) -> NSAttributedString {
+        let isIPad = UIDevice.currentDevice().userInterfaceIdiom == .Pad
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .Center
+        paragraphStyle.lineSpacing = isIPad ? 7 : 4
+
+        let attributes = [
+            NSParagraphStyleAttributeName: paragraphStyle,
+            NSForegroundColorAttributeName: UIColor.themeColor(.OffBlack),
+            NSFontAttributeName: UIFont.themeFontWithSize(isIPad ? 18 : 14)
+        ]
+
+        return NSAttributedString(string: text != nil ? text! : "", attributes: attributes)
     }
 
     required init?(coder aDecoder: NSCoder) {
