@@ -143,6 +143,18 @@ class Menu: UIView {
         return offScreenRect
     }
 
+    override func hitTest(point: CGPoint, withEvent event: UIEvent?) -> UIView? {
+        let hitCapturingViews = [newGameButton, instructionsButton, soundButton]
+
+        for view in hitCapturingViews {
+            if CGRectContainsPoint(view.frame, point) {
+                return super.hitTest(point, withEvent: event)
+            }
+        }
+
+        return nil
+    }
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
