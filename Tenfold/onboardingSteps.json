@@ -4,7 +4,7 @@
     "Would you like to go through some basics?"
   ],
   [
-    "This is your playing field.",
+    "This is your playing grid.",
     "The aim of the game is to get rid of all numbers."
   ],
   [
@@ -12,11 +12,12 @@
     "For example..."
   ],
   [
-     "You can also remove numbers that add up 10.",
+     "Numbers can also pair if they add up 10.",
      "1 + 9..."
   ],
   [
-    "Need more numbers? Pull up for the next round."
+    "Need more numbers? Pull up for the next\u00a0round.",
+    "Any numbers left over will be added to\u00a0the\u00a0game."
   ],
   [
      "That's it!",

@@ -1,6 +1,6 @@
 [
   {
-    "title": "Cross out numbers in pairs to empty\u00a0the\u00a0grid!",
+    "title": "Remove numbers in pairs to empty\u00a0the\u00a0grid!",
     "examples": [
       {
         "animationType": "PAIRINGS",
@@ -46,11 +46,11 @@
     ]
   },
   {
-    "title": "Numbers on separate rows can be paired up if everything in between them is crossed out.",
+    "title": "Rows on the grid are continuous.",
     "examples": [
       {
         "animationType": "PAIRINGS",
-        "text": "Just think of the grid as one big continuous row!",
+        "text": "So long as two numbers don't have anything in between them along one continous row, you can pair them up.",
         "values": [null, 2   , 5   , 3   , null, null, null, null, null,
                    null, null, null, null, null, null, 7   , null, 5   ,
                    2   , null, null, null, null, null, null, null, null],
