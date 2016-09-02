@@ -22,7 +22,7 @@ class Menu: UIView {
     }()
 
     private static let logoWidth: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 180 : 140
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 180 : 120
     }()
 
     private static let centerPointOffset: CGFloat = {

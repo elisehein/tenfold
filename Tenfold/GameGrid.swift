@@ -241,24 +241,24 @@ class GameGrid: Grid {
     }
 
     internal func ensureGridPositionedForGameplay() {
-        guard automaticallySnapToGameplayPosition else { return }
-
-        // This handler needs to be called *before* the animation block,
-        // in positionGridForGameplay() otherwise it will for some reason
-        // push it to a later thread
-        //
-        // Ideally we would of course call this inside positionGridForGameplay(),
-        // but we need it to be overriden even if the grid isn't at the starting
-        // position. At the moment, the handler does not do anything we need to worry
-        // about, even if it's called multiple times
-        onWillSnapToGameplayPosition?()
-
-        guard gridAtStartingPosition else { return }
         positionGridForGameplay()
     }
 
     func positionGridForGameplay() {
         guard automaticallySnapToGameplayPosition else { return }
+
+        // This handler needs to be called *before* the animation block,
+        // in positionGridForGameplay() otherwise it will for some reason
+        // push it to a later thread
+        onWillSnapToGameplayPosition?()
+
+        // This next guard should be before we call onWillSnapToGameplayPosition(),
+        // but after returning from onboarding we have a situation where the grid
+        // is *not* at the starting position, but we need to hide the menu anyway
+        // (which is done in the handler).
+        // For the time being there are no negative side effects to calling the handler
+        // too often – it only really sets a background colour.
+        guard gridAtStartingPosition else { return }
 
         // We're not calling toggleBounce here because it overrides false
         // whenever there is a top inset – which is always true in startingPosition.
