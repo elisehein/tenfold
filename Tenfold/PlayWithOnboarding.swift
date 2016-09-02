@@ -22,33 +22,40 @@ class PlayWithOnboarding: Play {
         modalTransitionStyle = .CrossDissolve
 
         menu.onboardingSteps.onDismiss = handleDismissal
-        menu.onboardingSteps.onEndTransitionToStep =
-            handleEndTransitionToStep
+        menu.onboardingSteps.onBeginTransitionToStep = handleBeginTransitionToStep
+        menu.onboardingSteps.onEndTransitionToStep = handleEndTransitionToStep
 
         gameGrid.userInteractionEnabled = false
         gameGrid.scrollEnabled = false
     }
 
-    private func handleDismissal() {
-        dismissViewControllerAnimated(true, completion: nil)
+    func handleDismissal() {
+        dismissViewControllerAnimated(menu.onboardingSteps.currentStep == .Welcome, completion: nil)
     }
 
-    private func handleEndTransitionToStep(stepIndex: Int) {
-        switch stepIndex {
-        case 2:
+    private func handleBeginTransitionToStep(onboardingStep: OnboardingStep) {
+        switch onboardingStep {
+        case .LastTips:
+            gameGrid.userInteractionEnabled = false
+            gameGrid.scrollEnabled = false
+            onWillFinishWithGame?(game: game)
+
+            NSTimer.scheduledTimerWithTimeInterval(3, target: self, selector: #selector(PlayWithOnboarding.handleDismissal), userInfo: nil, repeats: false)
+        default:
+            return
+        }
+    }
+    private func handleEndTransitionToStep(onboardingStep: OnboardingStep) {
+        switch onboardingStep {
+        case .CrossOutIdentical:
             hintAtPairing([10, 19])
-        case 3:
+        case .CrossOutSummandsOfTen:
             hintAtPairing([8, 17])
-        case 4:
+        case .PullUP:
             gameGrid.automaticallySnapToGameplayPosition = true
             gameGrid.indecesPermittedForSelection = []
             gameGrid.userInteractionEnabled = true
             gameGrid.scrollEnabled = true
-        case 5:
-            gameGrid.userInteractionEnabled = false
-            gameGrid.scrollEnabled = false
-            onWillFinishWithGame?(game: game)
-            dismissViewControllerAnimated(false, completion: nil)
         default:
             return
         }
@@ -73,7 +80,7 @@ class PlayWithOnboarding: Play {
         flashTimer?.invalidate()
         super.handleSuccessfulPairing(index, otherIndex: otherIndex)
 
-        if menu.onboardingSteps.currentStepIndex == 2 &&
+        if menu.onboardingSteps.currentStep == .CrossOutIdentical &&
            game.totalNumbers() - game.numbersRemaining() <= 2 {
             hintAtPairing([9, 11])
         } else {

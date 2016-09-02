@@ -10,6 +10,15 @@ import Foundation
 import UIKit
 import SwiftyJSON
 
+enum OnboardingStep: Int {
+    case Welcome = 0
+    case IntroducePlayingField = 1
+    case CrossOutIdentical = 2
+    case CrossOutSummandsOfTen = 3
+    case PullUP = 4
+    case LastTips = 5
+}
+
 class OnboardingSteps: UIView {
 
     private static let steps = JSON.initFromFile("onboardingSteps")!
@@ -41,11 +50,11 @@ class OnboardingSteps: UIView {
 
     private var hasLoadedConstraints = false
 
-    var currentStepIndex = 0
+    var currentStep: OnboardingStep = .Welcome
 
     var onDismiss: (() -> Void)?
-    var onBeginTransitionToStep: ((stepIndex: Int) -> Void)?
-    var onEndTransitionToStep: ((stepIndex: Int) -> Void)?
+    var onBeginTransitionToStep: ((onboardingStep: OnboardingStep) -> Void)?
+    var onEndTransitionToStep: ((onboardingStep: OnboardingStep) -> Void)?
 
     init() {
         super.init(frame: CGRect.zero)
@@ -81,10 +90,10 @@ class OnboardingSteps: UIView {
         setNeedsUpdateConstraints()
     }
 
-    func transitionToStep(stepIndex: Int) {
-        onBeginTransitionToStep?(stepIndex: stepIndex)
+    func transitionToStep(onboardingStep: OnboardingStep) {
+        onBeginTransitionToStep?(onboardingStep: onboardingStep)
 
-        let firstStep = OnboardingSteps.steps[stepIndex][0].string!
+        let firstStep = OnboardingSteps.steps[onboardingStep.rawValue][0].string!
         topLabel.attributedText = NSAttributedString(string: firstStep,
                                                      attributes: labelBaseAttributes)
 
@@ -92,41 +101,41 @@ class OnboardingSteps: UIView {
            self.topLabel.alpha = 1
         })
 
-        if OnboardingSteps.steps[stepIndex].count > 1 {
-            let secondStep = OnboardingSteps.steps[stepIndex][1].string!
+        if OnboardingSteps.steps[onboardingStep.rawValue].count > 1 {
+            let secondStep = OnboardingSteps.steps[onboardingStep.rawValue][1].string!
             bottomLabel.attributedText = NSAttributedString(string: secondStep,
                                                             attributes: labelBaseAttributes)
             UIView.animateWithDuration(OnboardingSteps.animationDuration,
-                                       delay: bottomLabelAppearanceDelayForStep(stepIndex),
+                                       delay: bottomLabelAppearanceDelayForStep(onboardingStep),
                                        options: [],
                                        animations: {
                 self.bottomLabel.alpha = 1
             }, completion: { _ in
-                self.onEndTransitionToStep?(stepIndex: stepIndex)
+                self.onEndTransitionToStep?(onboardingStep: onboardingStep)
             })
         } else {
-            onEndTransitionToStep?(stepIndex: stepIndex)
+            onEndTransitionToStep?(onboardingStep: onboardingStep)
         }
 
-        registerStepExtras(stepIndex)
+        registerStepExtras(onboardingStep)
     }
 
     func transitionToNextStep() {
         UIView.animateWithDuration(0.3, animations: {
             self.topLabel.alpha = 0
             self.bottomLabel.alpha = 0
-            self.removeStepExtras(self.currentStepIndex)
+            self.removeStepExtras(self.currentStep)
         }, completion: { _ in
-            self.currentStepIndex += 1
-            self.transitionToStep(self.currentStepIndex)
+            self.currentStep = OnboardingStep(rawValue: self.currentStep.rawValue + 1)!
+            self.transitionToStep(self.currentStep)
         })
     }
 
-    private func bottomLabelAppearanceDelayForStep(stepIndex: Int) -> Double {
-        switch stepIndex {
-        case 1:
+    private func bottomLabelAppearanceDelayForStep(onboardingStep: OnboardingStep) -> Double {
+        switch onboardingStep {
+        case .IntroducePlayingField:
             return 0
-        case 2:
+        case .CrossOutIdentical:
             return 2
         default:
             return OnboardingSteps.animationDelay
@@ -134,11 +143,11 @@ class OnboardingSteps: UIView {
 
     }
 
-    private func registerStepExtras(stepIndex: Int) {
-        switch stepIndex {
-        case 0:
+    private func registerStepExtras(onboardingStep: OnboardingStep) {
+        switch onboardingStep {
+        case .Welcome:
             displayButtons()
-        case 1:
+        case .IntroducePlayingField:
             showDownArrow()
             // swiftlint:disable:next line_length
             NSTimer.scheduledTimerWithTimeInterval(4, target: self, selector: #selector(OnboardingSteps.transitionToNextStep), userInfo: nil, repeats: false)
@@ -148,11 +157,11 @@ class OnboardingSteps: UIView {
         }
     }
 
-    private func removeStepExtras(stepIndex: Int) {
-        switch stepIndex {
-        case 0:
+    private func removeStepExtras(onboardingStep: OnboardingStep) {
+        switch onboardingStep {
+        case .Welcome:
             removeButtons()
-        case 1:
+        case .IntroducePlayingField:
             removeDownArrow()
         default:
             return

@@ -145,7 +145,7 @@ class Menu: UIView {
     }
 
     func beginOnboarding() {
-        onboardingSteps.transitionToStep(0)
+        onboardingSteps.transitionToStep(.Welcome)
     }
 
     func showDefaultView() {
