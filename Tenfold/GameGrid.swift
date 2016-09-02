@@ -72,8 +72,23 @@ class GameGrid: Grid {
 
     // MARK: Gameplay logic
 
-    func restart(withGame newGame: Game, animated: Bool = true, completion: (() -> Void)? = nil) {
-        UIView.animateWithDuration(animated ? 0.2 : 0,
+    func restart(withGame newGame: Game,
+                 animated: Bool = true,
+                 enforceStartingPosition: Bool = true,
+                 completion: (() -> Void)? = nil) {
+        if animated {
+            hideCurrentGame({
+                self.transform = CGAffineTransformIdentity
+                self.loadNewGame(newGame, enforceStartingPosition: enforceStartingPosition)
+                self.showCurrentGame(completion)
+            })
+        } else {
+            loadNewGame(newGame, enforceStartingPosition: enforceStartingPosition)
+        }
+    }
+
+    private func hideCurrentGame(completion: (() -> Void)) {
+        UIView.animateWithDuration(0.2,
                                    delay: 0,
                                    options: .CurveEaseIn,
                                    animations: {
@@ -82,17 +97,22 @@ class GameGrid: Grid {
                                                         0,
                                                         self.initialGameHeight() * 0.3)
         }, completion: { _ in
-            self.game = newGame
-            self.reloadData()
-            self.transform = CGAffineTransformIdentity
-            self.adjustTopInset(enforceStartingPosition: true)
-
-            UIView.animateWithDuration(0.15, delay: 0.2, options: .CurveEaseIn, animations: {
-                self.alpha = 1
-            }, completion: { _ in
-                completion?()
-            })
+            completion()
         })
+    }
+
+    private func showCurrentGame(completion: (() -> Void)?) {
+        UIView.animateWithDuration(0.15, delay: 0.2, options: .CurveEaseIn, animations: {
+            self.alpha = 1
+        }, completion: { _ in
+            completion?()
+        })
+    }
+
+    private func loadNewGame(newGame: Game, enforceStartingPosition: Bool) {
+        self.game = newGame
+        self.reloadData()
+        self.adjustTopInset(enforceStartingPosition: enforceStartingPosition)
     }
 
     func loadNextRound(atIndeces indeces: Array<Int>, completion: ((Bool) -> Void)?) {

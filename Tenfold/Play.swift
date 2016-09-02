@@ -11,8 +11,8 @@ import AVFoundation
 
 class Play: UIViewController {
 
-    let defaultBGColor = UIColor.themeColor(.OffWhite)
-    var gameplayBGColor = UIColor.themeColor(.OffWhiteShaded)
+    private static let defaultBGColor = UIColor.themeColor(.OffWhite)
+    private static let gameplayBGColor = UIColor.themeColor(.OffWhiteShaded)
 
     private static let gridInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
 
@@ -64,7 +64,7 @@ class Play: UIViewController {
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.showInstructions))
         swipe.direction = .Left
 
-        view.backgroundColor = defaultBGColor
+        view.backgroundColor = Play.defaultBGColor
         view.addGestureRecognizer(swipe)
         view.addSubview(gameGrid)
         view.addSubview(menu)
@@ -181,14 +181,23 @@ class Play: UIViewController {
         }
     }
 
-    private func restart(withGame newGame: Game = Game()) {
+    private func restart(withGame newGame: Game = Game(), inGameplayPosition: Bool = false) {
         game = newGame
-        gameGrid.restart(withGame: game, completion: {
+        gameGrid.restart(withGame: game,
+                         animated: !inGameplayPosition,
+                         enforceStartingPosition: !inGameplayPosition,
+                         completion: {
             self.updateNextRoundNotificationText()
             self.updateState()
             self.nextRoundGrid?.hide(animated: false)
-            self.menu.showIfNeeded(atEndPosition: self.menuFrame(atStartingPosition: true))
-            self.view.backgroundColor = self.defaultBGColor
+
+            if !inGameplayPosition {
+                self.menu.showIfNeeded(atEndPosition: self.menuFrame(atStartingPosition: true))
+            }
+
+            self.view.backgroundColor = inGameplayPosition ?
+                                        Play.gameplayBGColor :
+                                        Play.defaultBGColor
         })
     }
 
@@ -312,12 +321,12 @@ class Play: UIViewController {
     // MARK: Scrolling interactions
 
     private func handleWillSnapToStartingPosition() {
-        view.backgroundColor = defaultBGColor
+        view.backgroundColor = Play.defaultBGColor
         menu.showIfNeeded(atEndPosition: menuFrame(atStartingPosition: true))
     }
 
     func handleWillSnapToGameplayPosition() {
-        view.backgroundColor = gameplayBGColor
+        view.backgroundColor = Play.gameplayBGColor
 
         if !isOnboarding {
             menu.hideIfNeeded()
@@ -375,13 +384,13 @@ class Play: UIViewController {
         guard !gameGrid.snappingInProgress else { return }
 
         if gameGrid.pullDownInProgress() && !gameGrid.gridAtStartingPosition {
-            view.backgroundColor = interpolatedColor(from: gameplayBGColor,
-                                                     to: defaultBGColor,
+            view.backgroundColor = interpolatedColor(from: Play.gameplayBGColor,
+                                                     to: Play.defaultBGColor,
                                                      distance: gameGrid.distancePulledDown(),
                                                      threshold: Play.showMenuPullDownThreshold)
         } else if gameGrid.pullUpFromStartingPositionInProgress() {
             // swiftlint:disable:next line_length
-            view.backgroundColor = interpolatedColor(from: defaultBGColor, to: gameplayBGColor, distance: gameGrid.pullUpDistanceFromStartingPosition(), threshold: Play.hideMenuPullUpThreshold)
+            view.backgroundColor = interpolatedColor(from: Play.defaultBGColor, to: Play.gameplayBGColor, distance: gameGrid.pullUpDistanceFromStartingPosition(), threshold: Play.hideMenuPullUpThreshold)
         }
     }
 
@@ -400,7 +409,13 @@ class Play: UIViewController {
     // MARK: Onboarding ended
 
     private func handleOnboardingWillFinishWithGame(onboardingGame: Game) {
-        restart(withGame: onboardingGame)
-        gameGrid.positionGridForGameplay()
+        view.backgroundColor = Play.gameplayBGColor
+        menu.hideIfNeeded(animated: false)
+        restart(withGame: onboardingGame, inGameplayPosition: true)
+
+        // Not entirely sure why these pop up.. seems it's because the scroll view fires
+        // some scrolling events. In any case, just hide them.
+        nextRoundGrid?.hide(animated: false)
+        nextRoundNotification.toggle(inFrame: view.bounds, showing: false)
     }
 }

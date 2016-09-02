@@ -48,7 +48,7 @@ class PlayWithOnboarding: Play {
             gameGrid.userInteractionEnabled = false
             gameGrid.scrollEnabled = false
             onWillFinishWithGame?(game: game)
-            dismissViewControllerAnimated(true, completion: nil)
+            dismissViewControllerAnimated(false, completion: nil)
         default:
             return
         }
