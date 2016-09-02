@@ -48,7 +48,7 @@
 		0CC94F711D7588AF00FAF4B2 /* RankingTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC94F701D7588AF00FAF4B2 /* RankingTable.swift */; };
 		0CC94F731D75D09E00FAF4B2 /* GameSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC94F721D75D09E00FAF4B2 /* GameSnapshot.swift */; };
 		0CD93E821D78A14900D7DF96 /* PageDownIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD93E811D78A14900D7DF96 /* PageDownIndicator.swift */; };
-		0CD93E841D79846100D7DF96 /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD93E831D79846100D7DF96 /* Onboarding.swift */; };
+		0CD93E841D79846100D7DF96 /* PlayWithOnboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD93E831D79846100D7DF96 /* PlayWithOnboarding.swift */; };
 		0CD93E861D79875500D7DF96 /* OnboardingSteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD93E851D79875500D7DF96 /* OnboardingSteps.swift */; };
 		0CD93E891D798D6400D7DF96 /* onboardingSteps.json in Resources */ = {isa = PBXBuildFile; fileRef = 0CD93E881D798D6400D7DF96 /* onboardingSteps.json */; };
 		0CE682961D6DB46300CA5787 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CE682951D6DB46300CA5787 /* String.swift */; };
@@ -104,7 +104,7 @@
 		0CC94F701D7588AF00FAF4B2 /* RankingTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RankingTable.swift; sourceTree = "<group>"; };
 		0CC94F721D75D09E00FAF4B2 /* GameSnapshot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameSnapshot.swift; sourceTree = "<group>"; };
 		0CD93E811D78A14900D7DF96 /* PageDownIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageDownIndicator.swift; sourceTree = "<group>"; };
-		0CD93E831D79846100D7DF96 /* Onboarding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Onboarding.swift; sourceTree = "<group>"; };
+		0CD93E831D79846100D7DF96 /* PlayWithOnboarding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayWithOnboarding.swift; sourceTree = "<group>"; };
 		0CD93E851D79875500D7DF96 /* OnboardingSteps.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingSteps.swift; sourceTree = "<group>"; };
 		0CD93E881D798D6400D7DF96 /* onboardingSteps.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = onboardingSteps.json; sourceTree = "<group>"; };
 		0CE682951D6DB46300CA5787 /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
@@ -237,8 +237,8 @@
 			children = (
 				0C70C4041D71B95500A9E8B8 /* ConfirmationModal.swift */,
 				0CADBDF51D6D92850090C13F /* GameFinished.swift */,
-				0CD93E831D79846100D7DF96 /* Onboarding.swift */,
 				0C738ADC1C69D811007C9548 /* Play.swift */,
+				0CD93E831D79846100D7DF96 /* PlayWithOnboarding.swift */,
 				0C68BE7D1D3A4B3A00A6ACDC /* Rules.swift */,
 			);
 			name = Screens;
@@ -395,7 +395,7 @@
 				0CADBDF61D6D92850090C13F /* GameFinished.swift in Sources */,
 				CBB3C9C61D72E00B00551E03 /* UIImage.swift in Sources */,
 				0C69CE4E1C6DCDE9002E0D29 /* Array.swift in Sources */,
-				0CD93E841D79846100D7DF96 /* Onboarding.swift in Sources */,
+				0CD93E841D79846100D7DF96 /* PlayWithOnboarding.swift in Sources */,
 				0CF5C54B1D6F76C5006D46B8 /* Button.swift in Sources */,
 				0C68BE7E1D3A4B3A00A6ACDC /* Rules.swift in Sources */,
 				0CB938911D20389C005B81F4 /* NextRoundGrid.swift in Sources */,

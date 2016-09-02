@@ -33,20 +33,10 @@ class Menu: UIView {
     private let newGameButton = Button()
     private let instructionsButton = Button()
     private let soundButton = Button()
-    private let onboardingSteps = OnboardingSteps()
+    let onboardingSteps = OnboardingSteps()
 
     var onTapNewGame: (() -> Void)?
     var onTapInstructions: (() -> Void)?
-
-    var onDismissOnboarding: (() -> Void)? {
-        didSet {
-            if let handler = onDismissOnboarding {
-                if state == .Onboarding {
-                    onboardingSteps.onDismiss = handler
-                }
-            }
-        }
-    }
 
     var animationInProgress = false
 
@@ -164,12 +154,12 @@ class Menu: UIView {
         }
     }
 
-    func hideIfNeeded() {
+    func hideIfNeeded(animated animated: Bool = true) {
         guard !hidden else { return }
         animationInProgress = true
 
         let lockedFrame = frame
-        UIView.animateWithDuration(0.25,
+        UIView.animateWithDuration(animated ? 0.25 : 0,
                                    delay: 0,
                                    options: .CurveEaseIn,
                                    animations: {
@@ -204,10 +194,14 @@ class Menu: UIView {
     }
 
     override func hitTest(point: CGPoint, withEvent event: UIEvent?) -> UIView? {
-        let hitCapturingViews = [newGameButton, instructionsButton, soundButton, onboardingSteps]
+        let hitCapturingViews = [newGameButton,
+                                 instructionsButton,
+                                 soundButton,
+                                 onboardingSteps.buttonsContainer]
 
         for view in hitCapturingViews {
-            if CGRectContainsPoint(view.frame, point) {
+            let absoluteFrame = convertRect(view.frame, fromView: view.superview)
+            if CGRectContainsPoint(absoluteFrame, point) {
                 return super.hitTest(point, withEvent: event)
             }
         }

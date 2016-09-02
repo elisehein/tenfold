@@ -14,10 +14,14 @@ class OnboardingSteps: UIView {
 
     private static let steps = JSON.initFromFile("onboardingSteps")!
 
+    private static let animationDelay: Double = 1
+    private static let animationDuration: Double = 0.8
+
     private let topLabel = UILabel()
     private let bottomLabel = UILabel()
-    private let buttonsContainer = UIView()
+    private let downArrow = UIImageView(image: UIImage(named: "chevron-down"))
 
+    let buttonsContainer = UIView()
     private let okButton = Button()
     private let dismissButton = Button()
 
@@ -37,7 +41,11 @@ class OnboardingSteps: UIView {
 
     private var hasLoadedConstraints = false
 
+    var currentStepIndex = 0
+
     var onDismiss: (() -> Void)?
+    var onBeginTransitionToStep: ((stepIndex: Int) -> Void)?
+    var onEndTransitionToStep: ((stepIndex: Int) -> Void)?
 
     init() {
         super.init(frame: CGRect.zero)
@@ -47,11 +55,14 @@ class OnboardingSteps: UIView {
         topLabel.alpha = 0
         bottomLabel.alpha = 0
 
+        addSubview(topLabel)
+        addSubview(bottomLabel)
+
         buttonsContainer.hidden = true
 
         okButton.setTitle("Yes", forState: .Normal)
         okButton.addTarget(self,
-                           action: #selector(OnboardingSteps.didAgreeToOnboarding),
+                           action: #selector(OnboardingSteps.transitionToNextStep),
                            forControlEvents: .TouchUpInside)
 
         dismissButton.setTitle("No", forState: .Normal)
@@ -59,44 +70,90 @@ class OnboardingSteps: UIView {
                            action: #selector(OnboardingSteps.didDismissOnboarding),
                            forControlEvents: .TouchUpInside)
 
-        addSubview(topLabel)
-        addSubview(bottomLabel)
-
         addSubview(buttonsContainer)
         buttonsContainer.addSubview(okButton)
         buttonsContainer.addSubview(dismissButton)
+
+        downArrow.contentMode = .Center
+        downArrow.hidden = true
+        addSubview(downArrow)
 
         setNeedsUpdateConstraints()
     }
 
     func transitionToStep(stepIndex: Int) {
+        onBeginTransitionToStep?(stepIndex: stepIndex)
+
         let firstStep = OnboardingSteps.steps[stepIndex][0].string!
         topLabel.attributedText = NSAttributedString(string: firstStep,
                                                      attributes: labelBaseAttributes)
 
-        UIView.animateWithDuration(0.8, animations: {
-            self.topLabel.alpha = 1
+        UIView.animateWithDuration(OnboardingSteps.animationDuration, animations: {
+           self.topLabel.alpha = 1
         })
 
         if OnboardingSteps.steps[stepIndex].count > 1 {
             let secondStep = OnboardingSteps.steps[stepIndex][1].string!
             bottomLabel.attributedText = NSAttributedString(string: secondStep,
                                                             attributes: labelBaseAttributes)
-            UIView.animateWithDuration(0.8,
-                                       delay: 0.8,
+            UIView.animateWithDuration(OnboardingSteps.animationDuration,
+                                       delay: bottomLabelAppearanceDelayForStep(stepIndex),
                                        options: [],
                                        animations: {
                 self.bottomLabel.alpha = 1
-            }, completion: nil)
-
-            handleStepExtras(stepIndex)
+            }, completion: { _ in
+                self.onEndTransitionToStep?(stepIndex: stepIndex)
+            })
+        } else {
+            onEndTransitionToStep?(stepIndex: stepIndex)
         }
+
+        registerStepExtras(stepIndex)
     }
 
-    private func handleStepExtras(stepIndex: Int) {
+    func transitionToNextStep() {
+        UIView.animateWithDuration(0.3, animations: {
+            self.topLabel.alpha = 0
+            self.bottomLabel.alpha = 0
+            self.removeStepExtras(self.currentStepIndex)
+        }, completion: { _ in
+            self.currentStepIndex += 1
+            self.transitionToStep(self.currentStepIndex)
+        })
+    }
+
+    private func bottomLabelAppearanceDelayForStep(stepIndex: Int) -> Double {
+        switch stepIndex {
+        case 1:
+            return 0
+        case 2:
+            return 2
+        default:
+            return OnboardingSteps.animationDelay
+        }
+
+    }
+
+    private func registerStepExtras(stepIndex: Int) {
         switch stepIndex {
         case 0:
             displayButtons()
+        case 1:
+            showDownArrow()
+            // swiftlint:disable:next line_length
+            NSTimer.scheduledTimerWithTimeInterval(4, target: self, selector: #selector(OnboardingSteps.transitionToNextStep), userInfo: nil, repeats: false)
+
+        default:
+            return
+        }
+    }
+
+    private func removeStepExtras(stepIndex: Int) {
+        switch stepIndex {
+        case 0:
+            removeButtons()
+        case 1:
+            removeDownArrow()
         default:
             return
         }
@@ -106,16 +163,53 @@ class OnboardingSteps: UIView {
         buttonsContainer.alpha = 0
         buttonsContainer.hidden = false
 
-        UIView.animateWithDuration(0.8,
-                                   delay: 1.6,
+        UIView.animateWithDuration(OnboardingSteps.animationDuration,
+                                   delay: 2 * OnboardingSteps.animationDelay,
                                    options: [],
                                    animations: {
             self.buttonsContainer.alpha = 1
         }, completion: nil)
     }
 
-    func didAgreeToOnboarding() {
+    private func showDownArrow() {
+        downArrow.hidden = false
+        downArrow.alpha = 0
 
+        var arrowFrame = CGRect(x: 0,
+                                y: bounds.size.height - 100,
+                                width: bounds.size.width,
+                                height: 30)
+        downArrow.frame = arrowFrame
+
+        UIView.animateWithDuration(OnboardingSteps.animationDuration, animations: {
+            self.downArrow.alpha = 1
+        })
+        UIView.animateWithDuration(1,
+                                   delay: 0,
+                                   options: [.CurveEaseInOut,
+                                             .Autoreverse,
+                                             .Repeat,
+                                             .AllowUserInteraction],
+                                   animations: {
+            arrowFrame.origin.y += 20
+            self.downArrow.frame = arrowFrame
+        }, completion: nil)
+    }
+
+    private func removeButtons() {
+        UIView.animateWithDuration(0.3, animations: {
+            self.buttonsContainer.alpha = 0
+        }, completion: { _ in
+            self.buttonsContainer.removeFromSuperview()
+        })
+    }
+
+    private func removeDownArrow() {
+        UIView.animateWithDuration(0.3, animations: {
+            self.downArrow.alpha = 0
+        }, completion: { _ in
+            self.downArrow.removeFromSuperview()
+        })
     }
 
     func didDismissOnboarding() {
@@ -125,11 +219,16 @@ class OnboardingSteps: UIView {
     override func updateConstraints() {
         if !hasLoadedConstraints {
 
-            topLabel.autoPinEdgeToSuperviewEdge(.Top)
-            topLabel.autoAlignAxisToSuperviewAxis(.Vertical)
+            topLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: 30)
+            bottomLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: topLabel, withOffset: 20)
 
-            bottomLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: topLabel, withOffset: 10)
-            bottomLabel.autoAlignAxisToSuperviewAxis(.Vertical)
+            for label in [topLabel, bottomLabel] {
+                label.autoAlignAxisToSuperviewAxis(.Vertical)
+                label.autoMatchDimension(.Width,
+                                         toDimension: .Width,
+                                         ofView: self,
+                                         withMultiplier: 0.8)
+            }
 
             buttonsContainer.autoPinEdge(.Top, toEdge: .Bottom, ofView: bottomLabel, withOffset: 40)
             buttonsContainer.autoAlignAxisToSuperviewAxis(.Vertical)

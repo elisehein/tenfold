@@ -11,8 +11,8 @@ import AVFoundation
 
 class Play: UIViewController {
 
-    private static let defaultBGColor = UIColor.themeColor(.OffWhite)
-    private static let gameplayBGColor = UIColor.themeColor(.OffWhiteShaded)
+    let defaultBGColor = UIColor.themeColor(.OffWhite)
+    var gameplayBGColor = UIColor.themeColor(.OffWhiteShaded)
 
     private static let gridInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
 
@@ -23,10 +23,10 @@ class Play: UIViewController {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 160 : 120
     }()
 
-    private var game: Game
+    var game: Game
 
     let menu: Menu
-    private let gameGrid: GameGrid
+    let gameGrid: GameGrid
     private var nextRoundGrid: NextRoundGrid?
     private let nextRoundNotification = Notification()
     private let gamePlayMessageNotification = Notification()
@@ -36,17 +36,18 @@ class Play: UIViewController {
     private var viewHasLoaded = false
     private var shouldLaunchOnboarding: Bool
     private var isOnboarding: Bool
-    private var onboardingCompleted = false
 
     init(shouldLaunchOnboarding: Bool, isOnboarding: Bool) {
-        self.shouldLaunchOnboarding = shouldLaunchOnboarding
-        self.isOnboarding = isOnboarding
-        self.menu = Menu(state: isOnboarding ? .Onboarding : .Default)
-
         let savedGame = StorageService.restoreGame()
 
-        self.game = savedGame == nil ? Game() : savedGame!
+        // If we do *somehow* have a saved game, don't mess with it and just show them
+        // the regular Play screen
+        self.shouldLaunchOnboarding = shouldLaunchOnboarding// && savedGame == nil
+        self.isOnboarding = isOnboarding// && savedGame == nil
+
+        self.game = Game()//savedGame == nil ? Game() : savedGame!
         self.gameGrid = GameGrid(game: game)
+        self.menu = Menu(state: isOnboarding ? .Onboarding : .Default)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -55,6 +56,7 @@ class Play: UIViewController {
         gameGrid.onWillSnapToStartingPosition = handleWillSnapToStartingPosition
         gameGrid.onWillSnapToGameplayPosition = handleWillSnapToGameplayPosition
         gameGrid.onPairingAttempt = handlePairingAttempt
+        gameGrid.automaticallySnapToGameplayPosition = !isOnboarding
 
         menu.onTapNewGame = confirmNewGame
         menu.onTapInstructions = showInstructions
@@ -62,7 +64,7 @@ class Play: UIViewController {
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.showInstructions))
         swipe.direction = .Left
 
-        view.backgroundColor = Play.defaultBGColor
+        view.backgroundColor = defaultBGColor
         view.addGestureRecognizer(swipe)
         view.addSubview(gameGrid)
         view.addSubview(menu)
@@ -93,18 +95,22 @@ class Play: UIViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
+
+        if !shouldLaunchOnboarding && !isOnboarding {
+            menu.showDefaultView()
+        }
     }
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
 
-        if shouldLaunchOnboarding && !onboardingCompleted {
-            presentViewController(Onboarding(), animated: false, completion: nil)
-            onboardingCompleted = true
+        if shouldLaunchOnboarding {
+            let onboarding = PlayWithOnboarding()
+            onboarding.onWillFinishWithGame = handleOnboardingWillFinishWithGame
+            presentViewController(onboarding, animated: false, completion: nil)
+            shouldLaunchOnboarding = false
         } else if isOnboarding {
             menu.beginOnboarding()
-        } else {
-            menu.showDefaultView()
         }
     }
 
@@ -165,24 +171,24 @@ class Play: UIViewController {
             let modal = ConfirmationModal(game: game)
             modal.onTapYes = {
                 StorageService.saveGameSnapshot(self.game)
-                self.restartGame()
+                self.restart()
             }
 
             presentViewController(modal, animated: true, completion: nil)
         } else {
             StorageService.saveGameSnapshot(game)
-            restartGame()
+            restart()
         }
     }
 
-    private func restartGame() {
-        game = Game()
+    private func restart(withGame newGame: Game = Game()) {
+        game = newGame
         gameGrid.restart(withGame: game, completion: {
             self.updateNextRoundNotificationText()
             self.updateState()
             self.nextRoundGrid?.hide(animated: false)
             self.menu.showIfNeeded(atEndPosition: self.menuFrame(atStartingPosition: true))
-            self.view.backgroundColor = Play.defaultBGColor
+            self.view.backgroundColor = self.defaultBGColor
         })
     }
 
@@ -196,15 +202,19 @@ class Play: UIViewController {
         let successfulPairing = Pairing.validate(index, otherIndex, inGame: game)
 
         if successfulPairing {
-            game.crossOutPair(index, otherIndex: otherIndex)
-            gameGrid.crossOutPair(index, otherIndex: otherIndex)
-            updateNextRoundNotificationText()
-            updateState()
-            removeSurplusRows(containingIndeces: index, otherIndex)
-            checkForNewlyUnrepresentedValues()
+            handleSuccessfulPairing(index, otherIndex: otherIndex)
         } else {
             gameGrid.dismissSelection()
         }
+    }
+
+    func handleSuccessfulPairing(index: Int, otherIndex: Int) {
+        game.crossOutPair(index, otherIndex: otherIndex)
+        gameGrid.crossOutPair(index, otherIndex: otherIndex)
+        updateNextRoundNotificationText()
+        updateState()
+        removeSurplusRows(containingIndeces: index, otherIndex)
+        checkForNewlyUnrepresentedValues()
     }
 
     // Instead of calling reloadData on the entire matrix, dynamically add the next round
@@ -264,7 +274,7 @@ class Play: UIViewController {
                 self.presentViewController(GameFinished(game: self.game),
                                            animated: true,
                                            completion: { _ in
-                    self.restartGame()
+                    self.restart()
                 })
             } else {
                 self.updateState()
@@ -302,23 +312,29 @@ class Play: UIViewController {
     // MARK: Scrolling interactions
 
     private func handleWillSnapToStartingPosition() {
-        view.backgroundColor = Play.defaultBGColor
+        view.backgroundColor = defaultBGColor
         menu.showIfNeeded(atEndPosition: menuFrame(atStartingPosition: true))
     }
 
-    private func handleWillSnapToGameplayPosition() {
-        view.backgroundColor = Play.gameplayBGColor
-        menu.hideIfNeeded()
+    func handleWillSnapToGameplayPosition() {
+        view.backgroundColor = gameplayBGColor
+
+        if !isOnboarding {
+            menu.hideIfNeeded()
+        }
     }
 
-    private func handlePullUpThresholdExceeded() {
+    func handlePullUpThresholdExceeded() {
         nextRoundGrid?.hide(animated: false)
         nextRoundNotification.dismiss(inFrame: view.bounds,
                                       completion: {
             self.updateNextRoundNotificationText()
         })
         loadNextRound()
-        menu.hideIfNeeded()
+
+        if !isOnboarding {
+            menu.hideIfNeeded()
+        }
     }
 
     private func handleScroll() {
@@ -359,13 +375,13 @@ class Play: UIViewController {
         guard !gameGrid.snappingInProgress else { return }
 
         if gameGrid.pullDownInProgress() && !gameGrid.gridAtStartingPosition {
-            view.backgroundColor = interpolatedColor(from: Play.gameplayBGColor,
-                                                     to: Play.defaultBGColor,
+            view.backgroundColor = interpolatedColor(from: gameplayBGColor,
+                                                     to: defaultBGColor,
                                                      distance: gameGrid.distancePulledDown(),
                                                      threshold: Play.showMenuPullDownThreshold)
         } else if gameGrid.pullUpFromStartingPositionInProgress() {
             // swiftlint:disable:next line_length
-            view.backgroundColor = interpolatedColor(from: Play.defaultBGColor, to: Play.gameplayBGColor, distance: gameGrid.pullUpDistanceFromStartingPosition(), threshold: Play.hideMenuPullUpThreshold)
+            view.backgroundColor = interpolatedColor(from: defaultBGColor, to: gameplayBGColor, distance: gameGrid.pullUpDistanceFromStartingPosition(), threshold: Play.hideMenuPullUpThreshold)
         }
     }
 
@@ -379,5 +395,12 @@ class Play: UIViewController {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Onboarding ended
+
+    private func handleOnboardingWillFinishWithGame(onboardingGame: Game) {
+        restart(withGame: onboardingGame)
+        gameGrid.positionGridForGameplay()
     }
 }

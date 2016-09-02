@@ -17,6 +17,7 @@ class GameGrid: Grid {
 
     var gridAtStartingPosition = true
     var snappingInProgress = false
+    var automaticallySnapToGameplayPosition = true
 
     internal var bouncingInProgress = false
     internal var currentScrollCycleHandled = false
@@ -42,6 +43,8 @@ class GameGrid: Grid {
     // say when pairing two items so far from each other that they cannot be seen on screen
     // at the same time), it's easier to keep track of selection ourselves, rather than natively
     internal var selectedIndexPaths: Array<NSIndexPath> = []
+
+    var indecesPermittedForSelection: Array<Int>? = nil
 
     init(game: Game) {
         self.game = game
@@ -69,8 +72,8 @@ class GameGrid: Grid {
 
     // MARK: Gameplay logic
 
-    func restart(withGame newGame: Game, completion: (() -> Void)?) {
-        UIView.animateWithDuration(0.2,
+    func restart(withGame newGame: Game, animated: Bool = true, completion: (() -> Void)? = nil) {
+        UIView.animateWithDuration(animated ? 0.2 : 0,
                                    delay: 0,
                                    options: .CurveEaseIn,
                                    animations: {
@@ -165,6 +168,15 @@ class GameGrid: Grid {
         }
     }
 
+    func flashNumbers(atIndeces indeces: Array<Int>) {
+        for index in indeces {
+            let indexPath = NSIndexPath(forItem: index, inSection: 0)
+            if let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell {
+                cell.flash()
+            }
+        }
+    }
+
     // MARK: Top insets and visible space considering scroll state
 
     // Empty space visible should be capped to depend on the initial game height (3 rows);
@@ -213,7 +225,9 @@ class GameGrid: Grid {
         positionGridForGameplay()
     }
 
-    internal func positionGridForGameplay() {
+    func positionGridForGameplay() {
+        guard automaticallySnapToGameplayPosition else { return }
+
         // This handler needs to be called *before* the animation block,
         // otherwise it will for some reason push it to a later thread
         onWillSnapToGameplayPosition?()

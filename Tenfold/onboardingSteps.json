@@ -2,5 +2,23 @@
   [
     "Welcome to Tenfold. 👋🏼",
     "Would you like to go through some basics?"
+  ],
+  [
+    "This is your playing field.",
+    "The aim of the game is to empty it of all numbers."
+  ],
+  [
+    "You can remove pairs of identical numbers that are next to each other.",
+    "For example..."
+  ],
+  [
+     "You can also remove numbers that make up 10."
+  ],
+  [
+    "Need more numbers? Pull up for the next round."
+  ],
+  [
+     "Keep going!",
+     "Swipe right any time for instructions."
   ]
 ]

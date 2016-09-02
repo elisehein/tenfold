@@ -37,6 +37,8 @@ extension UIColor {
         switch themeColor {
         case .SecondaryAccent:
             return UIColor(hex: "#2F4720") // Kombu green
+        case .OffWhiteShaded:
+            return UIColor(hex: "#E8DCBA")
         default:
             return UIColor.themeColor(themeColor)
         }
