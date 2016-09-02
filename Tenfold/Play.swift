@@ -37,15 +37,15 @@ class Play: UIViewController {
     private var shouldLaunchOnboarding: Bool
     private var isOnboarding: Bool
 
-    init(shouldLaunchOnboarding: Bool, isOnboarding: Bool) {
+    init(shouldLaunchOnboarding: Bool, isOnboarding: Bool = false) {
         let savedGame = StorageService.restoreGame()
 
         // If we do *somehow* have a saved game, don't mess with it and just show them
         // the regular Play screen
-        self.shouldLaunchOnboarding = shouldLaunchOnboarding// && savedGame == nil
-        self.isOnboarding = isOnboarding// && savedGame == nil
+        self.shouldLaunchOnboarding = shouldLaunchOnboarding && savedGame == nil
+        self.isOnboarding = isOnboarding && savedGame == nil
 
-        self.game = Game()//savedGame == nil ? Game() : savedGame!
+        self.game = savedGame == nil ? Game() : savedGame!
         self.gameGrid = GameGrid(game: game)
         self.menu = Menu(state: isOnboarding ? .Onboarding : .Default)
 

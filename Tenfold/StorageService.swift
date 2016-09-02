@@ -13,11 +13,23 @@ class StorageService {
     private static let gameStorageKey = "tenfoldGameStorageKey"
     private static let orderedGameSnapshotsStorageKey = "orderedGameSnapshotsStorageKey"
     private static let soundPrefStorageKey = "tenfoldSoundPrefStorageKey"
+    private static let firstLaunchFlagStorageKey = "tenfoldFirstLaunchFlagStorageKey"
 
     class func registerDefaults() {
         NSUserDefaults.standardUserDefaults().registerDefaults([
-            soundPrefStorageKey: true
+            soundPrefStorageKey: true,
+            firstLaunchFlagStorageKey: true
         ])
+    }
+
+    class func restoreFirstLaunchFlag() -> Bool {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        return defaults.boolForKey(StorageService.firstLaunchFlagStorageKey)
+    }
+
+    class func saveFirstLaunchFlag(firstLaunch: Bool) {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        defaults.setBool(firstLaunch, forKey:StorageService.firstLaunchFlagStorageKey)
     }
 
     class func saveGame(game: Game) {
