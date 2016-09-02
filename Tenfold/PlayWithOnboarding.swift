@@ -30,7 +30,7 @@ class PlayWithOnboarding: Play {
     }
 
     func handleDismissal() {
-        dismissViewControllerAnimated(menu.onboardingSteps.currentStep == .Welcome, completion: nil)
+        dismissViewControllerAnimated(true, completion: nil)
     }
 
     private func handleBeginTransitionToStep(onboardingStep: OnboardingStep) {
@@ -40,7 +40,8 @@ class PlayWithOnboarding: Play {
             gameGrid.scrollEnabled = false
             onWillFinishWithGame?(game: game)
 
-            NSTimer.scheduledTimerWithTimeInterval(3, target: self, selector: #selector(PlayWithOnboarding.handleDismissal), userInfo: nil, repeats: false)
+            // swiftlint:disable:next line_length
+            NSTimer.scheduledTimerWithTimeInterval(4.5, target: self, selector: #selector(PlayWithOnboarding.handleDismissal), userInfo: nil, repeats: false)
         default:
             return
         }

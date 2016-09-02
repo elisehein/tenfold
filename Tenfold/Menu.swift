@@ -26,7 +26,7 @@ class Menu: UIView {
     }()
 
     private static let centerPointOffset: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 100 : 20
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 100 : 0
     }()
 
     private let logo = UIImageView()
@@ -106,7 +106,7 @@ class Menu: UIView {
         onboardingSteps.autoConstrainAttribute(.Top,
                                                toAttribute: .Horizontal,
                                                ofView: self,
-                                               withOffset: -Menu.centerPointOffset)
+                                               withOffset: Menu.centerPointOffset)
         onboardingSteps.autoMatchDimension(.Width, toDimension: .Width, ofView: self)
         onboardingSteps.autoPinEdgeToSuperviewEdge(.Bottom)
     }
@@ -119,7 +119,7 @@ class Menu: UIView {
         newGameButton.autoConstrainAttribute(.Top,
                                              toAttribute: .Horizontal,
                                              ofView: self,
-                                             withOffset: -Menu.centerPointOffset)
+                                             withOffset: Menu.centerPointOffset)
         instructionsButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: newGameButton)
         soundButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: instructionsButton)
 

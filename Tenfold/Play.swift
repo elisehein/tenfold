@@ -34,6 +34,7 @@ class Play: UIViewController {
     private var passedNextRoundThreshold = false
 
     private var viewHasLoaded = false
+    private var viewHasAppeared = false
     private var shouldLaunchOnboarding: Bool
     private var isOnboarding: Bool
 
@@ -111,6 +112,9 @@ class Play: UIViewController {
             shouldLaunchOnboarding = false
         } else if isOnboarding {
             menu.beginOnboarding()
+            viewHasAppeared = true
+        } else {
+            viewHasAppeared = true
         }
     }
 
@@ -191,9 +195,8 @@ class Play: UIViewController {
             self.updateState()
             self.nextRoundGrid?.hide(animated: false)
 
-            if !inGameplayPosition {
-                self.menu.showIfNeeded(atEndPosition: self.menuFrame(atStartingPosition: true))
-            }
+            let menuEndPosition = self.menuFrame(atStartingPosition: !inGameplayPosition)
+            self.menu.showIfNeeded(atEndPosition: menuEndPosition)
 
             self.view.backgroundColor = inGameplayPosition ?
                                         Play.gameplayBGColor :
@@ -266,10 +269,10 @@ class Play: UIViewController {
         let surplusIndeces = surplusIndecesOnRows(containingIndeces: [index, otherIndex])
 
         if surplusIndeces.count > 0 {
-            SoundService.sharedService.playIfAllowed(.CrossOutRow)
+            playSound(.CrossOutRow)
             removeNumbers(atIndeces: surplusIndeces)
         } else {
-            SoundService.sharedService.playIfAllowed(.CrossOut)
+            playSound(.CrossOut)
         }
     }
 
@@ -318,6 +321,12 @@ class Play: UIViewController {
         nextRoundNotification.text = "ROUND \(game.currentRound + 1)   |   + \(game.numbersRemaining())"
     }
 
+    private func playSound(sound: Sound) {
+        if !isOnboarding {
+            SoundService.sharedService.playIfAllowed(sound)
+        }
+    }
+
     // MARK: Scrolling interactions
 
     private func handleWillSnapToStartingPosition() {
@@ -347,7 +356,7 @@ class Play: UIViewController {
     }
 
     private func handleScroll() {
-        guard viewHasLoaded else { return }
+        guard viewHasLoaded && viewHasAppeared else { return }
 
         interpolateBackgroundColour()
 
@@ -359,7 +368,7 @@ class Play: UIViewController {
 
             if proportionVisible == 1 {
                 if !passedNextRoundThreshold {
-                    SoundService.sharedService.playIfAllowed(.NextRound)
+                    playSound(.NextRound)
                     passedNextRoundThreshold = true
                     gamePlayMessageNotification.toggle(inFrame: view.bounds, showing: false)
                     nextRoundNotification.toggle(inFrame: view.bounds,
@@ -410,7 +419,6 @@ class Play: UIViewController {
 
     private func handleOnboardingWillFinishWithGame(onboardingGame: Game) {
         view.backgroundColor = Play.gameplayBGColor
-        menu.hideIfNeeded(animated: false)
         restart(withGame: onboardingGame, inGameplayPosition: true)
 
         // Not entirely sure why these pop up.. seems it's because the scroll view fires

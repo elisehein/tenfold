@@ -229,7 +229,7 @@ class OnboardingSteps: UIView {
         if !hasLoadedConstraints {
 
             topLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: 30)
-            bottomLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: topLabel, withOffset: 20)
+            bottomLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: topLabel, withOffset: 15)
 
             for label in [topLabel, bottomLabel] {
                 label.autoAlignAxisToSuperviewAxis(.Vertical)
@@ -239,7 +239,7 @@ class OnboardingSteps: UIView {
                                          withMultiplier: 0.8)
             }
 
-            buttonsContainer.autoPinEdge(.Top, toEdge: .Bottom, ofView: bottomLabel, withOffset: 40)
+            buttonsContainer.autoPinEdge(.Top, toEdge: .Bottom, ofView: bottomLabel, withOffset: 30)
             buttonsContainer.autoAlignAxisToSuperviewAxis(.Vertical)
             buttonsContainer.autoSetDimension(.Height, toSize: Menu.buttonHeight)
             buttonsContainer.autoMatchDimension(.Width,
