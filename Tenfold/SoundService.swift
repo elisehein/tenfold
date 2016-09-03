@@ -16,7 +16,7 @@ enum Sound {
 }
 
 class SoundService {
-    static let sharedService = SoundService.init()
+    static var singleton: SoundService? = nil
 
     var players: [Sound: AVAudioPlayer?] = [:]
 
@@ -24,6 +24,10 @@ class SoundService {
         players[.CrossOut] = SoundService.player(.CrossOut)
         players[.CrossOutRow] = SoundService.player(.CrossOutRow)
         players[.NextRound] = SoundService.player(.NextRound)
+    }
+
+    class func initSingleton() {
+        singleton = SoundService()
     }
 
     class func player(sound: Sound) -> AVAudioPlayer? {

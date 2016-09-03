@@ -304,7 +304,7 @@ class Play: UIViewController {
 
     private func playSound(sound: Sound) {
         if !isOnboarding {
-            SoundService.sharedService.playIfAllowed(sound)
+            SoundService.singleton!.playIfAllowed(sound)
         }
     }
 
