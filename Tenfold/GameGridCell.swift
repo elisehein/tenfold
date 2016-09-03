@@ -94,13 +94,13 @@ class GameGridCell: UICollectionViewCell {
 
         UIView.animateWithDuration(0.3,
                                    delay: 0.3,
-                                   options: .CurveEaseOut,
+                                   options: [.CurveEaseOut, .AllowUserInteraction],
                                    animations: {
-            self.contentView.backgroundColor = UIColor.themeColorDarker(.OffWhiteShaded)
+            self.contentView.backgroundColor = UIColor.themeColor(.Accent)
         }, completion: { _ in
             UIView.animateWithDuration(0.3,
                                        delay: 0,
-                                       options: .CurveEaseIn,
+                                       options: [.CurveEaseIn, .AllowUserInteraction],
                                        animations: {
                 guard !self.selectedForPairing && !self.crossedOut else { return }
                 self.contentView.backgroundColor = self.defaultBackgroundColor
