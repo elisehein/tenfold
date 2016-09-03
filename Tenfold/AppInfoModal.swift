@@ -115,7 +115,10 @@ class AppInfoModal: ModalOverlay {
     }
 
     override func updateViewConstraints() {
-        guard allowLoadingConstraints else { return }
+        guard allowLoadingConstraints else {
+            super.updateViewConstraints()
+            return
+        }
 
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
             modal.autoSetDimension(.Width, toSize: 460)
