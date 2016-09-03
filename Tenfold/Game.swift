@@ -183,6 +183,20 @@ class Game: NSObject, NSCoding {
         return true
     }
 
+    func surplusIndecesOnRows(containingIndeces indeces: Array<Int>) -> Array<Int> {
+        var surplusIndeces: Array<Int> = []
+
+        for index in indeces {
+            let rowIndeces = indecesOnRow(containingIndex: index)
+            if allCrossedOut(rowIndeces) &&
+               !Set(rowIndeces).isSubsetOf(Set(surplusIndeces)) {
+                surplusIndeces += rowIndeces
+            }
+        }
+
+        return surplusIndeces
+    }
+
     class func removeSurplusRows(from givenNumbers: Array<Number>) -> Array<Number> {
         var filtered: Array<Number> = []
 

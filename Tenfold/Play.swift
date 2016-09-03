@@ -251,22 +251,8 @@ class Play: UIViewController {
         return game.lastNumberColumn() + 1
     }
 
-    private func surplusIndecesOnRows(containingIndeces indeces: Array<Int>) -> Array<Int> {
-        var surplusIndeces: Array<Int> = []
-
-        for index in indeces {
-            let rowIndeces = game.indecesOnRow(containingIndex: index)
-            if game.allCrossedOut(rowIndeces) &&
-               !Set(rowIndeces).isSubsetOf(Set(surplusIndeces)) {
-                surplusIndeces += rowIndeces
-            }
-        }
-
-        return surplusIndeces
-    }
-
     private func removeSurplusRows(containingIndeces index: Int, _ otherIndex: Int) {
-        let surplusIndeces = surplusIndecesOnRows(containingIndeces: [index, otherIndex])
+        let surplusIndeces = game.surplusIndecesOnRows(containingIndeces: [index, otherIndex])
 
         if surplusIndeces.count > 0 {
             playSound(.CrossOutRow)
