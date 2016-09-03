@@ -50,6 +50,9 @@ class Play: UIViewController {
         super.init(nibName: nil, bundle: nil)
 
         gameGrid.onScroll = handleScroll
+        gameGrid.onPullingDown = handlePullingDown
+        gameGrid.onPullingUpFromStartingPosition = handlePullingUpFromStartingPosition
+        gameGrid.onScroll = handleScroll
         gameGrid.onPullUpThresholdExceeded = handlePullUpThresholdExceeded
         gameGrid.onWillSnapToStartingPosition = handleWillSnapToStartingPosition
         gameGrid.onWillSnapToGameplayPosition = handleWillSnapToGameplayPosition
@@ -339,8 +342,6 @@ class Play: UIViewController {
     private func handleScroll() {
         guard viewHasLoaded && viewHasAppeared else { return }
 
-        interpolateBackgroundColour()
-
         if gameGrid.pullUpInProgress() {
             positionNextRoundMatrix()
             nextRoundGrid?.show(animated: true)
@@ -370,24 +371,15 @@ class Play: UIViewController {
         positionMenu()
     }
 
-    private func interpolateBackgroundColour() {
-        guard !gameGrid.snappingInProgress else { return }
-
-        if gameGrid.pullDownInProgress() && !gameGrid.gridAtStartingPosition {
-            // swiftlint:disable:next line_length
-            view.backgroundColor = interpolatedColor(from: Play.gameplayBGColor, to: Play.defaultBGColor, distance: gameGrid.distancePulledDown(), threshold: gameGrid.snapToStartingPositionThreshold!)
-        } else if gameGrid.pullUpFromStartingPositionInProgress() {
-            // swiftlint:disable:next line_length
-            view.backgroundColor = interpolatedColor(from: Play.defaultBGColor, to: Play.gameplayBGColor, distance: gameGrid.pullUpDistanceFromStartingPosition(), threshold: gameGrid.snapToGameplayPositionThreshold!)
-        }
+    private func handlePullingDown(withFraction fraction: CGFloat) {
+        guard menu.hidden else { return }
+        view.backgroundColor = Play.gameplayBGColor.interpolateTo(Play.defaultBGColor,
+                                                                  fraction: fraction)
     }
 
-    private func interpolatedColor(from sourceColor: UIColor,
-                                   to targetColor: UIColor,
-                                   distance: CGFloat,
-                                   threshold: CGFloat) -> UIColor {
-        let fraction = min(1, distance / threshold)
-        return sourceColor.interpolateTo(targetColor, fraction: fraction)
+    private func handlePullingUpFromStartingPosition(withFraction fraction: CGFloat) {
+        view.backgroundColor = Play.defaultBGColor.interpolateTo(Play.gameplayBGColor,
+                                                                     fraction: fraction)
     }
 
     required init?(coder aDecoder: NSCoder) {

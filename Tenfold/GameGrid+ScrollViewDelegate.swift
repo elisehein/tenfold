@@ -69,6 +69,19 @@ extension GameGrid: UIScrollViewDelegate {
             interjectBounce(scrollView)
         }
 
+        if !snappingInProgress &&
+           snapToStartingPositionThreshold != nil &&
+           snapToGameplayPositionThreshold != nil {
+            if pullDownInProgress() {
+                let pullDownFraction = distancePulledDown() / snapToStartingPositionThreshold!
+                onPullingDown?(withFraction: min(1, pullDownFraction))
+            } else if pullUpFromStartingPositionInProgress() {
+                let distance = pullUpDistanceFromStartingPosition()
+                let pullUpFraction = distance / snapToGameplayPositionThreshold!
+                onPullingUpFromStartingPosition?(withFraction: min(1, pullUpFraction))
+            }
+        }
+
         onScroll?()
     }
 }

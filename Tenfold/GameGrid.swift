@@ -27,6 +27,8 @@ class GameGrid: Grid {
     var snapToGameplayPositionThreshold: CGFloat?
 
     var onScroll: (() -> Void)?
+    var onPullingDown: ((withFraction: CGFloat) -> Void)?
+    var onPullingUpFromStartingPosition: ((withFraction: CGFloat) -> Void)?
     var onPullUpThresholdExceeded: (() -> Void)?
     var onWillSnapToGameplayPosition: (() -> Void)?
     var onWillSnapToStartingPosition: (() -> Void)?
