@@ -16,9 +16,6 @@ class Play: UIViewController {
 
     private static let gridInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
 
-    private static let hideMenuPullUpThreshold: CGFloat = 50
-    private static let showMenuPullDownThreshold: CGFloat = 70
-
     private static let maxNextRoundPullUpThreshold: CGFloat = {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 160 : 120
     }()
@@ -87,8 +84,8 @@ class Play: UIViewController {
         gamePlayMessageNotification.toggle(inFrame: view.bounds, showing: false)
         initNextRoundMatrix()
 
-        gameGrid.snapToStartingPositionThreshold = Play.showMenuPullDownThreshold
-        gameGrid.snapToGameplayPositionThreshold = Play.hideMenuPullUpThreshold
+        gameGrid.snapToStartingPositionThreshold = 70
+        gameGrid.snapToGameplayPositionThreshold = 50
 
         viewHasLoaded = true
     }
@@ -127,9 +124,7 @@ class Play: UIViewController {
         nextRoundGrid?.hide(animated: false)
 
         updateNextRoundNotificationText()
-
         gameGrid.pullUpThreshold = calcNextRoundPullUpThreshold(nextRoundValues.count)
-
         view.insertSubview(nextRoundGrid!, belowSubview: gameGrid)
     }
 
@@ -171,17 +166,17 @@ class Play: UIViewController {
     // MARK: Menu interactions
 
     private func confirmNewGame() {
+        let abandonGame = {
+            StorageService.saveGameSnapshot(self.game)
+            self.restart()
+        }
+
         if game.currentRound > 1 && game.startTime != nil {
             let modal = ConfirmationModal(game: game)
-            modal.onTapYes = {
-                StorageService.saveGameSnapshot(self.game)
-                self.restart()
-            }
-
+            modal.onTapYes = abandonGame
             presentViewController(modal, animated: true, completion: nil)
         } else {
-            StorageService.saveGameSnapshot(game)
-            restart()
+            abandonGame()
         }
     }
 
@@ -379,13 +374,11 @@ class Play: UIViewController {
         guard !gameGrid.snappingInProgress else { return }
 
         if gameGrid.pullDownInProgress() && !gameGrid.gridAtStartingPosition {
-            view.backgroundColor = interpolatedColor(from: Play.gameplayBGColor,
-                                                     to: Play.defaultBGColor,
-                                                     distance: gameGrid.distancePulledDown(),
-                                                     threshold: Play.showMenuPullDownThreshold)
+            // swiftlint:disable:next line_length
+            view.backgroundColor = interpolatedColor(from: Play.gameplayBGColor, to: Play.defaultBGColor, distance: gameGrid.distancePulledDown(), threshold: gameGrid.snapToStartingPositionThreshold!)
         } else if gameGrid.pullUpFromStartingPositionInProgress() {
             // swiftlint:disable:next line_length
-            view.backgroundColor = interpolatedColor(from: Play.defaultBGColor, to: Play.gameplayBGColor, distance: gameGrid.pullUpDistanceFromStartingPosition(), threshold: Play.hideMenuPullUpThreshold)
+            view.backgroundColor = interpolatedColor(from: Play.defaultBGColor, to: Play.gameplayBGColor, distance: gameGrid.pullUpDistanceFromStartingPosition(), threshold: gameGrid.snapToGameplayPositionThreshold!)
         }
     }
 
