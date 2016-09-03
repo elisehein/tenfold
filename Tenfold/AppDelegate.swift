@@ -19,13 +19,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         SoundService.initSingleton()
         StorageService.registerDefaults()
+        let firstLaunch = StorageService.restoreFirstLaunchFlag()
+        StorageService.saveFirstLaunchFlag(false)
 
         setGlobalAppearance()
 
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
 
         if let window = window {
-            let firstLaunch = StorageService.restoreFirstLaunchFlag()
             let play = Play(shouldLaunchOnboarding: firstLaunch)
             let navigationController = UINavigationController(rootViewController: play)
             navigationController.navigationBarHidden = true
