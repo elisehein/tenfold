@@ -194,11 +194,33 @@
 				0C90AEA31C6D1AE800E1E42E /* Screens */,
 				0CA050A61C6B23AB006A42B9 /* Theming */,
 				0C90AEA11C6D19AC00E1E42E /* UI Modules */,
+				0C8E73011D7ABEF100DFE757 /* Widgets */,
 				0C738ADA1C69D811007C9548 /* AppDelegate.swift */,
 				0C738AE61C69D811007C9548 /* Info.plist */,
 				0CADBDF11D6C50CB0090C13F /* Launch Screen.storyboard */,
 			);
 			path = Tenfold;
+			sourceTree = "<group>";
+		};
+		0C8E72FF1D7ABED000DFE757 /* Rules */ = {
+			isa = PBXGroup;
+			children = (
+				0CFDE5B91D65B2E2001F9DF5 /* RuleExampleCell.swift */,
+				0C710E251D6721DA0047F391 /* RuleExampleGrid.swift */,
+				0C70C4021D71B4D200A9E8B8 /* RulesFooter.swift */,
+				0C4F12601D65C58000AAEB54 /* RuleHeader.swift */,
+			);
+			name = Rules;
+			sourceTree = "<group>";
+		};
+		0C8E73011D7ABEF100DFE757 /* Widgets */ = {
+			isa = PBXGroup;
+			children = (
+				0CF5C54A1D6F76C5006D46B8 /* Button.swift */,
+				0CADBDF31D6C65110090C13F /* Notification.swift */,
+				0CD93E811D78A14900D7DF96 /* PageDownIndicator.swift */,
+			);
+			name = Widgets;
 			sourceTree = "<group>";
 		};
 		0C90AE991C6B29A700E1E42E /* Fonts */ = {
@@ -215,19 +237,13 @@
 			isa = PBXGroup;
 			children = (
 				0C70C4161D74B5C300A9E8B8 /* GameGrid */,
-				0CF5C54A1D6F76C5006D46B8 /* Button.swift */,
+				0C8E72FF1D7ABED000DFE757 /* Rules */,
 				0C39D3091D3BC3B90047CE74 /* Grid.swift */,
 				4EA6957F1D36992E00F9A315 /* Menu.swift */,
 				0CB938901D20389C005B81F4 /* NextRoundGrid.swift */,
 				0CB9388C1D202832005B81F4 /* NextRoundCell.swift */,
-				0CADBDF31D6C65110090C13F /* Notification.swift */,
 				0CD93E851D79875500D7DF96 /* OnboardingSteps.swift */,
-				0CD93E811D78A14900D7DF96 /* PageDownIndicator.swift */,
 				0CC94F701D7588AF00FAF4B2 /* RankingTable.swift */,
-				0CFDE5B91D65B2E2001F9DF5 /* RuleExampleCell.swift */,
-				0C710E251D6721DA0047F391 /* RuleExampleGrid.swift */,
-				0C70C4021D71B4D200A9E8B8 /* RulesFooter.swift */,
-				0C4F12601D65C58000AAEB54 /* RuleHeader.swift */,
 			);
 			name = "UI Modules";
 			sourceTree = "<group>";
