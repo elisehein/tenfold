@@ -77,11 +77,8 @@ class AppInfoModal: ModalOverlay {
     }
 
     private func populateSpecialThanksMessage() {
-        let URL = NSURL(string: "http://elisehe.in/tenfold/appInfoData.json")
-        let URLRequest = NSMutableURLRequest(URL: URL!)
-        URLRequest.cachePolicy = .ReloadIgnoringCacheData
-
-        Alamofire.request(URLRequest).response { request, response, data, error in
+        Alamofire.request(.GET, "http://elisehe.in/tenfold/appInfoData.json")
+            .response { request, response, data, error in
                 guard error == nil else { return }
                 guard data != nil else { return }
 
