@@ -86,6 +86,7 @@ class GameGrid: Grid {
             })
         } else {
             loadNewGame(newGame, enforceStartingPosition: enforceStartingPosition)
+            completion?()
         }
     }
 

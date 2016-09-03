@@ -152,7 +152,7 @@ class Play: UIViewController {
         return menuFrame
     }
 
-    private func positionNextRoundMatrix() {
+    private func positionNextRoundGrid() {
         var nextRoundMatrixFrame = gameGrid.frame
         let cellHeight = Grid.cellSize(forAvailableWidth: nextRoundMatrixFrame.size.width).height
         nextRoundMatrixFrame.origin.y += gameGrid.bottomEdgeY() - cellHeight
@@ -343,7 +343,7 @@ class Play: UIViewController {
         guard viewHasLoaded && viewHasAppeared else { return }
 
         if gameGrid.pullUpInProgress() {
-            positionNextRoundMatrix()
+            positionNextRoundGrid()
             nextRoundGrid?.show(animated: true)
 
             let proportionVisible = min(1, gameGrid.distancePulledUp() / gameGrid.pullUpThreshold!)
@@ -392,12 +392,7 @@ class Play: UIViewController {
         view.backgroundColor = Play.gameplayBGColor
         restart(withGame: onboardingGame, inGameplayPosition: true)
 
-        // The menu frame hasn't had updates because it hasn't been in view
+        // Don't know why... Possibly because we don't call handleScroll()
         positionMenu()
-
-        // Not entirely sure why these pop up.. seems it's because the scroll view fires
-        // some scrolling events. In any case, just hide them.
-        nextRoundGrid?.hide(animated: false)
-        nextRoundNotification.toggle(inFrame: view.bounds, showing: false)
     }
 }
