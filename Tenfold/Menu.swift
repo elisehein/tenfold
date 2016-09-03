@@ -29,6 +29,9 @@ class Menu: UIView {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? -20 : 0
     }()
 
+    private static let logoHeightFactor: CGFloat = 0.75
+
+    private let logoContainer = UIView()
     private let logo = UIImageView()
     private let newGameButton = Button()
     private let instructionsButton = Button()
@@ -40,6 +43,7 @@ class Menu: UIView {
     private let state: MenuState
     private var shouldShowTips: Bool
 
+    var onTapLogo: (() -> Void)?
     var onTapNewGame: (() -> Void)?
     var onTapInstructions: (() -> Void)?
 
@@ -57,11 +61,14 @@ class Menu: UIView {
 
         logo.image = UIImage(named: "tenfold-logo")
         logo.contentMode = .ScaleAspectFit
-        addSubview(logo)
 
         if state == .Onboarding {
             addSubview(onboardingSteps)
         } else {
+            let logoTap = UITapGestureRecognizer(target: self, action: #selector(Menu.didTapLogo))
+            logo.userInteractionEnabled = true
+            logo.addGestureRecognizer(logoTap)
+
             newGameButton.hidden = true
             newGameButton.setTitle("Start over", forState: .Normal)
             newGameButton.addTarget(self,
@@ -86,6 +93,9 @@ class Menu: UIView {
             addSubview(soundButton)
         }
 
+        addSubview(logoContainer)
+        logoContainer.addSubview(logo)
+
         setNeedsUpdateConstraints()
     }
 
@@ -97,6 +107,14 @@ class Menu: UIView {
                 loadDefaultStateConstraints()
             }
 
+            logoContainer.autoPinEdgeToSuperviewEdge(.Top)
+            logoContainer.autoMatchDimension(.Width, toDimension: .Width, ofView: self)
+            logoContainer.autoAlignAxisToSuperviewAxis(.Vertical)
+
+            logo.autoCenterInSuperview()
+            logo.autoSetDimension(.Width, toSize: Menu.logoWidth)
+            logo.autoSetDimension(.Height, toSize: Menu.logoWidth * Menu.logoHeightFactor)
+
             hasLoadedConstraints = true
         }
 
@@ -104,10 +122,7 @@ class Menu: UIView {
     }
 
     private func loadOnboardingStateConstraints() {
-        logo.autoPinEdgeToSuperviewEdge(.Top)
-        logo.autoPinEdge(.Bottom, toEdge: .Top, ofView: onboardingSteps)
-        logo.autoAlignAxisToSuperviewAxis(.Vertical)
-        logo.autoSetDimension(.Width, toSize: Menu.logoWidth)
+        logoContainer.autoPinEdge(.Bottom, toEdge: .Top, ofView: onboardingSteps)
 
         onboardingSteps.autoAlignAxisToSuperviewAxis(.Vertical)
         onboardingSteps.autoConstrainAttribute(.Top,
@@ -119,6 +134,8 @@ class Menu: UIView {
     }
 
     private func loadDefaultStateConstraints() {
+        logoContainer.autoPinEdge(.Bottom, toEdge: .Top, ofView: newGameButton)
+
         for button in [newGameButton, instructionsButton, soundButton] {
             button.autoSetDimension(.Height, toSize: Menu.buttonHeight)
         }
@@ -130,12 +147,11 @@ class Menu: UIView {
         instructionsButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: newGameButton)
         soundButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: instructionsButton)
 
-        logo.autoPinEdgeToSuperviewEdge(.Top)
-        logo.autoPinEdge(.Bottom, toEdge: .Top, ofView: newGameButton)
-        logo.autoAlignAxisToSuperviewAxis(.Vertical)
-        logo.autoSetDimension(.Width, toSize: Menu.logoWidth)
-
         [logo, newGameButton, instructionsButton, soundButton].autoAlignViewsToAxis(.Vertical)
+    }
+
+    func didTapLogo() {
+        onTapLogo!()
     }
 
     func didTapNewGame() {
@@ -209,7 +225,8 @@ class Menu: UIView {
     }
 
     override func hitTest(point: CGPoint, withEvent event: UIEvent?) -> UIView? {
-        let hitCapturingViews = [newGameButton,
+        let hitCapturingViews = [logo,
+                                 newGameButton,
                                  instructionsButton,
                                  soundButton,
                                  onboardingSteps.buttonsContainer]

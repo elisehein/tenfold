@@ -31,7 +31,7 @@ class AppInfoModal: ModalOverlay {
         // Keep everything hidden until we've populated the text
         modal.alpha = 0
         fetchContent(completion: {
-            UIView.animateWithDuration(0.2, animations: {
+            UIView.animateWithDuration(0.15, animations: {
                 self.modal.alpha = 1
             })
         })
