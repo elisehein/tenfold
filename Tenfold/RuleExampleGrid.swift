@@ -147,6 +147,7 @@ class RuleExampleGrid: Grid {
 
         for indexPath in [indexPath, otherIndexPath] {
             if let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell {
+                cell.selectedForPairing = false
                 if reverse {
                     cell.unCrossOut()
                 } else {
