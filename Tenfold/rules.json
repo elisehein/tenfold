@@ -5,20 +5,20 @@
       {
         "animationType": "PAIRINGS",
         "text": "Two identical numbers can pair up.",
-        "values": [null, null, null, null, null, 3   , 3   , null, null,
+        "values": [null, null, null, null, null, null, 3   , 3   , null,
                    null, null, 5   , null, null, null, null, null, null,
                    null, null, 5   , null, null, null, null, null, null],
         "crossedOut": [],
-        "pairs": [[11, 20], [5, 6]]
+        "pairs": [[11, 20], [6, 7]]
       },
       {
         "animationType": "PAIRINGS",
         "text": "Numbers can also pair if they add up 10.",
-        "values": [null, null, null, null, null, null, null, null, null,
-                   null, null, 2   , 8   , null, null, null, null, 1   ,
-                   null, null, null, null, null, null, null, null, 9   ],
+        "values": [null, null, null, null, 1   , null, null, null, null,
+                   null, null, null, null ,9   , null, null, null, null,
+                   2   , 8   , null, null, null, null, null, null, null],
         "crossedOut": [],
-        "pairs": [[11, 12], [17, 26]]
+        "pairs": [[18, 19], [4, 13]]
       }
     ]
   },
