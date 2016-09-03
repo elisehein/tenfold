@@ -11,11 +11,10 @@ import UIKit
 import SwiftyJSON
 import PureLayout
 
-class ConfirmationModal: UIViewController {
+class ConfirmationModal: ModalOverlay {
 
     private let game: Game
 
-    private let modal = UIView()
     private let titleLabel = UILabel()
     private let textLabel = UILabel()
     private let yesButton = Button()
@@ -29,18 +28,7 @@ class ConfirmationModal: UIViewController {
 
     init(game: Game) {
         self.game = game
-        super.init(nibName: nil, bundle: nil)
-
-        modalTransitionStyle = .CrossDissolve
-        modalPresentationStyle = .OverCurrentContext
-
-        view.backgroundColor = UIColor.themeColor(.OffBlack).colorWithAlphaComponent(0.65)
-
-        modal.backgroundColor = UIColor.themeColor(.OffWhite)
-        modal.layer.shadowColor = UIColor.themeColor(.OffBlack).CGColor
-        modal.layer.shadowOffset = CGSize(width: 2, height: 2)
-        modal.layer.shadowRadius = 2
-        modal.layer.shadowOpacity = 0.5
+        super.init()
 
         titleLabel.text = "Are you sure?"
         titleLabel.font = UIFont.themeFontWithSize(15, weight: .Bold)
@@ -55,25 +43,18 @@ class ConfirmationModal: UIViewController {
         setText()
         textLabel.numberOfLines = 0
 
-        setButtonBackgroundColorWithHighlight(yesButton, color: UIColor.themeColor(.OffWhiteShaded))
+        ModalOverlay.configureModalButton(yesButton, color: UIColor.themeColor(.OffWhiteShaded))
         yesButton.setTitle("Start over", forState: .Normal)
         yesButton.addTarget(self,
                             action: #selector(ConfirmationModal.didTapYes),
                             forControlEvents: .TouchUpInside)
 
-        setButtonBackgroundColorWithHighlight(cancelButton,
-                                              color: UIColor.themeColor(.SecondaryAccent))
+        ModalOverlay.configureModalButton(cancelButton, color: UIColor.themeColor(.SecondaryAccent))
         cancelButton.setTitle("Keep going", forState: .Normal)
         cancelButton.addTarget(self,
                                action: #selector(ConfirmationModal.didTapCancel),
                                forControlEvents: .TouchUpInside)
 
-        for button in [yesButton, cancelButton] {
-            button.layer.borderColor = modal.backgroundColor?.CGColor
-            button.layer.borderWidth = 2.0
-        }
-
-        view.addSubview(modal)
         modal.addSubview(titleLabel)
         modal.addSubview(textLabel)
         modal.addSubview(yesButton)
@@ -90,13 +71,11 @@ class ConfirmationModal: UIViewController {
 
             var horizontalInset: CGFloat = 40
             var contentPadding: CGFloat = 40
-            var buttonHeight: CGFloat = 60
             var titleTextSpacing: CGFloat = 15
 
             if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
                 horizontalInset = 80
                 contentPadding = 70
-                buttonHeight = 80
                 titleTextSpacing = 25
 
                 modal.autoSetDimension(.Width, toSize: 460)
@@ -125,12 +104,12 @@ class ConfirmationModal: UIViewController {
             yesButton.autoAlignAxisToSuperviewAxis(.Vertical)
             yesButton.autoPinEdge(.Bottom, toEdge: .Top, ofView: cancelButton, withOffset: 2)
             yesButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
-            yesButton.autoSetDimension(.Height, toSize: buttonHeight)
+            yesButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
 
             cancelButton.autoAlignAxisToSuperviewAxis(.Vertical)
             cancelButton.autoPinEdgeToSuperviewEdge(.Bottom)
             cancelButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
-            cancelButton.autoSetDimension(.Height, toSize: buttonHeight)
+            cancelButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
 
             hasLoadedConstraints = true
         }
@@ -170,19 +149,6 @@ class ConfirmationModal: UIViewController {
         dismissViewControllerAnimated(true, completion: nil)
     }
 
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        super.touchesEnded(touches, withEvent: event)
-
-        if touches.count == 1 {
-            let touch = touches.first
-            if let point = touch?.locationInView(view) {
-                if !CGRectContainsPoint(modal.frame, point) {
-                    dismissViewControllerAnimated(true, completion: nil)
-                }
-            }
-        }
-    }
-
     private func constructAttributedString(withText text: String) -> NSAttributedString {
 
         let paragraphStyle = NSMutableParagraphStyle()
@@ -207,11 +173,6 @@ class ConfirmationModal: UIViewController {
 
     private func randomMotivationalQuote() -> String {
         return ConfirmationModal.quotes.arrayValue.randomElement().string!
-    }
-
-    private func setButtonBackgroundColorWithHighlight(button: UIButton, color: UIColor) {
-        button.setBackgroundImage(UIImage.imageWithColor(color), forState: .Normal)
-        button.setBackgroundImage(UIImage.imageWithColor(color.darken()), forState: .Highlighted)
     }
 
     required init?(coder aDecoder: NSCoder) {
