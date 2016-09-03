@@ -28,6 +28,14 @@ class AppInfoModal: ModalOverlay {
     override init() {
         super.init()
 
+        // Keep everything hidden until we've populated the text
+        modal.alpha = 0
+        fetchContent(completion: {
+            UIView.animateWithDuration(0.2, animations: {
+                self.modal.alpha = 1
+            })
+        })
+
         let boldAttributes = labelAttributes(withBoldText: true)
         appNameLabel.attributedText = NSAttributedString(string: "Tenfold App",
                                                          attributes: boldAttributes)
@@ -56,8 +64,6 @@ class AppInfoModal: ModalOverlay {
                              action: #selector(AppInfoModal.didTapRate),
                              forControlEvents: .TouchUpInside)
 
-        populateSpecialThanksMessage()
-
         modal.addSubview(logo)
         modal.addSubview(appNameLabel)
         modal.addSubview(appVersionLabel)
@@ -76,7 +82,7 @@ class AppInfoModal: ModalOverlay {
         UIApplication.sharedApplication().openURL(NSURL(string: "mailto:hello@tenfoldapp.com")!)
     }
 
-    private func populateSpecialThanksMessage() {
+    private func fetchContent(completion completion: (() -> Void)) {
         Alamofire.request(.GET, "http://elisehe.in/tenfold/appInfoData.json")
             .response { request, response, data, error in
                 guard error == nil else { return }
@@ -88,6 +94,8 @@ class AppInfoModal: ModalOverlay {
                     //swiftlint:disable:next line_length
                     self.specialThanksLabel.attributedText = NSAttributedString(string: text, attributes: attributes)
                 }
+
+                completion()
         }
     }
 
