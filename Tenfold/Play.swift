@@ -111,7 +111,7 @@ class Play: UIViewController {
             presentViewController(onboarding, animated: false, completion: nil)
             shouldLaunchOnboarding = false
         } else if isOnboarding {
-            menu.beginOnboarding()
+            menu.onboardingSteps.begin()
             viewHasAppeared = true
         } else {
             viewHasAppeared = true

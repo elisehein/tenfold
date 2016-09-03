@@ -12,18 +12,20 @@ import SwiftyJSON
 
 enum OnboardingStep: Int {
     case Welcome = 0
-    case IntroducePlayingField = 1
+    case AimOfTheGame = 1
     case CrossOutIdentical = 2
     case CrossOutSummandsOfTen = 3
-    case PullUP = 4
+    case PullUp = 4
     case LastTips = 5
+    case Empty = 6
 }
 
 class OnboardingSteps: UIView {
 
     private static let steps = JSON.initFromFile("onboardingSteps")!
 
-    private static let animationDelay: Double = 1
+    private static let topLabelAnimationDelay: Double = 0.5
+    private static let bottomLabelAnimationDelay: Double = 0.6
     private static let animationDuration: Double = 0.8
 
     private let topLabel = UILabel()
@@ -50,7 +52,7 @@ class OnboardingSteps: UIView {
 
     private var hasLoadedConstraints = false
 
-    var currentStep: OnboardingStep = .Welcome
+    var currentStep: OnboardingStep?
 
     var onDismiss: (() -> Void)?
     var onBeginTransitionToStep: ((onboardingStep: OnboardingStep) -> Void)?
@@ -90,68 +92,87 @@ class OnboardingSteps: UIView {
         setNeedsUpdateConstraints()
     }
 
+    func begin() {
+        transitionToStep(.Welcome)
+    }
+
     func transitionToStep(onboardingStep: OnboardingStep) {
+        currentStep = onboardingStep
         onBeginTransitionToStep?(onboardingStep: onboardingStep)
 
         let firstStep = OnboardingSteps.steps[onboardingStep.rawValue][0].string!
         topLabel.attributedText = NSAttributedString(string: firstStep,
                                                      attributes: labelBaseAttributes)
 
-        UIView.animateWithDuration(OnboardingSteps.animationDuration, animations: {
+        UIView.animateWithDuration(OnboardingSteps.animationDuration,
+                                   delay: topLabelAppearanceDelay(forStep: onboardingStep),
+                                   options: [],
+                                   animations: {
            self.topLabel.alpha = 1
+        }, completion: { _ in
+            if OnboardingSteps.steps[onboardingStep.rawValue].count > 1 {
+                self.showBottomLabel(forOnboardingStep: onboardingStep)
+            } else {
+                self.onEndTransitionToStep?(onboardingStep: onboardingStep)
+            }
         })
 
-        if OnboardingSteps.steps[onboardingStep.rawValue].count > 1 {
-            let secondStep = OnboardingSteps.steps[onboardingStep.rawValue][1].string!
-            bottomLabel.attributedText = NSAttributedString(string: secondStep,
-                                                            attributes: labelBaseAttributes)
-            UIView.animateWithDuration(OnboardingSteps.animationDuration,
-                                       delay: bottomLabelAppearanceDelayForStep(onboardingStep),
-                                       options: [],
-                                       animations: {
-                self.bottomLabel.alpha = 1
-            }, completion: { _ in
-                self.onEndTransitionToStep?(onboardingStep: onboardingStep)
-            })
-        } else {
-            onEndTransitionToStep?(onboardingStep: onboardingStep)
-        }
-
         registerStepExtras(onboardingStep)
+    }
+
+    private func showBottomLabel(forOnboardingStep onboardingStep: OnboardingStep) {
+        let secondStep = OnboardingSteps.steps[onboardingStep.rawValue][1].string!
+        bottomLabel.attributedText = NSAttributedString(string: secondStep,
+                                                        attributes: labelBaseAttributes)
+        UIView.animateWithDuration(OnboardingSteps.animationDuration,
+                                   delay: bottomLabelAppearanceDelay(forStep: onboardingStep),
+                                   options: [],
+                                   animations: {
+            self.bottomLabel.alpha = 1
+        }, completion: { _ in
+            self.onEndTransitionToStep?(onboardingStep: onboardingStep)
+        })
     }
 
     func transitionToNextStep() {
         UIView.animateWithDuration(0.3, animations: {
             self.topLabel.alpha = 0
             self.bottomLabel.alpha = 0
-            self.removeStepExtras(self.currentStep)
+            self.removeStepExtras(self.currentStep!)
         }, completion: { _ in
-            self.currentStep = OnboardingStep(rawValue: self.currentStep.rawValue + 1)!
-            self.transitionToStep(self.currentStep)
+            let nextStep = OnboardingStep(rawValue: self.currentStep!.rawValue + 1)!
+            self.transitionToStep(nextStep)
         })
     }
 
-    private func bottomLabelAppearanceDelayForStep(onboardingStep: OnboardingStep) -> Double {
+    private func topLabelAppearanceDelay(forStep onboardingStep: OnboardingStep) -> Double {
         switch onboardingStep {
-        case .IntroducePlayingField:
-            return 0
+        case .PullUp:
+            return 1
+        default:
+            return OnboardingSteps.topLabelAnimationDelay
+        }
+    }
+
+    private func bottomLabelAppearanceDelay(forStep onboardingStep: OnboardingStep) -> Double {
+        switch onboardingStep {
         case .CrossOutIdentical:
             return 2
         default:
-            return OnboardingSteps.animationDelay
+            return OnboardingSteps.bottomLabelAnimationDelay
         }
-
     }
 
     private func registerStepExtras(onboardingStep: OnboardingStep) {
         switch onboardingStep {
         case .Welcome:
             displayButtons()
-        case .IntroducePlayingField:
-            showDownArrow()
+        case .AimOfTheGame:
             // swiftlint:disable:next line_length
             NSTimer.scheduledTimerWithTimeInterval(4, target: self, selector: #selector(OnboardingSteps.transitionToNextStep), userInfo: nil, repeats: false)
-
+        case .LastTips:
+            // swiftlint:disable:next line_length
+            NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: #selector(OnboardingSteps.transitionToNextStep), userInfo: nil, repeats: false)
         default:
             return
         }
@@ -161,8 +182,6 @@ class OnboardingSteps: UIView {
         switch onboardingStep {
         case .Welcome:
             removeButtons()
-        case .IntroducePlayingField:
-            removeDownArrow()
         default:
             return
         }
@@ -172,36 +191,13 @@ class OnboardingSteps: UIView {
         buttonsContainer.alpha = 0
         buttonsContainer.hidden = false
 
+        // swiftlint:disable:next line_length
+        let delay = OnboardingSteps.topLabelAnimationDelay + OnboardingSteps.animationDuration + OnboardingSteps.bottomLabelAnimationDelay
         UIView.animateWithDuration(OnboardingSteps.animationDuration,
-                                   delay: 2 * OnboardingSteps.animationDelay,
+                                   delay: delay,
                                    options: [],
                                    animations: {
             self.buttonsContainer.alpha = 1
-        }, completion: nil)
-    }
-
-    private func showDownArrow() {
-        downArrow.hidden = false
-        downArrow.alpha = 0
-
-        var arrowFrame = CGRect(x: 0,
-                                y: bounds.size.height - 100,
-                                width: bounds.size.width,
-                                height: 30)
-        downArrow.frame = arrowFrame
-
-        UIView.animateWithDuration(OnboardingSteps.animationDuration, animations: {
-            self.downArrow.alpha = 1
-        })
-        UIView.animateWithDuration(1,
-                                   delay: 0,
-                                   options: [.CurveEaseInOut,
-                                             .Autoreverse,
-                                             .Repeat,
-                                             .AllowUserInteraction],
-                                   animations: {
-            arrowFrame.origin.y += 20
-            self.downArrow.frame = arrowFrame
         }, completion: nil)
     }
 
@@ -210,14 +206,6 @@ class OnboardingSteps: UIView {
             self.buttonsContainer.alpha = 0
         }, completion: { _ in
             self.buttonsContainer.removeFromSuperview()
-        })
-    }
-
-    private func removeDownArrow() {
-        UIView.animateWithDuration(0.3, animations: {
-            self.downArrow.alpha = 0
-        }, completion: { _ in
-            self.downArrow.removeFromSuperview()
         })
     }
 

@@ -144,10 +144,6 @@ class Menu: UIView {
         soundButton.strikeThrough = !StorageService.currentSoundPreference()
     }
 
-    func beginOnboarding() {
-        onboardingSteps.transitionToStep(.Welcome)
-    }
-
     func showDefaultView() {
         for button in [newGameButton, instructionsButton, soundButton] {
             button.hidden = false

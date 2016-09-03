@@ -13,7 +13,7 @@
       },
       {
         "animationType": "PAIRINGS",
-        "text": "Numbers can also pair if they add up 10.",
+        "text": "Numbers can also pair if they make up 10.",
         "values": [null, null, null, null, 1   , null, null, null, null,
                    null, null, null, null ,9   , null, null, null, null,
                    2   , 8   , null, null, null, null, null, null, null],

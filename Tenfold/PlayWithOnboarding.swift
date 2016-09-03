@@ -39,24 +39,26 @@ class PlayWithOnboarding: Play {
             gameGrid.userInteractionEnabled = false
             gameGrid.scrollEnabled = false
             onWillDismissWithGame?(game: game)
-
-            // swiftlint:disable:next line_length
-            NSTimer.scheduledTimerWithTimeInterval(4.5, target: self, selector: #selector(PlayWithOnboarding.handleDismissal), userInfo: nil, repeats: false)
         default:
             return
         }
     }
     private func handleEndTransitionToStep(onboardingStep: OnboardingStep) {
         switch onboardingStep {
+        case .AimOfTheGame:
+            // swiftlint:disable:next line_length
+            NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(PlayWithOnboarding.previewCrossedOutGrid), userInfo: nil, repeats: false)
         case .CrossOutIdentical:
             hintAtPairing([10, 19])
         case .CrossOutSummandsOfTen:
             hintAtPairing([8, 17])
-        case .PullUP:
+        case .PullUp:
             gameGrid.automaticallySnapToGameplayPosition = true
             gameGrid.indecesPermittedForSelection = []
             gameGrid.userInteractionEnabled = true
             gameGrid.scrollEnabled = true
+        case .Empty:
+            handleDismissal()
         default:
             return
         }
@@ -68,13 +70,19 @@ class PlayWithOnboarding: Play {
         gameGrid.scrollEnabled = false
         indecesToFlash = pairIndeces
 
-        flashNumbers()
+        flashPairing()
         // swiftlint:disable:next line_length
-        flashTimer = NSTimer.scheduledTimerWithTimeInterval(3, target: self, selector: #selector(PlayWithOnboarding.flashNumbers), userInfo: nil, repeats: true)
+        flashTimer = NSTimer.scheduledTimerWithTimeInterval(3, target: self, selector: #selector(PlayWithOnboarding.flashPairing), userInfo: nil, repeats: true)
     }
 
-    func flashNumbers() {
-        gameGrid.flashNumbers(atIndeces: indecesToFlash)
+    func flashPairing() {
+        gameGrid.flashNumbers(atIndeces: indecesToFlash,
+                              withColor: UIColor.themeColor(.Accent))
+    }
+
+    func previewCrossedOutGrid() {
+        gameGrid.flashNumbers(atIndeces: Array(0..<27),
+                              withColor: UIColor.themeColor(.OffWhiteShaded))
     }
 
     override func handleSuccessfulPairing(index: Int, otherIndex: Int) {

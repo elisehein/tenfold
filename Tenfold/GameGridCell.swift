@@ -89,21 +89,21 @@ class GameGridCell: UICollectionViewCell {
         drawEndOfRoundMarker()
     }
 
-    func flash() {
+    func flash(withColor color: UIColor) {
         guard !selectedForPairing && !crossedOut else { return }
 
         UIView.animateWithDuration(0.3,
                                    delay: 0.3,
                                    options: [.CurveEaseOut, .AllowUserInteraction],
                                    animations: {
-            self.contentView.backgroundColor = UIColor.themeColor(.Accent)
+            self.contentView.backgroundColor = color
         }, completion: { _ in
             UIView.animateWithDuration(0.3,
                                        delay: 0,
                                        options: [.CurveEaseIn, .AllowUserInteraction],
                                        animations: {
                 guard !self.selectedForPairing && !self.crossedOut else { return }
-                self.contentView.backgroundColor = self.defaultBackgroundColor
+                self.contentView.backgroundColor = self.cellBackgroundColor()
             }, completion: nil)
         })
     }

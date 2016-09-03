@@ -191,11 +191,12 @@ class GameGrid: Grid {
         }
     }
 
-    func flashNumbers(atIndeces indeces: Array<Int>) {
+    func flashNumbers(atIndeces indeces: Array<Int>,
+                      withColor color: UIColor) {
         for index in indeces {
             let indexPath = NSIndexPath(forItem: index, inSection: 0)
             if let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell {
-                cell.flash()
+                cell.flash(withColor: color)
             }
         }
     }
