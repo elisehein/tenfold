@@ -1,6 +1,6 @@
 [
   {
-    "title": "Remove numbers in pairs to empty\u00a0the\u00a0grid!",
+    "title": "Remove numbers in pairs to empty\u00a0the\u00a0grid.",
     "examples": [
       {
         "animationType": "PAIRINGS",
@@ -13,7 +13,7 @@
       },
       {
         "animationType": "PAIRINGS",
-        "text": "Numbers can also pair if they make up 10.",
+        "text": "Numbers can also pair if they make\u00a0up\u00a010.",
         "values": [null, null, null, null, 1   , null, null, null, null,
                    null, null, null, null ,9   , null, null, null, null,
                    2   , 8   , null, null, null, null, null, null, null],
@@ -50,7 +50,7 @@
     "examples": [
       {
         "animationType": "PAIRINGS",
-        "text": "So long as two numbers don't have anything in between them, you can pair them up.",
+        "text": "So long as two numbers don't have anything in between them, you can pair\u00a0them\u00a0up.",
         "values": [null, 2   , 5   , 3   , null, null, null, null, null,
                    null, null, null, null, null, null, 7   , null, 5   ,
                    2   , null, null, null, null, null, null, null, null],
@@ -64,7 +64,7 @@
     "examples": [
       {
         "animationType": "PULL_UP",
-        "text": "Any numbers left over will be added to\u00a0the\u00a0game.",
+        "text": "Any numbers left over will be added to the game. Add less numbers each\u00a0time\u00a0and\u00a0win!",
         "values": [1   , null, null, null, 5   , 6   , 7   , null, null,
                    null, null, null, 2   , 1   , null, null, null, null,
                    null, null, 2   , null, null, null, null, null, null,
