@@ -115,58 +115,54 @@ class AppInfoModal: ModalOverlay {
     }
 
     override func updateViewConstraints() {
-        if allowLoadingConstraints {
+        guard allowLoadingConstraints else { return }
 
-            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-                modal.autoSetDimension(.Width, toSize: 460)
-            } else {
-                modal.autoPinEdgeToSuperviewEdge(.Left, withInset: 10)
-                modal.autoPinEdgeToSuperviewEdge(.Right, withInset: 10)
-            }
-
-            modal.autoCenterInSuperview()
-
-            logo.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
-            logo.autoAlignAxisToSuperviewAxis(.Vertical)
-            logo.autoPinEdgeToSuperviewEdge(.Top, withInset: AppInfoModal.modalInset)
-
-            appNameLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: logo, withOffset: 20)
-            appVersionLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: appNameLabel, withOffset: 5)
-            developerNameLabel.autoPinEdge(.Top,
-                                           toEdge: .Bottom,
-                                           ofView: appVersionLabel,
-                                           withOffset: AppInfoModal.paragraphSpacing)
-
-            specialThanksLabel.autoMatchDimension(.Width,
-                                                  toDimension: .Width,
-                                                  ofView: modal,
-                                                  withMultiplier: 0.8)
-            let labelTopSpacing = specialThanksLabel.text == nil ? 0 : AppInfoModal.paragraphSpacing
-            specialThanksLabel.autoPinEdge(.Top,
-                                           toEdge: .Bottom,
-                                           ofView: developerNameLabel,
-                                           withOffset: CGFloat(labelTopSpacing))
-
-            feedbackButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
-            feedbackButton.autoPinEdge(.Top,
-                                       toEdge: .Bottom,
-                                       ofView: specialThanksLabel,
-                                       withOffset: AppInfoModal.modalInset)
-            feedbackButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
-
-            rateButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
-            rateButton.autoPinEdge(.Top,
-                                   toEdge: .Bottom,
-                                   ofView: feedbackButton,
-                                   withOffset: -2)
-            rateButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
-            rateButton.autoPinEdgeToSuperviewEdge(.Bottom)
-
-            // swiftlint:disable:next line_length
-            [logo, appNameLabel, appVersionLabel, developerNameLabel, specialThanksLabel, feedbackButton, rateButton].autoAlignViewsToAxis(.Vertical)
-            allowLoadingConstraints = false
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            modal.autoSetDimension(.Width, toSize: 460)
+        } else {
+            modal.autoPinEdgeToSuperviewEdge(.Left, withInset: 10)
+            modal.autoPinEdgeToSuperviewEdge(.Right, withInset: 10)
         }
 
+        modal.autoCenterInSuperview()
+
+        logo.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
+        logo.autoAlignAxisToSuperviewAxis(.Vertical)
+        logo.autoPinEdgeToSuperviewEdge(.Top, withInset: AppInfoModal.modalInset)
+
+        appNameLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: logo, withOffset: 20)
+        appVersionLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: appNameLabel, withOffset: 5)
+        developerNameLabel.autoPinEdge(.Top,
+                                       toEdge: .Bottom,
+                                       ofView: appVersionLabel,
+                                       withOffset: AppInfoModal.paragraphSpacing)
+
+        specialThanksLabel.autoMatchDimension(.Width,
+                                              toDimension: .Width,
+                                              ofView: modal,
+                                              withMultiplier: 0.8)
+        let labelTopSpacing = specialThanksLabel.text == nil ? 0 : AppInfoModal.paragraphSpacing
+        specialThanksLabel.autoPinEdge(.Top,
+                                       toEdge: .Bottom,
+                                       ofView: developerNameLabel,
+                                       withOffset: CGFloat(labelTopSpacing))
+
+        feedbackButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
+        feedbackButton.autoPinEdge(.Top,
+                                   toEdge: .Bottom,
+                                   ofView: specialThanksLabel,
+                                   withOffset: AppInfoModal.modalInset)
+        feedbackButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
+
+        rateButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
+        rateButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: feedbackButton, withOffset: -2)
+        rateButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
+        rateButton.autoPinEdgeToSuperviewEdge(.Bottom)
+
+        // swiftlint:disable:next line_length
+        [logo, appNameLabel, appVersionLabel, developerNameLabel, specialThanksLabel, feedbackButton, rateButton].autoAlignViewsToAxis(.Vertical)
+
+        allowLoadingConstraints = false
         super.updateViewConstraints()
     }
 

@@ -172,7 +172,7 @@ class Menu: UIView {
             button.alpha = 0
             button.hidden = false
 
-            UIView.animateWithDuration(0.15, animations: {
+            UIView.animateWithDuration(0.2, animations: {
                 button.alpha = 1
             })
         }
