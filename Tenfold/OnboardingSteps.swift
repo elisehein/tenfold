@@ -37,14 +37,16 @@ class OnboardingSteps: UIView {
     private let dismissButton = Button()
 
     private let labelBaseAttributes: [String: AnyObject] = {
+        let isIPad = UIDevice.currentDevice().userInterfaceIdiom == .Pad
+
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .Center
-        paragraphStyle.lineSpacing = 4
+        paragraphStyle.lineSpacing = isIPad ? 7 : 4
 
         let attributes = [
             NSForegroundColorAttributeName: UIColor.themeColor(.OffBlack),
             NSParagraphStyleAttributeName: paragraphStyle,
-            NSFontAttributeName: UIFont.themeFontWithSize(14)
+            NSFontAttributeName: UIFont.themeFontWithSize(isIPad ? 18 : 14)
         ]
 
         return attributes

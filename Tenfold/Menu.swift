@@ -26,7 +26,7 @@ class Menu: UIView {
     }()
 
     private static let centerPointOffset: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 100 : 0
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? -20 : 0
     }()
 
     private let logo = UIImageView()
