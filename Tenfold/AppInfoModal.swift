@@ -9,9 +9,10 @@
 import Foundation
 import UIKit
 import PureLayout
-import StoreKit
+import Alamofire
+import SwiftyJSON
 
-class AppInfoModal: ModalOverlay, SKStoreProductViewControllerDelegate {
+class AppInfoModal: ModalOverlay {
 
     let logo = UIImageView(image: UIImage(named: "tenfold-logo-small"))
     let appNameLabel = UILabel()
@@ -41,13 +42,6 @@ class AppInfoModal: ModalOverlay, SKStoreProductViewControllerDelegate {
         developerNameLabel.attributedText = NSAttributedString(string: "by Elise Hein",
                                                                attributes: attributes)
 
-        let specialThanksLabelText = "Special thanks to Karl Sutt, Jesse Williams, " +
-                                     "and the class of 2010 at TEC, where this game of " +
-                                     "numbers proliferated."
-        specialThanksLabel.numberOfLines = 0
-        specialThanksLabel.attributedText = NSAttributedString(string: specialThanksLabelText,
-                                                               attributes: attributes)
-
         ModalOverlay.configureModalButton(feedbackButton,
                                           color: UIColor.themeColor(.SecondaryAccent))
         feedbackButton.setTitle("Send feedback", forState: .Normal)
@@ -62,6 +56,8 @@ class AppInfoModal: ModalOverlay, SKStoreProductViewControllerDelegate {
                              action: #selector(AppInfoModal.didTapRate),
                              forControlEvents: .TouchUpInside)
 
+        populateSpecialThanksMessage()
+
         modal.addSubview(logo)
         modal.addSubview(appNameLabel)
         modal.addSubview(appVersionLabel)
@@ -72,19 +68,30 @@ class AppInfoModal: ModalOverlay, SKStoreProductViewControllerDelegate {
     }
 
     func didTapRate() {
-        let ratingViewController = SKStoreProductViewController()
-        ratingViewController.delegate = self
-        let dict = [SKStoreProductParameterITunesItemIdentifier: "1149410716"]
-        ratingViewController.loadProductWithParameters(dict, completionBlock: nil)
-        presentViewController(ratingViewController, animated: true, completion: nil)
-    }
-
-    func productViewControllerDidFinish(viewController: SKStoreProductViewController) {
-        viewController.dismissViewControllerAnimated(true, completion: nil)
+        // swiftlint:disable:next line_length
+        UIApplication.sharedApplication().openURL(NSURL(string: "itms-apps://itunes.apple.com/app/id1149410716")!)
     }
 
     func didTapFeedback() {
-        print("Feedback")
+        UIApplication.sharedApplication().openURL(NSURL(string: "mailto:hello@tenfoldapp.com")!)
+    }
+
+    private func populateSpecialThanksMessage() {
+        let URL = NSURL(string: "http://elisehe.in/tenfold/appInfoData.json")
+        let URLRequest = NSMutableURLRequest(URL: URL!)
+        URLRequest.cachePolicy = .ReloadIgnoringCacheData
+
+        Alamofire.request(URLRequest).response { request, response, data, error in
+                guard error == nil else { return }
+                guard data != nil else { return }
+
+                if let text = JSON(data: data!)["specialThanks"].string {
+                    self.specialThanksLabel.numberOfLines = 0
+                    let attributes = self.labelAttributes(withBoldText: false)
+                    //swiftlint:disable:next line_length
+                    self.specialThanksLabel.attributedText = NSAttributedString(string: text, attributes: attributes)
+                }
+        }
     }
 
     override func viewWillAppear(animated: Bool) {
