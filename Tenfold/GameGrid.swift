@@ -232,7 +232,8 @@ class GameGrid: Grid {
     }
 
     private func initialGameHeight() -> CGFloat {
-        return Grid.heightForGame(withTotalRows: 3, availableWidth: bounds.size.width)
+        let initialRows = Matrix.singleton.totalRows(Game.initialNumberValues.count)
+        return Grid.heightForGame(withTotalRows: initialRows, availableWidth: bounds.size.width)
     }
 
     private func currentGameHeight() -> CGFloat {

@@ -14,7 +14,7 @@ class PlayWithOnboarding: Play {
     var flashTimer: NSTimer?
     var indecesToFlash: Array<Int> = []
 
-    var onWillFinishWithGame: ((game: Game) -> Void)?
+    var onWillDismissWithGame: ((game: Game) -> Void)?
 
     init() {
         super.init(shouldLaunchOnboarding: false, isOnboarding: true)
@@ -38,7 +38,7 @@ class PlayWithOnboarding: Play {
         case .LastTips:
             gameGrid.userInteractionEnabled = false
             gameGrid.scrollEnabled = false
-            onWillFinishWithGame?(game: game)
+            onWillDismissWithGame?(game: game)
 
             // swiftlint:disable:next line_length
             NSTimer.scheduledTimerWithTimeInterval(4.5, target: self, selector: #selector(PlayWithOnboarding.handleDismissal), userInfo: nil, repeats: false)

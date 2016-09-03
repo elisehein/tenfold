@@ -16,7 +16,7 @@ struct RankedGame {
 
 class RankingService {
 
-    static let sharedService = RankingService.init()
+    static let singleton = RankingService.init()
 
     var orderedGameSnapshots: Array<GameSnapshot>
 

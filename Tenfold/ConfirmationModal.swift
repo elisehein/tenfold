@@ -147,7 +147,7 @@ class ConfirmationModal: UIViewController {
             let toGoPhrase = numbersRemaining > 1 ? "numbers to go." : "number left!"
             text = "You've only got \(numbersRemaining) \(toGoPhrase) " +
                    randomMotivationalQuote()
-        } else if RankingService.sharedService.gameIsLongerThanCurrentLongest(game) {
+        } else if RankingService.singleton.gameIsLongerThanCurrentLongest(game) {
            text = "This is your longest game to date. Do you really want to quit now?"
         } else if game.historicNumberCount - numbersRemaining > 10 {
             text = "You've gotten rid of \(game.historicNumberCount - numbersRemaining) " +

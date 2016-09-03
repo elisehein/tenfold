@@ -50,7 +50,7 @@ class GameFinished: UIViewController {
     init(game: Game) {
         self.game = game
 
-        let topRankedGames = RankingService.sharedService.topRankedGames(cappedTo: 4)
+        let topRankedGames = RankingService.singleton.topRankedGames(cappedTo: 4)
         self.rankingTable = RankingTable(rankedGames: topRankedGames)
         super.init(nibName: nil, bundle: nil)
 
@@ -152,13 +152,13 @@ class GameFinished: UIViewController {
     private func statsText() -> String {
         var text = ""
 
-        if RankingService.sharedService.numberOfWinningGames() == 1 {
+        if RankingService.singleton.numberOfWinningGames() == 1 {
             text += "And it's a first! It took you \(game.historicNumberCount) numbers " +
                     "and \(game.currentRound) rounds to empty the grid. "
         } else {
-            if RankingService.sharedService.latestGameIsShortestWinningGame() {
+            if RankingService.singleton.latestGameIsShortestWinningGame() {
                 text += "And it's your shortest game to date! "
-            } else if RankingService.sharedService.latestGameIsLongest() {
+            } else if RankingService.singleton.latestGameIsLongest() {
                 text += "This is your longest game to date – you got there in the end! "
             }
 

@@ -87,7 +87,7 @@ class StorageService {
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setObject(orderedSnapshotsData,
                            forKey: StorageService.orderedGameSnapshotsStorageKey)
-        RankingService.sharedService.orderedGameSnapshots = orderedSnapshots
+        RankingService.singleton.orderedGameSnapshots = orderedSnapshots
     }
 
     class func currentSoundPreference() -> Bool {

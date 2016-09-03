@@ -104,7 +104,7 @@ class Play: UIViewController {
 
         if shouldLaunchOnboarding {
             let onboarding = PlayWithOnboarding()
-            onboarding.onWillFinishWithGame = handleOnboardingWillFinishWithGame
+            onboarding.onWillDismissWithGame = handleOnboardingWillDismissWithGame
             presentViewController(onboarding, animated: false, completion: nil)
             shouldLaunchOnboarding = false
         } else if isOnboarding {
@@ -396,7 +396,7 @@ class Play: UIViewController {
 
     // MARK: Onboarding ended
 
-    private func handleOnboardingWillFinishWithGame(onboardingGame: Game) {
+    private func handleOnboardingWillDismissWithGame(onboardingGame: Game) {
         view.backgroundColor = Play.gameplayBGColor
         restart(withGame: onboardingGame, inGameplayPosition: true)
 
