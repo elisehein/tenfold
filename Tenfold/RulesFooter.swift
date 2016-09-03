@@ -17,7 +17,7 @@ class RulesFooter: UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        label.text = "Swipe right any time to see these instructions."
+        label.text = "Swipe left any time to see these instructions."
         label.textColor = UIColor.themeColor(.OffBlack)
         label.font = UIFont.themeFontWithSize(13, weight: .Italic)
         label.textAlignment = .Center
