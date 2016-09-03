@@ -50,7 +50,7 @@
     "examples": [
       {
         "animationType": "PAIRINGS",
-        "text": "So long as two numbers don't have anything in between them along one continous row, you can pair them up.",
+        "text": "So long as two numbers don't have anything in between them, you can pair them up.",
         "values": [null, 2   , 5   , 3   , null, null, null, null, null,
                    null, null, null, null, null, null, 7   , null, 5   ,
                    2   , null, null, null, null, null, null, null, null],
