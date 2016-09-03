@@ -169,7 +169,12 @@ class Menu: UIView {
 
     func showDefaultView() {
         for button in [newGameButton, instructionsButton, soundButton] {
+            button.alpha = 0
             button.hidden = false
+
+            UIView.animateWithDuration(0.15, animations: {
+                button.alpha = 1
+            })
         }
     }
 

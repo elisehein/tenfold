@@ -30,7 +30,7 @@ class PlayWithOnboarding: Play {
     }
 
     func handleDismissal() {
-        dismissViewControllerAnimated(true, completion: nil)
+        dismissViewControllerAnimated(menu.onboardingSteps.currentStep == .Welcome, completion: nil)
     }
 
     private func handleBeginTransitionToStep(onboardingStep: OnboardingStep) {
