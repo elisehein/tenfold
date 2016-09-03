@@ -64,7 +64,7 @@
     "examples": [
       {
         "animationType": "PULL_UP",
-        "text": "Any numbers left over will be added to the game. Add less numbers each\u00a0time\u00a0and\u00a0win!",
+        "text": "Any numbers left over will be added to the game. Add less numbers each time\u00a0and\u00a0win!",
         "values": [1   , null, null, null, 5   , 6   , 7   , null, null,
                    null, null, null, 2   , 1   , null, null, null, null,
                    null, null, 2   , null, null, null, null, null, null,
