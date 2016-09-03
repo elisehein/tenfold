@@ -45,7 +45,8 @@ class Play: UIViewController {
 
         self.game = savedGame == nil ? Game() : savedGame!
         self.gameGrid = GameGrid(game: game)
-        self.menu = Menu(state: isOnboarding ? .Onboarding : .Default)
+        self.menu = Menu(state: isOnboarding ? .Onboarding : .Default,
+                         shouldShowTips: shouldLaunchOnboarding)
 
         super.init(nibName: nil, bundle: nil)
 

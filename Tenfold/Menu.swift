@@ -33,20 +33,27 @@ class Menu: UIView {
     private let newGameButton = Button()
     private let instructionsButton = Button()
     private let soundButton = Button()
+    private let showMenuTip = Notification()
     let onboardingSteps = OnboardingSteps()
+
+    private var hasLoadedConstraints = false
+    private let state: MenuState
+    private var shouldShowTips: Bool
 
     var onTapNewGame: (() -> Void)?
     var onTapInstructions: (() -> Void)?
 
     var animationInProgress = false
 
-    private var hasLoadedConstraints = false
-    private let state: MenuState
-
-    init(state: MenuState = .Default) {
+    init(state: MenuState, shouldShowTips: Bool) {
         self.state = state
+        self.shouldShowTips = shouldShowTips
 
         super.init(frame: CGRect.zero)
+
+        if shouldShowTips {
+            showMenuTip.text = "Pull down to see menu"
+        }
 
         logo.image = UIImage(named: "tenfold-logo")
         logo.contentMode = .ScaleAspectFit
@@ -164,7 +171,19 @@ class Menu: UIView {
         }, completion: { _ in
             self.hidden = true
             self.animationInProgress = false
+            self.showTipsIfNeeded()
         })
+    }
+
+    private func showTipsIfNeeded() {
+        if shouldShowTips {
+            UIApplication.sharedApplication().delegate?.window??.addSubview(showMenuTip)
+            let windowFrame = showMenuTip.superview?.bounds
+            showMenuTip.anchorEdge = .Top
+            showMenuTip.toggle(inFrame: windowFrame!, showing: false)
+            showMenuTip.flash(forSeconds: 3, inFrame: windowFrame!)
+            shouldShowTips = false
+        }
     }
 
     func showIfNeeded(atEndPosition endPosition: CGRect) {

@@ -9,10 +9,11 @@
 import Foundation
 import SwiftyJSON
 import UIKit
+import PureLayout
 
 class Notification: UIView {
 
-    private static let bottomMargin: CGFloat = {
+    private static let margin: CGFloat = {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 25 : 15
     }()
 
@@ -45,6 +46,7 @@ class Notification: UIView {
     private var dismissalInProgress = false
     private var flashInProgress = false
     private var flashCompletion: (() -> Void)?
+    var anchorEdge: ALEdge = .Bottom
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -117,7 +119,7 @@ class Notification: UIView {
 
     func flash(forSeconds seconds: Double,
                inFrame parentFrame: CGRect,
-               completion: (() -> Void)) {
+               completion: (() -> Void)? = nil) {
         guard !flashInProgress else { return }
 
         flashInProgress = true
@@ -187,13 +189,17 @@ class Notification: UIView {
         var notificationFrame = parentFrame
         notificationFrame.size.height = Notification.height
 
+        var y: CGFloat = 0
+
         if showing {
-            let y = parentHeight - notificationFrame.size.height - Notification.bottomMargin
-            notificationFrame.origin.y += y
+            y = anchorEdge == .Bottom ?
+                parentHeight - notificationFrame.size.height - Notification.margin :
+                Notification.margin
         } else {
-            notificationFrame.origin.y += parentHeight + 10
+            y = anchorEdge == .Bottom ? parentHeight + 10 : -10
         }
 
+        notificationFrame.origin.y = y
         return notificationFrame
     }
 
