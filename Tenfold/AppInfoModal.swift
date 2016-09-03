@@ -23,18 +23,10 @@ class AppInfoModal: ModalOverlay {
     let feedbackButton = Button()
     let rateButton = Button()
 
-    var hasLoadedConstraints = false
+    var allowLoadingConstraints = false
 
     override init() {
         super.init()
-
-        // Keep everything hidden until we've populated the text
-        modal.alpha = 0
-        fetchContent(completion: {
-            UIView.animateWithDuration(0.15, animations: {
-                self.modal.alpha = 1
-            })
-        })
 
         let boldAttributes = labelAttributes(withBoldText: true)
         appNameLabel.attributedText = NSAttributedString(string: "Tenfold App",
@@ -83,8 +75,11 @@ class AppInfoModal: ModalOverlay {
     }
 
     private func fetchContent(completion completion: (() -> Void)) {
-        Alamofire.request(.GET, "http://elisehe.in/tenfold/appInfoData.json")
-            .response { request, response, data, error in
+        let URL = NSURL(string: "http://elisehe.in/tenfold/appInfoData.json")!
+        let URLRequest = NSMutableURLRequest(URL: URL)
+        URLRequest.cachePolicy = .ReloadIgnoringCacheData
+
+        Alamofire.request(URLRequest).response { request, response, data, error in
                 guard error == nil else { return }
                 guard data != nil else { return }
 
@@ -101,11 +96,18 @@ class AppInfoModal: ModalOverlay {
 
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        view.setNeedsUpdateConstraints()
+
+        // Keep everything hidden until we've populated the text
+        modal.alpha = 0
+        fetchContent(completion: {
+            UIView.animateWithDuration(0.15, animations: { self.modal.alpha = 1 })
+            self.allowLoadingConstraints = true
+            self.view.setNeedsUpdateConstraints()
+        })
     }
 
     override func updateViewConstraints() {
-        if !hasLoadedConstraints {
+        if allowLoadingConstraints {
 
             modal.autoPinEdgeToSuperviewEdge(.Left, withInset: 10)
             modal.autoPinEdgeToSuperviewEdge(.Right, withInset: 10)
@@ -126,10 +128,11 @@ class AppInfoModal: ModalOverlay {
                                                   toDimension: .Width,
                                                   ofView: modal,
                                                   withMultiplier: 0.8)
+            let labelTopSpacing: CGFloat = specialThanksLabel.text == nil ? 0 : 30
             specialThanksLabel.autoPinEdge(.Top,
                                            toEdge: .Bottom,
                                            ofView: developerNameLabel,
-                                           withOffset: 30)
+                                           withOffset: labelTopSpacing)
 
             feedbackButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
             feedbackButton.autoPinEdge(.Top,
@@ -148,7 +151,7 @@ class AppInfoModal: ModalOverlay {
 
             // swiftlint:disable:next line_length
             [logo, appNameLabel, appVersionLabel, developerNameLabel, specialThanksLabel, feedbackButton, rateButton].autoAlignViewsToAxis(.Vertical)
-            hasLoadedConstraints = true
+            allowLoadingConstraints = false
         }
 
         super.updateViewConstraints()
