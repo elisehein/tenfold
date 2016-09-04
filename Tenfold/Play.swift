@@ -89,7 +89,7 @@ class Play: UIViewController {
         gamePlayMessageNotification.toggle(inFrame: view.bounds, showing: false)
         initNextRoundMatrix()
 
-        gameGrid.snapToStartingPositionThreshold = 70
+        gameGrid.snapToStartingPositionThreshold = 50
         gameGrid.snapToGameplayPositionThreshold = 50
 
         viewHasLoaded = true
