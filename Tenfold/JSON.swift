@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftyJSON
+import Alamofire
 
 extension JSON {
     static func initFromFile(fileName: String) -> JSON? {

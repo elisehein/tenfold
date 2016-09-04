@@ -26,10 +26,6 @@ class SoundService {
         players[.NextRound] = SoundService.player(.NextRound)
     }
 
-    class func initSingleton() {
-        singleton = SoundService()
-    }
-
     class func player(sound: Sound) -> AVAudioPlayer? {
         let sound = NSDataAsset(name: SoundService.assetName(sound))
         var player: AVAudioPlayer? = nil

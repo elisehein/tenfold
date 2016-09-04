@@ -24,8 +24,6 @@ class ConfirmationModal: ModalOverlay {
 
     var hasLoadedConstraints = false
 
-    private static var quotes = JSON.initFromFile("motivationalPhrases")!
-
     init(game: Game) {
         self.game = game
         super.init()
@@ -176,7 +174,7 @@ class ConfirmationModal: ModalOverlay {
     }
 
     private func randomMotivationalQuote() -> String {
-        return ConfirmationModal.quotes.arrayValue.randomElement().string!
+        return CopyService.phrasebook(.Motivational).arrayValue.randomElement().string!
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -21,8 +21,6 @@ class Notification: UIView {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 50 : 35
     }()
 
-    private static let newlyUnrepresentedPhrases = JSON.initFromFile("lastNumberCrossedOutPhrases")!
-
     private let label = UILabel()
     private let shadowLayer = UIView()
 
@@ -36,7 +34,7 @@ class Notification: UIView {
     var newlyUnrepresentedNumber: Int? {
         didSet {
             if let number = newlyUnrepresentedNumber {
-                let phrases = Notification.newlyUnrepresentedPhrases.arrayValue
+                let phrases = CopyService.phrasebook(.LastNumberInstance).arrayValue
                 let phrase = phrases.randomElement().string
                 text = String(format: phrase!, number)
             }

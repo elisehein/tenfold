@@ -9,7 +9,6 @@
 import Foundation
 import UIKit
 import PureLayout
-import Alamofire
 import SwiftyJSON
 
 class AppInfoModal: ModalOverlay {
@@ -31,7 +30,7 @@ class AppInfoModal: ModalOverlay {
     let feedbackButton = Button()
     let rateButton = Button()
 
-    var allowLoadingConstraints = false
+    var hasLoadedConstraints = false
 
     override init() {
         super.init()
@@ -48,6 +47,11 @@ class AppInfoModal: ModalOverlay {
                                                             attributes: attributes)
 
         developerNameLabel.attributedText = NSAttributedString(string: "by Elise Hein",
+                                                               attributes: attributes)
+
+        specialThanksLabel.numberOfLines = 0
+        let specialThanksText = CopyService.phrasebook(.AppInfo)["specialThanks"].string!
+        specialThanksLabel.attributedText = NSAttributedString(string: specialThanksText,
                                                                attributes: attributes)
 
         ModalOverlay.configureModalButton(feedbackButton,
@@ -82,40 +86,13 @@ class AppInfoModal: ModalOverlay {
         UIApplication.sharedApplication().openURL(NSURL(string: "mailto:hello@tenfoldapp.com")!)
     }
 
-    private func fetchContent(completion completion: (() -> Void)) {
-        let URL = NSURL(string: "http://elisehe.in/tenfold/appInfoData.json")!
-        let URLRequest = NSMutableURLRequest(URL: URL)
-        URLRequest.cachePolicy = .ReloadIgnoringCacheData
-
-        Alamofire.request(URLRequest).response { request, response, data, error in
-                guard error == nil else { return }
-                guard data != nil else { return }
-
-                if let text = JSON(data: data!)["specialThanks"].string {
-                    self.specialThanksLabel.numberOfLines = 0
-                    let attributes = self.labelAttributes(withBoldText: false)
-                    //swiftlint:disable:next line_length
-                    self.specialThanksLabel.attributedText = NSAttributedString(string: text, attributes: attributes)
-                }
-
-                completion()
-        }
-    }
-
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-
-        // Keep everything hidden until we've populated the text
-        modal.alpha = 0
-        fetchContent(completion: {
-            UIView.animateWithDuration(0.15, animations: { self.modal.alpha = 1 })
-            self.allowLoadingConstraints = true
-            self.view.setNeedsUpdateConstraints()
-        })
+        view.setNeedsUpdateConstraints()
     }
 
     override func updateViewConstraints() {
-        guard allowLoadingConstraints else {
+        guard !hasLoadedConstraints else {
             super.updateViewConstraints()
             return
         }
@@ -165,7 +142,7 @@ class AppInfoModal: ModalOverlay {
         // swiftlint:disable:next line_length
         [logo, appNameLabel, appVersionLabel, developerNameLabel, specialThanksLabel, feedbackButton, rateButton].autoAlignViewsToAxis(.Vertical)
 
-        allowLoadingConstraints = false
+        hasLoadedConstraints = true
         super.updateViewConstraints()
     }
 

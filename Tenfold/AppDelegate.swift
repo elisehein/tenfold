@@ -17,16 +17,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 
-        SoundService.initSingleton()
-        StorageService.registerDefaults()
-        let firstLaunch = StorageService.restoreFirstLaunchFlag()
-        StorageService.saveFirstLaunchFlag(false)
-
+        initServices()
         setGlobalAppearance()
 
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
 
         if let window = window {
+            let firstLaunch = StorageService.restoreFirstLaunchFlag()
+            StorageService.saveFirstLaunchFlag(false)
+
             let play = Play(shouldLaunchOnboarding: firstLaunch)
             let navigationController = UINavigationController(rootViewController: play)
             navigationController.navigationBarHidden = true
@@ -40,6 +39,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         return true
+    }
+
+    private func initServices() {
+        SoundService.singleton = SoundService()
+        CopyService.singleton = CopyService()
+        StorageService.registerDefaults()
     }
 
     private func setGlobalAppearance() {

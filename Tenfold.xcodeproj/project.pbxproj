@@ -13,6 +13,9 @@
 		0C392BC91D65E24600294ACC /* SourceSansPro-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0C392BC81D65E23500294ACC /* SourceSansPro-Regular.otf */; };
 		0C39D3081D3AB48B0047CE74 /* UIScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39D3071D3AB48B0047CE74 /* UIScrollView.swift */; };
 		0C39D30A1D3BC3B90047CE74 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39D3091D3BC3B90047CE74 /* Grid.swift */; };
+		0C41C1A61D7C130800E0AAF8 /* MaybeRemoteJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C41C1A51D7C130800E0AAF8 /* MaybeRemoteJSON.swift */; };
+		0C41C1A81D7C358600E0AAF8 /* CopyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C41C1A71D7C358600E0AAF8 /* CopyService.swift */; };
+		0C41C1AA1D7C48A000E0AAF8 /* appInfo.json in Resources */ = {isa = PBXBuildFile; fileRef = 0C41C1A91D7C48A000E0AAF8 /* appInfo.json */; };
 		0C4F12611D65C58000AAEB54 /* RuleHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4F12601D65C58000AAEB54 /* RuleHeader.swift */; };
 		0C68BE7E1D3A4B3A00A6ACDC /* Rules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C68BE7D1D3A4B3A00A6ACDC /* Rules.swift */; };
 		0C69CE4B1C6DCABA002E0D29 /* Number.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C69CE4A1C6DCABA002E0D29 /* Number.swift */; };
@@ -22,7 +25,7 @@
 		0C70C4031D71B4D200A9E8B8 /* RulesFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C70C4021D71B4D200A9E8B8 /* RulesFooter.swift */; };
 		0C70C4051D71B95500A9E8B8 /* ConfirmationModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C70C4041D71B95500A9E8B8 /* ConfirmationModal.swift */; };
 		0C70C4091D71C62800A9E8B8 /* motivationalPhrases.json in Resources */ = {isa = PBXBuildFile; fileRef = 0C70C4081D71C62800A9E8B8 /* motivationalPhrases.json */; };
-		0C70C40D1D73482E00A9E8B8 /* lastNumberCrossedOutPhrases.json in Resources */ = {isa = PBXBuildFile; fileRef = 0C70C40C1D73482E00A9E8B8 /* lastNumberCrossedOutPhrases.json */; };
+		0C70C40D1D73482E00A9E8B8 /* lastNumberInstance.json in Resources */ = {isa = PBXBuildFile; fileRef = 0C70C40C1D73482E00A9E8B8 /* lastNumberInstance.json */; };
 		0C70C40F1D73486500A9E8B8 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C70C40E1D73486500A9E8B8 /* JSON.swift */; };
 		0C70C4131D74B4EE00A9E8B8 /* GameGrid+DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C70C4121D74B4EE00A9E8B8 /* GameGrid+DataSource.swift */; };
 		0C70C4151D74B55F00A9E8B8 /* GameGrid+DelegateFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C70C4141D74B55F00A9E8B8 /* GameGrid+DelegateFlowLayout.swift */; };
@@ -70,6 +73,9 @@
 		0C392BC81D65E23500294ACC /* SourceSansPro-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-Regular.otf"; sourceTree = "<group>"; };
 		0C39D3071D3AB48B0047CE74 /* UIScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIScrollView.swift; sourceTree = "<group>"; };
 		0C39D3091D3BC3B90047CE74 /* Grid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
+		0C41C1A51D7C130800E0AAF8 /* MaybeRemoteJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MaybeRemoteJSON.swift; sourceTree = "<group>"; };
+		0C41C1A71D7C358600E0AAF8 /* CopyService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CopyService.swift; sourceTree = "<group>"; };
+		0C41C1A91D7C48A000E0AAF8 /* appInfo.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = appInfo.json; sourceTree = "<group>"; };
 		0C4F12601D65C58000AAEB54 /* RuleHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RuleHeader.swift; sourceTree = "<group>"; };
 		0C68BE7D1D3A4B3A00A6ACDC /* Rules.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Rules.swift; sourceTree = "<group>"; };
 		0C69CE4A1C6DCABA002E0D29 /* Number.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Number.swift; sourceTree = "<group>"; };
@@ -79,7 +85,7 @@
 		0C70C4021D71B4D200A9E8B8 /* RulesFooter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RulesFooter.swift; sourceTree = "<group>"; };
 		0C70C4041D71B95500A9E8B8 /* ConfirmationModal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfirmationModal.swift; sourceTree = "<group>"; };
 		0C70C4081D71C62800A9E8B8 /* motivationalPhrases.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = motivationalPhrases.json; sourceTree = "<group>"; };
-		0C70C40C1D73482E00A9E8B8 /* lastNumberCrossedOutPhrases.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = lastNumberCrossedOutPhrases.json; sourceTree = "<group>"; };
+		0C70C40C1D73482E00A9E8B8 /* lastNumberInstance.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = lastNumberInstance.json; sourceTree = "<group>"; };
 		0C70C40E1D73486500A9E8B8 /* JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		0C70C4121D74B4EE00A9E8B8 /* GameGrid+DataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "GameGrid+DataSource.swift"; sourceTree = "<group>"; };
 		0C70C4141D74B55F00A9E8B8 /* GameGrid+DelegateFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "GameGrid+DelegateFlowLayout.swift"; sourceTree = "<group>"; };
@@ -152,6 +158,7 @@
 		0C70C3F91D71846B00A9E8B8 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				0C41C1A71D7C358600E0AAF8 /* CopyService.swift */,
 				0CC94F6E1D75866600FAF4B2 /* RankingService.swift */,
 				0C70C3FA1D7186F400A9E8B8 /* SoundService.swift */,
 				0CB938821D1FE6DD005B81F4 /* StorageService.swift */,
@@ -276,6 +283,7 @@
 				0C90AEA61C6D1BCF00E1E42E /* Game.swift */,
 				0CC94F721D75D09E00FAF4B2 /* GameSnapshot.swift */,
 				4EE46E1F1D22CD55005C4493 /* Matrix.swift */,
+				0C41C1A51D7C130800E0AAF8 /* MaybeRemoteJSON.swift */,
 				0C69CE4A1C6DCABA002E0D29 /* Number.swift */,
 				0C3463921C6F8C340086D3CC /* Pairing.swift */,
 			);
@@ -294,7 +302,8 @@
 		0CD93E871D798D2800D7DF96 /* JSON */ = {
 			isa = PBXGroup;
 			children = (
-				0C70C40C1D73482E00A9E8B8 /* lastNumberCrossedOutPhrases.json */,
+				0C41C1A91D7C48A000E0AAF8 /* appInfo.json */,
+				0C70C40C1D73482E00A9E8B8 /* lastNumberInstance.json */,
 				0C70C4081D71C62800A9E8B8 /* motivationalPhrases.json */,
 				0CD93E881D798D6400D7DF96 /* onboardingSteps.json */,
 				0CFDE5BB1D65B763001F9DF5 /* rules.json */,
@@ -365,8 +374,9 @@
 				0C70C4011D71B4B700A9E8B8 /* SourceSansPro-It.otf in Resources */,
 				0C392BC91D65E24600294ACC /* SourceSansPro-Regular.otf in Resources */,
 				0C392BC71D65E1D800294ACC /* SourceSansPro-Semibold.otf in Resources */,
-				0C70C40D1D73482E00A9E8B8 /* lastNumberCrossedOutPhrases.json in Resources */,
+				0C70C40D1D73482E00A9E8B8 /* lastNumberInstance.json in Resources */,
 				0CFDE5BC1D65B763001F9DF5 /* rules.json in Resources */,
+				0C41C1AA1D7C48A000E0AAF8 /* appInfo.json in Resources */,
 				0CD93E891D798D6400D7DF96 /* onboardingSteps.json in Resources */,
 				0C70C4091D71C62800A9E8B8 /* motivationalPhrases.json in Resources */,
 				0C738AE21C69D811007C9548 /* Assets.xcassets in Resources */,
@@ -416,11 +426,13 @@
 				0C70C4051D71B95500A9E8B8 /* ConfirmationModal.swift in Sources */,
 				0C70C40F1D73486500A9E8B8 /* JSON.swift in Sources */,
 				0C90AEA01C6C7FDF00E1E42E /* UIFont+Theme.swift in Sources */,
+				0C41C1A81D7C358600E0AAF8 /* CopyService.swift in Sources */,
 				0C90AEA51C6D1B0700E1E42E /* GameGrid.swift in Sources */,
 				0CC94F711D7588AF00FAF4B2 /* RankingTable.swift in Sources */,
 				0C34638F1C6F89B30086D3CC /* GameGridCell.swift in Sources */,
 				0CC94F6D1D74B68800FAF4B2 /* GameGrid+ScrollViewDelegate.swift in Sources */,
 				0CADBDF61D6D92850090C13F /* GameFinished.swift in Sources */,
+				0C41C1A61D7C130800E0AAF8 /* MaybeRemoteJSON.swift in Sources */,
 				CBB3C9C61D72E00B00551E03 /* UIImage.swift in Sources */,
 				0C69CE4E1C6DCDE9002E0D29 /* Array.swift in Sources */,
 				0CD93E841D79846100D7DF96 /* PlayWithOnboarding.swift in Sources */,
