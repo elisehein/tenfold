@@ -120,10 +120,13 @@ class ConfirmationModal: ModalOverlay {
     private func setText() {
         let numbersRemaining = game.numbersRemaining()
         let historicNumbersCrossedOut = game.historicNumbersCrossedOut()
+        let uniqueValues = game.numberOfUniqueValues()
 
         var text: String
 
-        if numbersRemaining <= 20 {
+        if uniqueValues < 6 {
+            text = "You've got only \(uniqueValues) unique numbers left. Really quit now?"
+        } else if numbersRemaining <= 20 {
             let toGoPhrase = numbersRemaining > 1 ? "numbers to go." : "number left!"
             text = "You've only got \(numbersRemaining) \(toGoPhrase) " +
                    randomMotivationalQuote()

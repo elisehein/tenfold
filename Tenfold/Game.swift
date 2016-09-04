@@ -130,6 +130,11 @@ class Game: NSObject, NSCoding {
         return valueCounts.filter({ $1 == 0 }).map({ $0.0 })
     }
 
+    func numberOfUniqueValues() -> Int {
+        pruneValueCounts()
+        return valueCounts.keys.count
+    }
+
     func ended() -> Bool {
         return numbersRemaining() == 0
     }
