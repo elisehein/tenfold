@@ -63,27 +63,14 @@ class Game: NSObject, NSCoding {
         }
     }
 
+    // MARK: Manipulate game
+
     func crossOutPair(index: Int, otherIndex: Int) {
         startTime = NSDate()
         numbers[index].crossedOut = true
         numbers[otherIndex].crossedOut = true
         valueCounts[numbers[index].value!]! -= 1
         valueCounts[numbers[otherIndex].value!]! -= 1
-    }
-
-    func nextRoundNumbers() -> Array<Number> {
-        let nextRoundNumbers: Array<Number> = remainingNumbers().map({ number in
-            let newNumber = number.copy() as? Number
-            newNumber!.marksEndOfRound = false
-            return newNumber!
-        })
-
-        nextRoundNumbers.last.marksEndOfRound = true
-        return nextRoundNumbers
-    }
-
-    func nextRoundValues() -> Array<Int?> {
-        return remainingNumbers().map({ $0.value })
     }
 
     func makeNextRound() -> Bool {
@@ -114,10 +101,6 @@ class Game: NSObject, NSCoding {
         }
     }
 
-    func unrepresentedValues() -> Array<Int> {
-        return valueCounts.filter({ $1 == 0 }).map({ $0.0 })
-    }
-
     func pruneValueCounts() {
         let unrepresentedValueCounts = valueCounts.filter({ $1 == 0 })
 
@@ -126,12 +109,41 @@ class Game: NSObject, NSCoding {
         }
     }
 
+    // MARK: Query game
+
+    func nextRoundNumbers() -> Array<Number> {
+        let nextRoundNumbers: Array<Number> = remainingNumbers().map({ number in
+            let newNumber = number.copy() as? Number
+            newNumber!.marksEndOfRound = false
+            return newNumber!
+        })
+
+        nextRoundNumbers.last.marksEndOfRound = true
+        return nextRoundNumbers
+    }
+
+    func nextRoundValues() -> Array<Int?> {
+        return remainingNumbers().map({ $0.value })
+    }
+
+    func unrepresentedValues() -> Array<Int> {
+        return valueCounts.filter({ $1 == 0 }).map({ $0.0 })
+    }
+
     func ended() -> Bool {
         return numbersRemaining() == 0
     }
 
     func numbersRemaining() -> Int {
         return remainingNumbers().count
+    }
+
+    func numbersCrossedOut() -> Int {
+        return totalNumbers() - numbersRemaining()
+    }
+
+    func historicNumbersCrossedOut() -> Int {
+        return historicNumberCount - numbersRemaining()
     }
 
     func totalNumbers() -> Int {

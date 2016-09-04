@@ -119,6 +119,7 @@ class ConfirmationModal: ModalOverlay {
 
     private func setText() {
         let numbersRemaining = game.numbersRemaining()
+        let historicNumbersCrossedOut = game.historicNumbersCrossedOut()
 
         var text: String
 
@@ -128,8 +129,8 @@ class ConfirmationModal: ModalOverlay {
                    randomMotivationalQuote()
         } else if RankingService.singleton.gameIsLongerThanCurrentLongest(game) {
            text = "This is your longest game to date. Do you really want to quit now?"
-        } else if game.historicNumberCount - numbersRemaining > 10 {
-            text = "You've gotten rid of \(game.historicNumberCount - numbersRemaining) " +
+        } else if historicNumbersCrossedOut > 10 {
+            text = "You've gotten rid of \(historicNumbersCrossedOut) " +
                    "numbers already. " + randomMotivationalQuote()
         } else {
             text = "You're only on round \(game.currentRound). " +

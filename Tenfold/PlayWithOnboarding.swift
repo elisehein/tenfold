@@ -90,10 +90,10 @@ class PlayWithOnboarding: Play {
         super.handleSuccessfulPairing(index, otherIndex: otherIndex)
 
         if menu.onboardingSteps.currentStep == .CrossOutIdentical &&
-           game.totalNumbers() - game.numbersRemaining() <= 2 {
+           game.numbersCrossedOut() <= 2 {
             hintAtPairing([9, 11])
         } else if menu.onboardingSteps.currentStep == .CrossOutSummandsOfTen &&
-                  game.totalNumbers() - game.numbersRemaining() <= 6 {
+                  game.numbersCrossedOut() <= 6 {
            hintAtPairing([25, 26])
         } else {
             menu.onboardingSteps.transitionToNextStep()
