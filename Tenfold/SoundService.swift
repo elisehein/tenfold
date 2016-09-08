@@ -21,6 +21,13 @@ class SoundService {
     var players: [Sound: AVAudioPlayer?] = [:]
 
     init() {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch let error as NSError {
+            print(error)
+        }
+
         players[.CrossOut] = SoundService.player(.CrossOut)
         players[.CrossOutRow] = SoundService.player(.CrossOutRow)
         players[.NextRound] = SoundService.player(.NextRound)
@@ -33,8 +40,6 @@ class SoundService {
         guard sound != nil else { return nil }
 
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
-            try AVAudioSession.sharedInstance().setActive(true)
             player = try AVAudioPlayer(data: sound!.data, fileTypeHint: AVFileTypeWAVE)
             player!.prepareToPlay()
         } catch {
