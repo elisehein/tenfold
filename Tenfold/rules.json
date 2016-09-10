@@ -30,9 +30,10 @@
         "text": "These pairs are next to each other...",
         "values": [null, null, 3   , null, null, null, null, null, null,
                    null, null, 2   , null, null, null, 8   , null, null,
+                   null, null, null, null, null, null, null, null, null,
                    null, null, 7   , null, null, null, null, null, null],
-        "crossedOut": [12, 13, 14],
-        "pairs": [[11, 15], [2, 20]]
+        "crossedOut": [12, 13, 14, 20],
+        "pairs": [[11, 15], [2, 29]]
       },
       {
         "animationType": "PAIRINGS",
