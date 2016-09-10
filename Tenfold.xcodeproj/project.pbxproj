@@ -270,8 +270,8 @@
 				0C8E73041D7AF3FF00DFE757 /* AppInfoModal.swift */,
 				0C70C4041D71B95500A9E8B8 /* ConfirmationModal.swift */,
 				0CADBDF51D6D92850090C13F /* GameFinished.swift */,
-				0C738ADC1C69D811007C9548 /* Play.swift */,
 				0CD93E831D79846100D7DF96 /* Onboarding.swift */,
+				0C738ADC1C69D811007C9548 /* Play.swift */,
 				0C68BE7D1D3A4B3A00A6ACDC /* Rules.swift */,
 			);
 			name = Screens;
