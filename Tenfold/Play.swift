@@ -108,7 +108,7 @@ class Play: UIViewController {
         super.viewDidAppear(animated)
 
         if shouldLaunchOnboarding {
-            let onboarding = PlayWithOnboarding()
+            let onboarding = Onboarding()
             onboarding.onWillDismissWithGame = handleOnboardingWillDismissWithGame
             presentViewController(onboarding, animated: false, completion: nil)
             shouldLaunchOnboarding = false

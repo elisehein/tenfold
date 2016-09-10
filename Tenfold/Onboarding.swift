@@ -1,5 +1,5 @@
 //
-//  PlayWithOnboarding.swift
+//  Onboarding.swift
 //  Tenfold
 //
 //  Created by Elise Hein on 02/09/2016.
@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class PlayWithOnboarding: Play {
+class Onboarding: Play {
 
     var flashTimer: NSTimer?
     var indecesToFlash: Array<Int> = []
@@ -47,7 +47,7 @@ class PlayWithOnboarding: Play {
         switch onboardingStep {
         case .AimOfTheGame:
             // swiftlint:disable:next line_length
-            NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(PlayWithOnboarding.previewCrossedOutGrid), userInfo: nil, repeats: false)
+            NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(Onboarding.previewCrossedOutGrid), userInfo: nil, repeats: false)
         case .CrossOutIdentical:
             hintAtPairing([10, 19])
         case .CrossOutSummandsOfTen:
@@ -72,7 +72,7 @@ class PlayWithOnboarding: Play {
 
         flashPairing()
         // swiftlint:disable:next line_length
-        flashTimer = NSTimer.scheduledTimerWithTimeInterval(3, target: self, selector: #selector(PlayWithOnboarding.flashPairing), userInfo: nil, repeats: true)
+        flashTimer = NSTimer.scheduledTimerWithTimeInterval(3, target: self, selector: #selector(Onboarding.flashPairing), userInfo: nil, repeats: true)
     }
 
     func flashPairing() {
