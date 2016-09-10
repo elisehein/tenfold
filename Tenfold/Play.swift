@@ -14,7 +14,7 @@ class Play: UIViewController {
     private static let defaultBGColor = UIColor.themeColor(.OffWhite)
     private static let gameplayBGColor = UIColor.themeColor(.OffWhiteShaded)
 
-    private static let gridInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+    private static let gridInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
 
     private static let maxNextRoundPullUpThreshold: CGFloat = {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 160 : 120
