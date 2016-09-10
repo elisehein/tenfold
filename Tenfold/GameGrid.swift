@@ -132,6 +132,16 @@ class GameGrid: Grid {
         })
     }
 
+    func cellState(forCellAtIndexPath indexPath: NSIndexPath) -> GameGridCellState {
+        if game.isCrossedOut(indexPath.item) {
+            return .CrossedOut
+        } else if selectedIndexPaths.contains(indexPath) {
+            return .PendingPairing
+        } else {
+            return .Available
+        }
+    }
+
     func crossOutPair(index: Int, otherIndex: Int) {
         let indexPath = NSIndexPath(forItem: index, inSection: 0)
         let otherIndexPath = NSIndexPath(forItem: otherIndex, inSection: 0)

@@ -26,10 +26,9 @@ extension GameGrid: UICollectionViewDataSource {
 
         if let cell = cell as? GameGridCell {
             cell.value = game.valueAtIndex(indexPath.item)
-            cell.crossedOut = game.isCrossedOut(indexPath.item)
+            cell.state = cellState(forCellAtIndexPath: indexPath)
             cell.marksEndOfRound = game.marksEndOfRound(indexPath.item)
             cell.useClearBackground = true
-            cell.selectedForPairing = selectedIndexPaths.contains(indexPath)
             cell.resetColors()
         }
 

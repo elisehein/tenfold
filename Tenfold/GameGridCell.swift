@@ -9,6 +9,12 @@
 import Foundation
 import UIKit
 
+enum GameGridCellState {
+    case Available
+    case PendingPairing
+    case CrossedOut
+}
+
 class GameGridCell: UICollectionViewCell {
     static let fontSizeFactor: CGFloat = 0.45
     private static let animationDuration = 0.2
@@ -32,8 +38,7 @@ class GameGridCell: UICollectionViewCell {
 
     private var deselectionInProgress = false
 
-    var crossedOut: Bool = false
-    var selectedForPairing: Bool = false
+    var state: GameGridCellState = .Available
 
     var value: Int? {
         didSet {
@@ -66,8 +71,7 @@ class GameGridCell: UICollectionViewCell {
         selectionColorFiller.transform = CGAffineTransformMakeScale(0, 0)
         crossedOutColorFiller.transform = CGAffineTransformMakeScale(0, 0)
         marksEndOfRound = false
-        crossedOut = false
-        selectedForPairing = false
+        state == .Available
         value = nil
         resetColors()
     }
@@ -90,7 +94,7 @@ class GameGridCell: UICollectionViewCell {
     }
 
     func flash(withColor color: UIColor) {
-        guard !selectedForPairing && !crossedOut else { return }
+        guard state == .Available else { return }
 
         UIView.animateWithDuration(0.3,
                                    delay: 0.3,
@@ -102,14 +106,14 @@ class GameGridCell: UICollectionViewCell {
                                        delay: 0,
                                        options: [.CurveEaseIn, .AllowUserInteraction],
                                        animations: {
-                guard !self.selectedForPairing && !self.crossedOut else { return }
+                guard self.state == .Available else { return }
                 self.contentView.backgroundColor = self.cellBackgroundColor()
             }, completion: nil)
         })
     }
 
     func crossOut() {
-        crossedOut = true
+        state = .CrossedOut
         crossedOutColorFiller.backgroundColor = crossedOutBackgroundColor
         crossedOutColorFiller.transform = CGAffineTransformMakeScale(0, 0)
 
@@ -125,7 +129,7 @@ class GameGridCell: UICollectionViewCell {
     }
 
     func unCrossOut() {
-        crossedOut = false
+        state = .Available
         self.resetColors()
     }
 
@@ -134,7 +138,7 @@ class GameGridCell: UICollectionViewCell {
     }
 
     func indicateSelection() {
-        selectedForPairing = true
+        state = .PendingPairing
         selectionColorFiller.backgroundColor = UIColor.themeColor(.Accent)
         selectionColorFiller.transform = CGAffineTransformMakeScale(0, 0)
         UIView.animateWithDuration(GameGridCell.animationDuration,
@@ -151,7 +155,7 @@ class GameGridCell: UICollectionViewCell {
     }
 
     func indicateDeselection(withDelay delay: Double = 0) {
-        selectedForPairing = false
+        state = .Available
         selectionColorFiller.backgroundColor = UIColor.themeColor(.Accent)
         selectionColorFiller.transform = CGAffineTransformMakeScale(1, 1)
         contentView.backgroundColor = cellBackgroundColor()
@@ -190,14 +194,14 @@ class GameGridCell: UICollectionViewCell {
         selectionColorFiller.backgroundColor = UIColor.clearColor()
         crossedOutColorFiller.backgroundColor = UIColor.clearColor()
 
-        if crossedOut {
+        if state == .CrossedOut {
             endOfRoundMarker.fillColor = defaultBackgroundColor.CGColor
             numberLabel.textColor = UIColor.clearColor()
             contentView.backgroundColor = crossedOutBackgroundColor
         } else {
             endOfRoundMarker.fillColor = crossedOutBackgroundColor.CGColor
             numberLabel.textColor = crossedOutBackgroundColor
-            contentView.backgroundColor = selectedForPairing ?
+            contentView.backgroundColor = state == .PendingPairing ?
                                           UIColor.themeColor(.Accent) :
                                           cellBackgroundColor()
         }

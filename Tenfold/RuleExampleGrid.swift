@@ -147,7 +147,6 @@ class RuleExampleGrid: Grid {
 
         for indexPath in [indexPath, otherIndexPath] {
             if let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell {
-                cell.selectedForPairing = false
                 if reverse {
                     cell.unCrossOut()
                 } else {
@@ -179,7 +178,7 @@ extension RuleExampleGrid: UICollectionViewDataSource {
 
         if let cell = cell as? GameGridCell {
             cell.value = values[indexPath.item]
-            cell.crossedOut = crossedOutIndeces.contains(indexPath.item)
+            cell.state = crossedOutIndeces.contains(indexPath.item) ? .CrossedOut : .Available
             cell.marksEndOfRound = false
             cell.defaultBackgroundColor = UIColor.themeColor(.OffWhiteShaded)
 
