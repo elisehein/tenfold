@@ -47,7 +47,7 @@ class Onboarding: Play {
         switch onboardingStep {
         case .AimOfTheGame:
             // swiftlint:disable:next line_length
-            NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(Onboarding.previewCrossedOutGrid), userInfo: nil, repeats: false)
+            NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(Onboarding.flashGrid), userInfo: nil, repeats: false)
         case .CrossOutIdentical:
             hintAtPairing([10, 19])
         case .CrossOutSummandsOfTen:
@@ -80,7 +80,7 @@ class Onboarding: Play {
                               withColor: UIColor.themeColor(.Accent))
     }
 
-    func previewCrossedOutGrid() {
+    func flashGrid() {
         gameGrid.flashNumbers(atIndeces: Array(0..<27),
                               withColor: UIColor.themeColor(.OffWhiteShaded))
     }
