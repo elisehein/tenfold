@@ -210,6 +210,10 @@ class Menu: UIView {
     func showIfNeeded(atEndPosition endPosition: CGRect) {
         guard hidden else { return }
         hidden = false
+        reposition(atEndPosition: endPosition)
+    }
+
+    func reposition(atEndPosition endPosition: CGRect) {
         animationInProgress = true
 
         UIView.animateWithDuration(0.3,
@@ -218,6 +222,12 @@ class Menu: UIView {
                                    animations: {
             self.frame = endPosition
             self.alpha = 1
+
+            // This seems to only be needed when the frame animates its height,
+            // not its full position. In practice, this occurs only when we tap Start Over
+            // straight after onboarding, when the menu is visible, but not in its default
+            // starting position.
+            self.layoutIfNeeded()
         }, completion: { _ in
             self.animationInProgress = false
         })

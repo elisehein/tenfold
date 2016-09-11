@@ -186,6 +186,15 @@ class Play: UIViewController {
     }
 
     private func restart(withGame newGame: Game = Game(), inGameplayPosition: Bool = false) {
+        // Confusing wording: whenever we click Start Over, the menu is already visible,
+        // and already in the starting position, so this is not needed, EXCEPT for one case –
+        // straight after onboarding. In this case, the menu is visible, but not in the starting
+        // position. We need to animate it to its starting position along with the new game
+        // animation.
+        if !inGameplayPosition {
+            repositionMenuIfNeeded()
+        }
+
         game = newGame
         gameGrid.restart(withGame: game,
                          animated: !inGameplayPosition,
@@ -194,14 +203,18 @@ class Play: UIViewController {
             self.updateNextRoundNotificationText()
             self.updateState()
             self.nextRoundGrid?.hide(animated: false)
-
             let menuEndPosition = self.menuFrame(atStartingPosition: !inGameplayPosition)
             self.menu.showIfNeeded(atEndPosition: menuEndPosition)
-
-            self.view.backgroundColor = inGameplayPosition ?
-                                        Play.gameplayBGColor :
-                                        Play.defaultBGColor
         })
+
+        view.backgroundColor = inGameplayPosition ? Play.gameplayBGColor : Play.defaultBGColor
+    }
+
+    private func repositionMenuIfNeeded() {
+        let defaultMenuFrame = menuFrame(atStartingPosition: true)
+        if !menu.hidden && !CGRectEqualToRect(menu.frame, defaultMenuFrame) {
+            menu.reposition(atEndPosition: defaultMenuFrame)
+        }
     }
 
     func showInfoModal() {
