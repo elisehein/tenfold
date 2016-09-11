@@ -79,9 +79,9 @@ class ConfirmationModal: ModalOverlay {
                 modal.autoSetDimension(.Width, toSize: 460)
                 modal.autoCenterInSuperview()
             } else {
-                modal.autoPinEdgeToSuperviewEdge(.Left, withInset: 10)
-                modal.autoPinEdgeToSuperviewEdge(.Bottom, withInset: 10)
-                modal.autoPinEdgeToSuperviewEdge(.Right, withInset: 10)
+                modal.autoPinEdgeToSuperviewEdge(.Left, withInset: 8)
+                modal.autoPinEdgeToSuperviewEdge(.Bottom, withInset: 8)
+                modal.autoPinEdgeToSuperviewEdge(.Right, withInset: 8)
             }
 
             titleLabel.autoAlignAxisToSuperviewAxis(.Vertical)

@@ -100,8 +100,8 @@ class AppInfoModal: ModalOverlay {
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
             modal.autoSetDimension(.Width, toSize: 460)
         } else {
-            modal.autoPinEdgeToSuperviewEdge(.Left, withInset: 10)
-            modal.autoPinEdgeToSuperviewEdge(.Right, withInset: 10)
+            modal.autoPinEdgeToSuperviewEdge(.Left, withInset: 8)
+            modal.autoPinEdgeToSuperviewEdge(.Right, withInset: 8)
         }
 
         modal.autoCenterInSuperview()
