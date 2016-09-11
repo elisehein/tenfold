@@ -13,6 +13,7 @@ class Game: NSObject, NSCoding {
     static let numbersPerRow = 9
 
     private static let numbersCoderKey = "gameNumbersCoderKey"
+    private static let latestPairCoderKey = "gameLatestPairCoderKey"
     private static let historicNumberCountCoderKey = "gameHistoricNumberCountCoderKey"
     private static let currentRoundCoderKey = "gameCurrentRoundCoderKey"
     private static let valueCountsCoderKey = "gameValueCountsCoderKey"
@@ -32,6 +33,8 @@ class Game: NSObject, NSCoding {
     var currentRound: Int = 1
     var startTime: NSDate? = nil
 
+    var latestPair: Array<Int> = []
+
     class func initialNumbers() -> Array<Number> {
         let initialNumbers: Array<Number> = initialNumberValues.map({ value in
             return Number(value: value, crossedOut: false, marksEndOfRound: false)
@@ -42,24 +45,34 @@ class Game: NSObject, NSCoding {
     }
 
     override init() {
-        numbers = Game.initialNumbers()
-        historicNumberCount = numbers.count
-        valueCounts = Game.initialValueCounts
+        self.numbers = Game.initialNumbers()
+        self.valueCounts = Game.initialValueCounts
+        self.historicNumberCount = self.numbers.count
         super.init()
     }
 
     required init(coder aDecoder: NSCoder) {
-        let storedNumbers = (aDecoder.decodeObjectForKey(Game.numbersCoderKey) as? Array<Number>)!
-        self.numbers = Game.removeSurplusRows(from: storedNumbers)
+        if let storedNumbers = aDecoder.decodeObjectForKey(Game.numbersCoderKey) as? Array<Number> {
+            self.numbers = Game.removeSurplusRows(from: storedNumbers)
+        }
 
-        self.historicNumberCount = (aDecoder.decodeObjectForKey(Game.historicNumberCountCoderKey) as? Int)! // swiftlint:disable:this line_length
+        if let latestPair = aDecoder.decodeObjectForKey(Game.latestPairCoderKey) as? Array<Int> {
+            self.latestPair = latestPair
+        }
+
+        // swiftlint:disable:next line_length
+        self.historicNumberCount = (aDecoder.decodeObjectForKey(Game.historicNumberCountCoderKey) as? Int)!
         self.currentRound = (aDecoder.decodeObjectForKey(Game.currentRoundCoderKey) as? Int)!
         self.valueCounts = (aDecoder.decodeObjectForKey(Game.valueCountsCoderKey) as? [Int: Int])!
         self.startTime = (aDecoder.decodeObjectForKey(Game.startTimeCoderKey) as? NSDate?)!
 
         if self.numbers.count == 0 {
             self.numbers = Game.initialNumbers()
+            self.latestPair = []
+            self.valueCounts = Game.initialValueCounts
             self.historicNumberCount = self.numbers.count
+            self.startTime = nil
+            self.currentRound = 1
         }
     }
 
@@ -232,6 +245,7 @@ class Game: NSObject, NSCoding {
 
     func encodeWithCoder(aCoder: NSCoder) {
         aCoder.encodeObject(numbers, forKey: Game.numbersCoderKey)
+        aCoder.encodeObject(latestPair, forKey: Game.latestPairCoderKey)
         aCoder.encodeObject(historicNumberCount, forKey: Game.historicNumberCountCoderKey)
         aCoder.encodeObject(currentRound, forKey: Game.currentRoundCoderKey)
         aCoder.encodeObject(startTime, forKey: Game.startTimeCoderKey)
