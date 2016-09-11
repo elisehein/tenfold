@@ -78,6 +78,8 @@ class GameGrid: Grid {
                  animated: Bool = true,
                  enforceStartingPosition: Bool = true,
                  completion: (() -> Void)? = nil) {
+        selectedIndexPaths.removeAll()
+
         if animated {
             hideCurrentGame({
                 self.transform = CGAffineTransformIdentity
