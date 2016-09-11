@@ -84,7 +84,9 @@ class Play: UIViewController {
         gameGridFrame.origin.x = (view.bounds.size.width - gameGridFrame.size.width) / 2
         gameGrid.initialisePositionWithinFrame(gameGridFrame, withInsets: Play.gridInsets)
 
-        positionMenu()
+        menu.emptySpaceAvailable = gameGrid.emptySpaceVisible
+        menu.anchorFrame = view.bounds
+
         nextRoundNotification.toggle(inFrame: view.bounds, showing: false)
         gamePlayMessageNotification.toggle(inFrame: view.bounds, showing: false)
         initNextRoundMatrix()
@@ -135,25 +137,6 @@ class Play: UIViewController {
 
     // MARK: Positioning
 
-    private func positionMenu() {
-        guard !menu.animationInProgress && !menu.hidden else { return }
-        menu.frame = menuFrame()
-    }
-
-    private func menuFrame(atStartingPosition atStartingPosition: Bool = false) -> CGRect {
-        var menuFrame = gameGrid.frame
-        let maxMenuHeight = gameGrid.emptySpaceVisible(atStartingPosition: true)
-
-        if atStartingPosition {
-            menuFrame.size.height = maxMenuHeight
-        } else {
-            let requestedMenuHeight = gameGrid.emptySpaceVisible()
-            menuFrame.size.height = min(maxMenuHeight, requestedMenuHeight)
-        }
-
-        return menuFrame
-    }
-
     private func positionNextRoundGrid() {
         var nextRoundMatrixFrame = gameGrid.frame
         let cellHeight = Grid.cellSize(forAvailableWidth: nextRoundMatrixFrame.size.width).height
@@ -192,7 +175,7 @@ class Play: UIViewController {
         // position. We need to animate it to its starting position along with the new game
         // animation.
         if !inGameplayPosition {
-            repositionMenuIfNeeded()
+            menu.nudgeToDefaultPositionIfNeeded()
         }
 
         game = newGame
@@ -203,18 +186,10 @@ class Play: UIViewController {
             self.updateNextRoundNotificationText()
             self.updateState()
             self.nextRoundGrid?.hide(animated: false)
-            let menuEndPosition = self.menuFrame(atStartingPosition: !inGameplayPosition)
-            self.menu.showIfNeeded(atEndPosition: menuEndPosition)
+            self.menu.showIfNeeded(atDefaultPosition: !inGameplayPosition)
         })
 
         view.backgroundColor = inGameplayPosition ? Play.gameplayBGColor : Play.defaultBGColor
-    }
-
-    private func repositionMenuIfNeeded() {
-        let defaultMenuFrame = menuFrame(atStartingPosition: true)
-        if !menu.hidden && !CGRectEqualToRect(menu.frame, defaultMenuFrame) {
-            menu.reposition(atEndPosition: defaultMenuFrame)
-        }
     }
 
     func showInfoModal() {
@@ -334,7 +309,7 @@ class Play: UIViewController {
 
     private func handleWillSnapToStartingPosition() {
         view.backgroundColor = Play.defaultBGColor
-        menu.showIfNeeded(atEndPosition: menuFrame(atStartingPosition: true))
+        menu.showIfNeeded(atDefaultPosition: true)
     }
 
     func handleWillSnapToGameplayPosition() {
@@ -387,7 +362,7 @@ class Play: UIViewController {
             passedNextRoundThreshold = false
         }
 
-        positionMenu()
+        menu.position()
     }
 
     private func handlePullingDown(withFraction fraction: CGFloat) {
@@ -412,6 +387,6 @@ class Play: UIViewController {
         restart(withGame: onboardingGame, inGameplayPosition: true)
 
         // Don't know why... Possibly because we don't call handleScroll()
-        positionMenu()
+        menu.position()
     }
 }

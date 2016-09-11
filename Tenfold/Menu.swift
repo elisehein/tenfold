@@ -43,6 +43,13 @@ class Menu: UIView {
     private let state: MenuState
     private var shouldShowTips: Bool
 
+    var anchorFrame: CGRect = CGRect.zero {
+        didSet {
+            position()
+        }
+    }
+
+    var emptySpaceAvailable: ((atDefaultPosition: Bool) -> CGFloat)?
     var onTapLogo: (() -> Void)?
     var onTapNewGame: (() -> Void)?
     var onTapInstructions: (() -> Void)?
@@ -178,24 +185,6 @@ class Menu: UIView {
         }
     }
 
-    func hideIfNeeded(animated animated: Bool = true) {
-        guard !hidden else { return }
-        animationInProgress = true
-
-        let lockedFrame = frame
-        UIView.animateWithDuration(animated ? 0.25 : 0,
-                                   delay: 0,
-                                   options: .CurveEaseIn,
-                                   animations: {
-            self.frame = self.offScreen(lockedFrame)
-            self.alpha = 0
-        }, completion: { _ in
-            self.hidden = true
-            self.animationInProgress = false
-            self.showTipsIfNeeded()
-        })
-    }
-
     private func showTipsIfNeeded() {
         if shouldShowTips {
             UIApplication.sharedApplication().delegate?.window??.addSubview(showMenuTip)
@@ -207,13 +196,40 @@ class Menu: UIView {
         }
     }
 
-    func showIfNeeded(atEndPosition endPosition: CGRect) {
-        guard hidden else { return }
-        hidden = false
-        reposition(atEndPosition: endPosition)
+    func hideIfNeeded(animated animated: Bool = true) {
+        guard !hidden else { return }
+        animationInProgress = true
+
+        let lockedFrame = frame
+        UIView.animateWithDuration(animated ? 0.25 : 0,
+                                   delay: 0,
+                                   options: .CurveEaseIn,
+                                   animations: {
+            self.frame = self.offScreenFrame(givenFrame: lockedFrame)
+            self.alpha = 0
+        }, completion: { _ in
+            self.hidden = true
+            self.animationInProgress = false
+            self.showTipsIfNeeded()
+        })
     }
 
-    func reposition(atEndPosition endPosition: CGRect) {
+    func showIfNeeded(atDefaultPosition atDefaultPosition: Bool) {
+        guard hidden else { return }
+        hidden = false
+        let endPosition = visibleFrame(atDefaultPosition: atDefaultPosition)
+        animatePosition(withEndPosition: endPosition)
+    }
+
+    func nudgeToDefaultPositionIfNeeded() {
+        let defaultFrame = visibleFrame(atDefaultPosition: true)
+
+        if !hidden && !CGRectEqualToRect(frame, defaultFrame) {
+            animatePosition(withEndPosition: defaultFrame)
+        }
+    }
+
+    func animatePosition(withEndPosition endPosition: CGRect) {
         animationInProgress = true
 
         UIView.animateWithDuration(0.3,
@@ -233,7 +249,26 @@ class Menu: UIView {
         })
     }
 
-    private func offScreen(rect: CGRect) -> CGRect {
+    func position() {
+        guard !animationInProgress && !hidden else { return }
+        frame = visibleFrame()
+    }
+
+    private func visibleFrame(atDefaultPosition atDefaultPosition: Bool = false) -> CGRect {
+        var menuFrame = anchorFrame
+        let maxHeight = emptySpaceAvailable!(atDefaultPosition: true)
+
+        if atDefaultPosition {
+            menuFrame.size.height = maxHeight
+        } else {
+            let availableHeight = emptySpaceAvailable!(atDefaultPosition: false)
+            menuFrame.size.height = min(maxHeight, availableHeight)
+        }
+
+        return menuFrame
+    }
+
+    private func offScreenFrame(givenFrame rect: CGRect) -> CGRect {
         var offScreenRect = rect
         offScreenRect.origin.y = -rect.size.height
         return offScreenRect
