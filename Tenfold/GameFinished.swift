@@ -153,7 +153,7 @@ class GameFinished: UIViewController {
         var text = ""
 
         if RankingService.singleton.numberOfWinningGames() == 1 {
-            text += "And it's a first! It took you \(game.historicNumberCount) numbers " +
+            text += "And it's a first! It took you \(game.fullNumberCount) numbers " +
                     "and \(game.currentRound) rounds to empty the grid. "
         } else {
             if RankingService.singleton.latestGameIsShortestWinningGame() {

@@ -14,7 +14,7 @@ class Game: NSObject, NSCoding {
 
     private static let numbersCoderKey = "gameNumbersCoderKey"
     private static let latestPairCoderKey = "gameLatestPairCoderKey"
-    private static let historicNumberCountCoderKey = "gameHistoricNumberCountCoderKey"
+    private static let fullNumberCountCoderKey = "gameHistoricNumberCountCoderKey" // Legacy naming
     private static let currentRoundCoderKey = "gameCurrentRoundCoderKey"
     private static let valueCountsCoderKey = "gameValueCountsCoderKey"
     private static let startTimeCoderKey = "gameStartTimeCoderKey"
@@ -28,12 +28,10 @@ class Game: NSObject, NSCoding {
 
     private var numbers: Array<Number> = []
     private var valueCounts: [Int: Int]
-
-    var historicNumberCount: Int = 0
+    var latestPair: Array<Int> = []
+    var fullNumberCount: Int = 0
     var currentRound: Int = 1
     var startTime: NSDate? = nil
-
-    var latestPair: Array<Int> = []
 
     class func initialNumbers() -> Array<Number> {
         let initialNumbers: Array<Number> = initialNumberValues.map({ value in
@@ -47,7 +45,7 @@ class Game: NSObject, NSCoding {
     override init() {
         self.numbers = Game.initialNumbers()
         self.valueCounts = Game.initialValueCounts
-        self.historicNumberCount = self.numbers.count
+        self.fullNumberCount = self.numbers.count
         super.init()
     }
 
@@ -60,8 +58,7 @@ class Game: NSObject, NSCoding {
             self.latestPair = latestPair
         }
 
-        // swiftlint:disable:next line_length
-        self.historicNumberCount = (aDecoder.decodeObjectForKey(Game.historicNumberCountCoderKey) as? Int)!
+        self.fullNumberCount = (aDecoder.decodeObjectForKey(Game.fullNumberCountCoderKey) as? Int)!
         self.currentRound = (aDecoder.decodeObjectForKey(Game.currentRoundCoderKey) as? Int)!
         self.valueCounts = (aDecoder.decodeObjectForKey(Game.valueCountsCoderKey) as? [Int: Int])!
         self.startTime = (aDecoder.decodeObjectForKey(Game.startTimeCoderKey) as? NSDate?)!
@@ -70,7 +67,7 @@ class Game: NSObject, NSCoding {
             self.numbers = Game.initialNumbers()
             self.latestPair = []
             self.valueCounts = Game.initialValueCounts
-            self.historicNumberCount = self.numbers.count
+            self.fullNumberCount = self.numbers.count
             self.startTime = nil
             self.currentRound = 1
         }
@@ -93,7 +90,7 @@ class Game: NSObject, NSCoding {
     func makeNextRound(usingNumbers nextRoundNumbers: Array<Number>) -> Bool {
         if nextRoundNumbers.count > 0 {
             numbers += nextRoundNumbers
-            historicNumberCount += nextRoundNumbers.count
+            fullNumberCount += nextRoundNumbers.count
             currentRound += 1
 
             for (value, _) in valueCounts {
@@ -161,7 +158,7 @@ class Game: NSObject, NSCoding {
     }
 
     func historicNumbersCrossedOut() -> Int {
-        return historicNumberCount - numbersRemaining()
+        return fullNumberCount - numbersRemaining()
     }
 
     func totalNumbers() -> Int {
@@ -246,7 +243,7 @@ class Game: NSObject, NSCoding {
     func encodeWithCoder(aCoder: NSCoder) {
         aCoder.encodeObject(numbers, forKey: Game.numbersCoderKey)
         aCoder.encodeObject(latestPair, forKey: Game.latestPairCoderKey)
-        aCoder.encodeObject(historicNumberCount, forKey: Game.historicNumberCountCoderKey)
+        aCoder.encodeObject(fullNumberCount, forKey: Game.fullNumberCountCoderKey)
         aCoder.encodeObject(currentRound, forKey: Game.currentRoundCoderKey)
         aCoder.encodeObject(startTime, forKey: Game.startTimeCoderKey)
         aCoder.encodeObject(valueCounts, forKey: Game.valueCountsCoderKey)

@@ -9,24 +9,24 @@
 import Foundation
 
 class GameSnapshot: NSObject, NSCoding {
-    let historicNumberCount: Int
+    let fullNumberCount: Int
     let numbersRemaining: Int
     let totalRounds: Int
     let startTime: NSDate?
     let endTime: NSDate
 
-    private static let historicNumberCountCoderKey = "gameSnapshotHistoricNumberCountCoderKey"
+    private static let fullNumberCountCoderKey = "gameSnapshotHistoricNumberCountCoderKey"
     private static let numbersRemainingCoderKey = "gameSnapshotNumbersRemainingCoderKey"
     private static let totalRoundsCoderKey = "gameSnapshotTotalRoundsCoderKey"
     private static let startTimeCoderKey = "gameSnapshotStartTimeCoderKey"
     private static let endTimeCoderKey = "gameSnapshotEndTimeCoderKey"
 
-    init(historicNumberCount: Int,
+    init(fullNumberCount: Int,
          numbersRemaining: Int,
          totalRounds: Int,
          startTime: NSDate?,
          endTime: NSDate) {
-        self.historicNumberCount = historicNumberCount
+        self.fullNumberCount = fullNumberCount
         self.numbersRemaining = numbersRemaining
         self.totalRounds = totalRounds
         self.startTime = startTime
@@ -35,7 +35,7 @@ class GameSnapshot: NSObject, NSCoding {
     }
 
     convenience init(game: Game) {
-        self.init(historicNumberCount: game.historicNumberCount,
+        self.init(fullNumberCount: game.fullNumberCount,
                   numbersRemaining: game.numbersRemaining(),
                   totalRounds: game.currentRound,
                   startTime: game.startTime,
@@ -43,8 +43,7 @@ class GameSnapshot: NSObject, NSCoding {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        // swiftlint:disable:next line_length
-        self.historicNumberCount = Int(aDecoder.decodeIntForKey(GameSnapshot.historicNumberCountCoderKey))
+        self.fullNumberCount = Int(aDecoder.decodeIntForKey(GameSnapshot.fullNumberCountCoderKey))
         self.numbersRemaining = Int(aDecoder.decodeIntForKey(GameSnapshot.numbersRemainingCoderKey))
         self.totalRounds = Int(aDecoder.decodeIntForKey(GameSnapshot.totalRoundsCoderKey))
         self.startTime = aDecoder.decodeObjectForKey(GameSnapshot.startTimeCoderKey) as? NSDate
@@ -54,8 +53,8 @@ class GameSnapshot: NSObject, NSCoding {
     }
 
     func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeInt(Int32(historicNumberCount),
-                         forKey: GameSnapshot.historicNumberCountCoderKey)
+        aCoder.encodeInt(Int32(fullNumberCount),
+                         forKey: GameSnapshot.fullNumberCountCoderKey)
         aCoder.encodeInt(Int32(numbersRemaining), forKey: GameSnapshot.numbersRemainingCoderKey)
         aCoder.encodeInt(Int32(totalRounds), forKey: GameSnapshot.totalRoundsCoderKey)
         aCoder.encodeObject(startTime!, forKey: GameSnapshot.startTimeCoderKey)

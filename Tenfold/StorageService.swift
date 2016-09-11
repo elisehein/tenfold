@@ -73,7 +73,7 @@ class StorageService {
             // Simple heuristics to avoid storing every trivial game on device
             guard game.startTime != nil else { return }
             guard game.currentRound > 3 else { return }
-            guard game.historicNumberCount - game.numbersRemaining() > 20 else { return }
+            guard game.fullNumberCount - game.numbersRemaining() > 20 else { return }
         }
 
         var snapshots = restoreOrderedGameSnapshots()
