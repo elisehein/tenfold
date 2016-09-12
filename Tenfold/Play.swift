@@ -226,8 +226,6 @@ class Play: UIViewController {
     }
 
     func undoLatestPairing() {
-        guard game.latestMoveUndoable() else { return }
-
         let undoPairing = {
             let pair = self.game.latestMove!.crossedOutPair
             self.game.undoLatestPairing()

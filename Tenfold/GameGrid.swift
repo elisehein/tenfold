@@ -181,12 +181,6 @@ class GameGrid: Grid {
         prepareForRemoval(indexPaths, completion: {
             if !removalHandled {
                 self.deleteItemsAtIndexPaths(indexPaths)
-
-                if self.game.numberCount() > 0 {
-                    let lastIndexPath = NSIndexPath(forItem: self.game.numberCount() - 1, inSection: 0)
-                    self.reloadItemsAtIndexPaths([lastIndexPath])
-                }
-
                 removalHandled = true
                 completion()
             }

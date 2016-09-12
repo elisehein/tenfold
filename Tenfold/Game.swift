@@ -44,9 +44,9 @@ class Game: NSObject, NSCoding {
     }
 
     override init() {
-        self.numbers = Game.initialNumbers()
-        self.valueCounts = Game.initialValueCounts
-        self.historicNumberCount = self.numbers.count
+        numbers = Game.initialNumbers()
+        historicNumberCount = numbers.count
+        valueCounts = Game.initialValueCounts
         super.init()
     }
 
@@ -104,12 +104,9 @@ class Game: NSObject, NSCoding {
 
     private func removeRow(withIndeces indeces: Array<Int>) {
         guard indeces.count > 0 else { return }
-
         let numbersToRemove = numbers.filter({ indeces.contains(numbers.indexOf($0)!) })
         latestMove!.removedRows.append(numbersToRemove)
-
         latestMove?.removedRowPlaceholders.append(indeces[0])
-
         numbers.removeObjects(numbersToRemove)
     }
 
@@ -267,10 +264,6 @@ class Game: NSObject, NSCoding {
 
     private func remainingNumbers() -> Array<Number> {
         return numbers.filter({ !$0.crossedOut })
-    }
-
-    func latestMoveUndoable() -> Bool {
-        return latestMove != nil && latestMove?.crossedOutPair.count > 0
     }
 
     class func removeSurplusRows(from givenNumbers: Array<Number>) -> Array<Number> {
