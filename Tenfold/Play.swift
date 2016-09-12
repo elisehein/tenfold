@@ -58,6 +58,7 @@ class Play: UIViewController {
         gameGrid.onWillSnapToStartingPosition = handleWillSnapToStartingPosition
         gameGrid.onWillSnapToGameplayPosition = handleWillSnapToGameplayPosition
         gameGrid.onPairingAttempt = handlePairingAttempt
+        gameGrid.onUndoLatestPairing = undoLatestPairing
         gameGrid.automaticallySnapToGameplayPosition = !isOnboarding
 
         menu.onTapLogo = showInfoModal
@@ -213,12 +214,19 @@ class Play: UIViewController {
     }
 
     func handleSuccessfulPairing(index: Int, otherIndex: Int) {
-        game.crossOutPair(index, otherIndex: otherIndex)
-        gameGrid.crossOutPair(index, otherIndex: otherIndex)
+        game.crossOutPair(index, otherIndex)
+        gameGrid.crossOutPair(index, otherIndex)
         updateNextRoundNotificationText()
         updateState()
         removeSurplusRows(containingIndeces: index, otherIndex)
         checkForNewlyUnrepresentedValues()
+    }
+
+    func undoLatestPairing() {
+        gameGrid.unCrossOutPair(game.latestPair[0], game.latestPair[1])
+        game.undoLatestPairing()
+        updateNextRoundNotificationText()
+        updateState()
     }
 
     // Instead of calling reloadData on the entire matrix, dynamically add the next round

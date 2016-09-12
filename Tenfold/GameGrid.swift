@@ -33,6 +33,7 @@ class GameGrid: Grid {
     var onWillSnapToGameplayPosition: (() -> Void)?
     var onWillSnapToStartingPosition: (() -> Void)?
     var onPairingAttempt: ((itemIndex: Int, otherItemIndex: Int) -> Void)?
+    var onUndoLatestPairing: (() -> Void)?
 
     private static let scaleFactor = UIScreen.mainScreen().scale
     private static let prematureBounceReductionFactor: CGFloat = 0.2
@@ -144,17 +145,16 @@ class GameGrid: Grid {
         }
     }
 
-    func crossOutPair(index: Int, otherIndex: Int) {
-        let indexPath = NSIndexPath(forItem: index, inSection: 0)
-        let otherIndexPath = NSIndexPath(forItem: otherIndex, inSection: 0)
-        let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell
-        let otherCell = cellForItemAtIndexPath(otherIndexPath) as? GameGridCell
+    func crossOutPair(index: Int, _ otherIndex: Int) {
+        performActionOnCells(withIndeces: [index, otherIndex], { cell in
+            cell.crossOut()
+        })
+    }
 
-        // These need to be checked separately, as one cell may be visible
-        // while the other is not (in which case it is nil). We still want to
-        // cross out the visible one
-        if cell != nil { cell!.crossOut() }
-        if otherCell != nil { otherCell!.crossOut() }
+    func unCrossOutPair(index: Int, _ otherIndex: Int) {
+        performActionOnCells(withIndeces: [index, otherIndex], { cell in
+            cell.unCrossOut(animated: true)
+        })
     }
 
     func dismissSelection() {
@@ -205,12 +205,26 @@ class GameGrid: Grid {
 
     func flashNumbers(atIndeces indeces: Array<Int>,
                       withColor color: UIColor) {
+        performActionOnCells(withIndeces: indeces, { cell in
+            cell.flash(withColor: color)
+        })
+    }
+
+    private func performActionOnCells(withIndeces indeces: Array<Int>,
+                                      _ action: ((GameGridCell) -> Void)) {
+
+        // Each cell's existence need to be checked separately, as one cell may
+        // be visible while the other is not (in which case it is nil). We still
+        // want to
+        // cross out the visible one
         for index in indeces {
             let indexPath = NSIndexPath(forItem: index, inSection: 0)
+
             if let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell {
-                cell.flash(withColor: color)
+                action(cell)
             }
         }
+
     }
 
     // MARK: Top insets and visible space considering scroll state
