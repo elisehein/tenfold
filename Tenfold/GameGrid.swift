@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 
 class GameGrid: Grid {
-
     internal let reuseIdentifier = "GameGridCell"
 
     internal var game: Game
@@ -53,8 +52,7 @@ class GameGrid: Grid {
 
         super.init(frame: CGRect.zero)
 
-        registerClass(GameGridCell.self,
-                      forCellWithReuseIdentifier: self.reuseIdentifier)
+        registerClass(GameGridCell.self, forCellWithReuseIdentifier: self.reuseIdentifier)
         backgroundColor = UIColor.clearColor()
         dataSource = self
         delegate = self
@@ -63,8 +61,7 @@ class GameGrid: Grid {
         alwaysBounceVertical = true
     }
 
-    override func initialisePositionWithinFrame(givenFrame: CGRect,
-                                                withInsets insets: UIEdgeInsets) {
+    override func initialisePositionWithinFrame(givenFrame: CGRect, withInsets insets: UIEdgeInsets) {
         super.initialisePositionWithinFrame(givenFrame, withInsets: insets)
 
         // Whatever the game state, we initially start with 3 rows showing
@@ -130,6 +127,9 @@ class GameGrid: Grid {
         insertItemsAtIndexPaths(indexPaths)
         performBatchUpdates(nil, completion: { finished in
             self.adjustTopInset()
+            // In case our end of round marker got lost with row removals, ensure
+            // it's there just before adding the next round
+            self.reloadItemsAtIndexPaths([NSIndexPath(forItem: indeces[0] - 1, inSection: 0)])
             completion?(finished)
         })
     }
@@ -144,17 +144,16 @@ class GameGrid: Grid {
         }
     }
 
-    func crossOutPair(index: Int, otherIndex: Int) {
-        let indexPath = NSIndexPath(forItem: index, inSection: 0)
-        let otherIndexPath = NSIndexPath(forItem: otherIndex, inSection: 0)
-        let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell
-        let otherCell = cellForItemAtIndexPath(otherIndexPath) as? GameGridCell
+    func crossOutPair(index: Int, _ otherIndex: Int) {
+        performActionOnCells(withIndeces: [index, otherIndex], { cell in
+            cell.crossOut()
+        })
+    }
 
-        // These need to be checked separately, as one cell may be visible
-        // while the other is not (in which case it is nil). We still want to
-        // cross out the visible one
-        if cell != nil { cell!.crossOut() }
-        if otherCell != nil { otherCell!.crossOut() }
+    func unCrossOutPair(index: Int, _ otherIndex: Int) {
+        performActionOnCells(withIndeces: [index, otherIndex], { cell in
+            cell.unCrossOut(animated: true)
+        })
     }
 
     func dismissSelection() {
@@ -168,8 +167,10 @@ class GameGrid: Grid {
         }
     }
 
-    func removeNumbers(atIndexPaths indexPaths: Array<NSIndexPath>, completion: (() -> Void)) {
-        guard indexPaths.count > 0 else { return }
+    func removeNumbers(atIndeces indeces: Array<Int>, completion: (() -> Void)) {
+        guard indeces.count > 0 else { return }
+
+        let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
 
         adjustTopInset()
         if contentInset.top > 0 {
@@ -181,15 +182,25 @@ class GameGrid: Grid {
             if !removalHandled {
                 self.deleteItemsAtIndexPaths(indexPaths)
 
-                if self.game.totalNumbers() > 0 {
-                    let lastIndexPath = NSIndexPath(forItem: self.game.totalNumbers() - 1,
-                        inSection: 0)
+                if self.game.numberCount() > 0 {
+                    let lastIndexPath = NSIndexPath(forItem: self.game.numberCount() - 1, inSection: 0)
                     self.reloadItemsAtIndexPaths([lastIndexPath])
                 }
 
                 removalHandled = true
                 completion()
             }
+        })
+    }
+
+    func addRows(atIndeces indeces: Array<Int>, completion: (() -> Void)) {
+        guard indeces.count > 0 else { return }
+        let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
+
+        self.insertItemsAtIndexPaths(indexPaths)
+        performBatchUpdates(nil, completion: { finished in
+            self.adjustTopInset()
+            completion()
         })
     }
 
@@ -205,12 +216,26 @@ class GameGrid: Grid {
 
     func flashNumbers(atIndeces indeces: Array<Int>,
                       withColor color: UIColor) {
+        performActionOnCells(withIndeces: indeces, { cell in
+            cell.flash(withColor: color)
+        })
+    }
+
+    private func performActionOnCells(withIndeces indeces: Array<Int>,
+                                      _ action: ((GameGridCell) -> Void)) {
+
+        // Each cell's existence need to be checked separately, as one cell may
+        // be visible while the other is not (in which case it is nil). We still
+        // want to
+        // cross out the visible one
         for index in indeces {
             let indexPath = NSIndexPath(forItem: index, inSection: 0)
+
             if let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell {
-                cell.flash(withColor: color)
+                action(cell)
             }
         }
+
     }
 
     // MARK: Top insets and visible space considering scroll state
@@ -253,8 +278,7 @@ class GameGrid: Grid {
     }
 
     private func currentGameHeight() -> CGFloat {
-        return Grid.heightForGame(withTotalRows: game.totalRows(),
-                                  availableWidth: bounds.size.width)
+        return Grid.heightForGame(withTotalRows: game.totalRows(), availableWidth: bounds.size.width)
     }
 
     internal func ensureGridPositionedForGameplay() {

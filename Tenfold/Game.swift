@@ -12,9 +12,11 @@ class Game: NSObject, NSCoding {
 
     static let numbersPerRow = 9
 
+    // Take care not to rename the actual literals, as they are used as storage keys on
+    // devices that already have the game installed
     private static let numbersCoderKey = "gameNumbersCoderKey"
-    private static let latestPairCoderKey = "gameLatestPairCoderKey"
-    private static let fullNumberCountCoderKey = "gameHistoricNumberCountCoderKey" // Legacy naming
+    private static let historicNumberCountCoderKey = "gameHistoricNumberCountCoderKey"
+    private static let latestMoveCoderKey = "gameLatestMoveCoderKey"
     private static let currentRoundCoderKey = "gameCurrentRoundCoderKey"
     private static let valueCountsCoderKey = "gameValueCountsCoderKey"
     private static let startTimeCoderKey = "gameStartTimeCoderKey"
@@ -23,15 +25,14 @@ class Game: NSObject, NSCoding {
                                       1, 1, 1, 2, 1, 3, 1, 4, 1,
                                       5, 1, 6, 1, 7, 1, 8, 1, 9]
 
-    // swiftlint:disable:next line_length
     private static let initialValueCounts: [Int: Int] = [1: 11, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2, 7: 2, 8: 2, 9: 2]
 
     private var numbers: Array<Number> = []
     private var valueCounts: [Int: Int]
-    var latestPair: Array<Int> = []
-    var fullNumberCount: Int = 0
+    var historicNumberCount: Int = 0
     var currentRound: Int = 1
     var startTime: NSDate? = nil
+    var latestMove: GameMove? = nil
 
     class func initialNumbers() -> Array<Number> {
         let initialNumbers: Array<Number> = initialNumberValues.map({ value in
@@ -45,7 +46,7 @@ class Game: NSObject, NSCoding {
     override init() {
         self.numbers = Game.initialNumbers()
         self.valueCounts = Game.initialValueCounts
-        self.fullNumberCount = self.numbers.count
+        self.historicNumberCount = self.numbers.count
         super.init()
     }
 
@@ -54,33 +55,79 @@ class Game: NSObject, NSCoding {
             self.numbers = Game.removeSurplusRows(from: storedNumbers)
         }
 
-        if let latestPair = aDecoder.decodeObjectForKey(Game.latestPairCoderKey) as? Array<Int> {
-            self.latestPair = latestPair
+        if let latestMove = aDecoder.decodeObjectForKey(Game.latestMoveCoderKey) as? GameMove {
+            self.latestMove = latestMove
         }
 
-        self.fullNumberCount = (aDecoder.decodeObjectForKey(Game.fullNumberCountCoderKey) as? Int)!
+        self.historicNumberCount = (aDecoder.decodeObjectForKey(Game.historicNumberCountCoderKey) as? Int)!
         self.currentRound = (aDecoder.decodeObjectForKey(Game.currentRoundCoderKey) as? Int)!
         self.valueCounts = (aDecoder.decodeObjectForKey(Game.valueCountsCoderKey) as? [Int: Int])!
         self.startTime = (aDecoder.decodeObjectForKey(Game.startTimeCoderKey) as? NSDate?)!
-
-        if self.numbers.count == 0 {
-            self.numbers = Game.initialNumbers()
-            self.latestPair = []
-            self.valueCounts = Game.initialValueCounts
-            self.fullNumberCount = self.numbers.count
-            self.startTime = nil
-            self.currentRound = 1
-        }
     }
 
     // MARK: Manipulate game
 
-    func crossOutPair(index: Int, otherIndex: Int) {
+    func crossOutPair(index: Int, _ otherIndex: Int) {
         startTime = NSDate()
-        numbers[index].crossedOut = true
-        numbers[otherIndex].crossedOut = true
-        valueCounts[numbers[index].value!]! -= 1
-        valueCounts[numbers[otherIndex].value!]! -= 1
+        latestMove = GameMove(crossedOutPair: [index, otherIndex])
+
+        let crossOut: ((Number) -> Void) = { number in
+            number.crossedOut = true
+            self.valueCounts[number.value!]! -= 1
+        }
+
+        for index in [index, otherIndex] {
+            crossOut(numbers[index])
+        }
+    }
+
+    func undoLatestPairing() {
+        guard latestMove != nil else { return }
+
+        let unpair: ((Number) -> Void) = { number in
+            number.crossedOut = false
+            self.incrementValueCount(number.value!)
+        }
+
+        for index in latestMove!.crossedOutPair {
+            unpair(numbers[index])
+        }
+
+        latestMove = nil
+    }
+
+    func removeRowIfNeeded(containingIndex index: Int) -> Array<Int> {
+        let surplusIndeces = surplusIndecesOnRow(containingIndex: index)
+        removeRow(withIndeces: surplusIndeces)
+        return surplusIndeces
+    }
+
+    private func removeRow(withIndeces indeces: Array<Int>) {
+        guard indeces.count > 0 else { return }
+
+        let numbersToRemove = numbers.filter({ indeces.contains(numbers.indexOf($0)!) })
+        latestMove!.removedRows.append(numbersToRemove)
+
+        latestMove?.removedRowPlaceholders.append(indeces[0])
+
+        numbers.removeObjects(numbersToRemove)
+    }
+
+    func undoRowRemoval() -> Array<Int>? {
+        guard latestMove != nil else { return nil }
+        guard latestMove?.removedRows.count > 0 else { return nil }
+
+        var indecesAdded: Array<Int> = []
+
+        // For the placeholders to be correct, we need to bring back the rows in
+        // reverse order to what they were removed in
+        for rowIndex in (0..<latestMove!.removedRows.count).reverse() {
+            let placeholder = latestMove!.removedRowPlaceholders[rowIndex]
+            indecesAdded += Array(placeholder..<placeholder + Game.numbersPerRow)
+            numbers.insertContentsOf(latestMove!.removedRows[rowIndex], at: placeholder)
+        }
+
+        return indecesAdded
     }
 
     func makeNextRound() -> Bool {
@@ -89,8 +136,9 @@ class Game: NSObject, NSCoding {
 
     func makeNextRound(usingNumbers nextRoundNumbers: Array<Number>) -> Bool {
         if nextRoundNumbers.count > 0 {
+            numbers.last.marksEndOfRound = true // In case this was lost with row removals
             numbers += nextRoundNumbers
-            fullNumberCount += nextRoundNumbers.count
+            historicNumberCount += nextRoundNumbers.count
             currentRound += 1
 
             for (value, _) in valueCounts {
@@ -103,19 +151,19 @@ class Game: NSObject, NSCoding {
         }
     }
 
-    func removeNumbers(atIndeces indeces: Array<Int>) {
-        let numbersToRemove = numbers.filter({ indeces.contains(numbers.indexOf($0)!) })
-        numbers.removeObjects(numbersToRemove)
-        if numbers.count > 0 {
-            numbers.last.marksEndOfRound = true
-        }
-    }
-
     func pruneValueCounts() {
         let unrepresentedValueCounts = valueCounts.filter({ $1 == 0 })
 
         for (value, _) in unrepresentedValueCounts {
             valueCounts.removeValueForKey(value)
+        }
+    }
+
+    func incrementValueCount(value: Int) {
+        if valueCounts.keys.contains(value) {
+            valueCounts[value]! += 1
+        } else {
+            valueCounts[value] = 1
         }
     }
 
@@ -154,28 +202,27 @@ class Game: NSObject, NSCoding {
     }
 
     func numbersCrossedOut() -> Int {
-        return totalNumbers() - numbersRemaining()
+        return numberCount() - numbersRemaining()
     }
 
     func historicNumbersCrossedOut() -> Int {
-        return fullNumberCount - numbersRemaining()
+        return historicNumberCount - numbersRemaining()
     }
 
-    func totalNumbers() -> Int {
+    func numberCount() -> Int {
         return numbers.count
     }
 
     func totalRows() -> Int {
-        return Matrix.singleton.totalRows(totalNumbers())
+        return Matrix.singleton.totalRows(numberCount())
     }
 
     func lastNumberColumn() -> Int {
-        return Matrix.singleton.columnOfItem(atIndex: totalNumbers() - 1)
+        return Matrix.singleton.columnOfItem(atIndex: numberCount() - 1)
     }
 
     func indecesOnRow(containingIndex index: Int) -> Array<Int> {
-        return Matrix.singleton.indecesOnRow(containingIndex: index,
-                                             lastGameIndex: totalNumbers() - 1)
+        return Matrix.singleton.indecesOnRow(containingIndex: index, lastGameIndex: numberCount() - 1)
     }
 
     func valueAtIndex(index: Int) -> Int? {
@@ -194,15 +241,13 @@ class Game: NSObject, NSCoding {
         return indeces.filter({ numbers[$0].crossedOut }).count == indeces.count
     }
 
-    func allCrossedOutBetween(index index: Int,
-                              laterIndex: Int,
-                              withIncrement increment: Int = 1) -> Bool {
+    func allCrossedOutBetween(index index: Int, laterIndex: Int, withIncrement increment: Int = 1) -> Bool {
         if index + increment >= laterIndex {
             return false
         }
 
         for i in (index + increment).stride(to: laterIndex, by: increment) {
-            if numbers.count > i && !isCrossedOut(i) {
+            if numberCount() > i && !isCrossedOut(i) {
                 return false
             }
         }
@@ -210,25 +255,28 @@ class Game: NSObject, NSCoding {
         return true
     }
 
-    func surplusIndecesOnRows(containingIndeces indeces: Array<Int>) -> Array<Int> {
-        var surplusIndeces: Array<Int> = []
+    func surplusIndecesOnRow(containingIndex index: Int) -> Array<Int> {
+        let rowIndeces = indecesOnRow(containingIndex: index)
 
-        for index in indeces {
-            let rowIndeces = indecesOnRow(containingIndex: index)
-            if allCrossedOut(rowIndeces) &&
-               !Set(rowIndeces).isSubsetOf(Set(surplusIndeces)) {
-                surplusIndeces += rowIndeces
-            }
+        if allCrossedOut(rowIndeces) {
+            return rowIndeces
+        } else {
+            return []
         }
+    }
 
-        return surplusIndeces
+    private func remainingNumbers() -> Array<Number> {
+        return numbers.filter({ !$0.crossedOut })
+    }
+
+    func latestMoveUndoable() -> Bool {
+        return latestMove != nil && latestMove?.crossedOutPair.count > 0
     }
 
     class func removeSurplusRows(from givenNumbers: Array<Number>) -> Array<Number> {
         var filtered: Array<Number> = []
 
         for firstIndexOnRow in 0.stride(to: givenNumbers.count, by: Game.numbersPerRow) {
-            // swiftlint:disable:next line_length
             let lastIndexOnRow = min(firstIndexOnRow + Game.numbersPerRow, givenNumbers.count) - 1
             let row = givenNumbers[firstIndexOnRow...lastIndexOnRow]
 
@@ -242,14 +290,10 @@ class Game: NSObject, NSCoding {
 
     func encodeWithCoder(aCoder: NSCoder) {
         aCoder.encodeObject(numbers, forKey: Game.numbersCoderKey)
-        aCoder.encodeObject(latestPair, forKey: Game.latestPairCoderKey)
-        aCoder.encodeObject(fullNumberCount, forKey: Game.fullNumberCountCoderKey)
+        aCoder.encodeObject(historicNumberCount, forKey: Game.historicNumberCountCoderKey)
         aCoder.encodeObject(currentRound, forKey: Game.currentRoundCoderKey)
         aCoder.encodeObject(startTime, forKey: Game.startTimeCoderKey)
         aCoder.encodeObject(valueCounts, forKey: Game.valueCountsCoderKey)
-    }
-
-    private func remainingNumbers() -> Array<Number> {
-        return numbers.filter({ !$0.crossedOut })
+        aCoder.encodeObject(latestMove, forKey: Game.latestMoveCoderKey)
     }
 }

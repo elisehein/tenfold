@@ -180,15 +180,13 @@ extension RuleExampleGrid: UICollectionViewDataSource {
             cell.value = values[indexPath.item]
             cell.state = crossedOutIndeces.contains(indexPath.item) ? .CrossedOut : .Available
             cell.marksEndOfRound = false
-            cell.defaultBackgroundColor = UIColor.themeColor(.OffWhiteShaded)
+            cell.lightColor = UIColor.themeColor(.OffWhiteShaded)
 
-            // We are dependent on the fact that Pairing animation type example values
-            // always has three rows, and PullUp animation type example always has four.
             if animationType == RuleExampleGrid.animationTypePullUp {
                 if indexPath.item == 26 {
                    cell.marksEndOfRound = true
                 } else if indexPath.item > 26 {
-                   cell.defaultBackgroundColor = UIColor.themeColor(.SecondaryAccent)
+                   cell.lightColor = UIColor.themeColor(.SecondaryAccent)
                 }
             }
 

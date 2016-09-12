@@ -37,9 +37,10 @@ class Matrix: NSObject {
         return index + (itemsPerRow - columnOfItem(atIndex: index)) - 1
     }
 
-    func sameRow(index: Int, _ laterIndex: Int) -> Bool {
-        return (laterIndex - index < itemsPerRow &&
-                columnOfItem(atIndex: laterIndex) > columnOfItem(atIndex: index))
+    func sameRow(index: Int, _ otherIndex: Int) -> Bool {
+        let orderedIndeces = [index, otherIndex].sort { return $0 < $1 }
+        return (orderedIndeces[1] - orderedIndeces[0] < itemsPerRow &&
+                columnOfItem(atIndex: orderedIndeces[1]) > columnOfItem(atIndex: orderedIndeces[0]))
     }
 
     func sameColumn(index: Int, _ laterIndex: Int) -> Bool {

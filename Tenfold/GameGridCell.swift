@@ -20,23 +20,20 @@ class GameGridCell: UICollectionViewCell {
     private static let animationDuration = 0.2
 
     private let numberLabel = UILabel()
-    private let endOfRoundMarker = CAShapeLayer()
+    private let endOfRoundMarker = EndOfRoundMarker()
 
-    // We want two separate color fillers to animate in case the selection happens quite quickly;
-    // for example, when the selection animation hasn't finished, but the crossing out animation
-    // must already begin
-    private let selectionColorFiller = UIView()
-    private let crossedOutColorFiller = UIView()
+    // We want two separate color fillers to animate in case the selection happens
+    // quite quickly; for example, when the selection animation hasn't finished, but
+    // the crossing out animation must already begin
+    private let bottomColorFiller = UIView()
+    private let topColorFiller = UIView()
 
     var useClearBackground = false
-    var defaultBackgroundColor = UIColor.themeColor(.OffWhite)
-    private let crossedOutBackgroundColor = UIColor.themeColor(.OffBlack)
+    var lightColor = UIColor.themeColor(.OffWhiteShaded)
+    let darkColor = UIColor.themeColor(.OffBlack)
+    let accentColor = UIColor.themeColor(.Accent)
 
-    private let markerMargin: CGFloat = 3.5
-    private let markerDepth: CGFloat = 3
-    private let markerLength: CGFloat = 8.5
-
-    private var deselectionInProgress = false
+    private var unfillingInProgress = false
 
     var state: GameGridCellState = .Available
 
@@ -60,16 +57,16 @@ class GameGridCell: UICollectionViewCell {
 
         contentView.clipsToBounds = true
 
-        contentView.addSubview(selectionColorFiller)
-        contentView.addSubview(crossedOutColorFiller)
+        contentView.addSubview(bottomColorFiller)
+        contentView.addSubview(topColorFiller)
         contentView.addSubview(numberLabel)
         contentView.layer.addSublayer(endOfRoundMarker)
     }
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        selectionColorFiller.transform = CGAffineTransformMakeScale(0, 0)
-        crossedOutColorFiller.transform = CGAffineTransformMakeScale(0, 0)
+        bottomColorFiller.transform = CGAffineTransformMakeScale(0, 0)
+        topColorFiller.transform = CGAffineTransformMakeScale(0, 0)
         marksEndOfRound = false
         state == .Available
         value = nil
@@ -79,7 +76,7 @@ class GameGridCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        for colorFiller in [selectionColorFiller, crossedOutColorFiller] {
+        for colorFiller in [bottomColorFiller, topColorFiller] {
             colorFiller.frame = edgeToEdgeCircleFrame()
             colorFiller.layer.cornerRadius = colorFiller.frame.size.width / 2.0
             colorFiller.transform = CGAffineTransformMakeScale(0, 0)
@@ -90,7 +87,7 @@ class GameGridCell: UICollectionViewCell {
         let fontSize = contentView.bounds.size.height * GameGridCell.fontSizeFactor
         numberLabel.font = UIFont.themeFontWithSize(fontSize)
 
-        drawEndOfRoundMarker()
+        endOfRoundMarker.frame = contentView.bounds
     }
 
     func flash(withColor color: UIColor) {
@@ -114,52 +111,68 @@ class GameGridCell: UICollectionViewCell {
 
     func crossOut() {
         state = .CrossedOut
-        crossedOutColorFiller.backgroundColor = crossedOutBackgroundColor
-        crossedOutColorFiller.transform = CGAffineTransformMakeScale(0, 0)
 
-        UIView.animateWithDuration(GameGridCell.animationDuration,
-                                   delay: 0,
-                                   options: .CurveEaseOut,
-                                   animations: {
-            self.crossedOutColorFiller.transform = CGAffineTransformMakeScale(1, 1)
-        }, completion: { _ in
+        fill(usingColor: darkColor, filler: topColorFiller, completion: {
             self.resetColors()
-            self.crossedOutColorFiller.transform = CGAffineTransformMakeScale(0, 0)
         })
     }
 
-    func unCrossOut() {
+    func unCrossOut(animated animated: Bool = false) {
         state = .Available
-        self.resetColors()
+
+        if animated {
+            unfill(usingColor: darkColor, filler: bottomColorFiller, withDelay: 0, completion: {
+                self.resetColors()
+            })
+        } else {
+            self.resetColors()
+        }
+    }
+
+    func indicateSelection() {
+        state = .PendingPairing
+        fill(usingColor: accentColor, filler: bottomColorFiller)
     }
 
     func indicateSelectionFailure() {
         indicateDeselection(withDelay: 0.2)
     }
 
-    func indicateSelection() {
-        state = .PendingPairing
-        selectionColorFiller.backgroundColor = UIColor.themeColor(.Accent)
-        selectionColorFiller.transform = CGAffineTransformMakeScale(0, 0)
+    func indicateDeselection(withDelay delay: Double = 0) {
+        state = .Available
+        unfill(usingColor: UIColor.themeColor(.Accent), filler: bottomColorFiller, withDelay: delay)
+    }
+
+    private func fill(usingColor color: UIColor,
+                      filler: UIView,
+                      completion: (() -> Void)? = nil) {
+        filler.backgroundColor = color
+        filler.transform = CGAffineTransformMakeScale(0, 0)
+
         UIView.animateWithDuration(GameGridCell.animationDuration,
                                    delay: 0,
                                    options: [.CurveEaseOut, .BeginFromCurrentState],
                                    animations: {
-            self.selectionColorFiller.transform = CGAffineTransformMakeScale(1, 1)
+            filler.transform = CGAffineTransformMakeScale(1, 1)
         }, completion: { (finished: Bool) in
-            if finished && !self.deselectionInProgress {
-                self.contentView.backgroundColor = UIColor.themeColor(.Accent)
-                self.selectionColorFiller.transform = CGAffineTransformMakeScale(0, 0)
+            completion?()
+
+            if finished && !self.unfillingInProgress {
+                self.contentView.backgroundColor = color
+                filler.transform = CGAffineTransformMakeScale(0, 0)
             }
         })
     }
 
-    func indicateDeselection(withDelay delay: Double = 0) {
-        state = .Available
-        selectionColorFiller.backgroundColor = UIColor.themeColor(.Accent)
-        selectionColorFiller.transform = CGAffineTransformMakeScale(1, 1)
+
+    private func unfill(usingColor color: UIColor,
+                        filler: UIView,
+                        withDelay delay: Double,
+                        completion: (() -> Void)? = nil) {
+        filler.backgroundColor = color
+        filler.transform = CGAffineTransformMakeScale(1, 1)
         contentView.backgroundColor = cellBackgroundColor()
-        deselectionInProgress = true
+        unfillingInProgress = true
 
         // Zero transforms cannot be animated; see
         // http://stackoverflow.com/a/25966733/2026098
@@ -167,14 +180,15 @@ class GameGridCell: UICollectionViewCell {
                                    delay: delay,
                                    options: [.CurveEaseIn, .BeginFromCurrentState],
                                    animations: {
-            self.selectionColorFiller.transform = CGAffineTransformMakeScale(0.001, 0.001)
+            filler.transform = CGAffineTransformMakeScale(0.001, 0.001)
         }, completion: { _ in
-            self.deselectionInProgress = false
-            self.selectionColorFiller.transform = CGAffineTransformMakeScale(0, 0)
+            self.unfillingInProgress = false
+            filler.transform = CGAffineTransformMakeScale(0, 0)
+            completion?()
         })
     }
 
-    // We need to wait for whichever cell's selection triggered the removel to finish animating
+    // We need to wait for whichever cell's selection triggered the removal to finish animating
     func prepareForRemoval(completion completion: (() -> Void)) {
         let delayTime = Int64((GameGridCell.animationDuration + 0.1) * Double(NSEC_PER_SEC))
         let dispatchTime = dispatch_time(DISPATCH_TIME_NOW, delayTime)
@@ -191,24 +205,27 @@ class GameGridCell: UICollectionViewCell {
     }
 
     func resetColors() {
-        selectionColorFiller.backgroundColor = UIColor.clearColor()
-        crossedOutColorFiller.backgroundColor = UIColor.clearColor()
+        bottomColorFiller.backgroundColor = UIColor.clearColor()
+        topColorFiller.backgroundColor = UIColor.clearColor()
 
-        if state == .CrossedOut {
-            endOfRoundMarker.fillColor = defaultBackgroundColor.CGColor
+        switch state {
+        case .CrossedOut:
+            endOfRoundMarker.fillColor = lightColor.CGColor
             numberLabel.textColor = UIColor.clearColor()
-            contentView.backgroundColor = crossedOutBackgroundColor
-        } else {
-            endOfRoundMarker.fillColor = crossedOutBackgroundColor.CGColor
-            numberLabel.textColor = crossedOutBackgroundColor
-            contentView.backgroundColor = state == .PendingPairing ?
-                                          UIColor.themeColor(.Accent) :
-                                          cellBackgroundColor()
+            contentView.backgroundColor = darkColor
+        case .PendingPairing:
+            endOfRoundMarker.fillColor = darkColor.CGColor
+            numberLabel.textColor = darkColor
+            contentView.backgroundColor = accentColor
+        default:
+            endOfRoundMarker.fillColor = darkColor.CGColor
+            numberLabel.textColor = darkColor
+            contentView.backgroundColor = cellBackgroundColor()
         }
     }
 
     private func cellBackgroundColor() -> UIColor {
-        return useClearBackground ? UIColor.clearColor() : defaultBackgroundColor
+        return useClearBackground ? UIColor.clearColor() : lightColor
     }
 
     private func edgeToEdgeCircleFrame() -> CGRect {
@@ -217,38 +234,6 @@ class GameGridCell: UICollectionViewCell {
                       y: -(diagonal - contentView.bounds.size.height) / 2.0,
                       width: diagonal,
                       height: diagonal)
-    }
-
-    private func drawEndOfRoundMarker() {
-        let markerPath = CGPathCreateMutable()
-        let totalWidth: CGFloat = contentView.bounds.size.width
-        let totalHeight: CGFloat = contentView.bounds.size.height
-
-        CGPathMoveToPoint(markerPath, nil,
-                          totalWidth - markerMargin,
-                          totalHeight - markerMargin)
-        CGPathAddLineToPoint(markerPath,
-                             nil,
-                             totalWidth - markerMargin,
-                             totalHeight - markerMargin - markerLength)
-        CGPathAddLineToPoint(markerPath,
-                             nil,
-                             totalWidth - markerMargin - markerDepth,
-                             totalHeight - markerMargin - markerLength)
-        CGPathAddLineToPoint(markerPath,
-                             nil,
-                             totalWidth - markerMargin - markerDepth,
-                             totalHeight - markerMargin - markerDepth)
-        CGPathAddLineToPoint(markerPath,
-                             nil,
-                             totalWidth - markerMargin - markerLength,
-                             totalHeight - markerMargin - markerDepth)
-        CGPathAddLineToPoint(markerPath,
-                             nil,
-                             totalWidth - markerMargin - markerLength,
-                             totalHeight - markerMargin)
-        CGPathCloseSubpath(markerPath)
-        endOfRoundMarker.path = markerPath
     }
 
     required init?(coder aDecoder: NSCoder) {
