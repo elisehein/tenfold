@@ -14,8 +14,6 @@ class Play: UIViewController {
     private static let defaultBGColor = UIColor.themeColor(.OffWhite)
     private static let gameplayBGColor = UIColor.themeColor(.OffWhiteShaded)
 
-    private static let gridInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-
     private static let maxNextRoundPullUpThreshold: CGFloat = {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 160 : 120
     }()
@@ -65,11 +63,15 @@ class Play: UIViewController {
         menu.onTapNewGame = confirmNewGame
         menu.onTapInstructions = showInstructions
 
-        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.showInstructions))
-        swipe.direction = .Left
+        let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.showInstructions))
+        leftSwipe.direction = .Left
+
+        let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.undoLatestPairing))
+        rightSwipe.direction = .Right
 
         view.backgroundColor = Play.defaultBGColor
-        view.addGestureRecognizer(swipe)
+        view.addGestureRecognizer(leftSwipe)
+        view.addGestureRecognizer(rightSwipe)
         view.addSubview(gameGrid)
         view.addSubview(menu)
         view.addSubview(gamePlayMessageNotification)
@@ -83,7 +85,9 @@ class Play: UIViewController {
         var gameGridFrame = view.bounds
         gameGridFrame.size.width = min(540, gameGridFrame.size.width)
         gameGridFrame.origin.x = (view.bounds.size.width - gameGridFrame.size.width) / 2
-        gameGrid.initialisePositionWithinFrame(gameGridFrame, withInsets: Play.gridInsets)
+
+        let insets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        gameGrid.initialisePositionWithinFrame(gameGridFrame, withInsets: insets)
 
         menu.emptySpaceAvailable = gameGrid.emptySpaceVisible
         menu.anchorFrame = view.bounds
@@ -223,6 +227,8 @@ class Play: UIViewController {
     }
 
     func undoLatestPairing() {
+        guard game.latestPair.count > 0 else { return }
+
         gameGrid.unCrossOutPair(game.latestPair[0], game.latestPair[1])
         game.undoLatestPairing()
         updateNextRoundNotificationText()
