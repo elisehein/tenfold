@@ -56,7 +56,6 @@ class Play: UIViewController {
         gameGrid.onWillSnapToStartingPosition = handleWillSnapToStartingPosition
         gameGrid.onWillSnapToGameplayPosition = handleWillSnapToGameplayPosition
         gameGrid.onPairingAttempt = handlePairingAttempt
-        gameGrid.onUndoLatestPairing = undoLatestPairing
         gameGrid.automaticallySnapToGameplayPosition = !isOnboarding
 
         menu.onTapLogo = showInfoModal
@@ -227,19 +226,30 @@ class Play: UIViewController {
     }
 
     func undoLatestPairing() {
-        guard game.latestPair.count > 0 else { return }
+        guard game.latestMoveUndoable() else { return }
 
-        gameGrid.unCrossOutPair(game.latestPair[0], game.latestPair[1])
-        game.undoLatestPairing()
-        updateNextRoundNotificationText()
-        updateState()
+        let undoPairing = {
+            let pair = self.game.latestMove!.crossedOutPair
+            self.game.undoLatestPairing()
+            self.gameGrid.unCrossOutPair(pair[0], pair[1])
+            self.updateNextRoundNotificationText()
+            self.updateState()
+        }
+
+        if let newRowIndeces = game.undoRowRemoval() {
+            gameGrid.addRows(atIndeces: newRowIndeces, completion: {
+                undoPairing()
+            })
+        } else {
+            undoPairing()
+        }
     }
 
     // Instead of calling reloadData on the entire matrix, dynamically add the next round
     // This function assumes that the state of the game has diverged from the state of
     // the collectionView.
     private func loadNextRound() -> Bool {
-        let nextRoundStartIndex = game.totalNumbers()
+        let nextRoundStartIndex = game.numberCount()
         let nextRoundNumbers = game.nextRoundNumbers()
 
         if game.makeNextRound(usingNumbers: nextRoundNumbers) {
@@ -258,7 +268,14 @@ class Play: UIViewController {
     }
 
     private func removeSurplusRows(containingIndeces index: Int, _ otherIndex: Int) {
-        let surplusIndeces = game.surplusIndecesOnRows(containingIndeces: [index, otherIndex])
+        var surplusIndeces: Array<Int> = []
+        var orderedIndeces = index >= otherIndex ? [index, otherIndex] : [otherIndex, index]
+
+        surplusIndeces += self.game.removeRowIfNeeded(containingIndex: orderedIndeces[0])
+
+        if !Matrix.singleton.sameRow(index, otherIndex) {
+            surplusIndeces += self.game.removeRowIfNeeded(containingIndex: orderedIndeces[1])
+        }
 
         if surplusIndeces.count > 0 {
             playSound(.CrossOutRow)
@@ -269,10 +286,7 @@ class Play: UIViewController {
     }
 
     private func removeNumbers(atIndeces indeces: Array<Int>) {
-        game.removeNumbers(atIndeces: indeces)
-        let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
-
-        gameGrid.removeNumbers(atIndexPaths: indexPaths, completion: {
+        gameGrid.removeNumbers(atIndeces: indeces, completion: {
             if self.game.ended() {
                 StorageService.saveGameSnapshot(self.game, forced: true)
                 self.presentViewController(GameFinished(game: self.game),
@@ -336,8 +350,7 @@ class Play: UIViewController {
 
     func handlePullUpThresholdExceeded() {
         nextRoundGrid?.hide(animated: false)
-        nextRoundNotification.dismiss(inFrame: view.bounds,
-                                      completion: {
+        nextRoundNotification.dismiss(inFrame: view.bounds, completion: {
             self.updateNextRoundNotificationText()
         })
         loadNextRound()
@@ -361,9 +374,7 @@ class Play: UIViewController {
                     playSound(.NextRound)
                     passedNextRoundThreshold = true
                     gamePlayMessageNotification.toggle(inFrame: view.bounds, showing: false)
-                    nextRoundNotification.toggle(inFrame: view.bounds,
-                                                 showing: true,
-                                                 animated: true)
+                    nextRoundNotification.toggle(inFrame: view.bounds, showing: true, animated: true)
                 }
             } else {
                 nextRoundNotification.toggle(inFrame: view.bounds, showing: false, animated: true)
@@ -381,13 +392,11 @@ class Play: UIViewController {
 
     private func handlePullingDown(withFraction fraction: CGFloat) {
         guard menu.hidden else { return }
-        view.backgroundColor = Play.gameplayBGColor.interpolateTo(Play.defaultBGColor,
-                                                                  fraction: fraction)
+        view.backgroundColor = Play.gameplayBGColor.interpolateTo(Play.defaultBGColor, fraction: fraction)
     }
 
     private func handlePullingUpFromStartingPosition(withFraction fraction: CGFloat) {
-        view.backgroundColor = Play.defaultBGColor.interpolateTo(Play.gameplayBGColor,
-                                                                     fraction: fraction)
+        view.backgroundColor = Play.defaultBGColor.interpolateTo(Play.gameplayBGColor, fraction: fraction)
     }
 
     required init?(coder aDecoder: NSCoder) {

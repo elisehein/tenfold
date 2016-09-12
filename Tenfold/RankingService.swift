@@ -26,7 +26,7 @@ class RankingService {
 
     class func order(gameSnapshots: Array<GameSnapshot>) -> Array<GameSnapshot> {
         return gameSnapshots.sort({ pairOfStats in
-            pairOfStats.0.fullNumberCount < pairOfStats.1.fullNumberCount
+            pairOfStats.0.historicNumberCount < pairOfStats.1.historicNumberCount
         })
     }
 
@@ -39,7 +39,7 @@ class RankingService {
             return false
         }
 
-        return orderedGameSnapshots.last?.fullNumberCount < game.fullNumberCount
+        return orderedGameSnapshots.last?.historicNumberCount < game.historicNumberCount
     }
 
     func latestGameIsLongest() -> Bool {

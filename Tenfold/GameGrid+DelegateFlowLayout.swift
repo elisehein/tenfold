@@ -16,8 +16,7 @@ extension GameGrid: UICollectionViewDelegateFlowLayout {
            !indecesPermittedForSelection!.contains(indexPath.item) {
            return false
         } else {
-            let undoable = game.latestPair.contains(indexPath.item)
-            return !game.isCrossedOut(indexPath.item) || undoable
+            return !game.isCrossedOut(indexPath.item)
         }
     }
 
@@ -28,9 +27,7 @@ extension GameGrid: UICollectionViewDelegateFlowLayout {
 
         ensureGridPositionedForGameplay()
 
-        if game.isCrossedOut(indexPath.item) {
-            onUndoLatestPairing!()
-        } else if selectedIndexPaths.contains(indexPath) {
+        if selectedIndexPaths.contains(indexPath) {
             numberCell!.indicateDeselection()
             selectedIndexPaths.removeAll()
         } else if selectedIndexPaths.count == 1 {

@@ -106,7 +106,7 @@ class RankingTable: UIView {
         rankLabel.text = "# \(rankedGame.rank)"
 
         let numbersLabel = UILabel()
-        numbersLabel.text = String(rankedGame.gameSnapshot.fullNumberCount)
+        numbersLabel.text = String(rankedGame.gameSnapshot.historicNumberCount)
 
         let roundsLabel = UILabel()
         roundsLabel.text = String(rankedGame.gameSnapshot.totalRounds)

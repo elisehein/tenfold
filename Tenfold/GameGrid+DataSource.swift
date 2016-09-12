@@ -16,7 +16,7 @@ extension GameGrid: UICollectionViewDataSource {
 
     func collectionView(collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
-        return game.totalNumbers()
+        return game.numberCount()
     }
 
     func collectionView(collectionView: UICollectionView,

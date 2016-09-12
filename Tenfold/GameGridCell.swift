@@ -29,7 +29,7 @@ class GameGridCell: UICollectionViewCell {
     private let topColorFiller = UIView()
 
     var useClearBackground = false
-    var lightColor = UIColor.themeColor(.OffWhite)
+    var lightColor = UIColor.themeColor(.OffWhiteShaded)
     let darkColor = UIColor.themeColor(.OffBlack)
     let accentColor = UIColor.themeColor(.Accent)
 
