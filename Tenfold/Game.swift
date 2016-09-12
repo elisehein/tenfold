@@ -75,12 +75,23 @@ class Game: NSObject, NSCoding {
 
     // MARK: Manipulate game
 
-    func crossOutPair(index: Int, otherIndex: Int) {
+    func crossOutPair(index: Int, _ otherIndex: Int) {
         startTime = NSDate()
         numbers[index].crossedOut = true
         numbers[otherIndex].crossedOut = true
         valueCounts[numbers[index].value!]! -= 1
         valueCounts[numbers[otherIndex].value!]! -= 1
+        latestPair = [index, otherIndex]
+    }
+
+    func undoLatestPairing() {
+        let index = latestPair[0]
+        let otherIndex = latestPair[1]
+        numbers[index].crossedOut = false
+        numbers[otherIndex].crossedOut = false
+        incrementValueCount(numbers[index].value!)
+        incrementValueCount(numbers[otherIndex].value!)
+        latestPair = []
     }
 
     func makeNextRound() -> Bool {
@@ -116,6 +127,14 @@ class Game: NSObject, NSCoding {
 
         for (value, _) in unrepresentedValueCounts {
             valueCounts.removeValueForKey(value)
+        }
+    }
+
+    func incrementValueCount(value: Int) {
+        if valueCounts.keys.contains(value) {
+            valueCounts[value]! += 1
+        } else {
+            valueCounts[value] = 1
         }
     }
 
