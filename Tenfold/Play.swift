@@ -56,18 +56,17 @@ class Play: UIViewController {
         gameGrid.onWillSnapToStartingPosition = handleWillSnapToStartingPosition
         gameGrid.onWillSnapToGameplayPosition = handleWillSnapToGameplayPosition
         gameGrid.onPairingAttempt = handlePairingAttempt
+        gameGrid.onUndoLatestPairing = undoLatestPairing
         gameGrid.automaticallySnapToGameplayPosition = !isOnboarding
 
         menu.onTapLogo = showInfoModal
         menu.onTapNewGame = confirmNewGame
         menu.onTapInstructions = showInstructions
 
-        let leftSwipe = UISwipeGestureRecognizer(target: self,
-                                                 action: #selector(Play.showInstructions))
+        let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.showInstructions))
         leftSwipe.direction = .Left
 
-        let rightSwipe = UISwipeGestureRecognizer(target: self,
-                                                  action: #selector(Play.undoLatestPairing))
+        let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.undoLatestPairing))
         rightSwipe.direction = .Right
 
         view.backgroundColor = Play.defaultBGColor
