@@ -20,7 +20,7 @@ class GameGridCell: UICollectionViewCell {
     private static let animationDuration = 0.2
 
     private let numberLabel = UILabel()
-    private let endOfRoundMarker = CAShapeLayer()
+    private let endOfRoundMarker = EndOfRoundMarker()
 
     // We want two separate color fillers to animate in case the selection happens quite quickly;
     // for example, when the selection animation hasn't finished, but the crossing out animation
@@ -90,7 +90,7 @@ class GameGridCell: UICollectionViewCell {
         let fontSize = contentView.bounds.size.height * GameGridCell.fontSizeFactor
         numberLabel.font = UIFont.themeFontWithSize(fontSize)
 
-        drawEndOfRoundMarker()
+        endOfRoundMarker.frame = contentView.bounds
     }
 
     func flash(withColor color: UIColor) {
@@ -217,38 +217,6 @@ class GameGridCell: UICollectionViewCell {
                       y: -(diagonal - contentView.bounds.size.height) / 2.0,
                       width: diagonal,
                       height: diagonal)
-    }
-
-    private func drawEndOfRoundMarker() {
-        let markerPath = CGPathCreateMutable()
-        let totalWidth: CGFloat = contentView.bounds.size.width
-        let totalHeight: CGFloat = contentView.bounds.size.height
-
-        CGPathMoveToPoint(markerPath, nil,
-                          totalWidth - markerMargin,
-                          totalHeight - markerMargin)
-        CGPathAddLineToPoint(markerPath,
-                             nil,
-                             totalWidth - markerMargin,
-                             totalHeight - markerMargin - markerLength)
-        CGPathAddLineToPoint(markerPath,
-                             nil,
-                             totalWidth - markerMargin - markerDepth,
-                             totalHeight - markerMargin - markerLength)
-        CGPathAddLineToPoint(markerPath,
-                             nil,
-                             totalWidth - markerMargin - markerDepth,
-                             totalHeight - markerMargin - markerDepth)
-        CGPathAddLineToPoint(markerPath,
-                             nil,
-                             totalWidth - markerMargin - markerLength,
-                             totalHeight - markerMargin - markerDepth)
-        CGPathAddLineToPoint(markerPath,
-                             nil,
-                             totalWidth - markerMargin - markerLength,
-                             totalHeight - markerMargin)
-        CGPathCloseSubpath(markerPath)
-        endOfRoundMarker.path = markerPath
     }
 
     required init?(coder aDecoder: NSCoder) {
