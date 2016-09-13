@@ -129,7 +129,7 @@ class Play: UIViewController {
     private func initNextRoundMatrix() {
         let nextRoundValues = game.nextRoundValues()
         nextRoundGrid = NextRoundGrid(cellsPerRow: Game.numbersPerRow,
-                                      startIndex: nextRoundStartIndex(),
+                                      startIndex: game.lastNumberColumn() + 1,
                                       values: nextRoundValues,
                                       frame: gameGrid.frame)
         nextRoundGrid?.hide(animated: false)
@@ -261,10 +261,6 @@ class Play: UIViewController {
         }
     }
 
-    private func nextRoundStartIndex() -> Int {
-        return game.lastNumberColumn() + 1
-    }
-
     private func removeSurplusRows(containingIndeces index: Int, _ otherIndex: Int) {
         var surplusIndeces: Array<Int> = []
         var orderedIndeces = index >= otherIndex ? [index, otherIndex] : [otherIndex, index]
@@ -315,7 +311,7 @@ class Play: UIViewController {
 
     private func updateState() {
         let nextRoundValues = game.nextRoundValues()
-        nextRoundGrid!.update(startIndex: nextRoundStartIndex(), values: nextRoundValues)
+        nextRoundGrid!.update(startIndex: game.lastNumberColumn() + 1, values: nextRoundValues)
         gameGrid.pullUpThreshold = calcNextRoundPullUpThreshold(nextRoundValues.count)
         StorageService.saveGame(game)
     }
