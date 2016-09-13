@@ -25,8 +25,8 @@ class Matrix: NSObject {
     // Back to back refers to numbers that are right next to each
     // other either horizontally (incl. last column of previous row
     // and first column of this one), or vertically.
-    func backToBack(index: Int, otherIndex: Int) -> Bool {
-        return abs(index - otherIndex) == 1 || abs(index - otherIndex) == itemsPerRow
+    func backToBack(pair: Pair) -> Bool {
+        return pair.second - pair.first == 1 || pair.second - pair.first == itemsPerRow
     }
 
     func firstIndexOfRow(containingIndex index: Int) -> Int {
@@ -37,14 +37,13 @@ class Matrix: NSObject {
         return index + (itemsPerRow - columnOfItem(atIndex: index)) - 1
     }
 
-    func sameRow(index: Int, _ otherIndex: Int) -> Bool {
-        let orderedIndeces = [index, otherIndex].sort { return $0 < $1 }
-        return (orderedIndeces[1] - orderedIndeces[0] < itemsPerRow &&
-                columnOfItem(atIndex: orderedIndeces[1]) > columnOfItem(atIndex: orderedIndeces[0]))
+    func sameRow(pair: Pair) -> Bool {
+        return (pair.second - pair.first < itemsPerRow &&
+                columnOfItem(atIndex: pair.second) > columnOfItem(atIndex: pair.first))
     }
 
-    func sameColumn(index: Int, _ laterIndex: Int) -> Bool {
-        return columnOfItem(atIndex: index) == columnOfItem(atIndex: laterIndex)
+    func sameColumn(pair: Pair) -> Bool {
+        return columnOfItem(atIndex: pair.first) == columnOfItem(atIndex: pair.second)
     }
 
     func indecesOnRow(containingIndex index: Int, lastGameIndex: Int = Int.max) -> Array<Int> {

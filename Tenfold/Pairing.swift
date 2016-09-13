@@ -11,42 +11,35 @@ import Foundation
 class Pairing: NSObject {
     private static let matrix = Matrix.singleton
 
-    static func validate(index: Int, _ otherIndex: Int, inGame game: Game) -> Bool {
-        if game.isCrossedOut(index) || game.isCrossedOut(otherIndex) || index == otherIndex {
+    static func validate(proposedPair: Pair, inGame game: Game) -> Bool {
+        if game.isCrossedOut(proposedPair.first) ||
+           game.isCrossedOut(proposedPair.second) ||
+           proposedPair.first == proposedPair.second {
             NSException(name: "Invalid pairing",
                         reason: "These numbers cannot be attempted for pairing",
                         userInfo: nil).raise()
             return false
         }
 
-        return valuesCanPair (index, otherIndex: otherIndex, inGame: game) &&
-               positionsCanPair(index, otherIndex: otherIndex, inGame: game)
+        return valuesCanPair (proposedPair, inGame: game) &&
+               positionsCanPair(proposedPair, inGame: game)
     }
 
-    static private func valuesCanPair(index: Int, otherIndex: Int, inGame game: Game) -> Bool {
-        let value = game.valueAtIndex(index)
-        let otherValue = game.valueAtIndex(otherIndex)
+    static private func valuesCanPair(pair: Pair, inGame game: Game) -> Bool {
+        let value = game.valueAtIndex(pair.first)
+        let otherValue = game.valueAtIndex(pair.second)
 
         return (value == otherValue) || (value! + otherValue! == 10)
     }
 
-    static private func positionsCanPair(index: Int, otherIndex: Int, inGame game: Game) -> Bool {
-        if (matrix.backToBack(index, otherIndex: otherIndex)) {
-            return true
-        } else {
-            let orderedIndeces = [index, otherIndex].sort { return $0 < $1 }
-            return enclosingCrossedOutNumbers(orderedIndeces[0], orderedIndeces[1], inGame: game)
-        }
+    static private func positionsCanPair(pair: Pair, inGame game: Game) -> Bool {
+        return matrix.backToBack(pair) || enclosingCrossedOutNumbers(pair, inGame: game)
     }
 
-    static private func enclosingCrossedOutNumbers(start: Int,
-                                                   _ end: Int,
-                                                   inGame game: Game) -> Bool {
-        let enclosingHorizontally = game.allCrossedOutBetween(index: start, laterIndex: end)
-        let enclosingVertically = matrix.sameColumn(start, end) &&
-                                  game.allCrossedOutBetween(index: start,
-                                                            laterIndex: end,
-                                                            withIncrement: Game.numbersPerRow)
+    static private func enclosingCrossedOutNumbers(pair: Pair, inGame game: Game) -> Bool {
+        let enclosingHorizontally = game.allCrossedOutBetween(pair)
+        let enclosingVertically = matrix.sameColumn(pair) &&
+                                  game.allCrossedOutBetween(pair, withIncrement: Game.numbersPerRow)
 
         return enclosingHorizontally || enclosingVertically
     }

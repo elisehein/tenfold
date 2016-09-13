@@ -68,21 +68,21 @@ class Game: NSObject, NSCoding {
 
     // MARK: Manipulate game
 
-    func crossOutPair(index: Int, _ otherIndex: Int) {
+    func crossOut(pair: Pair) {
         startTime = NSDate()
-        latestMove = GameMove(crossedOutPair: [index, otherIndex])
+        latestMove = GameMove(crossedOutPair: pair.asArray())
 
         let crossOut: ((Number) -> Void) = { number in
             number.crossedOut = true
             self.valueCounts[number.value!]! -= 1
         }
 
-        for index in [index, otherIndex] {
+        for index in pair.asArray() {
             crossOut(numbers[index])
         }
     }
 
-    func undoLatestPairing() -> Array<Int>? {
+    func undoLatestPairing() -> Pair? {
         guard latestMove != nil else { return nil }
 
         let unpair: ((Number) -> Void) = { number in
@@ -94,19 +94,18 @@ class Game: NSObject, NSCoding {
             unpair(numbers[index])
         }
 
-        let crossedOutPair = latestMove!.crossedOutPair
+        let crossedOutPair = Pair(latestMove!.crossedOutPair)
         latestMove = nil
         return crossedOutPair
     }
 
-    func removeRowsIfNeeded(containing indeces: [Int]) -> Array<Int> {
+    func removeRowsIfNeeded(containingItemsFrom pair: Pair) -> Array<Int> {
         var surplusIndeces: [Int] = []
-        let orderedIndeces = indeces.sort { return $0 > $1 }
 
-        surplusIndeces += removeRow(containing: orderedIndeces[0])
+        surplusIndeces += removeRow(containing: pair.second)
 
-        if !Matrix.singleton.sameRow(indeces[0], indeces[1]) {
-            surplusIndeces += removeRow(containing: orderedIndeces[1])
+        if !Matrix.singleton.sameRow(pair) {
+            surplusIndeces += removeRow(containing: pair.first)
         }
 
         return surplusIndeces
@@ -258,12 +257,12 @@ class Game: NSObject, NSCoding {
         return indeces.filter({ numbers[$0].crossedOut }).count == indeces.count
     }
 
-    func allCrossedOutBetween(index index: Int, laterIndex: Int, withIncrement increment: Int = 1) -> Bool {
-        if index + increment >= laterIndex {
+    func allCrossedOutBetween(pair: Pair, withIncrement increment: Int = 1) -> Bool {
+        if pair.first + increment >= pair.second {
             return false
         }
 
-        for i in (index + increment).stride(to: laterIndex, by: increment) {
+        for i in (pair.first + increment).stride(to: pair.second, by: increment) {
             if numberCount() > i && !isCrossedOut(i) {
                 return false
             }

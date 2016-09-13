@@ -206,23 +206,23 @@ class Play: UIViewController {
 
     // MARK: Gameplay logic
 
-    private func handlePairingAttempt(index: Int, otherIndex: Int) {
-        let successfulPairing = Pairing.validate(index, otherIndex, inGame: game)
+    private func handlePairingAttempt(pair: Pair) {
+        let successfulPairing = Pairing.validate(pair, inGame: game)
 
         if successfulPairing {
-            handleSuccessfulPairing(index, otherIndex: otherIndex)
+            handleSuccessfulPairing(pair)
         } else {
             gameGrid.dismissSelection()
         }
     }
 
-    func handleSuccessfulPairing(index: Int, otherIndex: Int) {
-        game.crossOutPair(index, otherIndex)
-        gameGrid.crossOutPair(index, otherIndex)
+    func handleSuccessfulPairing(pair: Pair) {
+        game.crossOut(pair)
+        gameGrid.crossOut(pair)
         updateNextRoundNotificationText()
         updateState()
 
-        if removeSurplusRows(containing: [index, otherIndex]) {
+        if removeSurplusRows(containingItemsFrom: pair) {
             playSound(.CrossOutRow)
         } else {
             playSound(.CrossOut)
@@ -236,7 +236,7 @@ class Play: UIViewController {
 
         let undoPairing = {
             if let pair = self.game.undoLatestPairing() {
-                self.gameGrid.unCrossOutPair(pair)
+                self.gameGrid.unCrossOut(pair)
                 self.updateNextRoundNotificationText()
                 self.updateState()
             }
@@ -269,8 +269,8 @@ class Play: UIViewController {
         }
     }
 
-    private func removeSurplusRows(containing indeces: [Int]) -> Bool {
-        let surplusIndeces = game.removeRowsIfNeeded(containing: indeces)
+    private func removeSurplusRows(containingItemsFrom pair: Pair) -> Bool {
+        let surplusIndeces = game.removeRowsIfNeeded(containingItemsFrom: pair)
 
         if surplusIndeces.count > 0 {
             removeNumbers(atIndeces: surplusIndeces)

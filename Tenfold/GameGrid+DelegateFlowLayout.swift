@@ -32,8 +32,7 @@ extension GameGrid: UICollectionViewDelegateFlowLayout {
             selectedIndexPaths.removeAll()
         } else if selectedIndexPaths.count == 1 {
             selectedIndexPaths.append(indexPath)
-            onPairingAttempt!(itemIndex: selectedIndexPaths[0].item,
-                              otherItemIndex: selectedIndexPaths[1].item)
+            onPairingAttempt!(Pair(selectedIndexPaths.map({ $0.item })))
             selectedIndexPaths.removeAll()
         } else {
             selectedIndexPaths.append(indexPath)

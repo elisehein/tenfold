@@ -85,9 +85,9 @@ class Onboarding: Play {
                               withColor: UIColor.themeColor(.OffWhiteShaded))
     }
 
-    override func handleSuccessfulPairing(index: Int, otherIndex: Int) {
+    override func handleSuccessfulPairing(pair: Pair) {
         flashTimer?.invalidate()
-        super.handleSuccessfulPairing(index, otherIndex: otherIndex)
+        super.handleSuccessfulPairing(pair)
 
         if menu.onboardingSteps.currentStep == .CrossOutIdentical &&
            game.numbersCrossedOut() <= 2 {

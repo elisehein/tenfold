@@ -31,7 +31,7 @@ class GameGrid: Grid {
     var onPullUpThresholdExceeded: (() -> Void)?
     var onWillSnapToGameplayPosition: (() -> Void)?
     var onWillSnapToStartingPosition: (() -> Void)?
-    var onPairingAttempt: ((itemIndex: Int, otherItemIndex: Int) -> Void)?
+    var onPairingAttempt: ((Pair) -> Void)?
 
     private static let scaleFactor = UIScreen.mainScreen().scale
     private static let prematureBounceReductionFactor: CGFloat = 0.2
@@ -144,14 +144,14 @@ class GameGrid: Grid {
         }
     }
 
-    func crossOutPair(index: Int, _ otherIndex: Int) {
-        performActionOnCells(withIndeces: [index, otherIndex], { cell in
+    func crossOut(pair: Pair) {
+        performActionOnCells(withIndeces: pair.asArray(), { cell in
             cell.crossOut()
         })
     }
 
-    func unCrossOutPair(pairIndeces: Array<Int>?) {
-        performActionOnCells(withIndeces: pairIndeces!, { cell in
+    func unCrossOut(pair: Pair) {
+        performActionOnCells(withIndeces: pair.asArray(), { cell in
             cell.unCrossOut(animated: true)
         })
     }
