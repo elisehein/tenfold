@@ -227,11 +227,11 @@ class Play: UIViewController {
 
     func undoLatestPairing() {
         let undoPairing = {
-            let pair = self.game.latestMove!.crossedOutPair
-            self.game.undoLatestPairing()
-            self.gameGrid.unCrossOutPair(pair[0], pair[1])
-            self.updateNextRoundNotificationText()
-            self.updateState()
+            if let pair = self.game.undoLatestPairing() {
+                self.gameGrid.unCrossOutPair(pair)
+                self.updateNextRoundNotificationText()
+                self.updateState()
+            }
         }
 
         if let newRowIndeces = game.undoRowRemoval() {

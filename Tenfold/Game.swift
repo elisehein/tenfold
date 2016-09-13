@@ -29,10 +29,11 @@ class Game: NSObject, NSCoding {
 
     private var numbers: Array<Number> = []
     private var valueCounts: [Int: Int]
+    private var latestMove: GameMove? = nil
+
     var historicNumberCount: Int = 0
     var currentRound: Int = 1
     var startTime: NSDate? = nil
-    var latestMove: GameMove? = nil
 
     class func initialNumbers() -> Array<Number> {
         let initialNumbers: Array<Number> = initialNumberValues.map({ value in
@@ -81,8 +82,8 @@ class Game: NSObject, NSCoding {
         }
     }
 
-    func undoLatestPairing() {
-        guard latestMove != nil else { return }
+    func undoLatestPairing() -> Array<Int>? {
+        guard latestMove != nil else { return nil }
 
         let unpair: ((Number) -> Void) = { number in
             number.crossedOut = false
@@ -93,7 +94,9 @@ class Game: NSObject, NSCoding {
             unpair(numbers[index])
         }
 
+        let crossedOutPair = latestMove!.crossedOutPair
         latestMove = nil
+        return crossedOutPair
     }
 
     func removeRowIfNeeded(containingIndex index: Int) -> Array<Int> {

@@ -150,8 +150,8 @@ class GameGrid: Grid {
         })
     }
 
-    func unCrossOutPair(index: Int, _ otherIndex: Int) {
-        performActionOnCells(withIndeces: [index, otherIndex], { cell in
+    func unCrossOutPair(pairIndeces: Array<Int>?) {
+        performActionOnCells(withIndeces: pairIndeces!, { cell in
             cell.unCrossOut(animated: true)
         })
     }
