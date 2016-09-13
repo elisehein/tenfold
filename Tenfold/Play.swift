@@ -221,7 +221,13 @@ class Play: UIViewController {
         gameGrid.crossOutPair(index, otherIndex)
         updateNextRoundNotificationText()
         updateState()
-        removeSurplusRows(containingIndeces: index, otherIndex)
+
+        if removeSurplusRows(containing: [index, otherIndex]) {
+            playSound(.CrossOutRow)
+        } else {
+            playSound(.CrossOut)
+        }
+
         checkForNewlyUnrepresentedValues()
     }
 
@@ -261,21 +267,14 @@ class Play: UIViewController {
         }
     }
 
-    private func removeSurplusRows(containingIndeces index: Int, _ otherIndex: Int) {
-        var surplusIndeces: Array<Int> = []
-        var orderedIndeces = index >= otherIndex ? [index, otherIndex] : [otherIndex, index]
-
-        surplusIndeces += self.game.removeRowIfNeeded(containingIndex: orderedIndeces[0])
-
-        if !Matrix.singleton.sameRow(index, otherIndex) {
-            surplusIndeces += self.game.removeRowIfNeeded(containingIndex: orderedIndeces[1])
-        }
+    private func removeSurplusRows(containing indeces: [Int]) -> Bool {
+        let surplusIndeces = game.removeRowsIfNeeded(containing: indeces)
 
         if surplusIndeces.count > 0 {
-            playSound(.CrossOutRow)
             removeNumbers(atIndeces: surplusIndeces)
+            return true
         } else {
-            playSound(.CrossOut)
+            return false
         }
     }
 

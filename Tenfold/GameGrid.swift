@@ -191,8 +191,9 @@ class GameGrid: Grid {
         guard indeces.count > 0 else { return }
         let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
 
-        self.insertItemsAtIndexPaths(indexPaths)
-        performBatchUpdates(nil, completion: { finished in
+        performBatchUpdates({
+            self.insertItemsAtIndexPaths(indexPaths)
+        }, completion: { finished in
             self.adjustTopInset()
             completion()
         })

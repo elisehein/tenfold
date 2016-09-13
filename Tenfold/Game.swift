@@ -99,17 +99,33 @@ class Game: NSObject, NSCoding {
         return crossedOutPair
     }
 
-    func removeRowIfNeeded(containingIndex index: Int) -> Array<Int> {
-        let surplusIndeces = surplusIndecesOnRow(containingIndex: index)
-        removeRow(withIndeces: surplusIndeces)
+    func removeRowsIfNeeded(containing indeces: [Int]) -> Array<Int> {
+        var surplusIndeces: [Int] = []
+        let orderedIndeces = indeces.sort { return $0 > $1 }
+
+        surplusIndeces += removeRow(containing: orderedIndeces[0])
+
+        if !Matrix.singleton.sameRow(indeces[0], indeces[1]) {
+            surplusIndeces += removeRow(containing: orderedIndeces[1])
+        }
+
         return surplusIndeces
     }
 
-    private func removeRow(withIndeces indeces: Array<Int>) {
+    private func removeRow(containing index: Int) -> Array<Int> {
+        let surplusIndeces = surplusIndecesOnRow(containingIndex: index)
+        removeRow(containing: surplusIndeces)
+        return surplusIndeces
+    }
+
+    private func removeRow(containing indeces: [Int]) {
+        guard latestMove != nil else { return }
         guard indeces.count > 0 else { return }
         let numbersToRemove = numbers.filter({ indeces.contains(numbers.indexOf($0)!) })
+
         latestMove!.removedRows.append(numbersToRemove)
-        latestMove?.removedRowPlaceholders.append(indeces[0])
+        latestMove!.removedRowPlaceholders.append(indeces[0])
+
         numbers.removeObjects(numbersToRemove)
     }
 
@@ -123,8 +139,9 @@ class Game: NSObject, NSCoding {
         // reverse order to what they were removed in
         for rowIndex in (0..<latestMove!.removedRows.count).reverse() {
             let placeholder = latestMove!.removedRowPlaceholders[rowIndex]
-            indecesAdded += Array(placeholder..<placeholder + Game.numbersPerRow)
-            numbers.insertContentsOf(latestMove!.removedRows[rowIndex], at: placeholder)
+            let removedRow = latestMove!.removedRows[rowIndex]
+            indecesAdded += Array(placeholder..<placeholder + removedRow.count)
+            numbers.insertContentsOf(removedRow, at: placeholder)
         }
 
         return indecesAdded
