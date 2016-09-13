@@ -232,6 +232,8 @@ class Play: UIViewController {
     }
 
     func undoLatestPairing() {
+        guard !gameGrid.gridAtStartingPosition else { return }
+
         let undoPairing = {
             if let pair = self.game.undoLatestPairing() {
                 self.gameGrid.unCrossOutPair(pair)
