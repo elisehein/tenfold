@@ -178,12 +178,11 @@ class GameGridCell: UICollectionViewCell {
                                    animations: {
             filler.transform = CGAffineTransformMakeScale(1, 1)
         }, completion: { (finished: Bool) in
-            completion?()
-
             if finished && !self.unfillingInProgress {
                 self.contentView.backgroundColor = color
                 filler.transform = CGAffineTransformMakeScale(0, 0)
             }
+            completion?()
         })
     }
 
