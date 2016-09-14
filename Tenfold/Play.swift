@@ -249,7 +249,7 @@ class Play: UIViewController {
             return
         }
 
-        undoNotification.flash(forSeconds: 1.5, inFrame: view.bounds)
+        undoNotification.flash(forSeconds: 1, inFrame: view.bounds)
     }
 
     func undoNewRound() {
