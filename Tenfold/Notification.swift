@@ -18,7 +18,7 @@ enum NotificationType {
 
 class Notification: UIView {
 
-    private static let iconSize: CGFloat = 60
+    private static let iconSize: CGFloat = 80
 
     private static let margin: CGFloat = {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 25 : 15
@@ -192,9 +192,9 @@ class Notification: UIView {
     }
 
     func toggle(inFrame parentFrame: CGRect,
-                        showing: Bool,
-                        animated: Bool = false,
-                        completion: (() -> Void)? = nil) {
+                showing: Bool,
+                animated: Bool = false,
+                completion: (() -> Void)? = nil) {
 
         // In case we were interrupted before we reached the popup completion block before
         triggerPendingPopupCompletion()
@@ -203,16 +203,20 @@ class Notification: UIView {
         guard !CGRectEqualToRect(frame, frameInside(frame: parentFrame,
             showing: showing)) else { return }
 
+
+        // Ensure we begin the transition from the correct position
+        frame = frameInside(frame: parentFrame, showing: !showing)
+
         UIView.animateWithDuration(animated ? 0.6 : 0,
                                    delay: 0,
                                    usingSpringWithDamping: 0.7,
                                    initialSpringVelocity: 0.3,
                                    options: [.CurveEaseIn, .BeginFromCurrentState],
                                    animations: {
-                                    self.alpha = showing ? 1 : 0
-                                    self.frame = self.frameInside(frame: parentFrame, showing: showing)
-            }, completion: { _ in
-                completion?()
+            self.alpha = showing ? 1 : 0
+            self.frame = self.frameInside(frame: parentFrame, showing: showing)
+        }, completion: { _ in
+            completion?()
         })
     }
 
