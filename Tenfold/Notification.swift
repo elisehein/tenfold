@@ -86,7 +86,7 @@ class Notification: UIView {
             label.layer.masksToBounds = true
             addSubview(label)
         } else {
-            iconView.backgroundColor = UIColor.themeColor(.Accent)
+            iconView.backgroundColor = UIColor(hex: "#DB7551")
             iconView.contentMode = .Center
             iconView.layer.masksToBounds = true
             addSubview(iconView)
@@ -227,7 +227,7 @@ class Notification: UIView {
                 y = Notification.margin
                 x = (parentFrame.width - width) / 2
             } else if anchorEdge == .Left {
-                y = (parentFrame.height - height) / 2
+                y = parentFrame.height - height - Notification.margin
                 x = Notification.margin
             }
         } else {
@@ -238,7 +238,7 @@ class Notification: UIView {
                 y = -10
                 x = (parentFrame.width - width) / 2
             } else if anchorEdge == .Left {
-                y = (parentFrame.height - height) / 2
+                y = parentFrame.height - height - Notification.margin
                 x = -10
             }
         }

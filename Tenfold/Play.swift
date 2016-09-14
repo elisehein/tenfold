@@ -11,6 +11,8 @@ import AVFoundation
 
 class Play: UIViewController {
 
+    private var undoHandled = true
+
     private static let defaultBGColor = UIColor.themeColor(.OffWhite)
     private static let gameplayBGColor = UIColor.themeColor(.OffWhiteShaded)
 
@@ -66,15 +68,14 @@ class Play: UIViewController {
         let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.showInstructions))
         leftSwipe.direction = .Left
 
-        let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.undoLatestMove))
-        rightSwipe.direction = .Right
+        let pan = UIPanGestureRecognizer(target: self, action: #selector(Play.detectRightPan))
 
         undoNotification.anchorEdge = .Left
         undoNotification.iconName = "undo"
 
         view.backgroundColor = Play.defaultBGColor
         view.addGestureRecognizer(leftSwipe)
-        view.addGestureRecognizer(rightSwipe)
+        view.addGestureRecognizer(pan)
         view.addSubview(gameGrid)
         view.addSubview(menu)
         view.addSubview(gamePlayMessageNotification)
@@ -237,6 +238,40 @@ class Play: UIViewController {
         checkForNewlyUnrepresentedValues()
     }
 
+    func detectRightPan(recognizer: UIPanGestureRecognizer) {
+        if recognizer.state == .Began && recognizer.velocityInView(view).x < 0 {
+            return
+        } else if recognizer.state == .Began {
+            undoHandled = false
+        }
+
+        guard !undoHandled else { return }
+
+        let threshold: CGFloat = 30
+        undoNotification.alpha = 1
+        undoNotification.frame = CGRect(x: min(threshold, recognizer.translationInView(view).x - 60 - 10),
+                                        y: view.bounds.size.height / 2,
+                                        width: 60,
+                                        height: 60)
+
+        if undoNotification.frame.origin.x == threshold {
+            undoHandled = true
+            undoLatestMove()
+            var hiddenFrame = undoNotification.frame
+            hiddenFrame.origin.x = -70
+
+            UIView.animateWithDuration(0.2, delay: 0.5, options: [], animations: {
+                self.undoNotification.frame = hiddenFrame
+            }, completion: { _ in
+                self.undoLatestMove()
+            })
+        }
+
+        if recognizer.state == .Ended {
+            undoNotification.alpha = 0
+        }
+    }
+
     func undoLatestMove() {
         guard !gameGrid.gridAtStartingPosition else { return }
         guard !gameGrid.rowRemovalInProgress else { return }
@@ -248,8 +283,8 @@ class Play: UIViewController {
         } else {
             return
         }
-
-        undoNotification.flash(forSeconds: 1, inFrame: view.bounds)
+//
+//        undoNotification.flash(forSeconds: 1, inFrame: view.bounds)
     }
 
     func undoNewRound() {
