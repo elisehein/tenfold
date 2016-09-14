@@ -88,6 +88,9 @@ class RuleExampleGrid: Grid {
     func performPairings() {
         var delay = 0.5
 
+        // We don't use the Pair struct here because it seems we can't pass it
+        // around inside a userInfo object (don't know). In any case, no need,
+        // we get a list of indeces anyway from the JSON.
         for pair in pairs {
             crossOutPair(pair[0], pair[1], reverse: true)
 
