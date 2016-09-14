@@ -168,18 +168,26 @@ class Notification: UIView {
 
     func flash(inFrame parentFrame: CGRect) {
         alpha = 0
+
         frame = CGRect(x: -60,
                        y: (parentFrame.height - 60) / 2,
                        width: 60,
                        height: 60)
         center = CGPoint(x: parentFrame.width / 2, y: parentFrame.height / 2)
+        transform = CGAffineTransformMakeScale(0.001, 0.001)
 
-        UIView.animateWithDuration(0.3, animations: {
+        UIView.animateWithDuration(0.6,
+                                   delay: 0,
+                                   usingSpringWithDamping: 0.6,
+                                   initialSpringVelocity: 0.3,
+                                   options: [.CurveEaseIn],
+                                   animations: {
             self.alpha = 1
+            self.transform = CGAffineTransformMakeScale(1, 1)
         }, completion: { _ in
-            UIView.animateWithDuration(1, animations: {
+            UIView.animateWithDuration(0.5, delay: 0.2, options: [], animations: {
                 self.alpha = 0
-            })
+            }, completion: nil)
         })
     }
 
