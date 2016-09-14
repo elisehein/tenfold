@@ -82,6 +82,12 @@ extension GameGrid: UIScrollViewDelegate {
             }
         }
 
+        // The only reason we are guarding here is because somehow the scroll view reports a pull up
+        // in progress in response to us tweaking the offsets and insets during row insertion
+        // (see GameGrid.swift), which in turn causes the next round grid to show up during row insertion.
+        // Tried for some time to make pullUpInProgress() more solid, but it did my
+        // head in, so this is the easy way out.
+        guard rowInsertionInProgressWithIndeces == nil else { return }
         onScroll?()
     }
 }

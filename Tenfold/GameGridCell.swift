@@ -54,7 +54,7 @@ class GameGridCell: UICollectionViewCell {
             if aboutToBeRevealed {
                 contentView.alpha = 0
             } else if oldValue && !aboutToBeRevealed {
-                UIView.animateWithDuration(0.15, animations: {
+                UIView.animateWithDuration(0.2, animations: {
                     self.contentView.alpha = 1
                 })
             } else {

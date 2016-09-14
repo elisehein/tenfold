@@ -47,7 +47,7 @@ class GameGrid: Grid {
     internal var selectedIndexPaths: [NSIndexPath] = []
 
     var indecesPermittedForSelection: [Int]? = nil
-    var indecesAboutToBeRevealed: [Int]? = nil
+    var rowInsertionInProgressWithIndeces: [Int]? = nil
 
     init(game: Game) {
         self.game = game
@@ -176,13 +176,21 @@ class GameGrid: Grid {
         let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
 
         adjustTopInset()
+
         if contentInset.top > 0 {
-            setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: true)
+            let rowDelta = Matrix.singleton.totalRows(indeces.count)
+            let gameHeightDelta = heightForGame(withTotalRows: rowDelta)
+            setContentOffset(CGPoint(x: 0, y: -contentInset.top + gameHeightDelta), animated: true)
         }
 
         prepareForRemoval(indexPaths, completion: {
             if self.numberRemovalInProgress {
                 self.deleteItemsAtIndexPaths(indexPaths)
+
+                if self.contentInset.top > 0 {
+                    self.setContentOffset(CGPoint(x: 0, y: -self.contentInset.top), animated: true)
+                }
+
                 self.numberRemovalInProgress = false
                 completion()
             }
@@ -191,9 +199,16 @@ class GameGrid: Grid {
 
     func addRows(atIndeces indeces: [Int], completion: (() -> Void)) {
         guard indeces.count > 0 else { return }
+        rowInsertionInProgressWithIndeces = indeces
+
         let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
 
-        indecesAboutToBeRevealed = indeces
+        if self.contentInset.top > 0 {
+            let rowDelta = Matrix.singleton.totalRows(indeces.count)
+            let gameHeightDelta = heightForGame(withTotalRows: rowDelta)
+            self.setContentOffset(CGPoint(x: 0, y: -self.contentInset.top + gameHeightDelta), animated: true)
+        }
+
         performBatchUpdates({
             self.insertItemsAtIndexPaths(indexPaths)
         }, completion: { finished in
@@ -204,7 +219,7 @@ class GameGrid: Grid {
     }
 
     private func revealCellsAtIndeces(indeces: [Int]) {
-        indecesAboutToBeRevealed = nil
+        rowInsertionInProgressWithIndeces = nil
 
         performActionOnCells(withIndeces: indeces, { cell in
             cell.aboutToBeRevealed = false
@@ -281,11 +296,11 @@ class GameGrid: Grid {
 
     private func initialGameHeight() -> CGFloat {
         let initialRows = Matrix.singleton.totalRows(Game.initialNumberValues.count)
-        return Grid.heightForGame(withTotalRows: initialRows, availableWidth: bounds.size.width)
+        return heightForGame(withTotalRows: initialRows)
     }
 
     private func currentGameHeight() -> CGFloat {
-        return Grid.heightForGame(withTotalRows: game.totalRows(), availableWidth: bounds.size.width)
+        return heightForGame(withTotalRows: game.totalRows())
     }
 
     internal func ensureGridPositionedForGameplay() {

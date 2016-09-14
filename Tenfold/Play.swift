@@ -245,7 +245,7 @@ class Play: UIViewController {
 
         if let newRowIndeces = game.undoRowRemoval() {
             gameGrid.addRows(atIndeces: newRowIndeces, completion: {
-                undoPairing(delay: 0.2)
+                undoPairing(delay: 0.3)
             })
         } else {
             undoPairing(delay: 0)

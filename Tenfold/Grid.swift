@@ -47,6 +47,10 @@ class Grid: UICollectionView {
         return CGSize(width: integerWidth, height: availableSize.height)
     }
 
+    func heightForGame(withTotalRows totalRows: Int) -> CGFloat {
+        return Grid.heightForGame(withTotalRows: totalRows, availableWidth: bounds.size.width)
+    }
+
     class func heightForGame(withTotalRows totalRows: Int, availableWidth: CGFloat) -> CGFloat {
         let heightForSpacing = CGFloat(totalRows - 1) * CGFloat(Grid.cellSpacing)
         let cellHeight = Grid.cellSize(forAvailableWidth: availableWidth).height

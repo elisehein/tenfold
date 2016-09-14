@@ -30,8 +30,8 @@ extension GameGrid: UICollectionViewDataSource {
             cell.marksEndOfRound = game.marksEndOfRound(indexPath.item)
             cell.useClearBackground = true
 
-            if indecesAboutToBeRevealed != nil &&
-               indecesAboutToBeRevealed!.contains(indexPath.item) {
+            if rowInsertionInProgressWithIndeces != nil &&
+               rowInsertionInProgressWithIndeces!.contains(indexPath.item) {
                 cell.aboutToBeRevealed = true
             }
 
