@@ -185,7 +185,7 @@ class Notification: UIView {
             self.alpha = 1
             self.transform = CGAffineTransformMakeScale(1, 1)
         }, completion: { _ in
-            UIView.animateWithDuration(0.5, delay: 0.2, options: [], animations: {
+            UIView.animateWithDuration(0.4, delay: 0.2, options: [], animations: {
                 self.alpha = 0
             }, completion: nil)
         })
