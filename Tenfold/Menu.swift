@@ -36,7 +36,7 @@ class Menu: UIView {
     private let newGameButton = Button()
     private let instructionsButton = Button()
     private let soundButton = Button()
-    private let showMenuTip = Notification()
+    private let showMenuTip = Notification(type: .Text)
     let onboardingSteps = OnboardingSteps()
 
     private var hasLoadedConstraints = false

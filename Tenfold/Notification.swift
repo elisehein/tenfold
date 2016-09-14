@@ -11,6 +11,11 @@ import SwiftyJSON
 import UIKit
 import PureLayout
 
+enum NotificationType {
+    case Text
+    case Icon
+}
+
 class Notification: UIView {
 
     private static let iconSize: CGFloat = 60
@@ -19,12 +24,24 @@ class Notification: UIView {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 25 : 15
     }()
 
-    private static let height: CGFloat = {
+    private static let labelHeight: CGFloat = {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 50 : 35
     }()
 
+    private static let labelWidthAddition: CGFloat = {
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 50 : 30
+    }()
+
     private let label = UILabel()
+    private let iconView = UIImageView()
     private let shadowLayer = UIView()
+
+    var iconName: String? {
+        didSet {
+            guard iconName != nil else { return }
+            iconView.image = UIImage(named: iconName!)
+        }
+    }
 
     var text: String = "" {
         didSet {
@@ -46,13 +63,13 @@ class Notification: UIView {
     private var dismissalInProgress = false
     private var flashInProgress = false
     private var flashCompletion: (() -> Void)?
+    private var type: NotificationType
+
     var anchorEdge: ALEdge = .Bottom
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
-        label.backgroundColor = UIColor.themeColor(.OffBlack).colorWithAlphaComponent(0.92)
-        label.layer.masksToBounds = true
+    init(type: NotificationType) {
+        self.type = type
+        super.init(frame: CGRect.zero)
 
         shadowLayer.backgroundColor = UIColor.clearColor()
         shadowLayer.layer.shadowColor = UIColor.blackColor().CGColor
@@ -63,44 +80,35 @@ class Notification: UIView {
         shadowLayer.clipsToBounds = false
 
         addSubview(shadowLayer)
-        addSubview(label)
-    }
 
-    init(iconName: String) {
-        self.init()
-
-        let image = UIImage(named: iconName)
-        let imageView = UIImageView(image: image)
-        imageView.contentMode = .Center
-        label.addSubview(imageView)
+        if type == .Text {
+            label.backgroundColor = UIColor.themeColor(.OffBlack).colorWithAlphaComponent(0.92)
+            label.layer.masksToBounds = true
+            addSubview(label)
+        } else {
+            iconView.backgroundColor = UIColor.themeColor(.Accent)
+            iconView.contentMode = .Center
+            iconView.layer.masksToBounds = true
+            addSubview(iconView)
+        }
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        var widthAddition: CGFloat = 30
-
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            widthAddition = 50
-        }
-
-        var labelFrame = bounds
-
-        if label.text != nil {
-            labelFrame.size.width = label.intrinsicContentSize().width + widthAddition
-            labelFrame.origin.x += (bounds.size.width - labelFrame.size.width) / 2
-        }
-
-        label.frame = labelFrame
-        label.layer.cornerRadius = label.frame.size.height / 2
-
-        if label.subviews.count > 0 {
-            label.subviews[0].frame = label.bounds
+        if type == .Text {
+            label.frame = bounds
+            label.layer.cornerRadius = label.frame.size.height / 2
+            shadowLayer.layer.shadowPath = UIBezierPath(roundedRect: label.frame,
+                                                        cornerRadius: label.layer.cornerRadius).CGPath
+        } else {
+            iconView.frame = bounds
+            iconView.layer.cornerRadius = iconView.frame.size.height / 2
+            shadowLayer.layer.shadowPath = UIBezierPath(roundedRect: iconView.frame,
+                                                        cornerRadius: iconView.layer.cornerRadius).CGPath
         }
 
         shadowLayer.frame = bounds
-        shadowLayer.layer.shadowPath = UIBezierPath(roundedRect: labelFrame,
-                                                    cornerRadius: label.layer.cornerRadius).CGPath
     }
 
     private func constructAttributedString(withText text: String) -> NSMutableAttributedString {
@@ -158,24 +166,6 @@ class Notification: UIView {
         })
     }
 
-    func fadeInAndDismiss(inFrame parentFrame: CGRect, fromPoint origin: CGPoint) {
-        alpha = 0
-        frame = CGRect(x: -60,
-                       y: (parentFrame.height - 60) / 2,
-                       width: 60,
-                       height: 60)
-        label.frame = bounds
-        center = CGPoint(x: parentFrame.width / 2, y: parentFrame.height / 2)
-
-        UIView.animateWithDuration(0.3, animations: {
-            self.alpha = 1
-        }, completion: { _ in
-            UIView.animateWithDuration(1, animations: {
-                self.alpha = 0
-            })
-        })
-    }
-
     func toggle(inFrame parentFrame: CGRect,
                 showing: Bool,
                 animated: Bool = false,
@@ -220,22 +210,40 @@ class Notification: UIView {
     }
 
     private func frameInside(frame parentFrame: CGRect, showing: Bool) -> CGRect {
-        let parentHeight = parentFrame.size.height
-        var notificationFrame = parentFrame
-        notificationFrame.size.height = Notification.height
+        let width = type == .Icon ?
+                    Notification.iconSize :
+                    label.intrinsicContentSize().width + Notification.labelWidthAddition
+
+        let height = type == .Icon ? Notification.iconSize : Notification.labelHeight
 
         var y: CGFloat = 0
+        var x: CGFloat = 0
 
         if showing {
-            y = anchorEdge == .Bottom ?
-                parentHeight - notificationFrame.size.height - Notification.margin :
-                Notification.margin
+            if anchorEdge == .Bottom {
+                y = parentFrame.height - height - Notification.margin
+                x = (parentFrame.width - width) / 2
+            } else if anchorEdge == .Top {
+                y = Notification.margin
+                x = (parentFrame.width - width) / 2
+            } else if anchorEdge == .Left {
+                y = (parentFrame.height - height) / 2
+                x = Notification.margin
+            }
         } else {
-            y = anchorEdge == .Bottom ? parentHeight + 10 : -10
+            if anchorEdge == .Bottom {
+                y = parentFrame.height + 10
+                x = (parentFrame.width - width) / 2
+            } else if anchorEdge == .Top {
+                y = -10
+                x = (parentFrame.width - width) / 2
+            } else if anchorEdge == .Left {
+                y = (parentFrame.height - height) / 2
+                x = -10
+            }
         }
 
-        notificationFrame.origin.y = y
-        return notificationFrame
+        return CGRect(x: x, y: y, width: width, height: height)
     }
 
     private func triggerPendingFlashCompletion() {

@@ -23,9 +23,9 @@ class Play: UIViewController {
     let menu: Menu
     let gameGrid: GameGrid
     private var nextRoundGrid: NextRoundGrid?
-    private let nextRoundNotification = Notification()
-    private let gamePlayMessageNotification = Notification()
-    private let undoNotification = Notification(iconName: "undo")
+    private let nextRoundNotification = Notification(type: .Text)
+    private let gamePlayMessageNotification = Notification(type: .Text)
+    private let undoNotification = Notification(type: .Icon)
 
     private var passedNextRoundThreshold = false
 
@@ -70,6 +70,7 @@ class Play: UIViewController {
         rightSwipe.direction = .Right
 
         undoNotification.anchorEdge = .Left
+        undoNotification.iconName = "undo"
 
         view.backgroundColor = Play.defaultBGColor
         view.addGestureRecognizer(leftSwipe)
@@ -236,7 +237,7 @@ class Play: UIViewController {
         checkForNewlyUnrepresentedValues()
     }
 
-    func undoLatestMove(recognizer: UISwipeGestureRecognizer) {
+    func undoLatestMove() {
         guard !gameGrid.gridAtStartingPosition else { return }
         guard !gameGrid.rowRemovalInProgress else { return }
 
@@ -248,7 +249,7 @@ class Play: UIViewController {
             return
         }
 
-        undoNotification.fadeInAndDismiss(inFrame: view.bounds, fromPoint: recognizer.locationInView(view))
+        undoNotification.flash(forSeconds: 1.5, inFrame: view.bounds)
     }
 
     func undoNewRound() {
