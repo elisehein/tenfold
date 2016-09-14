@@ -49,6 +49,20 @@ class GameGridCell: UICollectionViewCell {
         }
     }
 
+    var aboutToBeRevealed: Bool = false {
+        didSet {
+            if aboutToBeRevealed {
+                contentView.alpha = 0
+            } else if oldValue && !aboutToBeRevealed {
+                UIView.animateWithDuration(0.15, animations: {
+                    self.contentView.alpha = 1
+                })
+            } else {
+                contentView.alpha = 1
+            }
+        }
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
 
@@ -70,6 +84,7 @@ class GameGridCell: UICollectionViewCell {
         marksEndOfRound = false
         state == .Available
         value = nil
+        aboutToBeRevealed = false
         resetColors()
     }
 
@@ -88,6 +103,12 @@ class GameGridCell: UICollectionViewCell {
         numberLabel.font = UIFont.themeFontWithSize(fontSize)
 
         endOfRoundMarker.frame = contentView.bounds
+    }
+
+    func reveal() {
+        UIView.animateWithDuration(0.15, animations: {
+            self.contentView.alpha = 1
+        })
     }
 
     func flash(withColor color: UIColor) {
@@ -117,11 +138,12 @@ class GameGridCell: UICollectionViewCell {
         })
     }
 
-    func unCrossOut(animated animated: Bool = false) {
+    func unCrossOut(withDelay delay: Double = 0, animated: Bool = false) {
         state = .Available
 
         if animated {
-            unfill(usingColor: darkColor, filler: bottomColorFiller, withDelay: 0, completion: {
+            numberLabel.textColor = darkColor
+            fill(usingColor: lightColor, filler: bottomColorFiller, delay: delay, completion: {
                 self.resetColors()
             })
         } else {
@@ -145,12 +167,13 @@ class GameGridCell: UICollectionViewCell {
 
     private func fill(usingColor color: UIColor,
                       filler: UIView,
+                      delay: Double = 0,
                       completion: (() -> Void)? = nil) {
         filler.backgroundColor = color
         filler.transform = CGAffineTransformMakeScale(0, 0)
 
         UIView.animateWithDuration(GameGridCell.animationDuration,
-                                   delay: 0,
+                                   delay: delay,
                                    options: [.CurveEaseOut, .BeginFromCurrentState],
                                    animations: {
             filler.transform = CGAffineTransformMakeScale(1, 1)

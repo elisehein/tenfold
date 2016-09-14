@@ -29,6 +29,12 @@ extension GameGrid: UICollectionViewDataSource {
             cell.state = cellState(forCellAtIndexPath: indexPath)
             cell.marksEndOfRound = game.marksEndOfRound(indexPath.item)
             cell.useClearBackground = true
+
+            if indecesAboutToBeRevealed != nil &&
+               indecesAboutToBeRevealed!.contains(indexPath.item) {
+                cell.aboutToBeRevealed = true
+            }
+
             cell.resetColors()
         }
 

@@ -233,10 +233,11 @@ class Play: UIViewController {
 
     func undoLatestPairing() {
         guard !gameGrid.gridAtStartingPosition else { return }
+        guard !gameGrid.numberRemovalInProgress else { return }
 
-        let undoPairing = {
+        let undoPairing: ((delay: Double) -> Void) = { delay in
             if let pair = self.game.undoLatestPairing() {
-                self.gameGrid.unCrossOut(pair)
+                self.gameGrid.unCrossOut(pair, withDelay: delay)
                 self.updateNextRoundNotificationText()
                 self.updateState()
             }
@@ -244,10 +245,10 @@ class Play: UIViewController {
 
         if let newRowIndeces = game.undoRowRemoval() {
             gameGrid.addRows(atIndeces: newRowIndeces, completion: {
-                undoPairing()
+                undoPairing(delay: 0.2)
             })
         } else {
-            undoPairing()
+            undoPairing(delay: 0)
         }
     }
 

@@ -130,7 +130,7 @@ class Game: NSObject, NSCoding {
 
     func undoRowRemoval() -> [Int]? {
         guard latestMove != nil else { return nil }
-        guard latestMove?.removedRows.count > 0 else { return nil }
+        guard latestMove!.removedRows.count > 0 else { return nil }
 
         var indecesAdded: [Int] = []
 
@@ -143,6 +143,8 @@ class Game: NSObject, NSCoding {
             numbers.insertContentsOf(removedRow, at: placeholder)
         }
 
+        latestMove!.removedRows.removeAll()
+        latestMove!.removedRowPlaceholders.removeAll()
         return indecesAdded
     }
 

@@ -17,6 +17,7 @@ class GameGrid: Grid {
     var gridAtStartingPosition = true
     var snappingInProgress = false
     var automaticallySnapToGameplayPosition = true
+    var numberRemovalInProgress = false
 
     internal var bouncingInProgress = false
     internal var currentScrollCycleHandled = false
@@ -46,6 +47,7 @@ class GameGrid: Grid {
     internal var selectedIndexPaths: [NSIndexPath] = []
 
     var indecesPermittedForSelection: [Int]? = nil
+    var indecesAboutToBeRevealed: [Int]? = nil
 
     init(game: Game) {
         self.game = game
@@ -150,9 +152,9 @@ class GameGrid: Grid {
         })
     }
 
-    func unCrossOut(pair: Pair) {
+    func unCrossOut(pair: Pair, withDelay delay: Double) {
         performActionOnCells(withIndeces: pair.asArray(), { cell in
-            cell.unCrossOut(animated: true)
+            cell.unCrossOut(withDelay: delay, animated: true)
         })
     }
 
@@ -169,6 +171,7 @@ class GameGrid: Grid {
 
     func removeNumbers(atIndeces indeces: [Int], completion: (() -> Void)) {
         guard indeces.count > 0 else { return }
+        numberRemovalInProgress = true
 
         let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
 
@@ -177,11 +180,10 @@ class GameGrid: Grid {
             setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: true)
         }
 
-        var removalHandled = false
         prepareForRemoval(indexPaths, completion: {
-            if !removalHandled {
+            if self.numberRemovalInProgress {
                 self.deleteItemsAtIndexPaths(indexPaths)
-                removalHandled = true
+                self.numberRemovalInProgress = false
                 completion()
             }
         })
@@ -191,11 +193,21 @@ class GameGrid: Grid {
         guard indeces.count > 0 else { return }
         let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
 
+        indecesAboutToBeRevealed = indeces
         performBatchUpdates({
             self.insertItemsAtIndexPaths(indexPaths)
         }, completion: { finished in
             self.adjustTopInset()
+            self.revealCellsAtIndeces(indeces)
             completion()
+        })
+    }
+
+    private func revealCellsAtIndeces(indeces: [Int]) {
+        indecesAboutToBeRevealed = nil
+
+        performActionOnCells(withIndeces: indeces, { cell in
+            cell.aboutToBeRevealed = false
         })
     }
 
