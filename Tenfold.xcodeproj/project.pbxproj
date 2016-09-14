@@ -238,6 +238,7 @@
 			isa = PBXGroup;
 			children = (
 				0CF5C54A1D6F76C5006D46B8 /* Button.swift */,
+				0C1E317C1D86AE6E00ABA583 /* EndOfRoundMarker.swift */,
 				0CADBDF31D6C65110090C13F /* Notification.swift */,
 				0CD93E811D78A14900D7DF96 /* PageDownIndicator.swift */,
 			);
@@ -259,7 +260,6 @@
 			children = (
 				0C70C4161D74B5C300A9E8B8 /* GameGrid */,
 				0C8E72FF1D7ABED000DFE757 /* Rules */,
-				0C1E317C1D86AE6E00ABA583 /* EndOfRoundMarker.swift */,
 				0C39D3091D3BC3B90047CE74 /* Grid.swift */,
 				4EA6957F1D36992E00F9A315 /* Menu.swift */,
 				0C8E73021D7AF33500DFE757 /* ModalOverlay.swift */,
