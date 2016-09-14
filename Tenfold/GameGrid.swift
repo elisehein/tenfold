@@ -187,7 +187,7 @@ class GameGrid: Grid {
         let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
 
         adjustTopInset()
-        adjustTopOffsetInAnticipationOfCellCountChange(indeces.count)
+        adjustTopOffsetInAnticipationOfCellCountChange(indeces)
 
         prepareForRemoval(indexPaths, completion: {
             if self.rowRemovalInProgress {
@@ -208,7 +208,7 @@ class GameGrid: Grid {
         rowInsertionInProgressWithIndeces = indeces
 
         let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
-        adjustTopOffsetInAnticipationOfCellCountChange(indeces.count)
+        adjustTopOffsetInAnticipationOfCellCountChange(indeces)
 
         performBatchUpdates({
             self.insertItemsAtIndexPaths(indexPaths)
@@ -281,9 +281,16 @@ class GameGrid: Grid {
         return prematurePullUpInProgress() ? contentDistanceFromTopEdge() : distancePulledUp()
     }
 
-    private func adjustTopOffsetInAnticipationOfCellCountChange(cellCount: Int) {
+    private func adjustTopOffsetInAnticipationOfCellCountChange(indeces: [Int]) {
+        // For some reason something funky happens when we're adding stuff
+        // to the very end of the game... in this case, adjusting top offset
+        // just makes it behave oddly
+        if game.indecesOverlapTailIndeces(indeces) {
+            return
+        }
+
         if contentInset.top > 0 {
-            let rowDelta = Matrix.singleton.totalRows(cellCount)
+            let rowDelta = Matrix.singleton.totalRows(indeces.count)
             let gameHeightDelta = heightForGame(withTotalRows: rowDelta)
             setContentOffset(CGPoint(x: 0, y: -contentInset.top + gameHeightDelta), animated: true)
         }

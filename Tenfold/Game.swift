@@ -258,6 +258,12 @@ class Game: NSObject, NSCoding {
         return Matrix.singleton.columnOfItem(atIndex: numberCount() - 1)
     }
 
+    func indecesOverlapTailIndeces(indeces: [Int]) -> Bool {
+        let tailIndeces = Array(numbers.count - indeces.count..<numbers.count)
+        print("Checking whether", tailIndeces, "overlap", indeces)
+        return Set(tailIndeces).union(Set(indeces)).count == tailIndeces.count
+    }
+
     func indecesOnRow(containingIndex index: Int) -> [Int] {
         return Matrix.singleton.indecesOnRow(containingIndex: index, lastGameIndex: numberCount() - 1)
     }
