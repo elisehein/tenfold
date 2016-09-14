@@ -233,7 +233,7 @@ class Play: UIViewController {
 
     func undoLatestPairing() {
         guard !gameGrid.gridAtStartingPosition else { return }
-        guard !gameGrid.numberRemovalInProgress else { return }
+        guard !gameGrid.rowRemovalInProgress else { return }
 
         let undoPairing: ((delay: Double) -> Void) = { delay in
             if let pair = self.game.undoLatestPairing() {
@@ -274,26 +274,23 @@ class Play: UIViewController {
         let surplusIndeces = game.removeRowsIfNeeded(containingItemsFrom: pair)
 
         if surplusIndeces.count > 0 {
-            removeNumbers(atIndeces: surplusIndeces)
+            gameGrid.removeRows(withNumberIndeces: surplusIndeces, completion: {
+                if self.game.ended() {
+                    StorageService.saveGameSnapshot(self.game, forced: true)
+                    self.presentViewController(GameFinished(game: self.game),
+                                               animated: true,
+                                               completion: { _ in
+                        self.restart()
+                    })
+                } else {
+                    self.updateState()
+                }
+            })
+
             return true
         } else {
             return false
         }
-    }
-
-    private func removeNumbers(atIndeces indeces: [Int]) {
-        gameGrid.removeNumbers(atIndeces: indeces, completion: {
-            if self.game.ended() {
-                StorageService.saveGameSnapshot(self.game, forced: true)
-                self.presentViewController(GameFinished(game: self.game),
-                                           animated: true,
-                                           completion: { _ in
-                    self.restart()
-                })
-            } else {
-                self.updateState()
-            }
-        })
     }
 
     private func checkForNewlyUnrepresentedValues() {

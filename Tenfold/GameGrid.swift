@@ -13,16 +13,14 @@ class GameGrid: Grid {
     internal let reuseIdentifier = "GameGridCell"
 
     internal var game: Game
-
-    var gridAtStartingPosition = true
-    var snappingInProgress = false
-    var automaticallySnapToGameplayPosition = true
-    var numberRemovalInProgress = false
-
+    internal var snappingInProgress = false
     internal var bouncingInProgress = false
     internal var currentScrollCycleHandled = false
 
-    var pullUpThreshold: CGFloat?
+    var gridAtStartingPosition = true
+    var automaticallySnapToGameplayPosition = true
+
+    internal var pullUpThreshold: CGFloat?
     var snapToStartingPositionThreshold: CGFloat?
     var snapToGameplayPositionThreshold: CGFloat?
 
@@ -45,9 +43,22 @@ class GameGrid: Grid {
     // say when pairing two items so far from each other that they cannot be seen on screen
     // at the same time), it's easier to keep track of selection ourselves, rather than natively
     internal var selectedIndexPaths: [NSIndexPath] = []
+    internal var indecesPermittedForSelection: [Int]? = nil
 
-    var indecesPermittedForSelection: [Int]? = nil
-    var rowInsertionInProgressWithIndeces: [Int]? = nil
+    // When you scroll while row insertion or removal is in progress, cellForItemWithIndexPath will
+    // for some reason get corrupt data. We can disable user interaction completely to also
+    // capture cases where selections happen too fast.
+    var rowRemovalInProgress = false {
+        didSet {
+            userInteractionEnabled = !rowRemovalInProgress
+        }
+    }
+
+    internal var rowInsertionInProgressWithIndeces: [Int]? = nil {
+        didSet {
+            userInteractionEnabled = rowInsertionInProgressWithIndeces == nil
+        }
+    }
 
     init(game: Game) {
         self.game = game
@@ -169,29 +180,24 @@ class GameGrid: Grid {
         }
     }
 
-    func removeNumbers(atIndeces indeces: [Int], completion: (() -> Void)) {
+    func removeRows(withNumberIndeces indeces: [Int], completion: (() -> Void)) {
         guard indeces.count > 0 else { return }
-        numberRemovalInProgress = true
+        rowRemovalInProgress = true
 
         let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
 
         adjustTopInset()
-
-        if contentInset.top > 0 {
-            let rowDelta = Matrix.singleton.totalRows(indeces.count)
-            let gameHeightDelta = heightForGame(withTotalRows: rowDelta)
-            setContentOffset(CGPoint(x: 0, y: -contentInset.top + gameHeightDelta), animated: true)
-        }
+        adjustTopOffsetInAnticipationOfCellCountChange(indeces.count)
 
         prepareForRemoval(indexPaths, completion: {
-            if self.numberRemovalInProgress {
+            if self.rowRemovalInProgress {
                 self.deleteItemsAtIndexPaths(indexPaths)
 
                 if self.contentInset.top > 0 {
                     self.setContentOffset(CGPoint(x: 0, y: -self.contentInset.top), animated: true)
                 }
 
-                self.numberRemovalInProgress = false
+                self.rowRemovalInProgress = false
                 completion()
             }
         })
@@ -202,12 +208,7 @@ class GameGrid: Grid {
         rowInsertionInProgressWithIndeces = indeces
 
         let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
-
-        if self.contentInset.top > 0 {
-            let rowDelta = Matrix.singleton.totalRows(indeces.count)
-            let gameHeightDelta = heightForGame(withTotalRows: rowDelta)
-            self.setContentOffset(CGPoint(x: 0, y: -self.contentInset.top + gameHeightDelta), animated: true)
-        }
+        adjustTopOffsetInAnticipationOfCellCountChange(indeces.count)
 
         performBatchUpdates({
             self.insertItemsAtIndexPaths(indexPaths)
@@ -278,6 +279,14 @@ class GameGrid: Grid {
 
     func pullUpDistanceFromStartingPosition() -> CGFloat {
         return prematurePullUpInProgress() ? contentDistanceFromTopEdge() : distancePulledUp()
+    }
+
+    private func adjustTopOffsetInAnticipationOfCellCountChange(cellCount: Int) {
+        if contentInset.top > 0 {
+            let rowDelta = Matrix.singleton.totalRows(cellCount)
+            let gameHeightDelta = heightForGame(withTotalRows: rowDelta)
+            setContentOffset(CGPoint(x: 0, y: -contentInset.top + gameHeightDelta), animated: true)
+        }
     }
 
     internal func adjustTopInset(enforceStartingPosition enforceStartingPosition: Bool = false) {
