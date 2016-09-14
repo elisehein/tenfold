@@ -191,7 +191,7 @@ class Menu: UIView {
             let windowFrame = showMenuTip.superview?.bounds
             showMenuTip.anchorEdge = .Top
             showMenuTip.toggle(inFrame: windowFrame!, showing: false)
-            showMenuTip.flash(forSeconds: 4, inFrame: windowFrame!)
+            showMenuTip.popup(forSeconds: 4, inFrame: windowFrame!)
             shouldShowTips = false
         }
     }

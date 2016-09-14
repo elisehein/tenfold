@@ -1,5 +1,5 @@
 //
-//  GameInfo.swift
+//  Notification.swift
 //  Tenfold
 //
 //  Created by Elise Hein on 23/08/2016.
@@ -61,8 +61,8 @@ class Notification: UIView {
     }
 
     private var dismissalInProgress = false
-    private var flashInProgress = false
-    private var flashCompletion: (() -> Void)?
+    private var popupInProgress = false
+    private var popupCompletion: (() -> Void)?
     private var type: NotificationType
 
     var anchorEdge: ALEdge = .Bottom
@@ -86,7 +86,7 @@ class Notification: UIView {
             label.layer.masksToBounds = true
             addSubview(label)
         } else {
-            iconView.backgroundColor = UIColor(hex: "#DB7551")
+            iconView.backgroundColor = UIColor.themeColor(.OffBlack)
             iconView.contentMode = .Center
             iconView.layer.masksToBounds = true
             addSubview(iconView)
@@ -142,13 +142,13 @@ class Notification: UIView {
         return attrString
     }
 
-    func flash(forSeconds seconds: Double,
+    func popup(forSeconds seconds: Double,
                inFrame parentFrame: CGRect,
                completion: (() -> Void)? = nil) {
-        guard !flashInProgress else { return }
+        guard !popupInProgress else { return }
 
-        flashInProgress = true
-        flashCompletion = completion
+        popupInProgress = true
+        popupCompletion = completion
 
         toggle(inFrame: parentFrame,
                showing: true,
@@ -157,26 +157,43 @@ class Notification: UIView {
         let triggerTime = dispatch_time(DISPATCH_TIME_NOW, Int64(seconds * Double(NSEC_PER_SEC)))
         dispatch_after(triggerTime,
                        dispatch_get_main_queue(), { () -> Void in
-            self.toggle(inFrame: parentFrame,
-                        showing: false,
-                        animated: true,
-                        completion: {
-                self.triggerPendingFlashCompletion()
+                        self.toggle(inFrame: parentFrame,
+                            showing: false,
+                            animated: true,
+                            completion: {
+                                self.triggerPendingPopupCompletion()
+                        })
+        })
+    }
+
+    func flash(inFrame parentFrame: CGRect) {
+        alpha = 0
+        frame = CGRect(x: -60,
+                       y: (parentFrame.height - 60) / 2,
+                       width: 60,
+                       height: 60)
+        center = CGPoint(x: parentFrame.width / 2, y: parentFrame.height / 2)
+
+        UIView.animateWithDuration(0.3, animations: {
+            self.alpha = 1
+        }, completion: { _ in
+            UIView.animateWithDuration(1, animations: {
+                self.alpha = 0
             })
         })
     }
 
     func toggle(inFrame parentFrame: CGRect,
-                showing: Bool,
-                animated: Bool = false,
-                completion: (() -> Void)? = nil) {
+                        showing: Bool,
+                        animated: Bool = false,
+                        completion: (() -> Void)? = nil) {
 
-        // In case we were interrupted before we reached the flash completion block before
-        triggerPendingFlashCompletion()
+        // In case we were interrupted before we reached the popup completion block before
+        triggerPendingPopupCompletion()
 
         guard !dismissalInProgress else { return }
         guard !CGRectEqualToRect(frame, frameInside(frame: parentFrame,
-                                                    showing: showing)) else { return }
+            showing: showing)) else { return }
 
         UIView.animateWithDuration(animated ? 0.6 : 0,
                                    delay: 0,
@@ -184,10 +201,10 @@ class Notification: UIView {
                                    initialSpringVelocity: 0.3,
                                    options: [.CurveEaseIn, .BeginFromCurrentState],
                                    animations: {
-            self.alpha = showing ? 1 : 0
-            self.frame = self.frameInside(frame: parentFrame, showing: showing)
-        }, completion: { _ in
-            completion?()
+                                    self.alpha = showing ? 1 : 0
+                                    self.frame = self.frameInside(frame: parentFrame, showing: showing)
+            }, completion: { _ in
+                completion?()
         })
     }
 
@@ -198,21 +215,21 @@ class Notification: UIView {
                                    delay: 0,
                                    options: .CurveEaseOut,
                                    animations: {
-            self.alpha = 0
-            var dismissedFrame = self.frame
-            dismissedFrame.origin.y -= 100
-            self.frame = dismissedFrame
-        }, completion: { _ in
-            self.dismissalInProgress = false
-            self.toggle(inFrame: parentFrame, showing: false)
-            completion()
+                                    self.alpha = 0
+                                    var dismissedFrame = self.frame
+                                    dismissedFrame.origin.y -= 100
+                                    self.frame = dismissedFrame
+            }, completion: { _ in
+                self.dismissalInProgress = false
+                self.toggle(inFrame: parentFrame, showing: false)
+                completion()
         })
     }
 
     private func frameInside(frame parentFrame: CGRect, showing: Bool) -> CGRect {
         let width = type == .Icon ?
-                    Notification.iconSize :
-                    label.intrinsicContentSize().width + Notification.labelWidthAddition
+            Notification.iconSize :
+            label.intrinsicContentSize().width + Notification.labelWidthAddition
 
         let height = type == .Icon ? Notification.iconSize : Notification.labelHeight
 
@@ -227,7 +244,7 @@ class Notification: UIView {
                 y = Notification.margin
                 x = (parentFrame.width - width) / 2
             } else if anchorEdge == .Left {
-                y = parentFrame.height - height - Notification.margin
+                y = (parentFrame.height - height) / 2
                 x = Notification.margin
             }
         } else {
@@ -238,7 +255,7 @@ class Notification: UIView {
                 y = -10
                 x = (parentFrame.width - width) / 2
             } else if anchorEdge == .Left {
-                y = parentFrame.height - height - Notification.margin
+                y = (parentFrame.height - height) / 2
                 x = -10
             }
         }
@@ -246,10 +263,10 @@ class Notification: UIView {
         return CGRect(x: x, y: y, width: width, height: height)
     }
 
-    private func triggerPendingFlashCompletion() {
-        flashInProgress = false
-        flashCompletion?()
-        flashCompletion = nil
+    private func triggerPendingPopupCompletion() {
+        popupInProgress = false
+        popupCompletion?()
+        popupCompletion = nil
     }
 
     required init?(coder aDecoder: NSCoder) {

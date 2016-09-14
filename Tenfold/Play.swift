@@ -65,16 +65,12 @@ class Play: UIViewController {
         menu.onTapNewGame = confirmNewGame
         menu.onTapInstructions = showInstructions
 
-        let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.showInstructions))
-        leftSwipe.direction = .Left
-
-        let pan = UIPanGestureRecognizer(target: self, action: #selector(Play.detectRightPan))
+        let pan = UIPanGestureRecognizer(target: self, action: #selector(Play.detectPan))
 
         undoNotification.anchorEdge = .Left
         undoNotification.iconName = "undo"
 
         view.backgroundColor = Play.defaultBGColor
-        view.addGestureRecognizer(leftSwipe)
         view.addGestureRecognizer(pan)
         view.addSubview(gameGrid)
         view.addSubview(menu)
@@ -238,37 +234,13 @@ class Play: UIViewController {
         checkForNewlyUnrepresentedValues()
     }
 
-    func detectRightPan(recognizer: UIPanGestureRecognizer) {
-        if recognizer.state == .Began && recognizer.velocityInView(view).x < 0 {
-            return
-        } else if recognizer.state == .Began {
-            undoHandled = false
-        }
+    func detectPan(recognizer: UIPanGestureRecognizer) {
+        guard recognizer.state == .Began else { return }
 
-        guard !undoHandled else { return }
-
-        let threshold: CGFloat = 30
-        undoNotification.alpha = 1
-        undoNotification.frame = CGRect(x: min(threshold, recognizer.translationInView(view).x - 60 - 10),
-                                        y: view.bounds.size.height / 2,
-                                        width: 60,
-                                        height: 60)
-
-        if undoNotification.frame.origin.x == threshold {
-            undoHandled = true
-            undoLatestMove()
-            var hiddenFrame = undoNotification.frame
-            hiddenFrame.origin.x = -70
-
-            UIView.animateWithDuration(0.2, delay: 0.5, options: [], animations: {
-                self.undoNotification.frame = hiddenFrame
-            }, completion: { _ in
-                self.undoLatestMove()
-            })
-        }
-
-        if recognizer.state == .Ended {
-            undoNotification.alpha = 0
+        if recognizer.velocityInView(view).x > 0 {
+           undoLatestMove()
+        } else {
+           showInstructions()
         }
     }
 
@@ -283,8 +255,8 @@ class Play: UIViewController {
         } else {
             return
         }
-//
-//        undoNotification.flash(forSeconds: 1, inFrame: view.bounds)
+
+        undoNotification.flash(inFrame: view.bounds)
     }
 
     func undoNewRound() {
@@ -357,7 +329,7 @@ class Play: UIViewController {
 
         if unrepresented.count > 0 && game.numbersRemaining() > 10 {
             gamePlayMessageNotification.newlyUnrepresentedNumber = unrepresented[0]
-            gamePlayMessageNotification.flash(forSeconds: 3,
+            gamePlayMessageNotification.popup(forSeconds: 3,
                                               inFrame: view.bounds,
                                               completion: {
                 self.game.pruneValueCounts()
