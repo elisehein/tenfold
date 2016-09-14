@@ -260,7 +260,6 @@ class Game: NSObject, NSCoding {
 
     func indecesOverlapTailIndeces(indeces: [Int]) -> Bool {
         let tailIndeces = Array(numbers.count - indeces.count..<numbers.count)
-        print("Checking whether", tailIndeces, "overlap", indeces)
         return Set(tailIndeces).union(Set(indeces)).count == tailIndeces.count
     }
 
