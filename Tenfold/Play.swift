@@ -28,6 +28,7 @@ class Play: UIViewController {
     private let nextRoundNotification = Notification(type: .Text)
     private let gamePlayMessageNotification = Notification(type: .Text)
     private let undoNotification = Notification(type: .Icon)
+    private let undoErrorNotification = Notification(type: .Text)
 
     private var passedNextRoundThreshold = false
 
@@ -67,6 +68,8 @@ class Play: UIViewController {
 
         let pan = UIPanGestureRecognizer(target: self, action: #selector(Play.detectPan))
 
+        undoErrorNotification.anchorEdge = .Top
+        undoErrorNotification.text = "You can only undo your last move"
         undoNotification.anchorEdge = .Left
         undoNotification.iconName = "undo"
 
@@ -77,6 +80,7 @@ class Play: UIViewController {
         view.addSubview(gamePlayMessageNotification)
         view.addSubview(nextRoundNotification)
         view.addSubview(undoNotification)
+        view.addSubview(undoErrorNotification)
     }
 
     override func viewDidLoad() {
@@ -95,6 +99,7 @@ class Play: UIViewController {
 
         nextRoundNotification.toggle(inFrame: view.bounds, showing: false)
         gamePlayMessageNotification.toggle(inFrame: view.bounds, showing: false)
+        undoErrorNotification.toggle(inFrame: view.bounds, showing: false)
         undoNotification.toggle(inFrame: view.bounds, showing: false)
         initNextRoundMatrix()
 
@@ -247,13 +252,15 @@ class Play: UIViewController {
     func undoLatestMove() {
         guard !gameGrid.gridAtStartingPosition else { return }
         guard !gameGrid.rowRemovalInProgress else { return }
+        guard game.latestMoveType() != nil else {
+            undoErrorNotification.popup(forSeconds: 3, inFrame: view.bounds)
+            return
+        }
 
         if game.latestMoveType() == .CrossingOutPair {
             undoLatestPairing()
         } else if game.latestMoveType() == .LoadingNextRound {
             undoNewRound()
-        } else {
-            return
         }
 
         undoNotification.flash(inFrame: view.bounds)

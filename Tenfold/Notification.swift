@@ -86,7 +86,7 @@ class Notification: UIView {
             label.layer.masksToBounds = true
             addSubview(label)
         } else {
-            iconView.backgroundColor = UIColor.themeColor(.OffBlack)
+            iconView.backgroundColor = UIColor.themeColor(.OffBlack).colorWithAlphaComponent(0.8)
             iconView.contentMode = .Center
             iconView.layer.masksToBounds = true
             addSubview(iconView)
