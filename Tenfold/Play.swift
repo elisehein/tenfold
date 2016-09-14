@@ -25,6 +25,7 @@ class Play: UIViewController {
     private var nextRoundGrid: NextRoundGrid?
     private let nextRoundNotification = Notification()
     private let gamePlayMessageNotification = Notification()
+    private let undoNotification = Notification(iconName: "undo")
 
     private var passedNextRoundThreshold = false
 
@@ -68,6 +69,8 @@ class Play: UIViewController {
         let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.undoLatestMove))
         rightSwipe.direction = .Right
 
+        undoNotification.anchorEdge = .Left
+
         view.backgroundColor = Play.defaultBGColor
         view.addGestureRecognizer(leftSwipe)
         view.addGestureRecognizer(rightSwipe)
@@ -75,6 +78,7 @@ class Play: UIViewController {
         view.addSubview(menu)
         view.addSubview(gamePlayMessageNotification)
         view.addSubview(nextRoundNotification)
+        view.addSubview(undoNotification)
     }
 
     override func viewDidLoad() {
@@ -93,6 +97,7 @@ class Play: UIViewController {
 
         nextRoundNotification.toggle(inFrame: view.bounds, showing: false)
         gamePlayMessageNotification.toggle(inFrame: view.bounds, showing: false)
+        undoNotification.toggle(inFrame: view.bounds, showing: false)
         initNextRoundMatrix()
 
         gameGrid.snapToStartingPositionThreshold = 50
@@ -231,7 +236,7 @@ class Play: UIViewController {
         checkForNewlyUnrepresentedValues()
     }
 
-    func undoLatestMove() {
+    func undoLatestMove(recognizer: UISwipeGestureRecognizer) {
         guard !gameGrid.gridAtStartingPosition else { return }
         guard !gameGrid.rowRemovalInProgress else { return }
 
@@ -239,7 +244,11 @@ class Play: UIViewController {
             undoLatestPairing()
         } else if game.latestMoveType() == .LoadingNextRound {
             undoNewRound()
+        } else {
+            return
         }
+
+        undoNotification.fadeInAndDismiss(inFrame: view.bounds, fromPoint: recognizer.locationInView(view))
     }
 
     func undoNewRound() {

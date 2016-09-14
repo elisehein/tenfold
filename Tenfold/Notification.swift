@@ -13,6 +13,8 @@ import PureLayout
 
 class Notification: UIView {
 
+    private static let iconSize: CGFloat = 60
+
     private static let margin: CGFloat = {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 25 : 15
     }()
@@ -64,6 +66,15 @@ class Notification: UIView {
         addSubview(label)
     }
 
+    init(iconName: String) {
+        self.init()
+
+        let image = UIImage(named: iconName)
+        let imageView = UIImageView(image: image)
+        imageView.contentMode = .Center
+        label.addSubview(imageView)
+    }
+
     override func layoutSubviews() {
         super.layoutSubviews()
 
@@ -74,10 +85,18 @@ class Notification: UIView {
         }
 
         var labelFrame = bounds
-        labelFrame.size.width = label.intrinsicContentSize().width + widthAddition
-        labelFrame.origin.x += (bounds.size.width - labelFrame.size.width) / 2
+
+        if label.text != nil {
+            labelFrame.size.width = label.intrinsicContentSize().width + widthAddition
+            labelFrame.origin.x += (bounds.size.width - labelFrame.size.width) / 2
+        }
+
         label.frame = labelFrame
         label.layer.cornerRadius = label.frame.size.height / 2
+
+        if label.subviews.count > 0 {
+            label.subviews[0].frame = label.bounds
+        }
 
         shadowLayer.frame = bounds
         shadowLayer.layer.shadowPath = UIBezierPath(roundedRect: labelFrame,
@@ -135,6 +154,24 @@ class Notification: UIView {
                         animated: true,
                         completion: {
                 self.triggerPendingFlashCompletion()
+            })
+        })
+    }
+
+    func fadeInAndDismiss(inFrame parentFrame: CGRect, fromPoint origin: CGPoint) {
+        alpha = 0
+        frame = CGRect(x: -60,
+                       y: (parentFrame.height - 60) / 2,
+                       width: 60,
+                       height: 60)
+        label.frame = bounds
+        center = CGPoint(x: parentFrame.width / 2, y: parentFrame.height / 2)
+
+        UIView.animateWithDuration(0.3, animations: {
+            self.alpha = 1
+        }, completion: { _ in
+            UIView.animateWithDuration(1, animations: {
+                self.alpha = 0
             })
         })
     }
