@@ -9,31 +9,53 @@
 import Foundation
 import UIKit
 
+enum GameMoveType {
+    case CrossingOutPair
+    case LoadingNextRound
+}
+
 class GameMove: NSObject, NSCoding {
     private static let pairCoderKey = "gameMovePairCoderKey"
-    private static let removedRowCoderKey = "gameMoveRemovedRowCoderKey"
-    private static let removedRowPlaceholdersCoderKey = "gameMoveRemovedRowPlaceholdersCoderKey"
+    private static let rowsRemovedCoderKey = "gameMoveRowsRemovedCoderKey"
+    private static let placeholdersCoderKey = "gameMovePlaceholdersForRowsRemovedCoderKey"
+    private static let numbersAddedCoderKey = "gameMoveNumbersAddedCoderKey"
 
-    let crossedOutPair: [Int]
-    var removedRows: [[Number]] = []
-    var removedRowPlaceholders: [Int] = []
+    var crossedOutPair: [Int]? = nil
+    var rowsRemoved: [[Number]] = []
+    var placeholdersForRowsRemoved: [Int] = []
+    var numbersAdded: Int = 0
 
     init(crossedOutPair: [Int]) {
         self.crossedOutPair = crossedOutPair
         super.init()
     }
 
+    init(numbersAdded: Int) {
+        self.numbersAdded = numbersAdded
+    }
+
+    func type() -> GameMoveType? {
+        if numbersAdded > 0 {
+            return .LoadingNextRound
+        } else if crossedOutPair != nil {
+            return .CrossingOutPair
+        } else {
+            return nil
+        }
+    }
+
     required init?(coder aDecoder: NSCoder) {
-        self.crossedOutPair = (aDecoder.decodeObjectForKey(GameMove.pairCoderKey) as? [Int])!
-        self.removedRows = (aDecoder.decodeObjectForKey(GameMove.removedRowCoderKey) as? [[Number]])!
-        self.removedRowPlaceholders = (aDecoder.decodeObjectForKey(GameMove.removedRowPlaceholdersCoderKey)
-                                       as? [Int])!
+        self.crossedOutPair = aDecoder.decodeObjectForKey(GameMove.pairCoderKey) as? [Int]
+        self.rowsRemoved = (aDecoder.decodeObjectForKey(GameMove.rowsRemovedCoderKey) as? [[Number]])!
+        self.placeholdersForRowsRemoved = (aDecoder.decodeObjectForKey(GameMove.placeholdersCoderKey) as? [Int])!
+        self.numbersAdded = aDecoder.decodeIntegerForKey(GameMove.numbersAddedCoderKey)
         super.init()
     }
 
     func encodeWithCoder(aCoder: NSCoder) {
         aCoder.encodeObject(crossedOutPair, forKey: GameMove.pairCoderKey)
-        aCoder.encodeObject(removedRows, forKey: GameMove.removedRowCoderKey)
-        aCoder.encodeObject(removedRowPlaceholders, forKey: GameMove.removedRowPlaceholdersCoderKey)
+        aCoder.encodeObject(rowsRemoved, forKey: GameMove.rowsRemovedCoderKey)
+        aCoder.encodeObject(placeholdersForRowsRemoved, forKey: GameMove.placeholdersCoderKey)
+        aCoder.encodeInteger(numbersAdded, forKey: GameMove.numbersAddedCoderKey)
     }
 }

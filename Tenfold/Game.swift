@@ -83,20 +83,35 @@ class Game: NSObject, NSCoding {
     }
 
     func undoLatestPairing() -> Pair? {
-        guard latestMove != nil else { return nil }
+        guard latestMove != nil && latestMove!.crossedOutPair != nil else { return nil }
 
-        let unpair: ((Number) -> Void) = { number in
-            number.crossedOut = false
-            self.incrementValueCount(number.value!)
+        if latestMove?.crossedOutPair != nil {
+            let unpair: ((Number) -> Void) = { number in
+                number.crossedOut = false
+                self.incrementValueCount(number.value!)
+            }
+
+            for index in latestMove!.crossedOutPair! {
+                unpair(numbers[index])
+            }
+
+            let crossedOutPair = Pair(latestMove!.crossedOutPair!)
+            latestMove = nil
+            return crossedOutPair
+        } else {
+            return nil
         }
+    }
 
-        for index in latestMove!.crossedOutPair {
-            unpair(numbers[index])
-        }
+    func undoNewRound() -> [Int]? {
+        guard latestMove != nil && latestMove?.numbersAdded > 0 else { return [] }
 
-        let crossedOutPair = Pair(latestMove!.crossedOutPair)
+        numbers.removeLast(latestMove!.numbersAdded)
+        historicNumberCount -= latestMove!.numbersAdded
+        currentRound -= 1
+        let indecesRemoved = Array(numbers.count..<numbers.count + latestMove!.numbersAdded)
         latestMove = nil
-        return crossedOutPair
+        return indecesRemoved
     }
 
     func removeRowsIfNeeded(containingItemsFrom pair: Pair) -> [Int] {
@@ -122,29 +137,28 @@ class Game: NSObject, NSCoding {
         guard indeces.count > 0 else { return }
         let numbersToRemove = numbers.filter({ indeces.contains(numbers.indexOf($0)!) })
 
-        latestMove!.removedRows.append(numbersToRemove)
-        latestMove!.removedRowPlaceholders.append(indeces[0])
+        latestMove!.rowsRemoved.append(numbersToRemove)
+        latestMove!.placeholdersForRowsRemoved.append(indeces[0])
 
         numbers.removeObjects(numbersToRemove)
     }
 
     func undoRowRemoval() -> [Int]? {
-        guard latestMove != nil else { return nil }
-        guard latestMove!.removedRows.count > 0 else { return nil }
+        guard latestMove != nil && latestMove!.rowsRemoved.count > 0 else { return nil }
 
         var indecesAdded: [Int] = []
 
         // For the placeholders to be correct, we need to bring back the rows in
         // reverse order to what they were removed in
-        for rowIndex in (0..<latestMove!.removedRows.count).reverse() {
-            let placeholder = latestMove!.removedRowPlaceholders[rowIndex]
-            let removedRow = latestMove!.removedRows[rowIndex]
+        for rowIndex in (0..<latestMove!.rowsRemoved.count).reverse() {
+            let placeholder = latestMove!.placeholdersForRowsRemoved[rowIndex]
+            let removedRow = latestMove!.rowsRemoved[rowIndex]
             indecesAdded += Array(placeholder..<placeholder + removedRow.count)
             numbers.insertContentsOf(removedRow, at: placeholder)
         }
 
-        latestMove!.removedRows.removeAll()
-        latestMove!.removedRowPlaceholders.removeAll()
+        latestMove!.rowsRemoved.removeAll()
+        latestMove!.placeholdersForRowsRemoved.removeAll()
         return indecesAdded
     }
 
@@ -158,7 +172,7 @@ class Game: NSObject, NSCoding {
             numbers += nextRoundNumbers
             historicNumberCount += nextRoundNumbers.count
             currentRound += 1
-            latestMove = nil
+            latestMove = GameMove(numbersAdded: nextRoundNumbers.count)
 
             for (value, _) in valueCounts {
                 valueCounts[value] = valueCounts[value]! * 2
@@ -187,6 +201,10 @@ class Game: NSObject, NSCoding {
     }
 
     // MARK: Query game
+
+    func latestMoveType() -> GameMoveType? {
+        return latestMove?.type()
+    }
 
     func nextRoundNumbers() -> [Number] {
         let nextRoundNumbers: [Number] = remainingNumbers().map({ number in

@@ -65,7 +65,7 @@ class Play: UIViewController {
         let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.showInstructions))
         leftSwipe.direction = .Left
 
-        let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.undoLatestPairing))
+        let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.undoLatestMove))
         rightSwipe.direction = .Right
 
         view.backgroundColor = Play.defaultBGColor
@@ -231,10 +231,27 @@ class Play: UIViewController {
         checkForNewlyUnrepresentedValues()
     }
 
-    func undoLatestPairing() {
+    func undoLatestMove() {
         guard !gameGrid.gridAtStartingPosition else { return }
         guard !gameGrid.rowRemovalInProgress else { return }
 
+        if game.latestMoveType() == .CrossingOutPair {
+            undoLatestPairing()
+        } else if game.latestMoveType() == .LoadingNextRound {
+            undoNewRound()
+        }
+    }
+
+    func undoNewRound() {
+        if let indeces = game.undoNewRound() {
+            gameGrid.removeRows(withNumberIndeces: indeces, completion: {
+                self.updateNextRoundNotificationText()
+                self.updateState()
+            })
+        }
+    }
+
+    func undoLatestPairing() {
         let undoPairing: ((delay: Double) -> Void) = { delay in
             if let pair = self.game.undoLatestPairing() {
                 self.gameGrid.unCrossOut(pair, withDelay: delay)
