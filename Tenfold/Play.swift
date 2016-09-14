@@ -255,7 +255,7 @@ class Play: UIViewController {
     // Instead of calling reloadData on the entire matrix, dynamically add the next round
     // This function assumes that the state of the game has diverged from the state of
     // the collectionView.
-    private func loadNextRound() -> Bool {
+    private func loadNextRound() {
         let nextRoundStartIndex = game.numberCount()
         let nextRoundNumbers = game.nextRoundNumbers()
 
@@ -264,9 +264,6 @@ class Play: UIViewController {
             let nextRoundIndeces = Array(nextRoundStartIndex...nextRoundEndIndex)
             gameGrid.loadNextRound(atIndeces: nextRoundIndeces, completion: nil)
             updateState()
-            return true
-        } else {
-            return false
         }
     }
 
