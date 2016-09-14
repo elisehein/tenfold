@@ -158,6 +158,7 @@ class Game: NSObject, NSCoding {
             numbers += nextRoundNumbers
             historicNumberCount += nextRoundNumbers.count
             currentRound += 1
+            latestMove = nil
 
             for (value, _) in valueCounts {
                 valueCounts[value] = valueCounts[value]! * 2
