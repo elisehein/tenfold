@@ -18,7 +18,7 @@ enum NotificationType {
 
 class Notification: UIView {
 
-    private static let iconSize: CGFloat = 80
+    private static let iconSize: CGFloat = 70
 
     private static let margin: CGFloat = {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 25 : 15
@@ -169,10 +169,10 @@ class Notification: UIView {
     func flash(inFrame parentFrame: CGRect) {
         alpha = 0
 
-        frame = CGRect(x: -60,
-                       y: (parentFrame.height - 60) / 2,
-                       width: 60,
-                       height: 60)
+        frame = CGRect(x: -Notification.iconSize,
+                       y: (parentFrame.height - Notification.iconSize) / 2,
+                       width: Notification.iconSize,
+                       height: Notification.iconSize)
         center = CGPoint(x: parentFrame.width / 2, y: parentFrame.height / 2)
         transform = CGAffineTransformMakeScale(0.001, 0.001)
 
