@@ -15,9 +15,9 @@ class RankingTable: UIView {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 45 : 25
     }()
 
-    private let rankedGames: Array<RankedGame>
+    private let rankedGames: [RankedGame]
 
-    init(rankedGames: Array<RankedGame>) {
+    init(rankedGames: [RankedGame]) {
         self.rankedGames = rankedGames
 
         super.init(frame: CGRect.zero)
@@ -89,8 +89,8 @@ class RankingTable: UIView {
         return headerView
     }
 
-    private func tableRows() -> Array<UIView> {
-        var rows = Array<UIView>()
+    private func tableRows() -> [UIView] {
+        var rows = [UIView]()
 
         for rankedGame in rankedGames {
             rows.append(tableRow(rankedGame))

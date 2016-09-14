@@ -14,20 +14,20 @@ class GameMove: NSObject, NSCoding {
     private static let removedRowCoderKey = "gameMoveRemovedRowCoderKey"
     private static let removedRowPlaceholdersCoderKey = "gameMoveRemovedRowPlaceholdersCoderKey"
 
-    let crossedOutPair: Array<Int>
-    var removedRows: Array<Array<Number>> = []
-    var removedRowPlaceholders: Array<Int> = []
+    let crossedOutPair: [Int]
+    var removedRows: [[Number]] = []
+    var removedRowPlaceholders: [Int] = []
 
-    init(crossedOutPair: Array<Int>) {
+    init(crossedOutPair: [Int]) {
         self.crossedOutPair = crossedOutPair
         super.init()
     }
 
     required init?(coder aDecoder: NSCoder) {
-        self.crossedOutPair = (aDecoder.decodeObjectForKey(GameMove.pairCoderKey) as? Array<Int>)!
-        self.removedRows = (aDecoder.decodeObjectForKey(GameMove.removedRowCoderKey) as? Array<Array<Number>>)!
+        self.crossedOutPair = (aDecoder.decodeObjectForKey(GameMove.pairCoderKey) as? [Int])!
+        self.removedRows = (aDecoder.decodeObjectForKey(GameMove.removedRowCoderKey) as? [[Number]])!
         self.removedRowPlaceholders = (aDecoder.decodeObjectForKey(GameMove.removedRowPlaceholdersCoderKey)
-                                       as? Array<Int>)!
+                                       as? [Int])!
         super.init()
     }
 

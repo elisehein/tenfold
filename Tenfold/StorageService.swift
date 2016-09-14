@@ -50,13 +50,13 @@ class StorageService {
         }
     }
 
-    class func restoreOrderedGameSnapshots() -> Array<GameSnapshot> {
+    class func restoreOrderedGameSnapshots() -> [GameSnapshot] {
         let defaults = NSUserDefaults.standardUserDefaults()
         let statsData = defaults.objectForKey(StorageService.orderedGameSnapshotsStorageKey)
 
         if let statsData = statsData as? NSData {
             let gameStats = NSKeyedUnarchiver.unarchiveObjectWithData(statsData)
-            if let stats = gameStats as? Array<GameSnapshot> {
+            if let stats = gameStats as? [GameSnapshot] {
                 return stats
             } else {
                 return []

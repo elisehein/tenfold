@@ -18,13 +18,13 @@ class RankingService {
 
     static let singleton = RankingService.init()
 
-    var orderedGameSnapshots: Array<GameSnapshot>
+    var orderedGameSnapshots: [GameSnapshot]
 
     init() {
         orderedGameSnapshots = StorageService.restoreOrderedGameSnapshots()
     }
 
-    class func order(gameSnapshots: Array<GameSnapshot>) -> Array<GameSnapshot> {
+    class func order(gameSnapshots: [GameSnapshot]) -> [GameSnapshot] {
         return gameSnapshots.sort({ pairOfStats in
             pairOfStats.0.historicNumberCount < pairOfStats.1.historicNumberCount
         })
@@ -63,8 +63,8 @@ class RankingService {
     // (currently historicNumberCount); if the latest (i.e. current game)
     // isn't a part of the top three, it's appended as the fourth, with the
     // Int key signifying the rank of the specific game (e.g, 1, 2, 3, 8)
-    func topRankedGames(cappedTo cap: Int) -> Array<RankedGame> {
-        var rankedGames: Array<RankedGame> = Array()
+    func topRankedGames(cappedTo cap: Int) -> [RankedGame] {
+        var rankedGames: [RankedGame] = []
         let snapshots = orderedWinningGameSnapshots()
 
         if snapshots.count == 0 {
@@ -95,12 +95,12 @@ class RankingService {
     }
 
     // swiftlint:disable:next line_length
-    func latestGameSnapshotIndex(inOrderedSnapshots orderedSnapshots: Array<GameSnapshot>) -> Int? {
+    func latestGameSnapshotIndex(inOrderedSnapshots orderedSnapshots: [GameSnapshot]) -> Int? {
         guard orderedSnapshots.count > 0 else {
             return nil
         }
 
-        let endTimes: Array<NSDate> = orderedSnapshots.map({ $0.endTime })
+        let endTimes: [NSDate] = orderedSnapshots.map({ $0.endTime })
         let sortedEndTimes = endTimes.sort({ pairOfDates in
             pairOfDates.0.compare(pairOfDates.1) == .OrderedAscending
         })
@@ -109,7 +109,7 @@ class RankingService {
     }
 
     // swiftlint:disable:next line_length
-    private func orderedWinningGameSnapshots() -> Array<GameSnapshot> {
+    private func orderedWinningGameSnapshots() -> [GameSnapshot] {
         return orderedGameSnapshots.filter({ $0.numbersRemaining == 0 })
     }
 }

@@ -36,19 +36,19 @@ class RuleExampleCell: UICollectionViewCell {
         }
     }
 
-    var gridValues: Array<Int?> = [] {
+    var gridValues: [Int?] = [] {
         didSet {
             exampleGrid.values = gridValues
         }
     }
 
-    var gridCrossedOutIndeces: Array<Int> = [] {
+    var gridCrossedOutIndeces: [Int] = [] {
         didSet {
             exampleGrid.crossedOutIndeces = gridCrossedOutIndeces
         }
     }
 
-    var gridPairs: Array<[Int]> = [] {
+    var gridPairs: [[Int]] = [] {
         didSet {
             exampleGrid.pairs = gridPairs
         }

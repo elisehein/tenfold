@@ -12,7 +12,7 @@ import UIKit
 class Onboarding: Play {
 
     var flashTimer: NSTimer?
-    var indecesToFlash: Array<Int> = []
+    var indecesToFlash: [Int] = []
 
     var onWillDismissWithGame: ((game: Game) -> Void)?
 
@@ -64,7 +64,7 @@ class Onboarding: Play {
         }
     }
 
-    private func hintAtPairing(pairIndeces: Array<Int>) {
+    private func hintAtPairing(pairIndeces: [Int]) {
         gameGrid.indecesPermittedForSelection = pairIndeces
         gameGrid.userInteractionEnabled = true
         gameGrid.scrollEnabled = false

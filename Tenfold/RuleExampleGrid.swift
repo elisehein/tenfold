@@ -13,13 +13,13 @@ class RuleExampleGrid: Grid {
 
     private static let pairingLoopDuration: Double = 2.2
 
-    private var timers: Array<NSTimer> = []
+    private var timers: [NSTimer] = []
     private let reuseIdentifier = "GameGridCell"
 
-    var values: Array<Int?> = []
+    var values: [Int?] = []
 
-    var crossedOutIndeces: Array<Int> = []
-    var pairs: Array<[Int]> = []
+    var crossedOutIndeces: [Int] = []
+    var pairs: [[Int]] = []
 
     // These must match the vocabulary used in instructions.json
     static let animationTypePairings = "PAIRINGS"

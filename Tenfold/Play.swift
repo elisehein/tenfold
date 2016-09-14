@@ -280,7 +280,7 @@ class Play: UIViewController {
         }
     }
 
-    private func removeNumbers(atIndeces indeces: Array<Int>) {
+    private func removeNumbers(atIndeces indeces: [Int]) {
         gameGrid.removeNumbers(atIndeces: indeces, completion: {
             if self.game.ended() {
                 StorageService.saveGameSnapshot(self.game, forced: true)

@@ -46,7 +46,7 @@ class Matrix: NSObject {
         return columnOfItem(atIndex: pair.first) == columnOfItem(atIndex: pair.second)
     }
 
-    func indecesOnRow(containingIndex index: Int, lastGameIndex: Int = Int.max) -> Array<Int> {
+    func indecesOnRow(containingIndex index: Int, lastGameIndex: Int = Int.max) -> [Int] {
         let first = firstIndexOfRow(containingIndex: index)
         let last = min(lastIndexOfRow(containingIndex: index), lastGameIndex)
         return Array(first...last)

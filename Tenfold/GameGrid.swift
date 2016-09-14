@@ -43,9 +43,9 @@ class GameGrid: Grid {
     // cannot deselect items that are not currently visible (which can often be required for us,
     // say when pairing two items so far from each other that they cannot be seen on screen
     // at the same time), it's easier to keep track of selection ourselves, rather than natively
-    internal var selectedIndexPaths: Array<NSIndexPath> = []
+    internal var selectedIndexPaths: [NSIndexPath] = []
 
-    var indecesPermittedForSelection: Array<Int>? = nil
+    var indecesPermittedForSelection: [Int]? = nil
 
     init(game: Game) {
         self.game = game
@@ -117,8 +117,8 @@ class GameGrid: Grid {
         self.adjustTopInset(enforceStartingPosition: enforceStartingPosition)
     }
 
-    func loadNextRound(atIndeces indeces: Array<Int>, completion: ((Bool) -> Void)?) {
-        var indexPaths: Array<NSIndexPath> = []
+    func loadNextRound(atIndeces indeces: [Int], completion: ((Bool) -> Void)?) {
+        var indexPaths: [NSIndexPath] = []
 
         for index in indeces {
            indexPaths.append(NSIndexPath(forItem: index, inSection: 0))
@@ -167,7 +167,7 @@ class GameGrid: Grid {
         }
     }
 
-    func removeNumbers(atIndeces indeces: Array<Int>, completion: (() -> Void)) {
+    func removeNumbers(atIndeces indeces: [Int], completion: (() -> Void)) {
         guard indeces.count > 0 else { return }
 
         let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
@@ -187,7 +187,7 @@ class GameGrid: Grid {
         })
     }
 
-    func addRows(atIndeces indeces: Array<Int>, completion: (() -> Void)) {
+    func addRows(atIndeces indeces: [Int], completion: (() -> Void)) {
         guard indeces.count > 0 else { return }
         let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
 
@@ -199,7 +199,7 @@ class GameGrid: Grid {
         })
     }
 
-    private func prepareForRemoval(indexPaths: Array<NSIndexPath>, completion: (() -> Void)) {
+    private func prepareForRemoval(indexPaths: [NSIndexPath], completion: (() -> Void)) {
         for indexPath in indexPaths {
             if let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell {
                 cell.prepareForRemoval(completion: completion)
@@ -209,14 +209,14 @@ class GameGrid: Grid {
         }
     }
 
-    func flashNumbers(atIndeces indeces: Array<Int>,
+    func flashNumbers(atIndeces indeces: [Int],
                       withColor color: UIColor) {
         performActionOnCells(withIndeces: indeces, { cell in
             cell.flash(withColor: color)
         })
     }
 
-    private func performActionOnCells(withIndeces indeces: Array<Int>,
+    private func performActionOnCells(withIndeces indeces: [Int],
                                       _ action: ((GameGridCell) -> Void)) {
 
         // Each cell's existence need to be checked separately, as one cell may
