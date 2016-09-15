@@ -41,3 +41,17 @@ extension GameGrid: UICollectionViewDataSource {
         return cell
     }
 }
+
+// MARK: DataSource helpers
+
+private extension GameGrid {
+    func cellState(forCellAtIndexPath indexPath: NSIndexPath) -> GameGridCellState {
+        if game.isCrossedOut(indexPath.item) {
+            return .CrossedOut
+        } else if selectedIndexPaths.contains(indexPath) {
+            return .PendingPairing
+        } else {
+            return .Available
+        }
+    }
+}
