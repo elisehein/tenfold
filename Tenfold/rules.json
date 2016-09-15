@@ -81,11 +81,12 @@
       {
         "animationType": "PAIRINGS_WITH_UNDO",
         "text": "One move at a time!",
-        "values": [null, null, null, null, null, null, null, null, null,
-                   4   , null, null, null, null, null, null, null, 6   ,
-                   null, null, null, null, null, null, null, null, null],
-        "crossedOut": [10, 11, 12, 13, 14, 15, 16],
-        "pairs": [[9, 17]]
+        "values": [null, null, null, 2   , null, null, null, 8   , null,
+                   null, null, null, null, null, null, null, null, null,
+                   null, null, null, null, null, null, null, null, null,
+                   null, null, null, 2   , null, null, null, null, null],
+        "crossedOut": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
+        "pairs": [[7, 30], [7, 30], [3, 30]],
       }
     ]
   }

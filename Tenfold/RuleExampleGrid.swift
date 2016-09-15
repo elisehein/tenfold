@@ -94,21 +94,39 @@ class RuleExampleGrid: Grid {
         // We don't use the Pair struct here because it seems we can't pass it
         // around inside a userInfo object (don't know). In any case, no need,
         // we get a list of indeces anyway from the JSON.
-        for pair in pairs {
-            crossOutPair(pair[0], pair[1], reverse: true)
+        for index in 0..<pairs.count {
+            let pair = pairs[index]
+            let alternatelyUndoingPairing = index % 2 != 0 && animationType == .PairingsWithUndo
 
-            let userInfo: [String: Int] = ["index": pair[0], "otherIndex": pair[1]]
-            after(seconds: delay,
-                  performSelector: #selector(RuleExampleGrid.selectAndCrossOutPair(_:)),
-                  withUserInfo: userInfo)
+            crossOutPair(pair[0], pair[1], reverse: true, animated: false)
 
+            // Every other pairing should be an undo
+            let userInfo: [String: AnyObject] = [
+                "index": pair[0],
+                "otherIndex": pair[1],
+                "reverse": alternatelyUndoingPairing
+            ]
+
+            let selector = alternatelyUndoingPairing ?
+                           #selector(RuleExampleGrid.undoPairing(_:)) :
+                           #selector(RuleExampleGrid.selectAndCrossOutPair(_:))
+
+            after(seconds: delay, performSelector: selector, withUserInfo: userInfo)
             delay += RuleExampleGrid.pairingLoopDuration
         }
     }
 
     func selectAndCrossOutPair(timer: NSTimer) {
-        if let userInfo = timer.userInfo! as? [String: Int] {
-            selectCell(userInfo["index"]!)
+        if let userInfo = timer.userInfo! as? [String: AnyObject] {
+            selectCell((userInfo["index"]! as? Int)!)
+            after(seconds: 0.7,
+                  performSelector: #selector(RuleExampleGrid.crossOutPairWithUserInfo(_:)),
+                  withUserInfo: userInfo)
+        }
+    }
+
+    func undoPairing(timer: NSTimer) {
+        if let userInfo = timer.userInfo! as? [String: AnyObject] {
             after(seconds: 0.7,
                   performSelector: #selector(RuleExampleGrid.crossOutPairWithUserInfo(_:)),
                   withUserInfo: userInfo)
@@ -116,14 +134,17 @@ class RuleExampleGrid: Grid {
     }
 
     func crossOutPairWithUserInfo(timer: NSTimer) {
-        if let userInfo = timer.userInfo! as? [String: Int] {
-            crossOutPair(userInfo["index"]!, userInfo["otherIndex"]!)
+        if let userInfo = timer.userInfo! as? [String: AnyObject] {
+            crossOutPair((userInfo["index"]! as? Int)!,
+                         (userInfo["otherIndex"]! as? Int)!,
+                         reverse: (userInfo["reverse"]! as? Bool)!,
+                         animated: true)
         }
     }
 
     func after(seconds seconds: Double,
                performSelector selector: Selector,
-               withUserInfo userInfo: [String: Int]? = nil,
+               withUserInfo userInfo: [String: AnyObject]? = nil,
                repeats: Bool = false) -> NSTimer {
         let timer = NSTimer.scheduledTimerWithTimeInterval(seconds,
                                                            target: self,
@@ -147,14 +168,14 @@ class RuleExampleGrid: Grid {
         }
     }
 
-    private func crossOutPair(index: Int, _ otherIndex: Int, reverse: Bool = false) {
+    private func crossOutPair(index: Int, _ otherIndex: Int, reverse: Bool = false, animated: Bool = false) {
         let indexPath = NSIndexPath(forItem: index, inSection: 0)
         let otherIndexPath = NSIndexPath(forItem: otherIndex, inSection: 0)
 
         for indexPath in [indexPath, otherIndexPath] {
             if let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell {
                 if reverse {
-                    cell.unCrossOut()
+                    cell.unCrossOut(animated: animated)
                 } else {
                     cell.crossOut()
                 }
