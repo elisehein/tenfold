@@ -74,5 +74,19 @@
         "pairs": []
       }
     ]
+  },
+  {
+    "title": "Swipe right to undo your latest move.",
+    "examples": [
+      {
+        "animationType": "PAIRINGS_WITH_UNDO",
+        "text": "One move at a time!",
+        "values": [null, null, null, null, null, null, null, null, null,
+                   4   , null, null, null, null, null, null, null, 6   ,
+                   null, null, null, null, null, null, null, null, null],
+        "crossedOut": [10, 11, 12, 13, 14, 15, 16],
+        "pairs": [[9, 17]]
+      }
+    ]
   }
 ]

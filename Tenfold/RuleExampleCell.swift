@@ -54,7 +54,7 @@ class RuleExampleCell: UICollectionViewCell {
         }
     }
 
-    var gridAnimationType: String = RuleExampleGrid.animationTypePairings {
+    var gridAnimationType: RuleExampleGridAnimationType = .Pairings {
         didSet {
             exampleGrid.animationType = gridAnimationType
         }

@@ -9,6 +9,13 @@
 import Foundation
 import UIKit
 
+// These must match the vocabulary used in instructions.json
+enum RuleExampleGridAnimationType: String {
+    case Pairings = "PAIRINGS"
+    case PairingsWithUndo = "PAIRINGS_WITH_UNDO"
+    case PullUp = "PULL_UP"
+}
+
 class RuleExampleGrid: Grid {
 
     private static let pairingLoopDuration: Double = 2.2
@@ -21,11 +28,7 @@ class RuleExampleGrid: Grid {
     var crossedOutIndeces: [Int] = []
     var pairs: [[Int]] = []
 
-    // These must match the vocabulary used in instructions.json
-    static let animationTypePairings = "PAIRINGS"
-    static let animationTypePullUp = "PULL_UP"
-
-    var animationType: String = RuleExampleGrid.animationTypePairings
+    var animationType: RuleExampleGridAnimationType = .Pairings
 
     init() {
         super.init(frame: CGRect.zero)
@@ -40,7 +43,7 @@ class RuleExampleGrid: Grid {
     }
 
     func playLoop() {
-        if animationType == RuleExampleGrid.animationTypePairings {
+        if animationType == .Pairings || animationType == .PairingsWithUndo {
             // Because the timer interval doesn't allow for the first loop to run immediately,
             // we fire the first one ourselves, and then set an interval for the rest.
             // (We only care about this in the case of pairing animations)
@@ -185,7 +188,7 @@ extension RuleExampleGrid: UICollectionViewDataSource {
             cell.marksEndOfRound = false
             cell.lightColor = UIColor.themeColor(.OffWhiteShaded)
 
-            if animationType == RuleExampleGrid.animationTypePullUp {
+            if animationType == .PullUp {
                 if indexPath.item == 26 {
                    cell.marksEndOfRound = true
                 } else if indexPath.item > 26 {

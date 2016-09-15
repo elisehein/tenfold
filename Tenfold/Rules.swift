@@ -212,7 +212,7 @@ extension Rules: UICollectionViewDataSource {
             cell.text = example["text"].string
             cell.gridValues = example["values"].arrayValue.map({ $0.int })
             cell.gridCrossedOutIndeces = example["crossedOut"].arrayValue.map({ $0.int! })
-            cell.gridAnimationType = example["animationType"].string!
+            cell.gridAnimationType = RuleExampleGridAnimationType(rawValue: example["animationType"].string!)!
 
             cell.gridPairs = example["pairs"].arrayValue.map({ JSONPair in
                 JSONPair.arrayValue.map({ index in index.int! })
