@@ -11,7 +11,7 @@ import AVFoundation
 
 class Play: UIViewController {
 
-    private var undoHandled = true
+    private var panTriggered: Bool = false
 
     private static let defaultBGColor = UIColor.themeColor(.OffWhite)
     private static let gameplayBGColor = UIColor.themeColor(.OffWhiteShaded)
@@ -240,13 +240,21 @@ class Play: UIViewController {
     }
 
     func detectPan(recognizer: UIPanGestureRecognizer) {
-        guard recognizer.state == .Began else { return }
+        guard recognizer.state == .Changed else {
+            panTriggered = recognizer.state == .Ended
+            return
+        }
+
+        guard !panTriggered else { return }
+        guard abs(recognizer.translationInView(view).x) > 70 else { return }
 
         if recognizer.velocityInView(view).x > 0 {
            undoLatestMove()
         } else {
            showInstructions()
         }
+
+        panTriggered = true
     }
 
     func undoLatestMove() {
