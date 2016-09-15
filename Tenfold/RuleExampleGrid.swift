@@ -28,18 +28,38 @@ class RuleExampleGrid: Grid {
     var crossedOutIndeces: [Int] = []
     var pairs: [[Int]] = []
 
-    var animationType: RuleExampleGridAnimationType = .Pairings
+    var animationType: RuleExampleGridAnimationType = .Pairings {
+        didSet {
+            clipsToBounds = animationType != .PairingsWithUndo
+            iconView.hidden = animationType != .PairingsWithUndo
+        }
+    }
+
+    let iconView = UIImageView()
 
     init() {
         super.init(frame: CGRect.zero)
+
+        registerClass(GameGridCell.self, forCellWithReuseIdentifier: self.reuseIdentifier)
 
         backgroundColor = UIColor.clearColor()
         delegate = self
         dataSource = self
         userInteractionEnabled = false
-        clipsToBounds = true
 
-        registerClass(GameGridCell.self, forCellWithReuseIdentifier: self.reuseIdentifier)
+        iconView.contentMode = .Center
+        iconView.image = UIImage(named: "swipe")
+        iconView.alpha = 0
+        addSubview(iconView)
+    }
+
+    override func layoutSubviews() {
+         super.layoutSubviews()
+
+        if animationType == .PairingsWithUndo {
+            let unit = Grid.cellSize(forAvailableWidth: bounds.size.width).width
+            iconView.frame = CGRect(origin: CGPoint(x: 7 * unit, y: 2.7 * unit), size: iconView.image!.size)
+        }
     }
 
     func playLoop() {
@@ -127,9 +147,35 @@ class RuleExampleGrid: Grid {
 
     func undoPairing(timer: NSTimer) {
         if let userInfo = timer.userInfo! as? [String: AnyObject] {
-            after(seconds: 0.7,
-                  performSelector: #selector(RuleExampleGrid.crossOutPairWithUserInfo(_:)),
-                  withUserInfo: userInfo)
+
+            // Note for Swift 3:
+            // http://stackoverflow.com/a/39302719/2026098
+            var t = CGAffineTransformIdentity
+            t = CGAffineTransformRotate(t, self.rads(-12))
+            t = CGAffineTransformTranslate(t, -35, 0)
+            iconView.transform = t
+            UIView.animateWithDuration(0.1, animations: { self.iconView.alpha = 1 })
+
+            UIView.animateWithDuration(0.6,
+                                       delay: 0,
+                                       options: .CurveEaseOut,
+                                       animations: {
+                t = CGAffineTransformIdentity
+                t = CGAffineTransformRotate(t, self.rads(10))
+                t = CGAffineTransformTranslate(t, 35, 0)
+                self.iconView.transform = t
+            }, completion: { _ in
+                UIView.animateWithDuration(0.2,
+                                           delay: 0.4,
+                                           options: [],
+                                           animations: {
+                        self.iconView.alpha = 0
+                }, completion: nil)
+                self.crossOutPair((userInfo["index"]! as? Int)!,
+                                  (userInfo["otherIndex"]! as? Int)!,
+                                  reverse: (userInfo["reverse"]! as? Bool)!,
+                                  animated: true)
+            })
         }
     }
 
@@ -181,6 +227,10 @@ class RuleExampleGrid: Grid {
                 }
             }
         }
+    }
+
+    private func rads(degrees: Double) -> CGFloat {
+        return CGFloat(M_PI * (degrees) / 180)
     }
 
     required init?(coder aDecoder: NSCoder) {
