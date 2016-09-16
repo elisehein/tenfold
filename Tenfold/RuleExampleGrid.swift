@@ -32,11 +32,11 @@ class RuleExampleGrid: Grid {
     var animationType: RuleExampleGridAnimationType = .Pairings {
         didSet {
             clipsToBounds = animationType != .PairingsWithUndo
-            iconView.hidden = animationType != .PairingsWithUndo
+            gesture.hidden = animationType == .Pairings
         }
     }
 
-    let iconView = UIImageView()
+    let gesture = GestureIllustration()
 
     init() {
         super.init(frame: CGRect.zero)
@@ -48,18 +48,19 @@ class RuleExampleGrid: Grid {
         dataSource = self
         userInteractionEnabled = false
 
-        iconView.contentMode = .Center
-        iconView.image = UIImage(named: "swipe")
-        iconView.alpha = 0
-        addSubview(iconView)
+        gesture.alpha = 0
+        addSubview(gesture)
     }
 
     override func layoutSubviews() {
-         super.layoutSubviews()
+        super.layoutSubviews()
+
+        let unit = Grid.cellSize(forAvailableWidth: bounds.size.width).width
 
         if animationType == .PairingsWithUndo {
-            let unit = Grid.cellSize(forAvailableWidth: bounds.size.width).width
-            iconView.frame = CGRect(origin: CGPoint(x: 7 * unit, y: 2.7 * unit), size: iconView.image!.size)
+            gesture.frame = CGRect(origin: CGPoint(x: 7 * unit, y: 2.7 * unit), size: gesture.image!.size)
+        } else if animationType == .PullUp {
+            gesture.frame = CGRect(origin: CGPoint(x: 7 * unit, y: 0.8 * unit), size: gesture.image!.size)
         }
     }
 
@@ -77,7 +78,12 @@ class RuleExampleGrid: Grid {
                   repeats: true)
         } else {
             positionGridForPullUp()
-            after(seconds: 3,
+
+            // We are delaying the first pull up because for some reason the initial offset will
+            // be corrupt if we position the grid and immediately pull up.
+            after(seconds: 0.1,
+                  performSelector: #selector(RuleExampleGrid.pullUp))
+            after(seconds: 6,
                   performSelector: #selector(RuleExampleGrid.pullUp),
                   repeats: true)
         }
@@ -92,8 +98,19 @@ class RuleExampleGrid: Grid {
     }
 
     func pullUp() {
-        setContentOffset(CGPoint(x: 0, y: Grid.cellSpacing), animated: true)
-        after(seconds: 2, performSelector: #selector(RuleExampleGrid.releasePullUp))
+        UIView.animateWithDuration(0.6, delay: 1, options: .CurveEaseOut, animations: {
+            self.contentOffset = CGPoint(x: 0, y: -Grid.cellSpacing)
+        }, completion: nil)
+
+        illustratePullUpGesture(delay: 1, completion: {
+            self.performActionOnCells(withIndeces: Array(27..<self.values.count), { cell in
+                UIView.animateWithDuration(0.15, delay: 0.6, options: [], animations: {
+                    cell.contentView.backgroundColor = UIColor.themeColor(.OffWhiteShaded)
+                }, completion: nil)
+            })
+        })
+
+        after(seconds: 5, performSelector: #selector(RuleExampleGrid.releasePullUp))
     }
 
     func releasePullUp() {
@@ -102,7 +119,7 @@ class RuleExampleGrid: Grid {
 
     private func positionGridForPullUp() {
         let cellHeight = Grid.cellSize(forAvailableWidth: bounds.size.width).height
-        contentInset.top = cellHeight
+        contentInset.top = 2 * cellHeight + CGFloat(Grid.cellSpacing)
         setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: false)
     }
 
@@ -139,7 +156,7 @@ class RuleExampleGrid: Grid {
         }
     }
 
-    func prepareToStartOver() {
+    private func prepareToStartOver() {
         var dirtyCells = Array(Set(pairs.flatten()))
         dirtyCells += crossedOutIndeces
 
@@ -164,36 +181,30 @@ class RuleExampleGrid: Grid {
 
     func undoPairing(timer: NSTimer) {
         if let userInfo = timer.userInfo! as? [String: AnyObject] {
-
-            // Note for Swift 3:
-            // http://stackoverflow.com/a/39302719/2026098
-            var t = CGAffineTransformIdentity
-            t = CGAffineTransformRotate(t, self.rads(-12))
-            t = CGAffineTransformTranslate(t, -35, 0)
-            iconView.transform = t
-            UIView.animateWithDuration(0.1, animations: { self.iconView.alpha = 1 })
-
-            UIView.animateWithDuration(0.6,
-                                       delay: 0,
-                                       options: .CurveEaseOut,
-                                       animations: {
-                t = CGAffineTransformIdentity
-                t = CGAffineTransformRotate(t, self.rads(10))
-                t = CGAffineTransformTranslate(t, 35, 0)
-                self.iconView.transform = t
-            }, completion: { _ in
-                UIView.animateWithDuration(0.2,
-                                           delay: 0.4,
-                                           options: [],
-                                           animations: {
-                        self.iconView.alpha = 0
-                }, completion: nil)
+            illustrateRightSwipeGesture(completion: {
                 self.crossOutPair((userInfo["index"]! as? Int)!,
                                   (userInfo["otherIndex"]! as? Int)!,
                                   reverse: (userInfo["reverse"]! as? Bool)!,
                                   animated: true)
             })
         }
+    }
+
+    private func illustrateRightSwipeGesture(completion completion: (() -> Void)) {
+        gesture.animate(startX: -40,
+                        startRotation: -12,
+                        endX: 35,
+                        endRotation: 10,
+                        disappearanceDelay: 0.4,
+                        completion: completion)
+    }
+
+    private func illustratePullUpGesture(delay delay: Double, completion: (() -> Void)) {
+        gesture.animate(endY: -50,
+                        duration: 0.4,
+                        appearanceDelay: delay,
+                        disappearanceDelay: 0.6,
+                        completion: completion)
     }
 
     func crossOutPairWithUserInfo(timer: NSTimer) {
@@ -244,10 +255,6 @@ class RuleExampleGrid: Grid {
                 }
             }
         }
-    }
-
-    private func rads(degrees: Double) -> CGFloat {
-        return CGFloat(M_PI * (degrees) / 180)
     }
 
     required init?(coder aDecoder: NSCoder) {
