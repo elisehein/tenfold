@@ -1,5 +1,5 @@
 //
-//  RuleExampleGrid.swift
+//  RuleGrid.swift
 //  Tenfold
 //
 //  Created by Elise Hein on 19/08/2016.
@@ -10,13 +10,13 @@ import Foundation
 import UIKit
 
 // These must match the vocabulary used in instructions.json
-enum RuleExampleGridAnimationType: String {
+enum RuleGridAnimationType: String {
     case Pairings = "PAIRINGS"
     case PairingsWithUndo = "PAIRINGS_WITH_UNDO"
     case PullUp = "PULL_UP"
 }
 
-class RuleExampleGrid: Grid {
+class RuleGrid: Grid {
 
     private static let pairingLoopDuration: Double = 2.2
     private static let pairingLoopReloadDuration: Double = 2
@@ -28,15 +28,22 @@ class RuleExampleGrid: Grid {
 
     var crossedOutIndeces: [Int] = []
     var pairs: [[Int]] = []
+    var gesture: Gesture?
 
-    var animationType: RuleExampleGridAnimationType = .Pairings {
+    var animationType: RuleGridAnimationType = .Pairings {
         didSet {
-            clipsToBounds = animationType != .PairingsWithUndo
-            gesture.hidden = animationType == .Pairings
+            guard animationType != .Pairings else { return }
+
+            if animationType == .PairingsWithUndo {
+                gesture = Gesture(type: .SwipeRight)
+            } else if animationType == .PullUp {
+                gesture = Gesture(type: .SwipeUpAndHold)
+            }
+
+            layer.addSublayer(gesture!)
+            gesture!.hidden = animationType == .Pairings
         }
     }
-
-    let gesture = GestureIllustration()
 
     init() {
         super.init(frame: CGRect.zero)
@@ -47,20 +54,20 @@ class RuleExampleGrid: Grid {
         delegate = self
         dataSource = self
         userInteractionEnabled = false
-
-        gesture.alpha = 0
-        addSubview(gesture)
+        clipsToBounds = true
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        let unit = Grid.cellSize(forAvailableWidth: bounds.size.width).width
-
         if animationType == .PairingsWithUndo {
-            gesture.frame = CGRect(origin: CGPoint(x: 7 * unit, y: 2.7 * unit), size: gesture.image!.size)
+            gesture!.frame = CGRect(origin: CGPoint(x: (bounds.size.width - Gesture.totalWidth) / 2,
+                                                    y: (bounds.size.height - Gesture.totalHeight) / 2 + 8),
+                                   size: CGSize.zero)
         } else if animationType == .PullUp {
-            gesture.frame = CGRect(origin: CGPoint(x: 7 * unit, y: 0.8 * unit), size: gesture.image!.size)
+            gesture!.frame = CGRect(origin: CGPoint(x: bounds.size.width * 0.75,
+                                                    y: bounds.size.height - 30),
+                                   size: CGSize.zero)
         }
     }
 
@@ -73,8 +80,8 @@ class RuleExampleGrid: Grid {
             performPairings()
 
             // swiftlint:disable:next line_length
-            after(seconds: Double(pairs.count) * RuleExampleGrid.pairingLoopDuration + RuleExampleGrid.pairingLoopReloadDuration,
-                  performSelector: #selector(RuleExampleGrid.performPairings),
+            after(seconds: Double(pairs.count) * RuleGrid.pairingLoopDuration + RuleGrid.pairingLoopReloadDuration,
+                  performSelector: #selector(RuleGrid.performPairings),
                   repeats: true)
         } else {
             positionGridForPullUp()
@@ -82,9 +89,9 @@ class RuleExampleGrid: Grid {
             // We are delaying the first pull up because for some reason the initial offset will
             // be corrupt if we position the grid and immediately pull up.
             after(seconds: 0.1,
-                  performSelector: #selector(RuleExampleGrid.pullUp))
+                  performSelector: #selector(RuleGrid.pullUp))
             after(seconds: 6,
-                  performSelector: #selector(RuleExampleGrid.pullUp),
+                  performSelector: #selector(RuleGrid.pullUp),
                   repeats: true)
         }
     }
@@ -98,19 +105,19 @@ class RuleExampleGrid: Grid {
     }
 
     func pullUp() {
-        UIView.animateWithDuration(0.6, delay: 1, options: .CurveEaseOut, animations: {
-            self.contentOffset = CGPoint(x: 0, y: -Grid.cellSpacing)
-        }, completion: nil)
-
-        illustratePullUpGesture(delay: 1, completion: {
-            self.performActionOnCells(withIndeces: Array(27..<self.values.count), { cell in
-                UIView.animateWithDuration(0.15, delay: 0.6, options: [], animations: {
+        gesture!.perform(withDelay: 1, completion: {
+            self.performActionOnCells(withIndeces: Array(36..<self.values.count), { cell in
+                UIView.animateWithDuration(0.15, delay: 0.55, options: [], animations: {
                     cell.contentView.backgroundColor = UIColor.themeColor(.OffWhiteShaded)
                 }, completion: nil)
             })
         })
 
-        after(seconds: 5, performSelector: #selector(RuleExampleGrid.releasePullUp))
+        UIView.animateWithDuration(0.5, delay: 1, options: .CurveEaseOut, animations: {
+            self.contentOffset = CGPoint(x: 0, y: -Grid.cellSpacing)
+        }, completion: nil)
+
+        after(seconds: 5, performSelector: #selector(RuleGrid.releasePullUp))
     }
 
     func releasePullUp() {
@@ -129,7 +136,7 @@ class RuleExampleGrid: Grid {
     }
 
     func performPairings() {
-        var delay = RuleExampleGrid.pairingLoopReloadDuration + 0.5
+        var delay = RuleGrid.pairingLoopReloadDuration + 0.5
 
         prepareToStartOver()
 
@@ -148,11 +155,11 @@ class RuleExampleGrid: Grid {
             ]
 
             let selector = alternatelyUndoingPairing ?
-                           #selector(RuleExampleGrid.undoPairing(_:)) :
-                           #selector(RuleExampleGrid.selectAndCrossOutPair(_:))
+                           #selector(RuleGrid.undoPairing(_:)) :
+                           #selector(RuleGrid.selectAndCrossOutPair(_:))
 
             after(seconds: delay, performSelector: selector, withUserInfo: userInfo)
-            delay += RuleExampleGrid.pairingLoopDuration
+            delay += RuleGrid.pairingLoopDuration
         }
     }
 
@@ -174,37 +181,20 @@ class RuleExampleGrid: Grid {
         if let userInfo = timer.userInfo! as? [String: AnyObject] {
             selectCell((userInfo["index"]! as? Int)!)
             after(seconds: 0.7,
-                  performSelector: #selector(RuleExampleGrid.crossOutPairWithUserInfo(_:)),
+                  performSelector: #selector(RuleGrid.crossOutPairWithUserInfo(_:)),
                   withUserInfo: userInfo)
         }
     }
 
     func undoPairing(timer: NSTimer) {
         if let userInfo = timer.userInfo! as? [String: AnyObject] {
-            illustrateRightSwipeGesture(completion: {
+            gesture!.perform(completion: {
                 self.crossOutPair((userInfo["index"]! as? Int)!,
                                   (userInfo["otherIndex"]! as? Int)!,
                                   reverse: (userInfo["reverse"]! as? Bool)!,
                                   animated: true)
             })
         }
-    }
-
-    private func illustrateRightSwipeGesture(completion completion: (() -> Void)) {
-        gesture.animate(startX: -40,
-                        startRotation: -12,
-                        endX: 35,
-                        endRotation: 10,
-                        disappearanceDelay: 0.4,
-                        completion: completion)
-    }
-
-    private func illustratePullUpGesture(delay delay: Double, completion: (() -> Void)) {
-        gesture.animate(endY: -50,
-                        duration: 0.4,
-                        appearanceDelay: delay,
-                        disappearanceDelay: 0.6,
-                        completion: completion)
     }
 
     func crossOutPairWithUserInfo(timer: NSTimer) {
@@ -257,12 +247,16 @@ class RuleExampleGrid: Grid {
         }
     }
 
+    func prepareForReuse() {
+        reloadData()
+    }
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
 
-extension RuleExampleGrid: UICollectionViewDataSource {
+extension RuleGrid: UICollectionViewDataSource {
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -284,9 +278,9 @@ extension RuleExampleGrid: UICollectionViewDataSource {
             cell.lightColor = UIColor.themeColor(.OffWhiteShaded)
 
             if animationType == .PullUp {
-                if indexPath.item == 26 {
+                if indexPath.item == 35 {
                    cell.marksEndOfRound = true
-                } else if indexPath.item > 26 {
+                } else if indexPath.item > 35 {
                    cell.lightColor = UIColor.themeColor(.SecondaryAccent)
                 }
             }
@@ -299,7 +293,7 @@ extension RuleExampleGrid: UICollectionViewDataSource {
 
 }
 
-extension RuleExampleGrid: UICollectionViewDelegateFlowLayout {
+extension RuleGrid: UICollectionViewDelegateFlowLayout {
     func collectionView(collectionView: UICollectionView,
                         layout: UICollectionViewLayout,
                         sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {

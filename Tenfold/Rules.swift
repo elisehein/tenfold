@@ -69,7 +69,7 @@ class Rules: UIViewController {
     init() {
         sections = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
 
-        sections.registerClass(RuleExampleCell.self,
+        sections.registerClass(RuleCell.self,
                                forCellWithReuseIdentifier: reuseIdentifier)
 
         // swiftlint:disable:next line_length
@@ -117,7 +117,7 @@ class Rules: UIViewController {
         let visibleCells = sections.visibleCells()
 
         for cell in visibleCells {
-            if let cell = cell as? RuleExampleCell {
+            if let cell = cell as? RuleCell {
                 cell.stopExampleLoop()
             }
         }
@@ -174,7 +174,7 @@ class Rules: UIViewController {
         let numberOfGridValues = example["values"].count
 
         let width = view.bounds.size.width
-        let height = RuleExampleCell.sizeOccupied(forAvailableWidth: width,
+        let height = RuleCell.sizeOccupied(forAvailableWidth: width,
                                                   usingText: text!,
                                                   numberOfGridValues: numberOfGridValues).height
 
@@ -207,12 +207,12 @@ extension Rules: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier,
                                                                          forIndexPath: indexPath)
 
-        if let cell = cell as? RuleExampleCell {
+        if let cell = cell as? RuleCell {
             let example = Rules.data[indexPath.section]["examples"][indexPath.item]
             cell.text = example["text"].string
             cell.gridValues = example["values"].arrayValue.map({ $0.int })
             cell.gridCrossedOutIndeces = example["crossedOut"].arrayValue.map({ $0.int! })
-            cell.gridAnimationType = RuleExampleGridAnimationType(rawValue: example["animationType"].string!)!
+            cell.gridAnimationType = RuleGridAnimationType(rawValue: example["animationType"].string!)!
 
             cell.gridPairs = example["pairs"].arrayValue.map({ JSONPair in
                 JSONPair.arrayValue.map({ index in index.int! })
@@ -246,7 +246,7 @@ extension Rules: UICollectionViewDelegate {
     func collectionView(collectionView: UICollectionView,
                         willDisplayCell cell: UICollectionViewCell,
                         forItemAtIndexPath indexPath: NSIndexPath) {
-        if let cell = cell as? RuleExampleCell {
+        if let cell = cell as? RuleCell {
             cell.prepareGrid()
             cell.playExampleLoop()
         }
@@ -254,7 +254,7 @@ extension Rules: UICollectionViewDelegate {
     func collectionView(collectionView: UICollectionView,
                         didEndDisplayingCell cell: UICollectionViewCell,
                         forItemAtIndexPath indexPath: NSIndexPath) {
-        if let cell = cell as? RuleExampleCell {
+        if let cell = cell as? RuleCell {
             cell.stopExampleLoop()
         }
     }
