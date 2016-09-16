@@ -82,22 +82,6 @@ class GameGrid: Grid {
         adjustTopInset(enforceStartingPosition: true)
     }
 
-
-    // Each cell's existence need to be checked separately, as one cell may
-    // be visible while the other is not (in which case it is nil). We still
-    // want to
-    // cross out the visible one
-    internal func performActionOnCells(withIndeces indeces: [Int],
-                                       _ action: ((GameGridCell) -> Void)) {
-        for index in indeces {
-            let indexPath = NSIndexPath(forItem: index, inSection: 0)
-
-            if let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell {
-                action(cell)
-            }
-        }
-    }
-
     internal func toggleBounce(shouldBounce: Bool) {
         guard !snappingInProgress else { return }
 

@@ -51,6 +51,21 @@ class Grid: UICollectionView {
         return Grid.heightForGame(withTotalRows: totalRows, availableWidth: bounds.size.width)
     }
 
+    // Each cell's existence need to be checked separately, as one cell may
+    // be visible while the other is not (in which case it is nil). We still
+    // want to
+    // cross out the visible one
+    internal func performActionOnCells(withIndeces indeces: [Int],
+                                       _ action: ((GameGridCell) -> Void)) {
+        for index in indeces {
+            let indexPath = NSIndexPath(forItem: index, inSection: 0)
+
+            if let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell {
+                action(cell)
+            }
+        }
+    }
+
     class func heightForGame(withTotalRows totalRows: Int, availableWidth: CGFloat) -> CGFloat {
         let heightForSpacing = CGFloat(totalRows - 1) * CGFloat(Grid.cellSpacing)
         let cellHeight = Grid.cellSize(forAvailableWidth: availableWidth).height

@@ -19,6 +19,7 @@ enum RuleExampleGridAnimationType: String {
 class RuleExampleGrid: Grid {
 
     private static let pairingLoopDuration: Double = 2.2
+    private static let pairingLoopReloadDuration: Double = 2
 
     private var timers: [NSTimer] = []
     private let reuseIdentifier = "GameGridCell"
@@ -69,7 +70,9 @@ class RuleExampleGrid: Grid {
             // (We only care about this in the case of pairing animations)
             positionGridForPairing()
             performPairings()
-            after(seconds: Double(pairs.count) * RuleExampleGrid.pairingLoopDuration,
+
+            // swiftlint:disable:next line_length
+            after(seconds: Double(pairs.count) * RuleExampleGrid.pairingLoopDuration + RuleExampleGrid.pairingLoopReloadDuration,
                   performSelector: #selector(RuleExampleGrid.performPairings),
                   repeats: true)
         } else {
@@ -109,7 +112,9 @@ class RuleExampleGrid: Grid {
     }
 
     func performPairings() {
-        var delay = 0.5
+        var delay = RuleExampleGrid.pairingLoopReloadDuration + 0.5
+
+        prepareToStartOver()
 
         // We don't use the Pair struct here because it seems we can't pass it
         // around inside a userInfo object (don't know). In any case, no need,
@@ -117,8 +122,6 @@ class RuleExampleGrid: Grid {
         for index in 0..<pairs.count {
             let pair = pairs[index]
             let alternatelyUndoingPairing = index % 2 != 0 && animationType == .PairingsWithUndo
-
-            crossOutPair(pair[0], pair[1], reverse: true, animated: false)
 
             // Every other pairing should be an undo
             let userInfo: [String: AnyObject] = [
@@ -134,6 +137,20 @@ class RuleExampleGrid: Grid {
             after(seconds: delay, performSelector: selector, withUserInfo: userInfo)
             delay += RuleExampleGrid.pairingLoopDuration
         }
+    }
+
+    func prepareToStartOver() {
+        var dirtyCells = Array(Set(pairs.flatten()))
+        dirtyCells += crossedOutIndeces
+
+        performActionOnCells(withIndeces: dirtyCells, { cell in
+            cell.fadeOutContentMomentarily(forSeconds: 1,
+                                           whileInvisible: {
+                for pair in self.pairs {
+                    self.crossOutPair(pair[0], pair[1], reverse: true, animated: false)
+                }
+            })
+        })
     }
 
     func selectAndCrossOutPair(timer: NSTimer) {

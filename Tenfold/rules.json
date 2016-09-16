@@ -27,22 +27,13 @@
     "examples": [
       {
         "animationType": "PAIRINGS",
-        "text": "These pairs are next to each other...",
+        "text": "For example...",
         "values": [null, null, 3   , null, null, null, null, null, null,
-                   null, null, 2   , null, null, null, 8   , null, null,
+                   4   , null, 2   , 8   , null, null, null, null, 4   ,
                    null, null, null, null, null, null, null, null, null,
                    null, null, 7   , null, null, null, null, null, null],
-        "crossedOut": [12, 13, 14, 20],
-        "pairs": [[11, 15], [2, 29]]
-      },
-      {
-        "animationType": "PAIRINGS",
-        "text": "...as are these.",
-        "values": [null, null, null, null, null, null, null, null, null,
-                   4   , null, null, null, null, null, null, null, 6   ,
-                   null, null, null, null, null, null, null, null, null],
-        "crossedOut": [10, 11, 12, 13, 14, 15, 16],
-        "pairs": [[9, 17]]
+        "crossedOut": [10, 13, 14, 15, 16, 20],
+        "pairs": [[11, 12], [2, 29], [9, 17]]
       }
     ]
   },
@@ -86,7 +77,7 @@
                    null, null, null, null, null, null, null, null, null,
                    null, null, null, 2   , null, null, null, null, null],
         "crossedOut": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
-        "pairs": [[7, 30], [7, 30], [3, 30]],
+        "pairs": [[7, 30], [7, 30], [30, 3]],
       }
     ]
   }

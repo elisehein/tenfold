@@ -111,6 +111,30 @@ class GameGridCell: UICollectionViewCell {
         })
     }
 
+    func fadeOutContentMomentarily(forSeconds seconds: Double,
+                                   whileInvisible whileInvisibleBlock: (() -> Void)) {
+        UIView.animateWithDuration(0.15, animations: {
+            self.contentView.backgroundColor = self.cellBackgroundColor()
+
+            for subview in self.contentView.subviews {
+                subview.alpha = 0
+            }
+        }, completion: { _ in
+            whileInvisibleBlock()
+
+            UIView.animateWithDuration(0.15,
+                                       delay: seconds,
+                                       options: [],
+                                       animations: {
+                for subview in self.contentView.subviews {
+                    subview.alpha = 1
+                }
+
+                self.resetColors()
+            }, completion: nil)
+        })
+    }
+
     func flash(withColor color: UIColor) {
         guard state == .Available else { return }
 
