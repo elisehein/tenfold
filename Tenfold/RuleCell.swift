@@ -81,8 +81,7 @@ class RuleCell: UICollectionViewCell {
                                                        usingText: givenText)
 
         let gridWidth = RuleCell.widthFactor * availableWidth
-        size.height += RuleCell.gridSize(forAvailableWidth: gridWidth,
-                                                gridValueCount: numberOfGridValues).height
+        size.height += Grid.size(forAvailableWidth: gridWidth, cellCount: numberOfGridValues).height
         size.height += RuleCell.textGridSpacing
 
         return size
@@ -107,8 +106,7 @@ class RuleCell: UICollectionViewCell {
         label.frame = CGRect(origin: CGPoint(x: x, y : 0), size: labelSize)
 
         let gridWidth = RuleCell.widthFactor * availableWidth
-        let gridSize = RuleCell.gridSize(forAvailableWidth: gridWidth,
-                                                gridValueCount: gridValues.count)
+        let gridSize = Grid.size(forAvailableWidth: gridWidth, cellCount: gridValues.count)
 
         let frameForGrid = CGRect(x: (availableWidth - gridSize.width) / 2,
                                   y: labelSize.height + RuleCell.textGridSpacing,
@@ -134,12 +132,6 @@ class RuleCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         stopExampleLoop()
-    }
-
-    class func gridSize(forAvailableWidth availableWidth: CGFloat, gridValueCount: Int) -> CGSize {
-        let totalRows = Matrix.singleton.totalRows(gridValueCount)
-        let height = Grid.heightForGame(withTotalRows: totalRows, availableWidth: availableWidth)
-        return CGSize(width: availableWidth, height: height)
     }
 
     class func labelWithAttributedText(text: String? = nil) -> UILabel {

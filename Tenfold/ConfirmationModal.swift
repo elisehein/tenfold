@@ -26,7 +26,7 @@ class ConfirmationModal: ModalOverlay {
 
     init(game: Game) {
         self.game = game
-        super.init()
+        super.init(position: .Bottom)
 
         titleLabel.text = "Are you sure?"
         titleLabel.font = UIFont.themeFontWithSize(15, weight: .Bold)
@@ -66,38 +66,20 @@ class ConfirmationModal: ModalOverlay {
 
     override func updateViewConstraints() {
         if !hasLoadedConstraints {
-
-            var horizontalInset: CGFloat = 40
-            var contentPadding: CGFloat = 40
-            var titleTextSpacing: CGFloat = 15
-
-            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-                horizontalInset = 80
-                contentPadding = 70
-                titleTextSpacing = 25
-
-                modal.autoSetDimension(.Width, toSize: 460)
-                modal.autoCenterInSuperview()
-            } else {
-                modal.autoPinEdgeToSuperviewEdge(.Left, withInset: 8)
-                modal.autoPinEdgeToSuperviewEdge(.Bottom, withInset: 8)
-                modal.autoPinEdgeToSuperviewEdge(.Right, withInset: 8)
-            }
-
             titleLabel.autoAlignAxisToSuperviewAxis(.Vertical)
             titleLabel.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
-            titleLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: contentPadding)
+            titleLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: ModalOverlay.contentPadding)
 
-            textLabel.autoPinEdgeToSuperviewEdge(.Left, withInset: horizontalInset)
-            textLabel.autoPinEdgeToSuperviewEdge(.Right, withInset: horizontalInset)
+            textLabel.autoPinEdgeToSuperviewEdge(.Left, withInset: ModalOverlay.horizontalInset)
+            textLabel.autoPinEdgeToSuperviewEdge(.Right, withInset: ModalOverlay.horizontalInset)
             textLabel.autoPinEdge(.Top,
                                   toEdge: .Bottom,
                                   ofView: titleLabel,
-                                  withOffset: titleTextSpacing)
+                                  withOffset: ModalOverlay.titleTextSpacing)
             textLabel.autoPinEdge(.Bottom,
                                   toEdge: .Top,
                                   ofView: yesButton,
-                                  withOffset: -contentPadding)
+                                  withOffset: -ModalOverlay.contentPadding)
 
             yesButton.autoAlignAxisToSuperviewAxis(.Vertical)
             yesButton.autoPinEdge(.Bottom, toEdge: .Top, ofView: cancelButton, withOffset: 2)

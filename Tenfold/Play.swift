@@ -132,6 +132,8 @@ class Play: UIViewController {
         } else {
             viewHasAppeared = true
         }
+
+        presentViewController(UpdatesModal(), animated: true, completion: nil)
     }
 
     private func initNextRoundMatrix() {

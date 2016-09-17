@@ -32,8 +32,8 @@ class AppInfoModal: ModalOverlay {
 
     var hasLoadedConstraints = false
 
-    override init() {
-        super.init()
+    init() {
+        super.init(position: .Center)
 
         let boldAttributes = labelAttributes(withBoldText: true)
         appNameLabel.attributedText = NSAttributedString(string: "Tenfold App",
@@ -78,7 +78,6 @@ class AppInfoModal: ModalOverlay {
     }
 
     func didTapRate() {
-        // swiftlint:disable:next line_length
         UIApplication.sharedApplication().openURL(NSURL(string: "itms-apps://itunes.apple.com/app/id1149410716")!)
     }
 
@@ -96,15 +95,6 @@ class AppInfoModal: ModalOverlay {
             super.updateViewConstraints()
             return
         }
-
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            modal.autoSetDimension(.Width, toSize: 460)
-        } else {
-            modal.autoPinEdgeToSuperviewEdge(.Left, withInset: 8)
-            modal.autoPinEdgeToSuperviewEdge(.Right, withInset: 8)
-        }
-
-        modal.autoCenterInSuperview()
 
         logo.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
         logo.autoAlignAxisToSuperviewAxis(.Vertical)

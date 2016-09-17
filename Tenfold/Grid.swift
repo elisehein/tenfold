@@ -82,6 +82,12 @@ class Grid: UICollectionView {
         return Grid.cellSpacing * (Game.numbersPerRow - 1)
     }
 
+    class func size(forAvailableWidth availableWidth: CGFloat, cellCount: Int) -> CGSize {
+        let totalRows = Matrix.singleton.totalRows(cellCount)
+        let height = Grid.heightForGame(withTotalRows: totalRows, availableWidth: availableWidth)
+        return CGSize(width: availableWidth, height: height)
+    }
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

@@ -9,15 +9,34 @@
 import Foundation
 import UIKit
 
+enum ModalPosition {
+    case Center
+    case Bottom
+}
+
 class ModalOverlay: UIViewController {
 
+    static let horizontalInset: CGFloat = {
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 80 : 25
+    }()
+
+    static let contentPadding: CGFloat = {
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 70 : 40
+    }()
+
+    static let titleTextSpacing: CGFloat = {
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 25 : 15
+    }()
+
     let modal = UIView()
+    let position: ModalPosition
 
     static let modalButtonHeight: CGFloat = {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 80 : 60
     }()
 
-    init() {
+    init(position: ModalPosition) {
+        self.position = position
         super.init(nibName: nil, bundle: nil)
 
         modalTransitionStyle = .CrossDissolve
@@ -45,6 +64,32 @@ class ModalOverlay: UIViewController {
                 }
             }
         }
+    }
+
+    override func updateViewConstraints() {
+        switch position {
+        case .Center:
+            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+                modal.autoSetDimension(.Width, toSize: 460)
+            } else {
+                modal.autoPinEdgeToSuperviewEdge(.Left, withInset: 8)
+                modal.autoPinEdgeToSuperviewEdge(.Right, withInset: 8)
+            }
+
+            modal.autoCenterInSuperview()
+
+        case .Bottom:
+            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+                modal.autoSetDimension(.Width, toSize: 460)
+                modal.autoCenterInSuperview()
+            } else {
+                modal.autoPinEdgeToSuperviewEdge(.Left, withInset: 8)
+                modal.autoPinEdgeToSuperviewEdge(.Bottom, withInset: 8)
+                modal.autoPinEdgeToSuperviewEdge(.Right, withInset: 8)
+            }
+        }
+
+        super.updateViewConstraints()
     }
 
     class func configureModalButton(button: UIButton, color: UIColor) {
