@@ -23,6 +23,7 @@ class RuleGrid: Grid {
 
     private var timers: [NSTimer] = []
     private let reuseIdentifier = "GameGridCell"
+    private var firstPairingDone: Bool = false
 
     var values: [Int?] = []
 
@@ -138,7 +139,18 @@ class RuleGrid: Grid {
     func performPairings() {
         var delay = RuleGrid.pairingLoopReloadDuration + 0.5
 
-        prepareToStartOver()
+        let resetPairs: (() -> Void) = {
+            for pair in self.pairs {
+                self.crossOutPair(pair[0], pair[1], reverse: true, animated: false)
+            }
+        }
+
+        if firstPairingDone {
+            prepareToStartOver(completion: resetPairs)
+        } else {
+            resetPairs()
+            firstPairingDone = true
+        }
 
         // We don't use the Pair struct here because it seems we can't pass it
         // around inside a userInfo object (don't know). In any case, no need,
@@ -163,17 +175,12 @@ class RuleGrid: Grid {
         }
     }
 
-    private func prepareToStartOver() {
+    private func prepareToStartOver(completion completion: (() -> Void)) {
         var dirtyCells = Array(Set(pairs.flatten()))
         dirtyCells += crossedOutIndeces
 
         performActionOnCells(withIndeces: dirtyCells, { cell in
-            cell.fadeOutContentMomentarily(forSeconds: 1,
-                                           whileInvisible: {
-                for pair in self.pairs {
-                    self.crossOutPair(pair[0], pair[1], reverse: true, animated: false)
-                }
-            })
+            cell.fadeOutContentMomentarily(forSeconds: 1, whileInvisible: completion)
         })
     }
 
@@ -248,6 +255,7 @@ class RuleGrid: Grid {
     }
 
     func prepareForReuse() {
+        firstPairingDone = false
         reloadData()
     }
 
