@@ -119,7 +119,9 @@ class OnboardingSteps: UIView {
             }
         })
 
-        registerStepExtras(onboardingStep)
+        if onboardingStep == .Welcome {
+            displayButtons()
+        }
     }
 
     private func showBottomLabel(forOnboardingStep onboardingStep: OnboardingStep) {
@@ -162,21 +164,6 @@ class OnboardingSteps: UIView {
             return 2
         default:
             return OnboardingSteps.bottomLabelAnimationDelay
-        }
-    }
-
-    private func registerStepExtras(onboardingStep: OnboardingStep) {
-        switch onboardingStep {
-        case .Welcome:
-            displayButtons()
-        case .AimOfTheGame:
-            // swiftlint:disable:next line_length
-            NSTimer.scheduledTimerWithTimeInterval(4, target: self, selector: #selector(OnboardingSteps.transitionToNextStep), userInfo: nil, repeats: false)
-        case .LastTips:
-            // swiftlint:disable:next line_length
-            NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: #selector(OnboardingSteps.transitionToNextStep), userInfo: nil, repeats: false)
-        default:
-            return
         }
     }
 
@@ -226,7 +213,7 @@ class OnboardingSteps: UIView {
                 label.autoMatchDimension(.Width,
                                          toDimension: .Width,
                                          ofView: self,
-                                         withMultiplier: 0.8)
+                                         withMultiplier: 0.85)
             }
 
             buttonsContainer.autoPinEdge(.Top, toEdge: .Bottom, ofView: bottomLabel, withOffset: 30)

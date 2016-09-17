@@ -47,7 +47,10 @@ class Onboarding: Play {
         switch onboardingStep {
         case .AimOfTheGame:
             // swiftlint:disable:next line_length
-            NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(Onboarding.flashGrid), userInfo: nil, repeats: false)
+            NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(Onboarding.flashGrid), userInfo: nil, repeats: false)
+
+            // swiftlint:disable:next line_length
+            NSTimer.scheduledTimerWithTimeInterval(4.5, target: self, selector: #selector(Onboarding.transitionToNextStep), userInfo: nil, repeats: false)
         case .CrossOutIdentical:
             hintAtPairing([10, 19])
         case .CrossOutSummandsOfTen:
@@ -57,6 +60,9 @@ class Onboarding: Play {
             gameGrid.indecesPermittedForSelection = []
             gameGrid.userInteractionEnabled = true
             gameGrid.scrollEnabled = true
+        case .LastTips:
+            // swiftlint:disable:next line_length
+            NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: #selector(Onboarding.transitionToNextStep), userInfo: nil, repeats: false)
         case .Empty:
             handleDismissal()
         default:
@@ -85,6 +91,10 @@ class Onboarding: Play {
                               withColor: UIColor.themeColor(.OffWhiteShaded))
     }
 
+    func transitionToNextStep() {
+        menu.onboardingSteps.transitionToNextStep()
+    }
+
     override func handleSuccessfulPairing(pair: Pair) {
         flashTimer?.invalidate()
         super.handleSuccessfulPairing(pair)
@@ -98,6 +108,10 @@ class Onboarding: Play {
         } else {
             menu.onboardingSteps.transitionToNextStep()
         }
+    }
+
+    override func detectPan(recognizer: UIPanGestureRecognizer) {
+        // Do nothing
     }
 
     override func handlePullUpThresholdExceeded() {
