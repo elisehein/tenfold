@@ -70,7 +70,7 @@ class GameFinished: UIViewController {
         titleLabel.textColor = UIColor.themeColor(.OffBlack)
 
         statsLabel.numberOfLines = 0
-        statsLabel.attributedText = constructAttributedString(withText: statsText())
+        statsLabel.attributedText = NSAttributedString.styled(as: .Paragraph, usingText: statsText())
 
         closeButton.addTarget(self,
                               action: #selector(GameFinished.dismiss),
@@ -166,22 +166,6 @@ class GameFinished: UIViewController {
         }
 
         return text
-    }
-
-    private func constructAttributedString(withText text: String) -> NSAttributedString {
-        let isIPad = UIDevice.currentDevice().userInterfaceIdiom == .Pad
-
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = isIPad ? 7 : 4
-        paragraphStyle.alignment = .Center
-
-        let attributes = [
-            NSParagraphStyleAttributeName: paragraphStyle,
-            NSFontAttributeName: UIFont.themeFontWithSize(isIPad ? 18 : 14),
-            NSForegroundColorAttributeName: UIColor.themeColor(.OffBlack)
-        ]
-
-        return NSAttributedString(string: text, attributes: attributes)
     }
 
     func dismiss() {

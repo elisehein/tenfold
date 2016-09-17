@@ -24,7 +24,7 @@ class RuleHeader: UICollectionReusableView {
         didSet {
             if let text = text {
                 // swiftlint:disable:next line_length
-                label.attributedText = RuleHeader.constructAttributedString(withText: text)
+                label.attributedText = NSAttributedString.styled(as: .Title, usingText: text)
             }
         }
     }
@@ -34,31 +34,11 @@ class RuleHeader: UICollectionReusableView {
         let width = RuleHeader.widthFactor * availableWidth
         let availableSize = CGSize(width: width, height: CGFloat(MAXFLOAT))
         let label = UILabel()
-        label.attributedText = constructAttributedString(withText: text)
+        label.attributedText = NSAttributedString.styled(as: .Title, usingText: text)
         label.numberOfLines = 0
         var size = label.sizeThatFits(availableSize)
         size.width = min(width, availableSize.width)
         return size
-    }
-
-
-    class func constructAttributedString(withText text: String) -> NSAttributedString {
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 7
-        paragraphStyle.alignment = .Center
-
-        var font = UIFont.themeFontWithSize(16, weight: .Bold)
-
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            font = font.fontWithSize(22)
-        }
-
-        let attributes = [
-            NSParagraphStyleAttributeName: paragraphStyle,
-            NSFontAttributeName: font
-        ]
-
-        return NSAttributedString(string: text, attributes: attributes)
     }
 
     override init(frame: CGRect) {

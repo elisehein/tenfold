@@ -120,7 +120,7 @@ class ConfirmationModal: ModalOverlay {
                    randomMotivationalQuote()
         }
 
-        textLabel.attributedText = constructAttributedString(withText: text)
+        textLabel.attributedText = NSAttributedString.styled(as: .Paragraph, usingText: text)
     }
 
     func didTapYes() {
@@ -131,28 +131,6 @@ class ConfirmationModal: ModalOverlay {
 
     func didTapCancel() {
         dismissViewControllerAnimated(true, completion: nil)
-    }
-
-    private func constructAttributedString(withText text: String) -> NSAttributedString {
-
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 5
-        paragraphStyle.alignment = .Center
-
-        var font = UIFont.themeFontWithSize(14)
-
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            font = UIFont.themeFontWithSize(18)
-            paragraphStyle.lineSpacing = 7
-        }
-
-        let attributes = [
-            NSParagraphStyleAttributeName: paragraphStyle,
-            NSFontAttributeName: font,
-            NSForegroundColorAttributeName: UIColor.themeColor(.OffBlack)
-        ]
-
-        return NSAttributedString(string: text, attributes: attributes)
     }
 
     private func randomMotivationalQuote() -> String {

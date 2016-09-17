@@ -31,7 +31,7 @@ class RuleCell: UICollectionViewCell {
     var text: String? {
         didSet {
             if let text = text {
-                label.attributedText = RuleCell.constructAttributedString(withText: text)
+                label.attributedText = NSAttributedString.styled(as: .Paragraph, usingText: text)
             }
         }
     }
@@ -137,25 +137,9 @@ class RuleCell: UICollectionViewCell {
     class func labelWithAttributedText(text: String? = nil) -> UILabel {
         let l = UILabel()
         l.numberOfLines = 0
-        l.attributedText = constructAttributedString(withText: text)
+        l.attributedText = NSAttributedString.styled(as: .Paragraph, usingText: text == nil ? "" : text!)
         return l
 
-    }
-
-    class func constructAttributedString(withText text: String?) -> NSAttributedString {
-        let isIPad = UIDevice.currentDevice().userInterfaceIdiom == .Pad
-
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .Center
-        paragraphStyle.lineSpacing = isIPad ? 7 : 4
-
-        let attributes = [
-            NSParagraphStyleAttributeName: paragraphStyle,
-            NSForegroundColorAttributeName: UIColor.themeColor(.OffBlack),
-            NSFontAttributeName: UIFont.themeFontWithSize(isIPad ? 18 : 14)
-        ]
-
-        return NSAttributedString(string: text != nil ? text! : "", attributes: attributes)
     }
 
     required init?(coder aDecoder: NSCoder) {

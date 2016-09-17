@@ -39,7 +39,7 @@ class UpdatesModal: ModalOverlay {
                    "Ever make an annoying mistake while playing? " +
                    "You can now undo your latest move by swiping right."
         textLabel.numberOfLines = 0
-        textLabel.attributedText = NSAttributedString.themeAttrString(.Paragraph, usingText: text)
+        textLabel.attributedText = NSAttributedString.styled(as: .Paragraph, usingText: text)
 
         ruleGrid.animationType = RuleGridAnimationType(rawValue: UpdatesModal.gridData["animationType"].string!)!
         ruleGrid.values = UpdatesModal.gridData["values"].arrayValue.map({ $0.int })
@@ -119,7 +119,7 @@ class UpdatesModal: ModalOverlay {
     }
 
     private func gridSize() -> CGSize {
-        let gridWidth = view.bounds.size.width * 0.7
+        let gridWidth = view.bounds.size.width * 0.8
         return Grid.size(forAvailableWidth: gridWidth, cellCount: ruleGrid.values.count)
     }
 
