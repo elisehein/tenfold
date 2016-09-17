@@ -28,20 +28,19 @@ class RuleGrid: Grid {
 
     var crossedOutIndeces: [Int] = []
     var pairs: [[Int]] = []
-    var gesture: Gesture?
+    var gesture = Gesture(type: .SwipeRight)
 
     var animationType: RuleGridAnimationType = .Pairings {
         didSet {
             guard animationType != .Pairings else { return }
 
             if animationType == .PairingsWithUndo {
-                gesture = Gesture(type: .SwipeRight)
+                gesture.type = .SwipeRight
             } else if animationType == .PullUp {
-                gesture = Gesture(type: .SwipeUpAndHold)
+                gesture.type = .SwipeUpAndHold
             }
 
-            layer.addSublayer(gesture!)
-            gesture!.hidden = animationType == .Pairings
+            gesture.hidden = animationType == .Pairings
         }
     }
 
@@ -55,18 +54,19 @@ class RuleGrid: Grid {
         dataSource = self
         userInteractionEnabled = false
         clipsToBounds = true
+        layer.addSublayer(gesture)
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
 
         if animationType == .PairingsWithUndo {
-            gesture!.frame = CGRect(origin: CGPoint(x: (bounds.size.width - Gesture.totalWidth) / 2,
-                                                    y: (bounds.size.height - Gesture.totalHeight) / 2 + 8),
+            gesture.frame = CGRect(origin: CGPoint(x: (bounds.size.width - gesture.totalWidth()) / 2,
+                                                   y: (bounds.size.height - Gesture.fingerDiameter) / 2 + 8),
                                    size: CGSize.zero)
         } else if animationType == .PullUp {
-            gesture!.frame = CGRect(origin: CGPoint(x: bounds.size.width * 0.75,
-                                                    y: bounds.size.height - 30),
+            gesture.frame = CGRect(origin: CGPoint(x: bounds.size.width * 0.75,
+                                                   y: bounds.size.height - 30),
                                    size: CGSize.zero)
         }
     }
@@ -105,9 +105,9 @@ class RuleGrid: Grid {
     }
 
     func pullUp() {
-        gesture!.perform(withDelay: 1, completion: {
+        gesture.perform(withDelay: 1, completion: {
             self.performActionOnCells(withIndeces: Array(36..<self.values.count), { cell in
-                UIView.animateWithDuration(0.15, delay: 0.55, options: [], animations: {
+                UIView.animateWithDuration(0.15, delay: 0.4, options: [], animations: {
                     cell.contentView.backgroundColor = UIColor.themeColor(.OffWhiteShaded)
                 }, completion: nil)
             })
@@ -188,7 +188,7 @@ class RuleGrid: Grid {
 
     func undoPairing(timer: NSTimer) {
         if let userInfo = timer.userInfo! as? [String: AnyObject] {
-            gesture!.perform(completion: {
+            gesture.perform(completion: {
                 self.crossOutPair((userInfo["index"]! as? Int)!,
                                   (userInfo["otherIndex"]! as? Int)!,
                                   reverse: (userInfo["reverse"]! as? Bool)!,

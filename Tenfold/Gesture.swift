@@ -14,28 +14,69 @@ enum GestureType {
     case SwipeRight
 }
 
+// Defaults for .SwipeRight
+private struct GestureConfiguration {
+    var totalWidth: CGFloat = 216
+    var swooshStartDuration: Double = 0.25
+    var swooshEndDuration: Double = 0.25
+    var swooshStartTimingFunction: String = kCAMediaTimingFunctionEaseIn
+    var swooshEndTimingFunction: String = kCAMediaTimingFunctionEaseOut
+    var swooshMidPoint: CGFloat = 158
+    var fadeInDuration: Double = 0.2
+    var fadeOutDuration: Double = 0.2
+    var disappearanceDelay: Double = 0
+}
+
 class Gesture: CAShapeLayer {
 
-    static let totalWidth: CGFloat = 220
-    static let totalHeight: CGFloat = 20
-
-    private var type: GestureType = .SwipeRight
+    static let fingerDiameter: CGFloat = 16
     private var completionBlock: (() -> Void)?
+    private var config: GestureConfiguration
+
+    var type: GestureType {
+        didSet {
+            self.config = Gesture.configurationForType(type)
+        }
+    }
 
     override init(layer: AnyObject) {
+        self.type = .SwipeRight
+        self.config = Gesture.configurationForType(type)
         super.init(layer: layer)
     }
 
     init(type: GestureType) {
         self.type = type
+        self.config = Gesture.configurationForType(type)
         super.init()
         fillColor = UIColor.whiteColor().CGColor
         opacity = 0
     }
 
+    private class func configurationForType(type: GestureType) -> GestureConfiguration {
+        switch type {
+        case .SwipeRight:
+            return GestureConfiguration()
+        case .SwipeUpAndHold:
+            return GestureConfiguration(totalWidth: 116,
+                                        swooshStartDuration: 0.5,
+                                        swooshEndDuration: 0,
+                                        swooshStartTimingFunction: kCAMediaTimingFunctionLinear,
+                                        swooshEndTimingFunction: kCAMediaTimingFunctionEaseOut,
+                                        swooshMidPoint: 116,
+                                        fadeInDuration: 0.2,
+                                        fadeOutDuration: 0.15,
+                                        disappearanceDelay: 0.65)
+        }
+    }
+
     override func display() {
         super.display()
         path = circlePath()
+    }
+
+    func totalWidth() -> CGFloat {
+        return config.totalWidth
     }
 
     func perform(withDelay delay: Double = 0, completion: (() -> Void)? = nil) {
@@ -58,7 +99,7 @@ class Gesture: CAShapeLayer {
     private func beginSwoosh(withDelay delay: Double) {
         let opacityAnimation = CABasicAnimation(keyPath: "opacity")
         opacityAnimation.beginTime = CACurrentMediaTime() + delay
-        opacityAnimation.duration = 0.2
+        opacityAnimation.duration = config.fadeInDuration
         opacityAnimation.fromValue = 0
         opacityAnimation.toValue = 1
         opacityAnimation.fillMode = kCAFillModeForwards
@@ -67,10 +108,10 @@ class Gesture: CAShapeLayer {
 
         let animation = CABasicAnimation(keyPath: "path")
         animation.beginTime = CACurrentMediaTime() + delay
-        animation.duration = type == .SwipeRight ? 0.2 : 0.3
+        animation.duration = config.swooshStartDuration
         animation.fromValue = circlePath()
         animation.toValue = pathWhileSwooshing()
-        animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
+        animation.timingFunction = CAMediaTimingFunction(name: config.swooshStartTimingFunction)
         animation.fillMode = kCAFillModeForwards
         animation.removedOnCompletion = false
         animation.delegate = self
@@ -78,15 +119,12 @@ class Gesture: CAShapeLayer {
     }
 
     private func endSwoosh() {
-        let movementDuration = type == .SwipeRight ? 0.2 : 0.2
-        let fadeOutDuration = 0.2
-
         let opacityAnimation = CABasicAnimation(keyPath: "opacity")
-        opacityAnimation.duration = type == .SwipeRight ? fadeOutDuration : 0.15
+        opacityAnimation.duration = config.fadeOutDuration
         opacityAnimation.beginTime = CACurrentMediaTime() +
-                                     (type == .SwipeRight ?
-                                      movementDuration - fadeOutDuration :
-                                      movementDuration + 0.5)
+                                     config.swooshEndDuration -
+                                     config.fadeOutDuration +
+                                     config.disappearanceDelay
         opacityAnimation.fromValue = 1
         opacityAnimation.toValue = 0
         opacityAnimation.fillMode = kCAFillModeForwards
@@ -94,10 +132,10 @@ class Gesture: CAShapeLayer {
         addAnimation(opacityAnimation, forKey: nil)
 
         let animation = CABasicAnimation(keyPath: "path")
-        animation.duration = movementDuration
+        animation.duration = config.swooshEndDuration
         animation.fromValue = pathWhileSwooshing()
-        animation.toValue = endPath()
-        animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+        animation.toValue = circlePath(atX: config.totalWidth - Gesture.fingerDiameter)
+        animation.timingFunction = CAMediaTimingFunction(name: config.swooshEndTimingFunction)
         animation.fillMode = kCAFillModeForwards
         animation.removedOnCompletion = false
         animation.delegate = self
@@ -105,7 +143,7 @@ class Gesture: CAShapeLayer {
     }
 
     private func pathWhileSwooshing() -> CGPath {
-        let furthestX: CGFloat = type == .SwipeRight ? 150 : 80
+        let furthestX = config.swooshMidPoint - (Gesture.fingerDiameter / 2)
 
         let bezierPath = UIBezierPath()
         bezierPath.moveToPoint(CGPoint(x: 0, y: 8))
@@ -124,10 +162,6 @@ class Gesture: CAShapeLayer {
                                    controlPoint2: CGPoint(x: 0, y: 12.42))
 
         return bezierPath.CGPath
-    }
-
-    private func endPath() -> CGPath {
-        return circlePath(atX: type == .SwipeRight ? 200 : 100)
     }
 
     // swiftlint:disable:next variable_name
@@ -152,7 +186,6 @@ class Gesture: CAShapeLayer {
     }
 
     override func animationDidStop(anim: CAAnimation, finished flag: Bool) {
-
         if anim == animationForKey("swooshStart") {
             endSwoosh()
         } else {
