@@ -65,7 +65,7 @@ class RuleGrid: Grid {
                                                    y: (bounds.size.height - Gesture.fingerDiameter) / 2 + 8),
                                    size: CGSize.zero)
         } else if animationType == .PullUp {
-            gesture.frame = CGRect(origin: CGPoint(x: bounds.size.width * 0.75,
+            gesture.frame = CGRect(origin: CGPoint(x: (bounds.size.width - Gesture.fingerDiameter) / 2,
                                                    y: bounds.size.height - 30),
                                    size: CGSize.zero)
         }

@@ -16,14 +16,14 @@ enum GestureType {
 
 // Defaults for .SwipeRight
 private struct GestureConfiguration {
-    var totalWidth: CGFloat = 216
+    var totalWidth: CGFloat = 186
     var swooshStartDuration: Double = 0.25
     var swooshEndDuration: Double = 0.25
     var swooshStartTimingFunction: String = kCAMediaTimingFunctionEaseIn
     var swooshEndTimingFunction: String = kCAMediaTimingFunctionEaseOut
-    var swooshMidPoint: CGFloat = 158
+    var swooshMidPoint: CGFloat = 173
     var fadeInDuration: Double = 0.2
-    var fadeOutDuration: Double = 0.2
+    var fadeOutDuration: Double = 0.25 // Can't be larger than swooshEndDuration
     var disappearanceDelay: Double = 0
 }
 
