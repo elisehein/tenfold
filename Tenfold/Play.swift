@@ -265,6 +265,8 @@ class Play: UIViewController {
             return
         }
 
+        menu.hideIfNeeded() // This only applies when returning from onboarding
+
         if game.latestMoveType() == .CrossingOutPair {
             undoLatestPairing()
         } else if game.latestMoveType() == .LoadingNextRound {
