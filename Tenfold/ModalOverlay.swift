@@ -17,7 +17,7 @@ enum ModalPosition {
 class ModalOverlay: UIViewController {
 
     static let horizontalInset: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 80 : 25
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 80 : 30
     }()
 
     static let contentPadding: CGFloat = {

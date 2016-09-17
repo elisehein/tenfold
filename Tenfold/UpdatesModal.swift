@@ -85,8 +85,8 @@ class UpdatesModal: ModalOverlay {
             titleLabel.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
             titleLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: ModalOverlay.contentPadding)
 
-            textLabel.autoPinEdgeToSuperviewEdge(.Left, withInset: ModalOverlay.horizontalInset)
-            textLabel.autoPinEdgeToSuperviewEdge(.Right, withInset: ModalOverlay.horizontalInset)
+            textLabel.autoPinEdgeToSuperviewEdge(.Left, withInset: 25)
+            textLabel.autoPinEdgeToSuperviewEdge(.Right, withInset: 25)
             textLabel.autoPinEdge(.Top,
                                   toEdge: .Bottom,
                                   ofView: titleLabel,
@@ -119,7 +119,9 @@ class UpdatesModal: ModalOverlay {
     }
 
     private func gridSize() -> CGSize {
-        let gridWidth = view.bounds.size.width * 0.8
+        let gridWidth = UIDevice.currentDevice().userInterfaceIdiom == .Pad ?
+                        370 :
+                        view.bounds.size.width * 0.8
         return Grid.size(forAvailableWidth: gridWidth, cellCount: ruleGrid.values.count)
     }
 
