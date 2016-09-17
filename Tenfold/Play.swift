@@ -34,16 +34,18 @@ class Play: UIViewController {
 
     private var viewHasLoaded = false
     private var viewHasAppeared = false
+    private var shouldShowUpdatesModal: Bool
     private var shouldLaunchOnboarding: Bool
     private var isOnboarding: Bool
 
-    init(shouldLaunchOnboarding: Bool, isOnboarding: Bool = false) {
+    init(shouldShowUpdatesModal: Bool, shouldLaunchOnboarding: Bool, isOnboarding: Bool = false) {
         let savedGame = StorageService.restoreGame()
 
         // If we do *somehow* have a saved game, don't mess with it and just show them
         // the regular Play screen
         self.shouldLaunchOnboarding = shouldLaunchOnboarding && savedGame == nil
         self.isOnboarding = isOnboarding && savedGame == nil
+        self.shouldShowUpdatesModal = shouldShowUpdatesModal
 
         self.game = savedGame == nil ? Game() : savedGame!
         self.gameGrid = GameGrid(game: game)
@@ -69,7 +71,7 @@ class Play: UIViewController {
         let pan = UIPanGestureRecognizer(target: self, action: #selector(Play.detectPan))
 
         undoErrorNotification.anchorEdge = .Top
-        undoErrorNotification.text = "You can only undo your last move"
+        undoErrorNotification.text = "Nothing to undo"
         undoNotification.anchorEdge = .Left
         undoNotification.iconName = "undo"
 
@@ -121,7 +123,10 @@ class Play: UIViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
 
-        if shouldLaunchOnboarding {
+        if shouldShowUpdatesModal {
+            presentViewController(UpdatesModal(), animated: true, completion: nil)
+            shouldShowUpdatesModal = false
+        } else if shouldLaunchOnboarding {
             let onboarding = Onboarding()
             onboarding.onWillDismissWithGame = handleOnboardingWillDismissWithGame
             presentViewController(onboarding, animated: false, completion: nil)
@@ -132,8 +137,6 @@ class Play: UIViewController {
         } else {
             viewHasAppeared = true
         }
-
-        presentViewController(UpdatesModal(), animated: true, completion: nil)
     }
 
     private func initNextRoundMatrix() {

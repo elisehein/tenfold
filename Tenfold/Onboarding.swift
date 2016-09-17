@@ -17,7 +17,7 @@ class Onboarding: Play {
     var onWillDismissWithGame: ((game: Game) -> Void)?
 
     init() {
-        super.init(shouldLaunchOnboarding: false, isOnboarding: true)
+        super.init(shouldShowUpdatesModal: false, shouldLaunchOnboarding: false, isOnboarding: true)
 
         modalTransitionStyle = .CrossDissolve
 

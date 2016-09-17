@@ -29,14 +29,11 @@ class StorageService {
         ])
     }
 
-    class func restoreFirstLaunchFlag() -> Bool {
+    class func toggleFirstLaunchFlag() -> Bool {
         let defaults = NSUserDefaults.standardUserDefaults()
-        return defaults.boolForKey(StorageKeys.FirstLaunchFlag.rawValue)
-    }
-
-    class func saveFirstLaunchFlag(firstLaunch: Bool) {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.setBool(firstLaunch, forKey: StorageKeys.FirstLaunchFlag.rawValue)
+        let flag = defaults.boolForKey(StorageKeys.FirstLaunchFlag.rawValue)
+        defaults.setBool(false, forKey: StorageKeys.FirstLaunchFlag.rawValue)
+        return flag
     }
 
     class func saveGame(game: Game) {
@@ -106,6 +103,12 @@ class StorageService {
         let currentPreference = currentSoundPreference()
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setBool(!currentPreference, forKey:StorageKeys.SoundOnFlag.rawValue)
+    }
+
+    class func toggleFeatureAnnouncementsFlag() -> Bool {
+        let shouldShow = !hasSeenFeatureAnnouncement(.Undo)
+        markFeatureAnnouncementSeen(.Undo)
+        return shouldShow
     }
 
     class func hasSeenFeatureAnnouncement(featureAnnouncement: StorageKeys.FeatureAnnouncements) -> Bool {
