@@ -33,7 +33,7 @@ class Rules: UIViewController {
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
             l.minimumInteritemSpacing = 0
             l.minimumLineSpacing = 90
-            l.sectionInset = UIEdgeInsets(top: 90, left: 0, bottom: 0, right: 0)
+            l.sectionInset = UIEdgeInsets(top: 60, left: 0, bottom: 0, right: 0)
         } else {
             l.minimumInteritemSpacing = 0
             l.minimumLineSpacing = 40
