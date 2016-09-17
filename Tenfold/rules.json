@@ -69,11 +69,11 @@
     ]
   },
   {
-    "title": "Swipe right to undo your latest move.",
+    "title": "Made a mistake?",
     "examples": [
       {
         "animationType": "PAIRINGS_WITH_UNDO",
-        "text": "One move at a time!",
+        "text": "You can swipe right to undo your latest move.",
         "values": [null, null, null, 2   , null, null, null, 8   , null,
                    null, null, null, null, null, null, null, null, null,
                    null, null, null, null, null, null, null, null, null,
