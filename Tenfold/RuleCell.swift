@@ -48,6 +48,8 @@ class RuleCell: UICollectionViewCell {
         didSet {
             if let detailText = detailText {
                 detailLabel.attributedText = NSAttributedString.styled(as: .Tip, usingText: detailText)
+            } else {
+                detailLabel.text = ""
             }
         }
     }
