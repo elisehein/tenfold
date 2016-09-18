@@ -106,17 +106,17 @@ class ConfirmationModal: ModalOverlay {
 
         if uniqueValues < 6 {
             text = "You've got only \(uniqueValues) unique numbers left. Really quit now?"
+        } else if numbersRemaining == 1 {
+            text = "You've got ONE number left – finish it!"
         } else if numbersRemaining <= 20 {
-            let toGoPhrase = numbersRemaining > 1 ? "numbers to go." : "number left!"
-            text = "You've only got \(numbersRemaining) \(toGoPhrase) " +
+            text = "You've only got \(numbersRemaining) numbers to go. " +
                    randomMotivationalQuote()
         } else if RankingService.singleton.gameIsLongerThanCurrentLongest(game) {
            text = "This is your longest game to date. Do you really want to quit now?"
         } else if historicNumbersCrossedOut > 10 {
-            text = "You've gotten rid of \(historicNumbersCrossedOut) " +
-                   "numbers already. " + randomMotivationalQuote()
+            text = "You've got \(numbersRemaining) numbers left. " + randomMotivationalQuote()
         } else {
-            text = "You're only on round \(game.currentRound). " +
+            text = "You've only been playing for \(game.currentRound) rounds. " +
                    randomMotivationalQuote()
         }
 
