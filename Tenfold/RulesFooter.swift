@@ -17,11 +17,9 @@ class RulesFooter: UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        label.text = "Swipe left any time to see these instructions."
-        label.textColor = UIColor.themeColor(.OffBlack)
-        label.font = UIFont.themeFontWithSize(13, weight: .Italic)
-        label.textAlignment = .Center
+        let tip = "Swipe left any time to see these instructions."
         label.numberOfLines = 0
+        label.attributedText = NSAttributedString.styled(as: .Tip, usingText: tip)
 
         addSubview(label)
     }

@@ -12,15 +12,12 @@ import UIKit
 extension GameGrid: UICollectionViewDelegateFlowLayout {
     func collectionView(collectionView: UICollectionView,
                         shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        var selectionForbidden = false
-
         if indecesPermittedForSelection != nil &&
            !indecesPermittedForSelection!.contains(indexPath.item) {
-           selectionForbidden = true
+           return false
+        } else {
+            return !game.isCrossedOut(indexPath.item)
         }
-
-        let shouldSelect = !game.isCrossedOut(indexPath.item) && !selectionForbidden
-        return shouldSelect
     }
 
     func collectionView(collectionView: UICollectionView,
@@ -33,11 +30,9 @@ extension GameGrid: UICollectionViewDelegateFlowLayout {
         if selectedIndexPaths.contains(indexPath) {
             numberCell!.indicateDeselection()
             selectedIndexPaths.removeAll()
-            return
         } else if selectedIndexPaths.count == 1 {
             selectedIndexPaths.append(indexPath)
-            onPairingAttempt!(itemIndex: selectedIndexPaths[0].item,
-                              otherItemIndex: selectedIndexPaths[1].item)
+            onPairingAttempt!(Pair(selectedIndexPaths.map({ $0.item })))
             selectedIndexPaths.removeAll()
         } else {
             selectedIndexPaths.append(indexPath)

@@ -1,5 +1,5 @@
 //
-//  InstructionItemCell.swift
+//  RuleCell.swift
 //  Tenfold
 //
 //  Created by Elise Hein on 18/08/2016.
@@ -9,9 +9,17 @@
 import Foundation
 import UIKit
 
-class RuleExampleCell: UICollectionViewCell {
+class RuleCell: UICollectionViewCell {
 
-    private static let widthFactor: CGFloat = {
+    private static let textWidthFactor: CGFloat = {
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            return 0.5
+        } else {
+            return 0.88
+        }
+    }()
+
+    private static let gridWidthFactor: CGFloat = {
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
             return 0.5
         } else {
@@ -31,43 +39,54 @@ class RuleExampleCell: UICollectionViewCell {
     var text: String? {
         didSet {
             if let text = text {
-                label.attributedText = RuleExampleCell.constructAttributedString(withText: text)
+                label.attributedText = NSAttributedString.styled(as: .Paragraph, usingText: text)
             }
         }
     }
 
-    var gridValues: Array<Int?> = [] {
+    var detailText: String? {
+        didSet {
+            if let detailText = detailText {
+                detailLabel.attributedText = NSAttributedString.styled(as: .Tip, usingText: detailText)
+            } else {
+                detailLabel.text = ""
+            }
+        }
+    }
+
+    var gridValues: [Int?] = [] {
         didSet {
             exampleGrid.values = gridValues
         }
     }
 
-    var gridCrossedOutIndeces: Array<Int> = [] {
+    var gridCrossedOutIndeces: [Int] = [] {
         didSet {
             exampleGrid.crossedOutIndeces = gridCrossedOutIndeces
         }
     }
 
-    var gridPairs: Array<[Int]> = [] {
+    var gridPairs: [[Int]] = [] {
         didSet {
             exampleGrid.pairs = gridPairs
         }
     }
 
-    var gridAnimationType: String = RuleExampleGrid.animationTypePairings {
+    var gridAnimationType: RuleGridAnimationType = .Pairings {
         didSet {
             exampleGrid.animationType = gridAnimationType
         }
     }
 
-    private let label = RuleExampleCell.labelWithAttributedText()
-    private let exampleGrid = RuleExampleGrid()
+    private let label = RuleCell.labelWithAttributedText()
+    private let detailLabel = UILabel()
+    private let exampleGrid = RuleGrid()
 
     class func sizeOccupiedByLabel(forAvailableWidth availableWidth: CGFloat,
                                    usingText text: String) -> CGSize {
-        let width = RuleExampleCell.widthFactor * availableWidth
+        let width = RuleCell.textWidthFactor * availableWidth
         let availableSize = CGSize(width: width, height: CGFloat(MAXFLOAT))
-        let label = RuleExampleCell.labelWithAttributedText(text)
+        let label = RuleCell.labelWithAttributedText(text)
         var size = label.sizeThatFits(availableSize)
         size.width = min(width, availableSize.width)
 
@@ -77,13 +96,12 @@ class RuleExampleCell: UICollectionViewCell {
     class func sizeOccupied(forAvailableWidth availableWidth: CGFloat,
                             usingText givenText: String,
                             numberOfGridValues: Int) -> CGSize {
-        var size = RuleExampleCell.sizeOccupiedByLabel(forAvailableWidth: availableWidth,
+        var size = RuleCell.sizeOccupiedByLabel(forAvailableWidth: availableWidth,
                                                        usingText: givenText)
 
-        let gridWidth = RuleExampleCell.widthFactor * availableWidth
-        size.height += RuleExampleCell.gridSize(forAvailableWidth: gridWidth,
-                                                gridValueCount: numberOfGridValues).height
-        size.height += RuleExampleCell.textGridSpacing
+        let gridWidth = RuleCell.gridWidthFactor * availableWidth
+        size.height += Grid.size(forAvailableWidth: gridWidth, cellCount: numberOfGridValues).height
+        size.height += RuleCell.textGridSpacing
 
         return size
     }
@@ -91,7 +109,11 @@ class RuleExampleCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
+        detailLabel.numberOfLines = 0
+        detailLabel.alpha = 0.8
+
         contentView.addSubview(label)
+        contentView.addSubview(detailLabel)
         contentView.addSubview(exampleGrid)
     }
 
@@ -100,18 +122,26 @@ class RuleExampleCell: UICollectionViewCell {
 
         let availableWidth = contentView.bounds.size.width
 
-        let labelSize = RuleExampleCell.sizeOccupiedByLabel(forAvailableWidth: availableWidth,
-                                                            usingText: text!)
+        let labelSize = RuleCell.sizeOccupiedByLabel(forAvailableWidth: availableWidth,
+                                                     usingText: text!)
 
-        let x = contentView.bounds.size.width * 0.5 * (1 - RuleExampleCell.widthFactor)
+        let x = contentView.bounds.size.width * 0.5 * (1 - RuleCell.textWidthFactor)
         label.frame = CGRect(origin: CGPoint(x: x, y : 0), size: labelSize)
 
-        let gridWidth = RuleExampleCell.widthFactor * availableWidth
-        let gridSize = RuleExampleCell.gridSize(forAvailableWidth: gridWidth,
-                                                gridValueCount: gridValues.count)
+        var detailLabelFrame = contentView.bounds
+        detailLabelFrame.size.width *= RuleCell.textWidthFactor
+        detailLabel.frame = detailLabelFrame
+        detailLabel.sizeToFit()
+        detailLabelFrame = detailLabel.frame
+        detailLabelFrame.origin.y = contentView.bounds.size.height + RuleCell.textGridSpacing
+        detailLabelFrame.origin.x = (contentView.bounds.size.width - detailLabelFrame.size.width) / 2
+        detailLabel.frame = detailLabelFrame
+
+        let gridWidth = RuleCell.gridWidthFactor * availableWidth
+        let gridSize = Grid.size(forAvailableWidth: gridWidth, cellCount: gridValues.count)
 
         let frameForGrid = CGRect(x: (availableWidth - gridSize.width) / 2,
-                                  y: labelSize.height + RuleExampleCell.textGridSpacing,
+                                  y: labelSize.height + RuleCell.textGridSpacing,
                                   width: gridSize.width,
                                   height: gridSize.height)
 
@@ -120,7 +150,7 @@ class RuleExampleCell: UICollectionViewCell {
     }
 
     func prepareGrid() {
-        exampleGrid.reloadData()
+        exampleGrid.prepareForReuse()
     }
 
     func playExampleLoop() {
@@ -136,34 +166,12 @@ class RuleExampleCell: UICollectionViewCell {
         stopExampleLoop()
     }
 
-    class func gridSize(forAvailableWidth availableWidth: CGFloat, gridValueCount: Int) -> CGSize {
-        let totalRows = Matrix.singleton.totalRows(gridValueCount)
-        let height = Grid.heightForGame(withTotalRows: totalRows, availableWidth: availableWidth)
-        return CGSize(width: availableWidth, height: height)
-    }
-
     class func labelWithAttributedText(text: String? = nil) -> UILabel {
         let l = UILabel()
         l.numberOfLines = 0
-        l.attributedText = constructAttributedString(withText: text)
+        l.attributedText = NSAttributedString.styled(as: .Paragraph, usingText: text == nil ? "" : text!)
         return l
 
-    }
-
-    class func constructAttributedString(withText text: String?) -> NSAttributedString {
-        let isIPad = UIDevice.currentDevice().userInterfaceIdiom == .Pad
-
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .Center
-        paragraphStyle.lineSpacing = isIPad ? 7 : 4
-
-        let attributes = [
-            NSParagraphStyleAttributeName: paragraphStyle,
-            NSForegroundColorAttributeName: UIColor.themeColor(.OffBlack),
-            NSFontAttributeName: UIFont.themeFontWithSize(isIPad ? 18 : 14)
-        ]
-
-        return NSAttributedString(string: text != nil ? text! : "", attributes: attributes)
     }
 
     required init?(coder aDecoder: NSCoder) {

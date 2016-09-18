@@ -8,39 +8,43 @@
 
 import Foundation
 
-class StorageService {
+enum StorageKeys: String {
+    case Game = "tenfoldGameStorageKey"
+    case OrderedGameSnapshots = "orderedGameSnapshotsStorageKey"
+    case SoundOnFlag = "tenfoldSoundPrefStorageKey"
+    case FirstLaunchFlag = "tenfoldFirstLaunchFlagStorageKey"
 
-    private static let gameStorageKey = "tenfoldGameStorageKey"
-    private static let orderedGameSnapshotsStorageKey = "orderedGameSnapshotsStorageKey"
-    private static let soundPrefStorageKey = "tenfoldSoundPrefStorageKey"
-    private static let firstLaunchFlagStorageKey = "tenfoldFirstLaunchFlagStorageKey"
+    enum FeatureAnnouncements: String {
+       case Undo = "tenfoldUndoFeatureAnnouncementStorageKey"
+    }
+}
+
+class StorageService {
 
     class func registerDefaults() {
         NSUserDefaults.standardUserDefaults().registerDefaults([
-            soundPrefStorageKey: true,
-            firstLaunchFlagStorageKey: true
+            StorageKeys.SoundOnFlag.rawValue: true,
+            StorageKeys.FirstLaunchFlag.rawValue: true,
+            StorageKeys.FeatureAnnouncements.Undo.rawValue: false
         ])
     }
 
-    class func restoreFirstLaunchFlag() -> Bool {
+    class func toggleFirstLaunchFlag() -> Bool {
         let defaults = NSUserDefaults.standardUserDefaults()
-        return defaults.boolForKey(StorageService.firstLaunchFlagStorageKey)
-    }
-
-    class func saveFirstLaunchFlag(firstLaunch: Bool) {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.setBool(firstLaunch, forKey:StorageService.firstLaunchFlagStorageKey)
+        let flag = defaults.boolForKey(StorageKeys.FirstLaunchFlag.rawValue)
+        defaults.setBool(false, forKey: StorageKeys.FirstLaunchFlag.rawValue)
+        return flag
     }
 
     class func saveGame(game: Game) {
         let gameData = NSKeyedArchiver.archivedDataWithRootObject(game)
         let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.setObject(gameData, forKey: StorageService.gameStorageKey)
+        defaults.setObject(gameData, forKey: StorageKeys.Game.rawValue)
     }
 
     class func restoreGame() -> Game? {
         let defaults = NSUserDefaults.standardUserDefaults()
-        let gameData = defaults.objectForKey(StorageService.gameStorageKey)
+        let gameData = defaults.objectForKey(StorageKeys.Game.rawValue)
 
         if let gameData = gameData as? NSData {
             let game = NSKeyedUnarchiver.unarchiveObjectWithData(gameData)
@@ -50,13 +54,13 @@ class StorageService {
         }
     }
 
-    class func restoreOrderedGameSnapshots() -> Array<GameSnapshot> {
+    class func restoreOrderedGameSnapshots() -> [GameSnapshot] {
         let defaults = NSUserDefaults.standardUserDefaults()
-        let statsData = defaults.objectForKey(StorageService.orderedGameSnapshotsStorageKey)
+        let statsData = defaults.objectForKey(StorageKeys.OrderedGameSnapshots.rawValue)
 
         if let statsData = statsData as? NSData {
             let gameStats = NSKeyedUnarchiver.unarchiveObjectWithData(statsData)
-            if let stats = gameStats as? Array<GameSnapshot> {
+            if let stats = gameStats as? [GameSnapshot] {
                 return stats
             } else {
                 return []
@@ -86,19 +90,34 @@ class StorageService {
         let orderedSnapshotsData = NSKeyedArchiver.archivedDataWithRootObject(orderedSnapshots)
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setObject(orderedSnapshotsData,
-                           forKey: StorageService.orderedGameSnapshotsStorageKey)
+                           forKey: StorageKeys.OrderedGameSnapshots.rawValue)
         RankingService.singleton.orderedGameSnapshots = orderedSnapshots
     }
 
     class func currentSoundPreference() -> Bool {
         let defaults = NSUserDefaults.standardUserDefaults()
-        let soundPref = defaults.boolForKey(StorageService.soundPrefStorageKey)
-        return soundPref
+        return defaults.boolForKey(StorageKeys.SoundOnFlag.rawValue)
     }
 
     class func toggleSoundPreference() {
         let currentPreference = currentSoundPreference()
         let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.setBool(!currentPreference, forKey:StorageService.soundPrefStorageKey)
+        defaults.setBool(!currentPreference, forKey:StorageKeys.SoundOnFlag.rawValue)
+    }
+
+    class func toggleFeatureAnnouncementsFlag() -> Bool {
+        let shouldShow = !hasSeenFeatureAnnouncement(.Undo)
+        markFeatureAnnouncementSeen(.Undo)
+        return shouldShow
+    }
+
+    class func hasSeenFeatureAnnouncement(featureAnnouncement: StorageKeys.FeatureAnnouncements) -> Bool {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        return defaults.boolForKey(featureAnnouncement.rawValue)
+    }
+
+    class func markFeatureAnnouncementSeen(featureAnnouncement: StorageKeys.FeatureAnnouncements) {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        defaults.setBool(true, forKey:featureAnnouncement.rawValue)
     }
 }

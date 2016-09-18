@@ -11,13 +11,13 @@ import AVFoundation
 
 class Play: UIViewController {
 
+    private var panTriggered: Bool = false
+
     private static let defaultBGColor = UIColor.themeColor(.OffWhite)
     private static let gameplayBGColor = UIColor.themeColor(.OffWhiteShaded)
 
-    private static let gridInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-
     private static let maxNextRoundPullUpThreshold: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 160 : 120
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 140 : 120
     }()
 
     var game: Game
@@ -25,23 +25,27 @@ class Play: UIViewController {
     let menu: Menu
     let gameGrid: GameGrid
     private var nextRoundGrid: NextRoundGrid?
-    private let nextRoundNotification = Notification()
-    private let gamePlayMessageNotification = Notification()
+    private let nextRoundNotification = Notification(type: .Text)
+    private let gamePlayMessageNotification = Notification(type: .Text)
+    private let undoNotification = Notification(type: .Icon)
+    private let undoErrorNotification = Notification(type: .Text)
 
     private var passedNextRoundThreshold = false
 
     private var viewHasLoaded = false
     private var viewHasAppeared = false
+    private var shouldShowUpdatesModal: Bool
     private var shouldLaunchOnboarding: Bool
     private var isOnboarding: Bool
 
-    init(shouldLaunchOnboarding: Bool, isOnboarding: Bool = false) {
+    init(shouldShowUpdatesModal: Bool, shouldLaunchOnboarding: Bool, isOnboarding: Bool = false) {
         let savedGame = StorageService.restoreGame()
 
         // If we do *somehow* have a saved game, don't mess with it and just show them
         // the regular Play screen
         self.shouldLaunchOnboarding = shouldLaunchOnboarding && savedGame == nil
         self.isOnboarding = isOnboarding && savedGame == nil
+        self.shouldShowUpdatesModal = shouldShowUpdatesModal
 
         self.game = savedGame == nil ? Game() : savedGame!
         self.gameGrid = GameGrid(game: game)
@@ -64,15 +68,21 @@ class Play: UIViewController {
         menu.onTapNewGame = confirmNewGame
         menu.onTapInstructions = showInstructions
 
-        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(Play.showInstructions))
-        swipe.direction = .Left
+        let pan = UIPanGestureRecognizer(target: self, action: #selector(Play.detectPan))
+
+        undoErrorNotification.anchorEdge = .Top
+        undoErrorNotification.text = "Nothing to undo"
+        undoNotification.anchorEdge = .Left
+        undoNotification.iconName = "undo"
 
         view.backgroundColor = Play.defaultBGColor
-        view.addGestureRecognizer(swipe)
+        view.addGestureRecognizer(pan)
         view.addSubview(gameGrid)
         view.addSubview(menu)
         view.addSubview(gamePlayMessageNotification)
         view.addSubview(nextRoundNotification)
+        view.addSubview(undoNotification)
+        view.addSubview(undoErrorNotification)
     }
 
     override func viewDidLoad() {
@@ -82,11 +92,17 @@ class Play: UIViewController {
         var gameGridFrame = view.bounds
         gameGridFrame.size.width = min(540, gameGridFrame.size.width)
         gameGridFrame.origin.x = (view.bounds.size.width - gameGridFrame.size.width) / 2
-        gameGrid.initialisePositionWithinFrame(gameGridFrame, withInsets: Play.gridInsets)
 
-        positionMenu()
+        let insets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        gameGrid.initialisePositionWithinFrame(gameGridFrame, withInsets: insets)
+
+        menu.emptySpaceAvailable = gameGrid.emptySpaceVisible
+        menu.anchorFrame = view.bounds
+
         nextRoundNotification.toggle(inFrame: view.bounds, showing: false)
         gamePlayMessageNotification.toggle(inFrame: view.bounds, showing: false)
+        undoErrorNotification.toggle(inFrame: view.bounds, showing: false)
+        undoNotification.toggle(inFrame: view.bounds, showing: false)
         initNextRoundMatrix()
 
         gameGrid.snapToStartingPositionThreshold = 50
@@ -108,22 +124,27 @@ class Play: UIViewController {
         super.viewDidAppear(animated)
 
         if shouldLaunchOnboarding {
-            let onboarding = PlayWithOnboarding()
+            let onboarding = Onboarding()
             onboarding.onWillDismissWithGame = handleOnboardingWillDismissWithGame
             presentViewController(onboarding, animated: false, completion: nil)
             shouldLaunchOnboarding = false
+            return
+        }
+
+        if shouldShowUpdatesModal {
+            presentViewController(UpdatesModal(), animated: true, completion: nil)
+            shouldShowUpdatesModal = false
         } else if isOnboarding {
             menu.onboardingSteps.begin()
-            viewHasAppeared = true
-        } else {
-            viewHasAppeared = true
         }
+
+        viewHasAppeared = true
     }
 
     private func initNextRoundMatrix() {
         let nextRoundValues = game.nextRoundValues()
         nextRoundGrid = NextRoundGrid(cellsPerRow: Game.numbersPerRow,
-                                      startIndex: nextRoundStartIndex(),
+                                      startIndex: game.lastNumberColumn() + 1,
                                       values: nextRoundValues,
                                       frame: gameGrid.frame)
         nextRoundGrid?.hide(animated: false)
@@ -134,25 +155,6 @@ class Play: UIViewController {
     }
 
     // MARK: Positioning
-
-    private func positionMenu() {
-        guard !menu.animationInProgress && !menu.hidden else { return }
-        menu.frame = menuFrame()
-    }
-
-    private func menuFrame(atStartingPosition atStartingPosition: Bool = false) -> CGRect {
-        var menuFrame = gameGrid.frame
-        let maxMenuHeight = gameGrid.emptySpaceVisible(atStartingPosition: true)
-
-        if atStartingPosition {
-            menuFrame.size.height = maxMenuHeight
-        } else {
-            let requestedMenuHeight = gameGrid.emptySpaceVisible()
-            menuFrame.size.height = min(maxMenuHeight, requestedMenuHeight)
-        }
-
-        return menuFrame
-    }
 
     private func positionNextRoundGrid() {
         var nextRoundMatrixFrame = gameGrid.frame
@@ -186,6 +188,15 @@ class Play: UIViewController {
     }
 
     private func restart(withGame newGame: Game = Game(), inGameplayPosition: Bool = false) {
+        // Confusing wording: whenever we click Start Over, the menu is already visible,
+        // and already in the starting position, so this is not needed, EXCEPT for one case –
+        // straight after onboarding. In this case, the menu is visible, but not in the starting
+        // position. We need to animate it to its starting position along with the new game
+        // animation.
+        if !inGameplayPosition {
+            menu.nudgeToDefaultPositionIfNeeded()
+        }
+
         game = newGame
         gameGrid.restart(withGame: game,
                          animated: !inGameplayPosition,
@@ -194,14 +205,10 @@ class Play: UIViewController {
             self.updateNextRoundNotificationText()
             self.updateState()
             self.nextRoundGrid?.hide(animated: false)
-
-            let menuEndPosition = self.menuFrame(atStartingPosition: !inGameplayPosition)
-            self.menu.showIfNeeded(atEndPosition: menuEndPosition)
-
-            self.view.backgroundColor = inGameplayPosition ?
-                                        Play.gameplayBGColor :
-                                        Play.defaultBGColor
+            self.menu.showIfNeeded(atDefaultPosition: !inGameplayPosition)
         })
+
+        view.backgroundColor = inGameplayPosition ? Play.gameplayBGColor : Play.defaultBGColor
     }
 
     func showInfoModal() {
@@ -214,30 +221,100 @@ class Play: UIViewController {
 
     // MARK: Gameplay logic
 
-    private func handlePairingAttempt(index: Int, otherIndex: Int) {
-        let successfulPairing = Pairing.validate(index, otherIndex, inGame: game)
+    private func handlePairingAttempt(pair: Pair) {
+        let successfulPairing = Pairing.validate(pair, inGame: game)
 
         if successfulPairing {
-            handleSuccessfulPairing(index, otherIndex: otherIndex)
+            handleSuccessfulPairing(pair)
         } else {
             gameGrid.dismissSelection()
         }
     }
 
-    func handleSuccessfulPairing(index: Int, otherIndex: Int) {
-        game.crossOutPair(index, otherIndex: otherIndex)
-        gameGrid.crossOutPair(index, otherIndex: otherIndex)
+    func handleSuccessfulPairing(pair: Pair) {
+        game.crossOut(pair)
+        gameGrid.crossOut(pair)
         updateNextRoundNotificationText()
         updateState()
-        removeSurplusRows(containingIndeces: index, otherIndex)
+
+        if removeSurplusRows(containingItemsFrom: pair) {
+            playSound(.CrossOutRow)
+        } else {
+            playSound(.CrossOut)
+        }
+
         checkForNewlyUnrepresentedValues()
+    }
+
+    func detectPan(recognizer: UIPanGestureRecognizer) {
+        guard recognizer.state == .Changed else {
+            panTriggered = recognizer.state == .Ended
+            return
+        }
+
+        guard !panTriggered else { return }
+        guard abs(recognizer.translationInView(view).x) > 70 else { return }
+
+        if recognizer.velocityInView(view).x > 0 {
+           undoLatestMove()
+        } else {
+           showInstructions()
+        }
+
+        panTriggered = true
+    }
+
+    func undoLatestMove() {
+        guard !gameGrid.gridAtStartingPosition else { return }
+        guard !gameGrid.rowRemovalInProgress else { return }
+        guard game.latestMoveType() != nil else {
+            undoErrorNotification.popup(forSeconds: 3, inFrame: view.bounds)
+            return
+        }
+
+        menu.hideIfNeeded() // This only applies when returning from onboarding
+
+        if game.latestMoveType() == .CrossingOutPair {
+            undoLatestPairing()
+        } else if game.latestMoveType() == .LoadingNextRound {
+            undoNewRound()
+        }
+
+        undoNotification.flash(inFrame: view.bounds)
+    }
+
+    func undoNewRound() {
+        if let indeces = game.undoNewRound() {
+            gameGrid.removeRows(withNumberIndeces: indeces, completion: {
+                self.updateNextRoundNotificationText()
+                self.updateState()
+            })
+        }
+    }
+
+    func undoLatestPairing() {
+        let undoPairing: ((delay: Double) -> Void) = { delay in
+            if let pair = self.game.undoLatestPairing() {
+                self.gameGrid.unCrossOut(pair, withDelay: delay)
+                self.updateNextRoundNotificationText()
+                self.updateState()
+            }
+        }
+
+        if let newRowIndeces = game.undoRowRemoval() {
+            gameGrid.addRows(atIndeces: newRowIndeces, completion: {
+                undoPairing(delay: 0.3)
+            })
+        } else {
+            undoPairing(delay: 0)
+        }
     }
 
     // Instead of calling reloadData on the entire matrix, dynamically add the next round
     // This function assumes that the state of the game has diverged from the state of
     // the collectionView.
-    private func loadNextRound() -> Bool {
-        let nextRoundStartIndex = game.totalNumbers()
+    private func loadNextRound() {
+        let nextRoundStartIndex = game.numberCount()
         let nextRoundNumbers = game.nextRoundNumbers()
 
         if game.makeNextRound(usingNumbers: nextRoundNumbers) {
@@ -245,43 +322,30 @@ class Play: UIViewController {
             let nextRoundIndeces = Array(nextRoundStartIndex...nextRoundEndIndex)
             gameGrid.loadNextRound(atIndeces: nextRoundIndeces, completion: nil)
             updateState()
+        }
+    }
+
+    private func removeSurplusRows(containingItemsFrom pair: Pair) -> Bool {
+        let surplusIndeces = game.removeRowsIfNeeded(containingItemsFrom: pair)
+
+        if surplusIndeces.count > 0 {
+            gameGrid.removeRows(withNumberIndeces: surplusIndeces, completion: {
+                if self.game.ended() {
+                    StorageService.saveGameSnapshot(self.game, forced: true)
+                    self.presentViewController(GameFinished(game: self.game),
+                                               animated: true,
+                                               completion: { _ in
+                        self.restart()
+                    })
+                } else {
+                    self.updateState()
+                }
+            })
+
             return true
         } else {
             return false
         }
-    }
-
-    private func nextRoundStartIndex() -> Int {
-        return game.lastNumberColumn() + 1
-    }
-
-    private func removeSurplusRows(containingIndeces index: Int, _ otherIndex: Int) {
-        let surplusIndeces = game.surplusIndecesOnRows(containingIndeces: [index, otherIndex])
-
-        if surplusIndeces.count > 0 {
-            playSound(.CrossOutRow)
-            removeNumbers(atIndeces: surplusIndeces)
-        } else {
-            playSound(.CrossOut)
-        }
-    }
-
-    private func removeNumbers(atIndeces indeces: Array<Int>) {
-        game.removeNumbers(atIndeces: indeces)
-        let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
-
-        gameGrid.removeNumbers(atIndexPaths: indexPaths, completion: {
-            if self.game.ended() {
-                StorageService.saveGameSnapshot(self.game, forced: true)
-                self.presentViewController(GameFinished(game: self.game),
-                                           animated: true,
-                                           completion: { _ in
-                    self.restart()
-                })
-            } else {
-                self.updateState()
-            }
-        })
     }
 
     private func checkForNewlyUnrepresentedValues() {
@@ -289,7 +353,7 @@ class Play: UIViewController {
 
         if unrepresented.count > 0 && game.numbersRemaining() > 10 {
             gamePlayMessageNotification.newlyUnrepresentedNumber = unrepresented[0]
-            gamePlayMessageNotification.flash(forSeconds: 3,
+            gamePlayMessageNotification.popup(forSeconds: 3,
                                               inFrame: view.bounds,
                                               completion: {
                 self.game.pruneValueCounts()
@@ -301,14 +365,14 @@ class Play: UIViewController {
 
     private func updateState() {
         let nextRoundValues = game.nextRoundValues()
-        nextRoundGrid!.update(startIndex: nextRoundStartIndex(), values: nextRoundValues)
+        nextRoundGrid!.update(startIndex: game.lastNumberColumn() + 1, values: nextRoundValues)
         gameGrid.pullUpThreshold = calcNextRoundPullUpThreshold(nextRoundValues.count)
         StorageService.saveGame(game)
     }
 
     private func updateNextRoundNotificationText() {
         // swiftlint:disable:next line_length
-        nextRoundNotification.text = "ROUND \(game.currentRound + 1)   |   + \(game.numbersRemaining())"
+        nextRoundNotification.text = "ROUND \(game.currentRound + 1)   |   + \(game.numbersRemaining())  nums"
     }
 
     private func playSound(sound: Sound) {
@@ -321,7 +385,7 @@ class Play: UIViewController {
 
     private func handleWillSnapToStartingPosition() {
         view.backgroundColor = Play.defaultBGColor
-        menu.showIfNeeded(atEndPosition: menuFrame(atStartingPosition: true))
+        menu.showIfNeeded(atDefaultPosition: true)
     }
 
     func handleWillSnapToGameplayPosition() {
@@ -334,8 +398,7 @@ class Play: UIViewController {
 
     func handlePullUpThresholdExceeded() {
         nextRoundGrid?.hide(animated: false)
-        nextRoundNotification.dismiss(inFrame: view.bounds,
-                                      completion: {
+        nextRoundNotification.dismiss(inFrame: view.bounds, completion: {
             self.updateNextRoundNotificationText()
         })
         loadNextRound()
@@ -359,9 +422,7 @@ class Play: UIViewController {
                     playSound(.NextRound)
                     passedNextRoundThreshold = true
                     gamePlayMessageNotification.toggle(inFrame: view.bounds, showing: false)
-                    nextRoundNotification.toggle(inFrame: view.bounds,
-                                                 showing: true,
-                                                 animated: true)
+                    nextRoundNotification.toggle(inFrame: view.bounds, showing: true, animated: true)
                 }
             } else {
                 nextRoundNotification.toggle(inFrame: view.bounds, showing: false, animated: true)
@@ -374,18 +435,16 @@ class Play: UIViewController {
             passedNextRoundThreshold = false
         }
 
-        positionMenu()
+        menu.position()
     }
 
     private func handlePullingDown(withFraction fraction: CGFloat) {
         guard menu.hidden else { return }
-        view.backgroundColor = Play.gameplayBGColor.interpolateTo(Play.defaultBGColor,
-                                                                  fraction: fraction)
+        view.backgroundColor = Play.gameplayBGColor.interpolateTo(Play.defaultBGColor, fraction: fraction)
     }
 
     private func handlePullingUpFromStartingPosition(withFraction fraction: CGFloat) {
-        view.backgroundColor = Play.defaultBGColor.interpolateTo(Play.gameplayBGColor,
-                                                                     fraction: fraction)
+        view.backgroundColor = Play.defaultBGColor.interpolateTo(Play.gameplayBGColor, fraction: fraction)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -399,6 +458,6 @@ class Play: UIViewController {
         restart(withGame: onboardingGame, inGameplayPosition: true)
 
         // Don't know why... Possibly because we don't call handleScroll()
-        positionMenu()
+        menu.position()
     }
 }

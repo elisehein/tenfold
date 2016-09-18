@@ -8,14 +8,14 @@
   ],
   [
     "You can remove pairs of identical numbers that are next to each other.",
-    "For example..."
+    "Give it a go..."
   ],
   [
      "Numbers can also pair if they make up 10."
   ],
   [
     "Out of pairs?",
-    "Slide up for the next round."
+    "Slide up to peek at the next round of numbers.\nRelease to add them to the game."
   ],
   [
      "That's it!",

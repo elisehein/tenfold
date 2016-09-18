@@ -36,13 +36,20 @@ class Menu: UIView {
     private let newGameButton = Button()
     private let instructionsButton = Button()
     private let soundButton = Button()
-    private let showMenuTip = Notification()
+    private let showMenuTip = Notification(type: .Text)
     let onboardingSteps = OnboardingSteps()
 
     private var hasLoadedConstraints = false
     private let state: MenuState
     private var shouldShowTips: Bool
 
+    var anchorFrame: CGRect = CGRect.zero {
+        didSet {
+            position()
+        }
+    }
+
+    var emptySpaceAvailable: ((atDefaultPosition: Bool) -> CGFloat)?
     var onTapLogo: (() -> Void)?
     var onTapNewGame: (() -> Void)?
     var onTapInstructions: (() -> Void)?
@@ -178,6 +185,17 @@ class Menu: UIView {
         }
     }
 
+    private func showTipsIfNeeded() {
+        if shouldShowTips {
+            UIApplication.sharedApplication().delegate?.window??.addSubview(showMenuTip)
+            let windowFrame = showMenuTip.superview?.bounds
+            showMenuTip.anchorEdge = .Top
+            showMenuTip.toggle(inFrame: windowFrame!, showing: false)
+            showMenuTip.popup(forSeconds: 4, inFrame: windowFrame!)
+            shouldShowTips = false
+        }
+    }
+
     func hideIfNeeded(animated animated: Bool = true) {
         guard !hidden else { return }
         animationInProgress = true
@@ -187,7 +205,7 @@ class Menu: UIView {
                                    delay: 0,
                                    options: .CurveEaseIn,
                                    animations: {
-            self.frame = self.offScreen(lockedFrame)
+            self.frame = self.offScreenFrame(givenFrame: lockedFrame)
             self.alpha = 0
         }, completion: { _ in
             self.hidden = true
@@ -196,20 +214,22 @@ class Menu: UIView {
         })
     }
 
-    private func showTipsIfNeeded() {
-        if shouldShowTips {
-            UIApplication.sharedApplication().delegate?.window??.addSubview(showMenuTip)
-            let windowFrame = showMenuTip.superview?.bounds
-            showMenuTip.anchorEdge = .Top
-            showMenuTip.toggle(inFrame: windowFrame!, showing: false)
-            showMenuTip.flash(forSeconds: 4, inFrame: windowFrame!)
-            shouldShowTips = false
+    func showIfNeeded(atDefaultPosition atDefaultPosition: Bool) {
+        guard hidden else { return }
+        hidden = false
+        let endPosition = visibleFrame(atDefaultPosition: atDefaultPosition)
+        animatePosition(withEndPosition: endPosition)
+    }
+
+    func nudgeToDefaultPositionIfNeeded() {
+        let defaultFrame = visibleFrame(atDefaultPosition: true)
+
+        if !hidden && !CGRectEqualToRect(frame, defaultFrame) {
+            animatePosition(withEndPosition: defaultFrame)
         }
     }
 
-    func showIfNeeded(atEndPosition endPosition: CGRect) {
-        guard hidden else { return }
-        hidden = false
+    func animatePosition(withEndPosition endPosition: CGRect) {
         animationInProgress = true
 
         UIView.animateWithDuration(0.3,
@@ -218,12 +238,37 @@ class Menu: UIView {
                                    animations: {
             self.frame = endPosition
             self.alpha = 1
+
+            // This seems to only be needed when the frame animates its height,
+            // not its full position. In practice, this occurs only when we tap Start Over
+            // straight after onboarding, when the menu is visible, but not in its default
+            // starting position.
+            self.layoutIfNeeded()
         }, completion: { _ in
             self.animationInProgress = false
         })
     }
 
-    private func offScreen(rect: CGRect) -> CGRect {
+    func position() {
+        guard !animationInProgress && !hidden else { return }
+        frame = visibleFrame()
+    }
+
+    private func visibleFrame(atDefaultPosition atDefaultPosition: Bool = false) -> CGRect {
+        var menuFrame = anchorFrame
+        let maxHeight = emptySpaceAvailable!(atDefaultPosition: true)
+
+        if atDefaultPosition {
+            menuFrame.size.height = maxHeight
+        } else {
+            let availableHeight = emptySpaceAvailable!(atDefaultPosition: false)
+            menuFrame.size.height = min(maxHeight, availableHeight)
+        }
+
+        return menuFrame
+    }
+
+    private func offScreenFrame(givenFrame rect: CGRect) -> CGRect {
         var offScreenRect = rect
         offScreenRect.origin.y = -rect.size.height
         return offScreenRect

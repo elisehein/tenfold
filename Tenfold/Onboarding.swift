@@ -1,5 +1,5 @@
 //
-//  PlayWithOnboarding.swift
+//  Onboarding.swift
 //  Tenfold
 //
 //  Created by Elise Hein on 02/09/2016.
@@ -9,15 +9,15 @@
 import Foundation
 import UIKit
 
-class PlayWithOnboarding: Play {
+class Onboarding: Play {
 
     var flashTimer: NSTimer?
-    var indecesToFlash: Array<Int> = []
+    var indecesToFlash: [Int] = []
 
     var onWillDismissWithGame: ((game: Game) -> Void)?
 
     init() {
-        super.init(shouldLaunchOnboarding: false, isOnboarding: true)
+        super.init(shouldShowUpdatesModal: false, shouldLaunchOnboarding: false, isOnboarding: true)
 
         modalTransitionStyle = .CrossDissolve
 
@@ -47,7 +47,10 @@ class PlayWithOnboarding: Play {
         switch onboardingStep {
         case .AimOfTheGame:
             // swiftlint:disable:next line_length
-            NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(PlayWithOnboarding.previewCrossedOutGrid), userInfo: nil, repeats: false)
+            NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(Onboarding.flashGrid), userInfo: nil, repeats: false)
+
+            // swiftlint:disable:next line_length
+            NSTimer.scheduledTimerWithTimeInterval(4.5, target: self, selector: #selector(Onboarding.transitionToNextStep), userInfo: nil, repeats: false)
         case .CrossOutIdentical:
             hintAtPairing([10, 19])
         case .CrossOutSummandsOfTen:
@@ -57,6 +60,9 @@ class PlayWithOnboarding: Play {
             gameGrid.indecesPermittedForSelection = []
             gameGrid.userInteractionEnabled = true
             gameGrid.scrollEnabled = true
+        case .LastTips:
+            // swiftlint:disable:next line_length
+            NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: #selector(Onboarding.transitionToNextStep), userInfo: nil, repeats: false)
         case .Empty:
             handleDismissal()
         default:
@@ -64,7 +70,7 @@ class PlayWithOnboarding: Play {
         }
     }
 
-    private func hintAtPairing(pairIndeces: Array<Int>) {
+    private func hintAtPairing(pairIndeces: [Int]) {
         gameGrid.indecesPermittedForSelection = pairIndeces
         gameGrid.userInteractionEnabled = true
         gameGrid.scrollEnabled = false
@@ -72,7 +78,7 @@ class PlayWithOnboarding: Play {
 
         flashPairing()
         // swiftlint:disable:next line_length
-        flashTimer = NSTimer.scheduledTimerWithTimeInterval(3, target: self, selector: #selector(PlayWithOnboarding.flashPairing), userInfo: nil, repeats: true)
+        flashTimer = NSTimer.scheduledTimerWithTimeInterval(3, target: self, selector: #selector(Onboarding.flashPairing), userInfo: nil, repeats: true)
     }
 
     func flashPairing() {
@@ -80,14 +86,18 @@ class PlayWithOnboarding: Play {
                               withColor: UIColor.themeColor(.Accent))
     }
 
-    func previewCrossedOutGrid() {
+    func flashGrid() {
         gameGrid.flashNumbers(atIndeces: Array(0..<27),
                               withColor: UIColor.themeColor(.OffWhiteShaded))
     }
 
-    override func handleSuccessfulPairing(index: Int, otherIndex: Int) {
+    func transitionToNextStep() {
+        menu.onboardingSteps.transitionToNextStep()
+    }
+
+    override func handleSuccessfulPairing(pair: Pair) {
         flashTimer?.invalidate()
-        super.handleSuccessfulPairing(index, otherIndex: otherIndex)
+        super.handleSuccessfulPairing(pair)
 
         if menu.onboardingSteps.currentStep == .CrossOutIdentical &&
            game.numbersCrossedOut() <= 2 {
@@ -98,6 +108,10 @@ class PlayWithOnboarding: Play {
         } else {
             menu.onboardingSteps.transitionToNextStep()
         }
+    }
+
+    override func detectPan(recognizer: UIPanGestureRecognizer) {
+        // Do nothing
     }
 
     override func handlePullUpThresholdExceeded() {

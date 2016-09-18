@@ -26,7 +26,7 @@ class ConfirmationModal: ModalOverlay {
 
     init(game: Game) {
         self.game = game
-        super.init()
+        super.init(position: .Bottom)
 
         titleLabel.text = "Are you sure?"
         titleLabel.font = UIFont.themeFontWithSize(15, weight: .Bold)
@@ -66,38 +66,20 @@ class ConfirmationModal: ModalOverlay {
 
     override func updateViewConstraints() {
         if !hasLoadedConstraints {
-
-            var horizontalInset: CGFloat = 40
-            var contentPadding: CGFloat = 40
-            var titleTextSpacing: CGFloat = 15
-
-            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-                horizontalInset = 80
-                contentPadding = 70
-                titleTextSpacing = 25
-
-                modal.autoSetDimension(.Width, toSize: 460)
-                modal.autoCenterInSuperview()
-            } else {
-                modal.autoPinEdgeToSuperviewEdge(.Left, withInset: 10)
-                modal.autoPinEdgeToSuperviewEdge(.Bottom, withInset: 10)
-                modal.autoPinEdgeToSuperviewEdge(.Right, withInset: 10)
-            }
-
             titleLabel.autoAlignAxisToSuperviewAxis(.Vertical)
             titleLabel.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
-            titleLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: contentPadding)
+            titleLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: ModalOverlay.contentPadding)
 
-            textLabel.autoPinEdgeToSuperviewEdge(.Left, withInset: horizontalInset)
-            textLabel.autoPinEdgeToSuperviewEdge(.Right, withInset: horizontalInset)
+            textLabel.autoPinEdgeToSuperviewEdge(.Left, withInset: ModalOverlay.horizontalInset)
+            textLabel.autoPinEdgeToSuperviewEdge(.Right, withInset: ModalOverlay.horizontalInset)
             textLabel.autoPinEdge(.Top,
                                   toEdge: .Bottom,
                                   ofView: titleLabel,
-                                  withOffset: titleTextSpacing)
+                                  withOffset: ModalOverlay.titleTextSpacing)
             textLabel.autoPinEdge(.Bottom,
                                   toEdge: .Top,
                                   ofView: yesButton,
-                                  withOffset: -contentPadding)
+                                  withOffset: -ModalOverlay.contentPadding)
 
             yesButton.autoAlignAxisToSuperviewAxis(.Vertical)
             yesButton.autoPinEdge(.Bottom, toEdge: .Top, ofView: cancelButton, withOffset: 2)
@@ -124,21 +106,21 @@ class ConfirmationModal: ModalOverlay {
 
         if uniqueValues < 6 {
             text = "You've got only \(uniqueValues) unique numbers left. Really quit now?"
+        } else if numbersRemaining == 1 {
+            text = "You've got ONE number left – finish it!"
         } else if numbersRemaining <= 20 {
-            let toGoPhrase = numbersRemaining > 1 ? "numbers to go." : "number left!"
-            text = "You've only got \(numbersRemaining) \(toGoPhrase) " +
+            text = "You've only got \(numbersRemaining) numbers to go. " +
                    randomMotivationalQuote()
         } else if RankingService.singleton.gameIsLongerThanCurrentLongest(game) {
            text = "This is your longest game to date. Do you really want to quit now?"
         } else if historicNumbersCrossedOut > 10 {
-            text = "You've gotten rid of \(historicNumbersCrossedOut) " +
-                   "numbers already. " + randomMotivationalQuote()
+            text = "You've got \(numbersRemaining) numbers left. " + randomMotivationalQuote()
         } else {
-            text = "You're only on round \(game.currentRound). " +
+            text = "You've only been playing for \(game.currentRound) rounds. " +
                    randomMotivationalQuote()
         }
 
-        textLabel.attributedText = constructAttributedString(withText: text)
+        textLabel.attributedText = NSAttributedString.styled(as: .Paragraph, usingText: text)
     }
 
     func didTapYes() {
@@ -149,28 +131,6 @@ class ConfirmationModal: ModalOverlay {
 
     func didTapCancel() {
         dismissViewControllerAnimated(true, completion: nil)
-    }
-
-    private func constructAttributedString(withText text: String) -> NSAttributedString {
-
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 5
-        paragraphStyle.alignment = .Center
-
-        var font = UIFont.themeFontWithSize(14)
-
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            font = UIFont.themeFontWithSize(18)
-            paragraphStyle.lineSpacing = 7
-        }
-
-        let attributes = [
-            NSParagraphStyleAttributeName: paragraphStyle,
-            NSFontAttributeName: font,
-            NSForegroundColorAttributeName: UIColor.themeColor(.OffBlack)
-        ]
-
-        return NSAttributedString(string: text, attributes: attributes)
     }
 
     private func randomMotivationalQuote() -> String {

@@ -48,7 +48,7 @@ class NextRoundGrid: Grid {
 
     private let reuseIdentifier = "NextRoundCell"
 
-    var values: Array<Int?>
+    var values: [Int?]
     private let cellsPerRow: Int
     private var startIndex: Int
 
@@ -81,7 +81,7 @@ class NextRoundGrid: Grid {
         }
     }
 
-    init(cellsPerRow: Int, startIndex: Int, values: Array<Int?>, frame: CGRect) {
+    init(cellsPerRow: Int, startIndex: Int, values: [Int?], frame: CGRect) {
 
         self.cellsPerRow = cellsPerRow
         self.values = values
@@ -95,7 +95,7 @@ class NextRoundGrid: Grid {
         delegate = self
     }
 
-    func update(startIndex startIndex: Int, values: Array<Int?>) {
+    func update(startIndex startIndex: Int, values: [Int?]) {
         self.startIndex = startIndex
         self.values = values
         revealValues = false
