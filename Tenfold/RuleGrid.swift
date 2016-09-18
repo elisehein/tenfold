@@ -256,6 +256,7 @@ class RuleGrid: Grid {
 
     func prepareForReuse() {
         firstPairingDone = false
+        gesture.hidden = animationType == .Pairings
         reloadData()
     }
 
