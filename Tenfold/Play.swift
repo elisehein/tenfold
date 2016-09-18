@@ -17,7 +17,7 @@ class Play: UIViewController {
     private static let gameplayBGColor = UIColor.themeColor(.OffWhiteShaded)
 
     private static let maxNextRoundPullUpThreshold: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 160 : 120
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 140 : 120
     }()
 
     var game: Game

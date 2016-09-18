@@ -106,9 +106,9 @@ class GameGridCell: UICollectionViewCell {
     }
 
     func reveal() {
-        UIView.animateWithDuration(0.15, animations: {
+        UIView.animateWithDuration(0.15, delay: 0, options: .AllowUserInteraction, animations: {
             self.contentView.alpha = 1
-        })
+        }, completion: nil)
     }
 
     func fadeOutContentMomentarily(forSeconds seconds: Double,
