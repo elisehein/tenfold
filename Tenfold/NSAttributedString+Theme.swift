@@ -42,7 +42,7 @@ extension NSAttributedString {
     private class func color(forTextStyle textStyle: TextStyle) -> UIColor {
         switch textStyle {
         case .Notification:
-            return UIColor.themeColor(.OffWhite)
+            return UIColor.whiteColor().colorWithAlphaComponent(0.95)
         default:
             return UIColor.themeColor(.OffBlack)
         }

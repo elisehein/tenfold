@@ -372,7 +372,7 @@ class Play: UIViewController {
 
     private func updateNextRoundNotificationText() {
         // swiftlint:disable:next line_length
-        nextRoundNotification.text = "ROUND \(game.currentRound + 1)   |   + \(game.numbersRemaining())"
+        nextRoundNotification.text = "ROUND \(game.currentRound + 1)   |   + \(game.numbersRemaining())  nums"
     }
 
     private func playSound(sound: Sound) {

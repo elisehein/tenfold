@@ -114,10 +114,14 @@ class Notification: UIView {
     private func constructAttributedString(withText text: String) -> NSMutableAttributedString {
         let attrString = NSAttributedString.styled(as: .Notification, usingText: text)
 
-        if let barIndex = text.indexOfCharacter("|") {
-            attrString.addAttribute(NSForegroundColorAttributeName,
-                                    value: UIColor.themeColor(.OffWhite).colorWithAlphaComponent(0.4),
-                                    range: NSRange(location: barIndex, length: 1))
+        let grayedOutSubstrings = ["|", "nums"]
+
+        for substring in grayedOutSubstrings {
+            if let index = text.indexOf(substring) {
+                attrString.addAttribute(NSForegroundColorAttributeName,
+                                        value: UIColor.whiteColor().colorWithAlphaComponent(0.55),
+                                        range: NSRange(location: index, length: substring.characters.count))
+            }
         }
 
         return attrString
