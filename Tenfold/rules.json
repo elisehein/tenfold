@@ -42,7 +42,7 @@
     "examples": [
       {
         "animationType": "PAIRINGS",
-        "text": "So long as two numbers don't have anything in between them, you can pair\u00a0them\u00a0up.",
+        "text": "So long as two numbers don't have anything in between, you can pair\u00a0them\u00a0up.",
         "values": [null, null, null, 3   , null, null, null, null, 2   ,
                    2   , null, null, null, null, 7   , null, null, 5   ,
                    null, null, null, 5   , null, null, null, null, null],
