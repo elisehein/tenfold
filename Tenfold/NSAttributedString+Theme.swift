@@ -13,6 +13,7 @@ enum TextStyle {
     case Title
     case Paragraph
     case Notification
+    case Tip
 }
 
 extension NSAttributedString {
@@ -23,7 +24,7 @@ extension NSAttributedString {
         paragraphStyle.alignment = .Center
 
         let font = UIFont.themeFontWithSize(fontSize(forTextStyle: textStyle),
-                                            weight: textStyle == .Title ? .Bold : .Regular)
+                                            weight: fontWeight(forTextStyle: textStyle))
 
         var attributes = [
             NSParagraphStyleAttributeName: paragraphStyle,
@@ -57,6 +58,8 @@ extension NSAttributedString {
                 return 0
             case .Title:
                 return 7
+            case .Tip:
+                return 5
             }
 
         } else {
@@ -68,6 +71,8 @@ extension NSAttributedString {
                 return 0
             case .Title:
                 return 7
+            case .Tip:
+                return 4
             }
         }
     }
@@ -82,6 +87,8 @@ extension NSAttributedString {
                 return 16
             case .Title:
                 return 22
+            case .Tip:
+                return 14
             }
 
         } else {
@@ -93,8 +100,21 @@ extension NSAttributedString {
                 return 13
             case .Title:
                 return 16
+            case .Tip:
+                return 13
             }
         }
 
+    }
+
+    private class func fontWeight(forTextStyle textStyle: TextStyle) -> FontWeight {
+        switch textStyle {
+        case .Title:
+            return .Bold
+        case .Tip:
+            return .Italic
+        default:
+            return .Regular
+        }
     }
 }

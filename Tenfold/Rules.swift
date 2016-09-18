@@ -210,6 +210,7 @@ extension Rules: UICollectionViewDataSource {
         if let cell = cell as? RuleCell {
             let example = Rules.data[indexPath.section]["examples"][indexPath.item]
             cell.text = example["text"].string
+            cell.detailText = example["detailText"].string
             cell.gridValues = example["values"].arrayValue.map({ $0.int })
             cell.gridCrossedOutIndeces = example["crossedOut"].arrayValue.map({ $0.int! })
             cell.gridAnimationType = RuleGridAnimationType(rawValue: example["animationType"].string!)!

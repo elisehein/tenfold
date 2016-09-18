@@ -52,11 +52,12 @@
     ]
   },
   {
-    "title": "Out of pairs? Slide up for the\u00a0next\u00a0round.",
+    "title": "Out of pairs? Slide up to keep\u00a0going.",
     "examples": [
       {
         "animationType": "PULL_UP",
-        "text": "Any numbers left over will be added to the game. Add less numbers each time\u00a0and\u00a0win!",
+        "text": "Any numbers left over will be added to the game. Add less numbers each round\u00a0and\u00a0win!",
+        "detailText": "TIP!\u2002Plan ahead by taking peeks at the next round.\nSlide up \u2014 peek \u2014 slide back down.",
         "values": [1   , 5   , null, null, null, null, null, null, null,
                    null, null, 2   , 5   , null, null, 2   , 1   , null,
                    null, null, null, 7   , null, null, null, 4   , 1  ,

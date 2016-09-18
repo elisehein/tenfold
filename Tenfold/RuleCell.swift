@@ -11,7 +11,15 @@ import UIKit
 
 class RuleCell: UICollectionViewCell {
 
-    private static let widthFactor: CGFloat = {
+    private static let textWidthFactor: CGFloat = {
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            return 0.5
+        } else {
+            return 0.88
+        }
+    }()
+
+    private static let gridWidthFactor: CGFloat = {
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
             return 0.5
         } else {
@@ -32,6 +40,14 @@ class RuleCell: UICollectionViewCell {
         didSet {
             if let text = text {
                 label.attributedText = NSAttributedString.styled(as: .Paragraph, usingText: text)
+            }
+        }
+    }
+
+    var detailText: String? {
+        didSet {
+            if let detailText = detailText {
+                detailLabel.attributedText = NSAttributedString.styled(as: .Tip, usingText: detailText)
             }
         }
     }
@@ -61,11 +77,12 @@ class RuleCell: UICollectionViewCell {
     }
 
     private let label = RuleCell.labelWithAttributedText()
+    private let detailLabel = UILabel()
     private let exampleGrid = RuleGrid()
 
     class func sizeOccupiedByLabel(forAvailableWidth availableWidth: CGFloat,
                                    usingText text: String) -> CGSize {
-        let width = RuleCell.widthFactor * availableWidth
+        let width = RuleCell.textWidthFactor * availableWidth
         let availableSize = CGSize(width: width, height: CGFloat(MAXFLOAT))
         let label = RuleCell.labelWithAttributedText(text)
         var size = label.sizeThatFits(availableSize)
@@ -80,7 +97,7 @@ class RuleCell: UICollectionViewCell {
         var size = RuleCell.sizeOccupiedByLabel(forAvailableWidth: availableWidth,
                                                        usingText: givenText)
 
-        let gridWidth = RuleCell.widthFactor * availableWidth
+        let gridWidth = RuleCell.gridWidthFactor * availableWidth
         size.height += Grid.size(forAvailableWidth: gridWidth, cellCount: numberOfGridValues).height
         size.height += RuleCell.textGridSpacing
 
@@ -90,7 +107,11 @@ class RuleCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
+        detailLabel.numberOfLines = 0
+        detailLabel.alpha = 0.8
+
         contentView.addSubview(label)
+        contentView.addSubview(detailLabel)
         contentView.addSubview(exampleGrid)
     }
 
@@ -100,12 +121,21 @@ class RuleCell: UICollectionViewCell {
         let availableWidth = contentView.bounds.size.width
 
         let labelSize = RuleCell.sizeOccupiedByLabel(forAvailableWidth: availableWidth,
-                                                            usingText: text!)
+                                                     usingText: text!)
 
-        let x = contentView.bounds.size.width * 0.5 * (1 - RuleCell.widthFactor)
+        let x = contentView.bounds.size.width * 0.5 * (1 - RuleCell.textWidthFactor)
         label.frame = CGRect(origin: CGPoint(x: x, y : 0), size: labelSize)
 
-        let gridWidth = RuleCell.widthFactor * availableWidth
+        var detailLabelFrame = contentView.bounds
+        detailLabelFrame.size.width *= RuleCell.textWidthFactor
+        detailLabel.frame = detailLabelFrame
+        detailLabel.sizeToFit()
+        detailLabelFrame = detailLabel.frame
+        detailLabelFrame.origin.y = contentView.bounds.size.height + RuleCell.textGridSpacing
+        detailLabelFrame.origin.x = (contentView.bounds.size.width - detailLabelFrame.size.width) / 2
+        detailLabel.frame = detailLabelFrame
+
+        let gridWidth = RuleCell.gridWidthFactor * availableWidth
         let gridSize = Grid.size(forAvailableWidth: gridWidth, cellCount: gridValues.count)
 
         let frameForGrid = CGRect(x: (availableWidth - gridSize.width) / 2,
