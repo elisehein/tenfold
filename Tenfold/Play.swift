@@ -123,20 +123,22 @@ class Play: UIViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
 
-        if shouldShowUpdatesModal {
-            presentViewController(UpdatesModal(), animated: true, completion: nil)
-            shouldShowUpdatesModal = false
-        } else if shouldLaunchOnboarding {
+        if shouldLaunchOnboarding {
             let onboarding = Onboarding()
             onboarding.onWillDismissWithGame = handleOnboardingWillDismissWithGame
             presentViewController(onboarding, animated: false, completion: nil)
             shouldLaunchOnboarding = false
+            return
+        }
+
+        if shouldShowUpdatesModal {
+            presentViewController(UpdatesModal(), animated: true, completion: nil)
+            shouldShowUpdatesModal = false
         } else if isOnboarding {
             menu.onboardingSteps.begin()
-            viewHasAppeared = true
-        } else {
-            viewHasAppeared = true
         }
+
+        viewHasAppeared = true
     }
 
     private func initNextRoundMatrix() {
