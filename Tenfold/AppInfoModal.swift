@@ -56,7 +56,7 @@ class AppInfoModal: ModalOverlay {
 
         ModalOverlay.configureModalButton(feedbackButton,
                                           color: UIColor.themeColor(.SecondaryAccent))
-        feedbackButton.setTitle("Send feedback", forState: .Normal)
+        feedbackButton.setTitle("Help & feedback", forState: .Normal)
         feedbackButton.addTarget(self,
                                  action: #selector(AppInfoModal.didTapFeedback),
                                  forControlEvents: .TouchUpInside)
