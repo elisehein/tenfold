@@ -39,7 +39,7 @@ extension NSAttributedString {
         return NSMutableAttributedString(string: text, attributes: attributes)
     }
 
-    private class func color(forTextStyle textStyle: TextStyle) -> UIColor {
+    class func color(forTextStyle textStyle: TextStyle) -> UIColor {
         switch textStyle {
         case .Notification:
             return UIColor.whiteColor().colorWithAlphaComponent(0.95)

@@ -26,14 +26,14 @@ class Notification: UIView {
     }()
 
     static let labelHeight: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 50 : 35
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 50 : 38
     }()
 
-    private static let labelWidthAddition: CGFloat = {
+    static let labelWidthAddition: CGFloat = {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 50 : 30
     }()
 
-    private let label = UILabel()
+    let label = UILabel()
     private let iconView = UIImageView()
     private let shadowLayer = UIView()
 
@@ -68,12 +68,6 @@ class Notification: UIView {
         }
     }
 
-    var score: Int = 0 {
-        didSet {
-            text = "\(score) TO GO"
-        }
-    }
-
     private var isShowing = false
     private var dismissalInProgress = false
     private var popupInProgress = false
@@ -99,6 +93,7 @@ class Notification: UIView {
         if type == .Text {
             label.backgroundColor = UIColor.themeColor(.OffBlack).colorWithAlphaComponent(0.92)
             label.layer.masksToBounds = true
+
             addSubview(label)
         } else {
             iconView.backgroundColor = UIColor.themeColor(.OffBlack).colorWithAlphaComponent(0.8)
@@ -126,10 +121,10 @@ class Notification: UIView {
         shadowLayer.frame = bounds
     }
 
-    private func constructAttributedString(withText text: String) -> NSMutableAttributedString {
+    func constructAttributedString(withText text: String) -> NSMutableAttributedString {
         let attrString = NSAttributedString.styled(as: .Notification, usingText: text)
 
-        let grayedOutSubstrings = ["|", "TO GO"]
+        let grayedOutSubstrings = ["|", "to go"]
 
         for substring in grayedOutSubstrings {
             if let index = text.indexOf(substring) {
@@ -255,9 +250,7 @@ class Notification: UIView {
     }
 
     private func frameInside(frame parentFrame: CGRect, showing: Bool) -> CGRect {
-        let width = type == .Icon ?
-                    Notification.iconSize :
-                    label.intrinsicContentSize().width + Notification.labelWidthAddition
+        let width = type == .Icon ? Notification.iconSize : textLabelWidth()
 
         let height = type == .Icon ? Notification.iconSize : Notification.labelHeight
 
@@ -289,6 +282,10 @@ class Notification: UIView {
         }
 
         return CGRect(x: x, y: y, width: width, height: height)
+    }
+
+    func textLabelWidth() -> CGFloat {
+        return label.intrinsicContentSize().width + Notification.labelWidthAddition
     }
 
     private func triggerPendingPopupCompletion() {

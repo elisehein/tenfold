@@ -29,7 +29,7 @@ class Play: UIViewController {
     private let gamePlayMessageNotification = Notification(type: .Text)
     private let undoNotification = Notification(type: .Icon)
     private let undoErrorNotification = Notification(type: .Icon)
-    private let scoreNotification = Notification(type: .Text)
+    private let scoreNotification = ScoreNotification()
 
     private var passedNextRoundThreshold = false
 
