@@ -66,6 +66,7 @@ extension GameGrid {
             self.snappingInProgress = false
             self.toggleBounce(self.contentInset.top > 0)
             self.gridAtStartingPosition = false
+            self.onDidSnapToGameplayPosition?()
         })
     }
 
@@ -83,8 +84,7 @@ private extension GameGrid {
         if atStartingPosition {
             return frame.size.height - min(initialGameHeight(), currentGameHeight())
         } else {
-            return max(0, frame.size.height - currentGameHeight())
+            return max(spaceForScore, frame.size.height - currentGameHeight())
         }
     }
-
 }

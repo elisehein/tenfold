@@ -20,11 +20,11 @@ class Notification: UIView {
 
     private static let iconSize: CGFloat = 70
 
-    private static let margin: CGFloat = {
+    static let margin: CGFloat = {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 25 : 15
     }()
 
-    private static let labelHeight: CGFloat = {
+    static let labelHeight: CGFloat = {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 50 : 35
     }()
 

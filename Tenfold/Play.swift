@@ -28,7 +28,8 @@ class Play: UIViewController {
     private let nextRoundNotification = Notification(type: .Text)
     private let gamePlayMessageNotification = Notification(type: .Text)
     private let undoNotification = Notification(type: .Icon)
-    private let undoErrorNotification = Notification(type: .Text)
+    private let undoErrorNotification = Notification(type: .Icon)
+    private let scoreNotification = Notification(type: .Text)
 
     private var passedNextRoundThreshold = false
 
@@ -61,6 +62,7 @@ class Play: UIViewController {
         gameGrid.onPullUpThresholdExceeded = handlePullUpThresholdExceeded
         gameGrid.onWillSnapToStartingPosition = handleWillSnapToStartingPosition
         gameGrid.onWillSnapToGameplayPosition = handleWillSnapToGameplayPosition
+        gameGrid.onDidSnapToGameplayPosition = handleDidSnapToGameplayPosition
         gameGrid.onPairingAttempt = handlePairingAttempt
         gameGrid.automaticallySnapToGameplayPosition = !isOnboarding
 
@@ -69,9 +71,10 @@ class Play: UIViewController {
 
         let pan = UIPanGestureRecognizer(target: self, action: #selector(Play.detectPan))
 
-        undoErrorNotification.anchorEdge = .Top
-        undoErrorNotification.text = "Nothing to undo"
-        undoNotification.anchorEdge = .Left
+        scoreNotification.anchorEdge = .Top
+        updateScore()
+
+        undoErrorNotification.iconName = "not-allowed"
         undoNotification.iconName = "undo"
 
         view.backgroundColor = Play.defaultBGColor
@@ -82,6 +85,7 @@ class Play: UIViewController {
         view.addSubview(nextRoundNotification)
         view.addSubview(undoNotification)
         view.addSubview(undoErrorNotification)
+        view.addSubview(scoreNotification)
     }
 
     override func viewDidLoad() {
@@ -106,6 +110,7 @@ class Play: UIViewController {
 
         gameGrid.snapToStartingPositionThreshold = 50
         gameGrid.snapToGameplayPositionThreshold = 50
+        gameGrid.spaceForScore = Notification.margin * 2 + Notification.labelHeight - gameGrid.frame.origin.y
 
         viewHasLoaded = true
     }
@@ -202,6 +207,7 @@ class Play: UIViewController {
                          enforceStartingPosition: !inGameplayPosition,
                          completion: {
             self.updateNextRoundNotificationText()
+            self.updateScore()
             self.updateState()
             self.nextRoundGrid?.hide(animated: false)
             self.menu.showIfNeeded(atDefaultPosition: !inGameplayPosition)
@@ -230,6 +236,7 @@ class Play: UIViewController {
         game.crossOut(pair)
         gameGrid.crossOut(pair)
         updateNextRoundNotificationText()
+        updateScore()
         updateState()
 
         if removeSurplusRows(containingItemsFrom: pair) {
@@ -263,7 +270,7 @@ class Play: UIViewController {
         guard !gameGrid.gridAtStartingPosition else { return }
         guard !gameGrid.rowRemovalInProgress else { return }
         guard game.latestMoveType() != nil else {
-            undoErrorNotification.popup(forSeconds: 3, inFrame: view.bounds)
+            undoErrorNotification.flash(inFrame: view.bounds)
             return
         }
 
@@ -282,6 +289,7 @@ class Play: UIViewController {
         if let indeces = game.undoNewRound() {
             gameGrid.removeRows(withNumberIndeces: indeces, completion: {
                 self.updateNextRoundNotificationText()
+                self.updateScore()
                 self.updateState()
             })
         }
@@ -292,6 +300,7 @@ class Play: UIViewController {
             if let pair = self.game.undoLatestPairing() {
                 self.gameGrid.unCrossOut(pair, withDelay: delay)
                 self.updateNextRoundNotificationText()
+                self.updateScore()
                 self.updateState()
             }
         }
@@ -366,8 +375,11 @@ class Play: UIViewController {
     }
 
     private func updateNextRoundNotificationText() {
-        // swiftlint:disable:next line_length
         nextRoundNotification.text = "ROUND \(game.currentRound + 1)   |   + \(game.numbersRemaining())  nums"
+    }
+
+    private func updateScore() {
+        scoreNotification.text = "\(game.numbersRemaining()) to go"
     }
 
     private func playSound(sound: Sound) {
@@ -380,6 +392,7 @@ class Play: UIViewController {
 
     private func handleWillSnapToStartingPosition() {
         view.backgroundColor = Play.defaultBGColor
+        scoreNotification.toggle(inFrame: view.frame, showing: false, animated: true)
         menu.showIfNeeded(atDefaultPosition: true)
     }
 
@@ -389,6 +402,10 @@ class Play: UIViewController {
         if !isOnboarding {
             menu.hideIfNeeded()
         }
+    }
+
+    func handleDidSnapToGameplayPosition() {
+        scoreNotification.toggle(inFrame: view.frame, showing: true, animated: true)
     }
 
     func handlePullUpThresholdExceeded() {

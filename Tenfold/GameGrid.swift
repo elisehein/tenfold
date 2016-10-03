@@ -24,11 +24,14 @@ class GameGrid: Grid {
     var snapToStartingPositionThreshold: CGFloat?
     var snapToGameplayPositionThreshold: CGFloat?
 
+    var spaceForScore: CGFloat = 0
+
     var onScroll: (() -> Void)?
     var onPullingDown: ((withFraction: CGFloat) -> Void)?
     var onPullingUpFromStartingPosition: ((withFraction: CGFloat) -> Void)?
     var onPullUpThresholdExceeded: (() -> Void)?
     var onWillSnapToGameplayPosition: (() -> Void)?
+    var onDidSnapToGameplayPosition: (() -> Void)?
     var onWillSnapToStartingPosition: (() -> Void)?
     var onPairingAttempt: ((Pair) -> Void)?
 
@@ -85,9 +88,9 @@ class GameGrid: Grid {
     internal func toggleBounce(shouldBounce: Bool) {
         guard !snappingInProgress else { return }
 
-        // We should *never* disable bounce if there is a top contentInset
+        // We should *never* disable bounce if there is more space above the grid than is needed for the score
         // otherwise we can't pull up from the first rounds where the grid isn't full screen yet
-        bounces = contentInset.top > 0 || shouldBounce
+        bounces = contentInset.top > spaceForScore || shouldBounce
     }
 
     required init?(coder aDecoder: NSCoder) {
