@@ -230,6 +230,16 @@ class Play: UIViewController {
         } else {
             gameGrid.dismissSelection()
         }
+
+        // Only really needed when we're carrying on with the onboarding game.
+        // This is a silly place for now, but it works okay for now, because it doesn't really matter
+        // how often we toggle the score (nothing happens if it's already visible).
+        // In that case, we first see the "Pull down to see menu" notification when we make the first
+        // game move, and then when we've chosen two, we ensure the score becomes visible, too.
+        if !isOnboarding {
+            menu.hideTipsIfNeeded()
+            scoreNotification.toggle(inFrame: view.bounds, showing: true, animated: true)
+        }
     }
 
     func handleSuccessfulPairing(pair: Pair) {
@@ -273,8 +283,9 @@ class Play: UIViewController {
             undoErrorNotification.flash(inFrame: view.bounds)
             return
         }
-
-        menu.hideIfNeeded() // This only applies when returning from onboarding
+        // These only apply when returning from onboarding
+        menu.hideIfNeeded()
+        scoreNotification.toggle(inFrame: view.bounds, showing: true, animated: true)
 
         if game.latestMoveType() == .CrossingOutPair {
             undoLatestPairing()

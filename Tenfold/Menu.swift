@@ -176,6 +176,10 @@ class Menu: UIView {
         }
     }
 
+    func hideTipsIfNeeded() {
+        showMenuTip.hidden = true
+    }
+
     private func showTipsIfNeeded() {
         if shouldShowTips {
             UIApplication.sharedApplication().delegate?.window??.addSubview(showMenuTip)
