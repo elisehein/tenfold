@@ -236,7 +236,7 @@ class Play: UIViewController {
         game.crossOut(pair)
         gameGrid.crossOut(pair)
         updateNextRoundNotificationText()
-        updateScore()
+        updateScore(withPulse: true)
         updateState()
 
         if removeSurplusRows(containingItemsFrom: pair) {
@@ -325,6 +325,7 @@ class Play: UIViewController {
             let nextRoundEndIndex = nextRoundStartIndex + nextRoundNumbers.count - 1
             let nextRoundIndeces = Array(nextRoundStartIndex...nextRoundEndIndex)
             gameGrid.loadNextRound(atIndeces: nextRoundIndeces, completion: nil)
+            updateScore(withPulse: true)
             updateState()
         }
     }
@@ -375,11 +376,15 @@ class Play: UIViewController {
     }
 
     private func updateNextRoundNotificationText() {
-        nextRoundNotification.text = "ROUND \(game.currentRound + 1)   |   + \(game.numbersRemaining())  nums"
+        nextRoundNotification.text = "ROUND \(game.currentRound + 1)   |   + \(game.numbersRemaining())"
     }
 
-    private func updateScore() {
-        scoreNotification.text = "\(game.numbersRemaining()) to go"
+    private func updateScore(withPulse withPulse: Bool = false) {
+        scoreNotification.score = game.numbersRemaining()
+
+        if withPulse {
+            scoreNotification.pulse()
+        }
     }
 
     private func playSound(sound: Sound) {
@@ -417,6 +422,7 @@ class Play: UIViewController {
 
         if !isOnboarding {
             menu.hideIfNeeded()
+            scoreNotification.toggle(inFrame: view.bounds, showing: true, animated: true)
         }
     }
 

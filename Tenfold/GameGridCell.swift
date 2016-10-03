@@ -17,7 +17,7 @@ enum GameGridCellState {
 
 class GameGridCell: UICollectionViewCell {
     static let fontSizeFactor: CGFloat = 0.45
-    private static let animationDuration = 0.2
+    static let animationDuration = 0.2
 
     private let numberLabel = UILabel()
     private let endOfRoundMarker = EndOfRoundMarker()

@@ -19,6 +19,7 @@ enum NotificationType {
 class Notification: UIView {
 
     private static let iconSize: CGFloat = 70
+    private static let pulseDuration = GameGridCell.animationDuration
 
     static let margin: CGFloat = {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 25 : 15
@@ -46,7 +47,14 @@ class Notification: UIView {
     var text: String = "" {
         didSet {
             label.attributedText = constructAttributedString(withText: text)
-            setNeedsLayout()
+
+            // This is our substitute for setNeedsLayout() for when the text changes the size
+            // of the label. Because in our case the entire view bounds is dependent on the text
+            // size, we need to reset the frame (and we shouldn't do that in layoutSubviews())
+            guard isShowing else { return }
+            if let superview = superview {
+                frame = frameInside(frame: superview.bounds, showing: isShowing)
+            }
         }
     }
 
@@ -60,6 +68,13 @@ class Notification: UIView {
         }
     }
 
+    var score: Int = 0 {
+        didSet {
+            text = "\(score) TO GO"
+        }
+    }
+
+    private var isShowing = false
     private var dismissalInProgress = false
     private var popupInProgress = false
     private var popupCompletion: (() -> Void)?
@@ -114,7 +129,7 @@ class Notification: UIView {
     private func constructAttributedString(withText text: String) -> NSMutableAttributedString {
         let attrString = NSAttributedString.styled(as: .Notification, usingText: text)
 
-        let grayedOutSubstrings = ["|", "nums"]
+        let grayedOutSubstrings = ["|", "TO GO"]
 
         for substring in grayedOutSubstrings {
             if let index = text.indexOf(substring) {
@@ -185,9 +200,7 @@ class Notification: UIView {
         triggerPendingPopupCompletion()
 
         guard !dismissalInProgress else { return }
-        guard !CGRectEqualToRect(frame, frameInside(frame: parentFrame,
-            showing: showing)) else { return }
-
+        guard isShowing != showing else { return }
 
         // Ensure we begin the transition from the correct position
         frame = frameInside(frame: parentFrame, showing: !showing)
@@ -201,6 +214,7 @@ class Notification: UIView {
             self.alpha = showing ? 1 : 0
             self.frame = self.frameInside(frame: parentFrame, showing: showing)
         }, completion: { _ in
+            self.isShowing = showing
             completion?()
         })
     }
@@ -223,10 +237,27 @@ class Notification: UIView {
         })
     }
 
+    func pulse() {
+        guard isShowing else { return }
+
+        UIView.animateWithDuration(Notification.pulseDuration,
+                                   delay: 0,
+                                   options: [.CurveEaseOut],
+                                   animations: {
+            self.transform = CGAffineTransformScale(self.transform, 1.15, 1.15)
+        }, completion: { _ in
+            UIView.animateWithDuration(0.15, delay: 0, options: [.CurveEaseIn], animations: {
+                self.transform = CGAffineTransformIdentity
+            }, completion: { _ in
+                self.transform = CGAffineTransformIdentity
+            })
+        })
+    }
+
     private func frameInside(frame parentFrame: CGRect, showing: Bool) -> CGRect {
         let width = type == .Icon ?
-            Notification.iconSize :
-            label.intrinsicContentSize().width + Notification.labelWidthAddition
+                    Notification.iconSize :
+                    label.intrinsicContentSize().width + Notification.labelWidthAddition
 
         let height = type == .Icon ? Notification.iconSize : Notification.labelHeight
 
