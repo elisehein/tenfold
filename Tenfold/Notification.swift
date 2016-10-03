@@ -197,6 +197,10 @@ class Notification: UIView {
         guard !dismissalInProgress else { return }
         guard isShowing != showing else { return }
 
+        // We need to toggle this flag straight away (not during completion) so that it automatically
+        // takes care of cases where the toggling is still in progress
+        self.isShowing = showing
+
         // Ensure we begin the transition from the correct position
         frame = frameInside(frame: parentFrame, showing: !showing)
 
@@ -209,7 +213,6 @@ class Notification: UIView {
             self.alpha = showing ? 1 : 0
             self.frame = self.frameInside(frame: parentFrame, showing: showing)
         }, completion: { _ in
-            self.isShowing = showing
             completion?()
         })
     }
