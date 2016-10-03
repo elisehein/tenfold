@@ -200,8 +200,8 @@ class Play: UIViewController {
                          animated: !inGameplayPosition,
                          enforceStartingPosition: !inGameplayPosition,
                          completion: {
-            self.updateNextRoundPillText()
             self.updateScore()
+            self.updateNextRoundPillText()
             self.updateState()
             self.nextRoundGrid?.hide(animated: false)
             self.menu.showIfNeeded(atDefaultPosition: !inGameplayPosition)
@@ -239,8 +239,8 @@ class Play: UIViewController {
     func handleSuccessfulPairing(pair: Pair) {
         game.crossOut(pair)
         gameGrid.crossOut(pair)
-        updateNextRoundPillText()
         updateScore(withPulse: true)
+        updateNextRoundPillText()
         updateState()
 
         if removeSurplusRows(containingItemsFrom: pair) {
@@ -295,8 +295,13 @@ class Play: UIViewController {
     func undoNewRound() {
         if let indeces = game.undoNewRound() {
             gameGrid.removeRows(withNumberIndeces: indeces, completion: {
-                self.updateNextRoundPillText()
+                // Note re all the places where we updateScore and updateNextRoundPillText
+                // Something about how the indentations are added to the score get leaked out
+                // to the next round pill, too, even though they're completely separate instances.
+                // For now, it's fixed so long as we always update the next round text *after*
+                // updating the score text. Shitty, I know.
                 self.updateScore()
+                self.updateNextRoundPillText()
                 self.updateState()
             })
         }
@@ -306,8 +311,8 @@ class Play: UIViewController {
         let undoPairing: ((delay: Double) -> Void) = { delay in
             if let pair = self.game.undoLatestPairing() {
                 self.gameGrid.unCrossOut(pair, withDelay: delay)
-                self.updateNextRoundPillText()
                 self.updateScore()
+                self.updateNextRoundPillText()
                 self.updateState()
             }
         }
