@@ -1,5 +1,5 @@
 //
-//  Notification.swift
+//  Pill.swift
 //  Tenfold
 //
 //  Created by Elise Hein on 23/08/2016.
@@ -11,12 +11,12 @@ import SwiftyJSON
 import UIKit
 import PureLayout
 
-enum NotificationType {
+enum PillType {
     case Text
     case Icon
 }
 
-class Notification: UIView {
+class Pill: UIView {
 
     private static let iconSize: CGFloat = 70
     private static let pulseDuration = GameGridCell.animationDuration
@@ -58,25 +58,15 @@ class Notification: UIView {
         }
     }
 
-    var newlyUnrepresentedNumber: Int? {
-        didSet {
-            if let number = newlyUnrepresentedNumber {
-                let phrases = CopyService.phrasebook(.LastNumberInstance).arrayValue
-                let phrase = phrases.randomElement().string
-                text = String(format: phrase!, number)
-            }
-        }
-    }
-
     private var isShowing = false
     private var dismissalInProgress = false
     private var popupInProgress = false
     private var popupCompletion: (() -> Void)?
-    private var type: NotificationType
+    private var type: PillType
 
     var anchorEdge: ALEdge = .Bottom
 
-    init(type: NotificationType) {
+    init(type: PillType) {
         self.type = type
         super.init(frame: CGRect.zero)
 
@@ -93,7 +83,6 @@ class Notification: UIView {
         if type == .Text {
             label.backgroundColor = UIColor.themeColor(.OffBlack).colorWithAlphaComponent(0.92)
             label.layer.masksToBounds = true
-
             addSubview(label)
         } else {
             iconView.backgroundColor = UIColor.themeColor(.OffBlack).colorWithAlphaComponent(0.8)
@@ -122,7 +111,7 @@ class Notification: UIView {
     }
 
     func constructAttributedString(withText text: String) -> NSMutableAttributedString {
-        let attrString = NSAttributedString.styled(as: .Notification, usingText: text)
+        let attrString = NSAttributedString.styled(as: .Pill, usingText: text)
 
         let grayedOutSubstrings = ["|", "to go"]
 
@@ -164,10 +153,10 @@ class Notification: UIView {
     func flash(inFrame parentFrame: CGRect) {
         alpha = 0
 
-        frame = CGRect(x: -Notification.iconSize,
-                       y: (parentFrame.height - Notification.iconSize) / 2,
-                       width: Notification.iconSize,
-                       height: Notification.iconSize)
+        frame = CGRect(x: -Pill.iconSize,
+                       y: (parentFrame.height - Pill.iconSize) / 2,
+                       width: Pill.iconSize,
+                       height: Pill.iconSize)
         center = CGPoint(x: parentFrame.width / 2, y: parentFrame.height / 2)
         transform = CGAffineTransformMakeScale(0.001, 0.001)
 
@@ -238,7 +227,7 @@ class Notification: UIView {
     func pulse() {
         guard isShowing else { return }
 
-        UIView.animateWithDuration(Notification.pulseDuration,
+        UIView.animateWithDuration(Pill.pulseDuration,
                                    delay: 0,
                                    options: [.CurveEaseOut],
                                    animations: {
@@ -246,30 +235,28 @@ class Notification: UIView {
         }, completion: { _ in
             UIView.animateWithDuration(0.15, delay: 0, options: [.CurveEaseIn], animations: {
                 self.transform = CGAffineTransformIdentity
-            }, completion: { _ in
-                self.transform = CGAffineTransformIdentity
-            })
+            }, completion: nil)
         })
     }
 
     private func frameInside(frame parentFrame: CGRect, showing: Bool) -> CGRect {
-        let width = type == .Icon ? Notification.iconSize : textLabelWidth()
+        let width = type == .Icon ? Pill.iconSize : textLabelWidth()
 
-        let height = type == .Icon ? Notification.iconSize : Notification.labelHeight
+        let height = type == .Icon ? Pill.iconSize : Pill.labelHeight
 
         var y: CGFloat = 0
         var x: CGFloat = 0
 
         if showing {
             if anchorEdge == .Bottom {
-                y = parentFrame.height - height - Notification.margin
+                y = parentFrame.height - height - Pill.margin
                 x = (parentFrame.width - width) / 2
             } else if anchorEdge == .Top {
-                y = Notification.margin
+                y = Pill.margin
                 x = (parentFrame.width - width) / 2
             } else if anchorEdge == .Left {
                 y = (parentFrame.height - height) / 2
-                x = Notification.margin
+                x = Pill.margin
             }
         } else {
             if anchorEdge == .Bottom {
@@ -288,7 +275,7 @@ class Notification: UIView {
     }
 
     func textLabelWidth() -> CGFloat {
-        return label.intrinsicContentSize().width + Notification.labelWidthAddition
+        return label.intrinsicContentSize().width + Pill.labelWidthAddition
     }
 
     private func triggerPendingPopupCompletion() {

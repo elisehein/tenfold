@@ -46,9 +46,10 @@
 		0C90AEA51C6D1B0700E1E42E /* GameGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C90AEA41C6D1B0700E1E42E /* GameGrid.swift */; };
 		0C90AEA71C6D1BCF00E1E42E /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C90AEA61C6D1BCF00E1E42E /* Game.swift */; };
 		0CA050A81C6B23D9006A42B9 /* UIColor+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA050A71C6B23D9006A42B9 /* UIColor+Theme.swift */; };
-		0CA5A7991DA2CC6100917DAA /* ScoreNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA5A7981DA2CC6100917DAA /* ScoreNotification.swift */; };
+		0CA5A7991DA2CC6100917DAA /* ScorePill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA5A7981DA2CC6100917DAA /* ScorePill.swift */; };
+		0CA5A79B1DA2E86200917DAA /* GameplayMessagePill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA5A79A1DA2E86200917DAA /* GameplayMessagePill.swift */; };
 		0CADBDF21D6C50CB0090C13F /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CADBDF11D6C50CB0090C13F /* Launch Screen.storyboard */; };
-		0CADBDF41D6C65110090C13F /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CADBDF31D6C65110090C13F /* Notification.swift */; };
+		0CADBDF41D6C65110090C13F /* Pill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CADBDF31D6C65110090C13F /* Pill.swift */; };
 		0CADBDF61D6D92850090C13F /* GameFinished.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CADBDF51D6D92850090C13F /* GameFinished.swift */; };
 		0CB109341C7234FB00182663 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB109331C7234FB00182663 /* UIColor.swift */; };
 		0CB938831D1FE6DD005B81F4 /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB938821D1FE6DD005B81F4 /* StorageService.swift */; };
@@ -117,9 +118,10 @@
 		0C90AEA41C6D1B0700E1E42E /* GameGrid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameGrid.swift; sourceTree = "<group>"; };
 		0C90AEA61C6D1BCF00E1E42E /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		0CA050A71C6B23D9006A42B9 /* UIColor+Theme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Theme.swift"; sourceTree = "<group>"; };
-		0CA5A7981DA2CC6100917DAA /* ScoreNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScoreNotification.swift; sourceTree = "<group>"; };
+		0CA5A7981DA2CC6100917DAA /* ScorePill.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScorePill.swift; sourceTree = "<group>"; };
+		0CA5A79A1DA2E86200917DAA /* GameplayMessagePill.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameplayMessagePill.swift; sourceTree = "<group>"; };
 		0CADBDF11D6C50CB0090C13F /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
-		0CADBDF31D6C65110090C13F /* Notification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
+		0CADBDF31D6C65110090C13F /* Pill.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pill.swift; sourceTree = "<group>"; };
 		0CADBDF51D6D92850090C13F /* GameFinished.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameFinished.swift; sourceTree = "<group>"; };
 		0CB109331C7234FB00182663 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		0CB938821D1FE6DD005B81F4 /* StorageService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
@@ -254,8 +256,8 @@
 				0CF5C54A1D6F76C5006D46B8 /* Button.swift */,
 				0C1E317C1D86AE6E00ABA583 /* EndOfRoundMarker.swift */,
 				0C5998BF1D8C3AED00D73EF6 /* Gesture.swift */,
-				0CADBDF31D6C65110090C13F /* Notification.swift */,
 				0CD93E811D78A14900D7DF96 /* PageDownIndicator.swift */,
+				0CADBDF31D6C65110090C13F /* Pill.swift */,
 			);
 			name = Widgets;
 			sourceTree = "<group>";
@@ -274,6 +276,7 @@
 			isa = PBXGroup;
 			children = (
 				0C70C4161D74B5C300A9E8B8 /* GameGrid */,
+				0CA5A79E1DA2E98900917DAA /* Pills */,
 				0C8E72FF1D7ABED000DFE757 /* Rules */,
 				0C39D3091D3BC3B90047CE74 /* Grid.swift */,
 				4EA6957F1D36992E00F9A315 /* Menu.swift */,
@@ -282,7 +285,6 @@
 				0CB9388C1D202832005B81F4 /* NextRoundCell.swift */,
 				0CD93E851D79875500D7DF96 /* OnboardingSteps.swift */,
 				0CC94F701D7588AF00FAF4B2 /* RankingTable.swift */,
-				0CA5A7981DA2CC6100917DAA /* ScoreNotification.swift */,
 			);
 			name = "UI Modules";
 			sourceTree = "<group>";
@@ -324,6 +326,15 @@
 				0C90AE9F1C6C7FDF00E1E42E /* UIFont+Theme.swift */,
 			);
 			name = Theming;
+			sourceTree = "<group>";
+		};
+		0CA5A79E1DA2E98900917DAA /* Pills */ = {
+			isa = PBXGroup;
+			children = (
+				0CA5A79A1DA2E86200917DAA /* GameplayMessagePill.swift */,
+				0CA5A7981DA2CC6100917DAA /* ScorePill.swift */,
+			);
+			name = Pills;
 			sourceTree = "<group>";
 		};
 		0CD93E871D798D2800D7DF96 /* JSON */ = {
@@ -443,6 +454,7 @@
 				0C8E73051D7AF3FF00DFE757 /* AppInfoModal.swift in Sources */,
 				0C738ADD1C69D811007C9548 /* Play.swift in Sources */,
 				0C69CE4B1C6DCABA002E0D29 /* Number.swift in Sources */,
+				0CA5A79B1DA2E86200917DAA /* GameplayMessagePill.swift in Sources */,
 				0C70C4031D71B4D200A9E8B8 /* RulesFooter.swift in Sources */,
 				0C90AEA71C6D1BCF00E1E42E /* Game.swift in Sources */,
 				0C39D3081D3AB48B0047CE74 /* UIScrollView.swift in Sources */,
@@ -457,7 +469,7 @@
 				0C70C4051D71B95500A9E8B8 /* ConfirmationModal.swift in Sources */,
 				0C70C40F1D73486500A9E8B8 /* JSON.swift in Sources */,
 				0C90AEA01C6C7FDF00E1E42E /* UIFont+Theme.swift in Sources */,
-				0CA5A7991DA2CC6100917DAA /* ScoreNotification.swift in Sources */,
+				0CA5A7991DA2CC6100917DAA /* ScorePill.swift in Sources */,
 				0C5998C01D8C3AED00D73EF6 /* Gesture.swift in Sources */,
 				0C41C1A81D7C358600E0AAF8 /* CopyService.swift in Sources */,
 				0C90AEA51C6D1B0700E1E42E /* GameGrid.swift in Sources */,
@@ -484,7 +496,7 @@
 				0CA050A81C6B23D9006A42B9 /* UIColor+Theme.swift in Sources */,
 				0CFDE5BA1D65B2E2001F9DF5 /* RuleCell.swift in Sources */,
 				0C738ADB1C69D811007C9548 /* AppDelegate.swift in Sources */,
-				0CADBDF41D6C65110090C13F /* Notification.swift in Sources */,
+				0CADBDF41D6C65110090C13F /* Pill.swift in Sources */,
 				0C710E261D6721DA0047F391 /* RuleGrid.swift in Sources */,
 				0C70C4151D74B55F00A9E8B8 /* GameGrid+DelegateFlowLayout.swift in Sources */,
 				0C8E73031D7AF33500DFE757 /* ModalOverlay.swift in Sources */,

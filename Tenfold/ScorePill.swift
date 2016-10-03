@@ -1,5 +1,5 @@
 //
-//  ScoreNotification.swift
+//  ScorePill.swift
 //  Tenfold
 //
 //  Created by Elise Hein on 03/10/2016.
@@ -9,10 +9,10 @@
 import Foundation
 import UIKit
 
-class ScoreNotification: Notification {
+class ScorePill: Pill {
 
     private static let circleSize: CGFloat = 16
-    private static let indent: CGFloat = ScoreNotification.circleSize + 10
+    private static let indent: CGFloat = ScorePill.circleSize + 10
 
     let circleLayer = CAShapeLayer()
 
@@ -34,10 +34,10 @@ class ScoreNotification: Notification {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        let circleRect = CGRect(x: Notification.labelWidthAddition / 2,
-                                y: (Notification.labelHeight - ScoreNotification.circleSize) / 2,
-                                width: ScoreNotification.circleSize,
-                                height: ScoreNotification.circleSize)
+        let circleRect = CGRect(x: Pill.labelWidthAddition / 2,
+                                y: (Pill.labelHeight - ScorePill.circleSize) / 2,
+                                width: ScorePill.circleSize,
+                                height: ScorePill.circleSize)
         circleLayer.path = UIBezierPath(ovalInRect: circleRect).CGPath
     }
 
@@ -48,7 +48,7 @@ class ScoreNotification: Notification {
                                                        atIndex: 0,
                                                        effectiveRange: &fullRange)
         if let paragraphStyle = maybeParagraphStyle as? NSMutableParagraphStyle {
-            paragraphStyle.firstLineHeadIndent = ScoreNotification.indent
+            paragraphStyle.firstLineHeadIndent = ScorePill.indent
             attrString.addAttribute(NSParagraphStyleAttributeName, value: paragraphStyle, range: fullRange)
         }
 
@@ -57,7 +57,7 @@ class ScoreNotification: Notification {
 
     override func textLabelWidth() -> CGFloat {
         let width = super.textLabelWidth()
-        return width + ScoreNotification.indent
+        return width + ScorePill.indent
     }
 
     required init?(coder aDecoder: NSCoder) {
