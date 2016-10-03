@@ -64,7 +64,6 @@ class Play: UIViewController {
         gameGrid.onPairingAttempt = handlePairingAttempt
         gameGrid.automaticallySnapToGameplayPosition = !isOnboarding
 
-        menu.onTapLogo = showInfoModal
         menu.onTapNewGame = confirmNewGame
         menu.onTapInstructions = showInstructions
 
@@ -209,10 +208,6 @@ class Play: UIViewController {
         })
 
         view.backgroundColor = inGameplayPosition ? Play.gameplayBGColor : Play.defaultBGColor
-    }
-
-    func showInfoModal() {
-        presentViewController(AppInfoModal(), animated: true, completion: nil)
     }
 
     func showInstructions() {
