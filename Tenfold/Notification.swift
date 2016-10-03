@@ -280,11 +280,11 @@ class Notification: UIView {
                 y = parentFrame.height + 10
                 x = (parentFrame.width - width) / 2
             } else if anchorEdge == .Top {
-                y = -10
+                y = -(height + 10)
                 x = (parentFrame.width - width) / 2
             } else if anchorEdge == .Left {
                 y = (parentFrame.height - height) / 2
-                x = -10
+                x = -(width + 10)
             }
         }
 

@@ -108,7 +108,7 @@ class Play: UIViewController {
         undoNotification.toggle(inFrame: view.bounds, showing: false)
         initNextRoundMatrix()
 
-        gameGrid.snapToStartingPositionThreshold = 50
+        gameGrid.snapToStartingPositionThreshold = 70
         gameGrid.snapToGameplayPositionThreshold = 50
         gameGrid.spaceForScore = Notification.margin * 2 + Notification.labelHeight - gameGrid.frame.origin.y
 
@@ -397,7 +397,7 @@ class Play: UIViewController {
 
     private func handleWillSnapToStartingPosition() {
         view.backgroundColor = Play.defaultBGColor
-        scoreNotification.toggle(inFrame: view.frame, showing: false, animated: true)
+        scoreNotification.toggle(inFrame: view.frame, showing: false)
         menu.showIfNeeded(atDefaultPosition: true)
     }
 
@@ -410,6 +410,7 @@ class Play: UIViewController {
     }
 
     func handleDidSnapToGameplayPosition() {
+        scoreNotification.alpha = 1
         scoreNotification.toggle(inFrame: view.frame, showing: true, animated: true)
     }
 
@@ -458,6 +459,7 @@ class Play: UIViewController {
 
     private func handlePullingDown(withFraction fraction: CGFloat) {
         guard menu.hidden else { return }
+        scoreNotification.alpha = 1 - fraction
         view.backgroundColor = Play.gameplayBGColor.interpolateTo(Play.defaultBGColor, fraction: fraction)
     }
 
@@ -473,6 +475,7 @@ class Play: UIViewController {
 
     private func handleOnboardingWillDismissWithGame(onboardingGame: Game) {
         view.backgroundColor = Play.gameplayBGColor
+        scoreNotification.alpha = 1
         restart(withGame: onboardingGame, inGameplayPosition: true)
 
         // Don't know why... Possibly because we don't call handleScroll()
