@@ -21,6 +21,15 @@ extension GameGrid {
                -contentOffset.y
     }
 
+    func scrolledToTop() -> Bool {
+        return contentOffset.y <= -spaceForScore
+    }
+
+    func scrollToTopIfPossible() {
+        guard contentInset.top == spaceForScore && !scrolledToTop() else { return }
+        setContentOffset(CGPoint(x: 0, y: -spaceForScore), animated: true)
+    }
+
     internal func adjustTopInset(enforceStartingPosition enforceStartingPosition: Bool = false) {
         contentInset.top = topInset(atStartingPosition: enforceStartingPosition)
         gridAtStartingPosition = enforceStartingPosition

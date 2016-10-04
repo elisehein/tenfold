@@ -71,6 +71,7 @@ class Play: UIViewController {
         let pan = UIPanGestureRecognizer(target: self, action: #selector(Play.detectPan))
 
         scorePill.anchorEdge = .Top
+        scorePill.onTap = handleScorePillTap
         updateScore()
 
         view.backgroundColor = Play.defaultBGColor
@@ -399,6 +400,10 @@ class Play: UIViewController {
 
     // MARK: Scrolling interactions
 
+    private func handleScorePillTap() {
+        gameGrid.scrollToTopIfPossible()
+    }
+
     private func handleWillSnapToStartingPosition() {
         view.backgroundColor = Play.defaultBGColor
         scorePill.toggle(inFrame: view.frame, showing: false)
@@ -458,7 +463,7 @@ class Play: UIViewController {
             passedNextRoundThreshold = false
         }
 
-        scorePill.type = gameGrid.contentOffset.y > -gameGrid.spaceForScore ? .Floating : .Static
+        scorePill.type = gameGrid.scrolledToTop() ? .Static : .Floating
         menu.position()
     }
 

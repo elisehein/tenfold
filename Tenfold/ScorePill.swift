@@ -21,6 +21,8 @@ class ScorePill: Pill {
     private let numbersLabel = UILabel()
     private static let countLabelTransformFactor: CGFloat = 1.45
 
+    var onTap: (() -> Void)? = nil
+
     var type: ScorePillType = .Static {
         didSet {
             guard type != oldValue else { return }
@@ -73,6 +75,9 @@ class ScorePill: Pill {
         roundLabel.transform = countLabelTransform()
         numbersLabel.transform = countLabelTransform()
 
+        let tap = UITapGestureRecognizer(target: self, action: #selector(ScorePill.didReceiveTap))
+
+        addGestureRecognizer(tap)
         addSubview(logo)
         addSubview(roundLabel)
         addSubview(numbersLabel)
@@ -100,6 +105,10 @@ class ScorePill: Pill {
         roundLabel.frame = countFrame
         countFrame.origin.x += countFrame.size.width + logoSize
         numbersLabel.frame = countFrame
+    }
+
+    func didReceiveTap() {
+        onTap?()
     }
 
     override func constructAttributedString(withText text: String) -> NSMutableAttributedString {
