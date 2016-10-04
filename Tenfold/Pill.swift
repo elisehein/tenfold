@@ -47,18 +47,10 @@ class Pill: UIView {
     var text: String = "" {
         didSet {
             label.attributedText = constructAttributedString(withText: text)
-
-            // This is our substitute for setNeedsLayout() for when the text changes the size
-            // of the label. Because in our case the entire view bounds is dependent on the text
-            // size, we need to reset the frame (and we shouldn't do that in layoutSubviews())
-            guard isShowing else { return }
-            if let superview = superview {
-                frame = frameInside(frame: superview.bounds, showing: isShowing)
-            }
         }
     }
 
-    private var isShowing = false
+    var isShowing = false
     private var dismissalInProgress = false
     private var popupInProgress = false
     private var popupCompletion: (() -> Void)?
@@ -111,19 +103,7 @@ class Pill: UIView {
     }
 
     func constructAttributedString(withText text: String) -> NSMutableAttributedString {
-        let attrString = NSAttributedString.styled(as: .Pill, usingText: text)
-
-        let grayedOutSubstrings = ["|", "to go"]
-
-        for substring in grayedOutSubstrings {
-            if let index = text.indexOf(substring) {
-                attrString.addAttribute(NSForegroundColorAttributeName,
-                                        value: UIColor.whiteColor().colorWithAlphaComponent(0.55),
-                                        range: NSRange(location: index, length: substring.characters.count))
-            }
-        }
-
-        return attrString
+        return NSAttributedString.styled(as: .Pill, usingText: text)
     }
 
     func popup(forSeconds seconds: Double,
@@ -241,7 +221,6 @@ class Pill: UIView {
 
     private func frameInside(frame parentFrame: CGRect, showing: Bool) -> CGRect {
         let width = type == .Icon ? Pill.iconSize : textLabelWidth()
-
         let height = type == .Icon ? Pill.iconSize : Pill.labelHeight
 
         var y: CGFloat = 0

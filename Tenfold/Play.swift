@@ -200,8 +200,8 @@ class Play: UIViewController {
                          animated: !inGameplayPosition,
                          enforceStartingPosition: !inGameplayPosition,
                          completion: {
-            self.updateScore()
             self.updateNextRoundPillText()
+            self.updateScore()
             self.updateState()
             self.nextRoundGrid?.hide(animated: false)
             self.menu.showIfNeeded(atDefaultPosition: !inGameplayPosition)
@@ -239,8 +239,8 @@ class Play: UIViewController {
     func handleSuccessfulPairing(pair: Pair) {
         game.crossOut(pair)
         gameGrid.crossOut(pair)
-        updateScore(withPulse: true)
         updateNextRoundPillText()
+        updateScore()
         updateState()
 
         if removeSurplusRows(containingItemsFrom: pair) {
@@ -295,13 +295,8 @@ class Play: UIViewController {
     func undoNewRound() {
         if let indeces = game.undoNewRound() {
             gameGrid.removeRows(withNumberIndeces: indeces, completion: {
-                // Note re all the places where we updateScore and updateNextRoundPillText
-                // Something about how the indentations are added to the score get leaked out
-                // to the next round pill, too, even though they're completely separate instances.
-                // For now, it's fixed so long as we always update the next round text *after*
-                // updating the score text. Shitty, I know.
-                self.updateScore()
                 self.updateNextRoundPillText()
+                self.updateScore()
                 self.updateState()
             })
         }
@@ -311,8 +306,8 @@ class Play: UIViewController {
         let undoPairing: ((delay: Double) -> Void) = { delay in
             if let pair = self.game.undoLatestPairing() {
                 self.gameGrid.unCrossOut(pair, withDelay: delay)
-                self.updateScore()
                 self.updateNextRoundPillText()
+                self.updateScore()
                 self.updateState()
             }
         }
@@ -337,7 +332,7 @@ class Play: UIViewController {
             let nextRoundEndIndex = nextRoundStartIndex + nextRoundNumbers.count - 1
             let nextRoundIndeces = Array(nextRoundStartIndex...nextRoundEndIndex)
             gameGrid.loadNextRound(atIndeces: nextRoundIndeces, completion: nil)
-            updateScore(withPulse: true)
+            updateScore()
             updateState()
         }
     }
@@ -388,15 +383,12 @@ class Play: UIViewController {
     }
 
     private func updateNextRoundPillText() {
-        nextRoundPill.text = "ROUND \(game.currentRound + 1)   |   + \(game.numbersRemaining())"
+        nextRoundPill.text = "+ \(game.numbersRemaining())"
     }
 
-    private func updateScore(withPulse withPulse: Bool = false) {
-        scorePill.score = game.numbersRemaining()
-
-        if withPulse {
-            scorePill.pulse()
-        }
+    private func updateScore() {
+        scorePill.numbers = game.numbersRemaining()
+        scorePill.round = game.currentRound
     }
 
     private func playSound(sound: Sound) {
