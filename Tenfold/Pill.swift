@@ -200,7 +200,7 @@ class Pill: UIView {
                                    animations: {
                                     self.alpha = 0
                                     var dismissedFrame = self.frame
-                                    dismissedFrame.origin.y -= 150
+                                    dismissedFrame.origin.y -= 100
                                     self.frame = dismissedFrame
             }, completion: { _ in
                 self.dismissalInProgress = false
