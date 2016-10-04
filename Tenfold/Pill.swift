@@ -204,21 +204,6 @@ class Pill: UIView {
         })
     }
 
-    func pulse() {
-        guard isShowing else { return }
-
-        UIView.animateWithDuration(Pill.pulseDuration,
-                                   delay: 0,
-                                   options: [.CurveEaseOut],
-                                   animations: {
-            self.transform = CGAffineTransformScale(self.transform, 1.15, 1.15)
-        }, completion: { _ in
-            UIView.animateWithDuration(0.15, delay: 0, options: [.CurveEaseIn], animations: {
-                self.transform = CGAffineTransformIdentity
-            }, completion: nil)
-        })
-    }
-
     private func frameInside(frame parentFrame: CGRect, showing: Bool) -> CGRect {
         let width = type == .Icon ? Pill.iconSize : textLabelWidth()
         let height = type == .Icon ? Pill.iconSize : Pill.labelHeight

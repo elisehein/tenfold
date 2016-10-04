@@ -366,9 +366,7 @@ class Play: UIViewController {
 
         if unrepresented.count > 0 && game.numbersRemaining() > 10 {
             gameplayMessagePill.newlyUnrepresentedNumber = unrepresented[0]
-            gameplayMessagePill.popup(forSeconds: 3,
-                                      inFrame: view.bounds,
-                                      completion: {
+            gameplayMessagePill.popup(forSeconds: 3, inFrame: view.bounds, completion: {
                 self.game.pruneValueCounts()
             })
         } else {
