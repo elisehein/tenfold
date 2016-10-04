@@ -9,11 +9,34 @@
 import Foundation
 import UIKit
 
+enum ScorePillType {
+    case Floating
+    case Static
+}
+
 class ScorePill: Pill {
 
-    let logo = UIImageView(image: UIImage(named: "tenfold-logo-small"))
-    let roundLabel = UILabel()
-    let numbersLabel = UILabel()
+    private let logo = UIImageView(image: UIImage(named: "tenfold-logo-small"))
+    private let roundLabel = UILabel()
+    private let numbersLabel = UILabel()
+
+    var type: ScorePillType = .Static {
+        didSet {
+            guard type != oldValue else { return }
+            guard superview != nil else { return }
+
+            if type == .Floating {
+                isShowing = false
+                configureBackground()
+                toggle(inFrame: superview!.frame, showing: true, animated: true)
+            } else {
+                toggle(inFrame: superview!.frame, showing: false, animated: true, completion: {
+                    self.configureBackground()
+                    self.toggle(inFrame: self.superview!.frame, showing: true, animated: true)
+                })
+            }
+        }
+    }
 
     var numbers: Int = 0 {
         didSet {
@@ -30,8 +53,8 @@ class ScorePill: Pill {
     init() {
         super.init(type: .Text)
 
-        label.backgroundColor = UIColor.themeColor(.OffWhite).colorWithAlphaComponent(0.95)
         text = "ROUND NUMS"
+        configureBackground()
 
         logo.contentMode = .ScaleAspectFit
         logo.frame = CGRect.zero
@@ -83,6 +106,16 @@ class ScorePill: Pill {
 
     override func textLabelWidth() -> CGFloat {
         return 260
+    }
+
+    private func configureBackground() {
+        if type == .Static {
+            label.backgroundColor = UIColor.clearColor()
+        } else {
+            label.backgroundColor = UIColor.themeColor(.OffWhite).colorWithAlphaComponent(0.92)
+        }
+
+        shadowLayer.hidden = type == .Static
     }
 
     private func constructAttributedStringForCount(count: Int) -> NSMutableAttributedString {

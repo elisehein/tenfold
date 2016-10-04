@@ -458,6 +458,7 @@ class Play: UIViewController {
             passedNextRoundThreshold = false
         }
 
+        scorePill.type = gameGrid.contentOffset.y > -gameGrid.spaceForScore ? .Floating : .Static
         menu.position()
     }
 
