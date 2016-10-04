@@ -189,13 +189,13 @@ class Pill: UIView {
     func dismiss(inFrame parentFrame: CGRect, completion: (() -> Void)) {
         dismissalInProgress = true
 
-        UIView.animateWithDuration(1.0,
+        UIView.animateWithDuration(1,
                                    delay: 0,
                                    options: .CurveEaseOut,
                                    animations: {
                                     self.alpha = 0
                                     var dismissedFrame = self.frame
-                                    dismissedFrame.origin.y -= 100
+                                    dismissedFrame.origin.y -= 150
                                     self.frame = dismissedFrame
             }, completion: { _ in
                 self.dismissalInProgress = false

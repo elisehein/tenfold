@@ -25,7 +25,7 @@ class Play: UIViewController {
     let menu: Menu
     let gameGrid: GameGrid
     private var nextRoundGrid: NextRoundGrid?
-    private let nextRoundPill = Pill(type: .Text)
+    private let nextRoundPill = NextRoundPill()
     private let gameplayMessagePill = GameplayMessagePill()
     private let undoPill = Pill(type: .Icon)
     private let scorePill = ScorePill()
@@ -384,7 +384,7 @@ class Play: UIViewController {
     }
 
     private func updateNextRoundPillText() {
-        nextRoundPill.text = "+ \(game.numbersRemaining())"
+        nextRoundPill.numberCount = game.numbersRemaining()
     }
 
     private func updateScore() {

@@ -108,8 +108,8 @@ class Rules: UIViewController {
                              forControlEvents: .TouchUpInside)
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
 
-        let infoButton = UIButton(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-        infoButton.setBackgroundImage(UIImage(named: "tenfold-logo-button"), forState: .Normal)
+        let infoButton = UIButton(frame: CGRect(x: 0, y: 0, width: 25, height: 17))
+        infoButton.setBackgroundImage(UIImage(named: "menu-icon"), forState: .Normal)
         infoButton.addTarget(self,
                              action: #selector(Rules.showAppInfo),
                              forControlEvents: .TouchUpInside)
