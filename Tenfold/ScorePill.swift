@@ -72,7 +72,7 @@ class ScorePill: Pill {
     init() {
         super.init(type: .Text)
 
-        text = "ROUND NUMS"
+        text = "ROUND TO GO"
         configureBackground()
 
         logo.contentMode = .ScaleAspectFit
@@ -127,14 +127,14 @@ class ScorePill: Pill {
 
         attrString.replaceCharactersInRange(NSRange(location: 5, length: 1), withAttributedString: gapString)
 
-        let attrs = [NSFontAttributeName: UIFont.themeFontWithSize(10),
+        let attrs = [NSFontAttributeName: UIFont.themeFontWithSize(Pill.detailFontSize),
                      NSForegroundColorAttributeName: UIColor(hex: "#94855D")]
         attrString.addAttributes(attrs, range: NSRange(location: 0, length: text.characters.count))
         return attrString
     }
 
     override func textLabelWidth() -> CGFloat {
-        return 260
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 300 : 260
     }
 
     private func configureBackground() {

@@ -13,7 +13,7 @@ class NextRoundPill: Pill {
 
     var numberCount: Int = 0 {
         didSet {
-            text = "+ \(numberCount) NUMS"
+            text = "+ \(numberCount) TO GO"
         }
     }
 
@@ -24,11 +24,11 @@ class NextRoundPill: Pill {
     override func constructAttributedString(withText text: String) -> NSMutableAttributedString {
         let attrString = super.constructAttributedString(withText: text)
 
-        let grayedOut = "NUMS"
+        let grayedOut = "TO GO"
         if let index = text.indexOf(grayedOut) {
             let attributes = [
                 NSForegroundColorAttributeName: UIColor.whiteColor().colorWithAlphaComponent(0.55),
-                NSFontAttributeName: UIFont.themeFontWithSize(10)
+                NSFontAttributeName: UIFont.themeFontWithSize(Pill.detailFontSize)
             ]
             attrString.addAttributes(attributes,
                                      range: NSRange(location: index, length: grayedOut.characters.count))

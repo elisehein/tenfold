@@ -18,6 +18,11 @@ enum PillType {
 
 class Pill: UIView {
 
+    static let detailFontSize: CGFloat = {
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 14 : 11
+
+    }()
+
     private static let iconSize: CGFloat = 70
     private static let pulseDuration = GameGridCell.animationDuration
 
