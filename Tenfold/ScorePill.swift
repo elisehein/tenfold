@@ -19,6 +19,7 @@ class ScorePill: Pill {
     private let logo = UIImageView(image: UIImage(named: "tenfold-logo-small"))
     private let roundLabel = UILabel()
     private let numbersLabel = UILabel()
+    private static let countLabelTransformFactor: CGFloat = 1.45
 
     var type: ScorePillType = .Static {
         didSet {
@@ -40,12 +41,21 @@ class ScorePill: Pill {
 
     var numbers: Int = 0 {
         didSet {
+            // Only pulse on game moves (remove pair & add round), not on undo moves
+            if numbers < oldValue || numbers == oldValue * 2 {
+                pulse(numbersLabel)
+            }
+
             numbersLabel.attributedText = constructAttributedStringForCount(numbers)
         }
     }
 
     var round: Int = 0 {
         didSet {
+            if round > oldValue {
+                pulse(roundLabel)
+            }
+
             roundLabel.attributedText = constructAttributedStringForCount(round)
         }
     }
@@ -59,6 +69,9 @@ class ScorePill: Pill {
         logo.contentMode = .ScaleAspectFit
         logo.frame = CGRect.zero
         logo.clipsToBounds = true
+
+        roundLabel.transform = countLabelTransform()
+        numbersLabel.transform = countLabelTransform()
 
         addSubview(logo)
         addSubview(roundLabel)
@@ -114,17 +127,43 @@ class ScorePill: Pill {
         } else {
             label.backgroundColor = UIColor.themeColor(.OffWhite).colorWithAlphaComponent(0.92)
         }
-
         shadowLayer.hidden = type == .Static
     }
 
     private func constructAttributedStringForCount(count: Int) -> NSMutableAttributedString {
         let attrString = super.constructAttributedString(withText: "\(count)")
 
-        let attrs = [NSForegroundColorAttributeName: UIColor(hex: "#5A491B")]
+        // Start from a scaled down font size so the pulse doesn't look blurry
+        let originalPillFontSize = NSAttributedString.fontSize(forTextStyle: .Pill)
+
+        let attrs = [
+            NSForegroundColorAttributeName: UIColor(hex: "#5A491B"),
+            NSFontAttributeName: UIFont.themeFontWithSize(originalPillFontSize *
+                                                          ScorePill.countLabelTransformFactor)
+        ]
+
         attrString.addAttributes(attrs, range: NSRange(location: 0, length: attrString.length))
         return attrString
+    }
 
+    private func pulse(aLabel: UILabel) {
+        UIView.animateWithDuration(GameGridCell.animationDuration,
+                                   delay: 0,
+                                   options: .CurveEaseOut,
+                                   animations: {
+            aLabel.transform = CGAffineTransformIdentity
+        }, completion: { _ in
+            UIView.animateWithDuration(0.15, animations: {
+                aLabel.transform = self.countLabelTransform()
+            }, completion: { _ in
+                aLabel.transform = self.countLabelTransform()
+            })
+        })
+    }
+
+    private func countLabelTransform() -> CGAffineTransform {
+        let defaultScale = 1 / ScorePill.countLabelTransformFactor
+        return CGAffineTransformScale(CGAffineTransformIdentity, defaultScale, defaultScale)
     }
 
     required init?(coder aDecoder: NSCoder) {

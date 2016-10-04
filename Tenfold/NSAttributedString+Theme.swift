@@ -77,7 +77,7 @@ extension NSAttributedString {
         }
     }
 
-    private class func fontSize(forTextStyle textStyle: TextStyle) -> CGFloat {
+    class func fontSize(forTextStyle textStyle: TextStyle) -> CGFloat {
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
 
             switch textStyle {
