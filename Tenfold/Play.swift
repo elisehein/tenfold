@@ -407,6 +407,7 @@ class Play: UIViewController {
     private func handleWillSnapToStartingPosition() {
         view.backgroundColor = Play.defaultBGColor
         scorePill.toggle(inFrame: view.frame, showing: false)
+        scorePill.isActive = false
         menu.showIfNeeded(atDefaultPosition: true)
     }
 
@@ -421,6 +422,7 @@ class Play: UIViewController {
     func handleDidSnapToGameplayPosition() {
         scorePill.alpha = 1
         scorePill.toggle(inFrame: view.frame, showing: true, animated: true)
+        scorePill.isActive = true
     }
 
     func handlePullUpThresholdExceeded() {
@@ -433,6 +435,7 @@ class Play: UIViewController {
         if !isOnboarding {
             menu.hideIfNeeded()
             scorePill.toggle(inFrame: view.bounds, showing: true, animated: true)
+            scorePill.isActive = true
         }
     }
 

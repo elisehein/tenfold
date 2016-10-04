@@ -23,6 +23,11 @@ class ScorePill: Pill {
 
     var onTap: (() -> Void)? = nil
 
+    // This is annoying, but we need a way of knowing whether we can reveal
+    // the static type pill after hiding the floating type pill -- that the grid
+    // hasn't gone to starting position in the meantime.
+    var isActive = false
+
     var type: ScorePillType = .Static {
         didSet {
             guard type != oldValue else { return }
@@ -35,6 +40,8 @@ class ScorePill: Pill {
             } else {
                 toggle(inFrame: superview!.frame, showing: false, animated: true, completion: {
                     self.configureBackground()
+
+                    guard self.isActive else { return }
                     self.toggle(inFrame: self.superview!.frame, showing: true, animated: true)
                 })
             }
