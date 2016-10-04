@@ -21,6 +21,15 @@ extension GameGrid {
                -contentOffset.y
     }
 
+    func scrolledToTop() -> Bool {
+        return contentOffset.y <= -spaceForScore
+    }
+
+    func scrollToTopIfPossible() {
+        guard contentInset.top == spaceForScore && !scrolledToTop() else { return }
+        setContentOffset(CGPoint(x: 0, y: -spaceForScore), animated: true)
+    }
+
     internal func adjustTopInset(enforceStartingPosition enforceStartingPosition: Bool = false) {
         contentInset.top = topInset(atStartingPosition: enforceStartingPosition)
         gridAtStartingPosition = enforceStartingPosition
@@ -66,6 +75,7 @@ extension GameGrid {
             self.snappingInProgress = false
             self.toggleBounce(self.contentInset.top > 0)
             self.gridAtStartingPosition = false
+            self.onDidSnapToGameplayPosition?()
         })
     }
 
@@ -83,8 +93,7 @@ private extension GameGrid {
         if atStartingPosition {
             return frame.size.height - min(initialGameHeight(), currentGameHeight())
         } else {
-            return max(0, frame.size.height - currentGameHeight())
+            return max(spaceForScore, frame.size.height - currentGameHeight())
         }
     }
-
 }

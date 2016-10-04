@@ -36,7 +36,7 @@ class Menu: UIView {
     private let newGameButton = Button()
     private let instructionsButton = Button()
     private let soundButton = Button()
-    private let showMenuTip = Notification(type: .Text)
+    private let showMenuTip = Pill(type: .Text)
     let onboardingSteps = OnboardingSteps()
 
     private var hasLoadedConstraints = false
@@ -174,6 +174,10 @@ class Menu: UIView {
                 button.alpha = 1
             })
         }
+    }
+
+    func hideTipsIfNeeded() {
+        showMenuTip.hidden = true
     }
 
     private func showTipsIfNeeded() {

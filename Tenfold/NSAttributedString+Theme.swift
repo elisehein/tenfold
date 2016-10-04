@@ -12,7 +12,7 @@ import UIKit
 enum TextStyle {
     case Title
     case Paragraph
-    case Notification
+    case Pill
     case Tip
 }
 
@@ -32,7 +32,7 @@ extension NSAttributedString {
             NSForegroundColorAttributeName: color(forTextStyle: textStyle)
         ]
 
-        if textStyle == .Notification {
+        if textStyle == .Pill {
             attributes[NSKernAttributeName] = 1.2
         }
 
@@ -41,7 +41,7 @@ extension NSAttributedString {
 
     private class func color(forTextStyle textStyle: TextStyle) -> UIColor {
         switch textStyle {
-        case .Notification:
+        case .Pill:
             return UIColor.whiteColor().colorWithAlphaComponent(0.95)
         default:
             return UIColor.themeColor(.OffBlack)
@@ -54,7 +54,7 @@ extension NSAttributedString {
             switch textStyle {
             case .Paragraph:
                 return 7
-            case .Notification:
+            case .Pill:
                 return 0
             case .Title:
                 return 7
@@ -67,7 +67,7 @@ extension NSAttributedString {
             switch textStyle {
             case .Paragraph:
                 return 4
-            case .Notification:
+            case .Pill:
                 return 0
             case .Title:
                 return 7
@@ -77,13 +77,13 @@ extension NSAttributedString {
         }
     }
 
-    private class func fontSize(forTextStyle textStyle: TextStyle) -> CGFloat {
+    class func fontSize(forTextStyle textStyle: TextStyle) -> CGFloat {
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
 
             switch textStyle {
             case .Paragraph:
                 return 18
-            case .Notification:
+            case .Pill:
                 return 16
             case .Title:
                 return 22
@@ -96,7 +96,7 @@ extension NSAttributedString {
             switch textStyle {
             case .Paragraph:
                 return 14
-            case .Notification:
+            case .Pill:
                 return 13
             case .Title:
                 return 16
