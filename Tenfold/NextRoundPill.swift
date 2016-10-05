@@ -13,7 +13,7 @@ class NextRoundPill: Pill {
 
     var numberCount: Int = 0 {
         didSet {
-            text = "+ \(numberCount) TO GO"
+            text = "+ \(numberCount)  TO GO"
         }
     }
 

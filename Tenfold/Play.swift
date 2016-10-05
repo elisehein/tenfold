@@ -479,17 +479,12 @@ class Play: UIViewController {
     }
 
     private func positionScore() {
-        // Keep the static pill scrolling with the grid
-        let y = min(gameGrid.spaceForScore, -gameGrid.contentOffset.y)
-        staticScorePill.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 0, y)
-
-        // Toggle the floating pill when the static one is nearly hidden
-        if gameGrid.contentOffset.y > -(gameGrid.spaceForScore * 0.25) {
+        if gameGrid.contentOffset.y > -gameGrid.spaceForScore {
             floatingScorePill.toggle(inFrame: view.bounds, showing: true, animated: true)
-            staticScorePill.alpha = 0
+            staticScorePill.hidden = true
         } else {
-            floatingScorePill.toggle(inFrame: view.bounds, showing: false)
-            staticScorePill.alpha = 1
+            floatingScorePill.toggle(inFrame: view.bounds, showing: false, animated: true)
+            staticScorePill.hidden = false
         }
     }
 

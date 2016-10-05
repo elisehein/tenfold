@@ -19,7 +19,7 @@ class ScorePill: Pill {
     private let logo = UIImageView(image: UIImage(named: "tenfold-logo-small"))
     private let roundLabel = UILabel()
     private let numbersLabel = UILabel()
-    private static let countLabelTransformFactor: CGFloat = 1.45
+    private static let countLabelTransformFactor: CGFloat = 1.35
 
     var onTap: (() -> Void)? = nil
     var type: ScorePillType = .Static
@@ -133,7 +133,8 @@ class ScorePill: Pill {
         if type == .Static {
             label.backgroundColor = UIColor.clearColor()
         } else {
-            label.backgroundColor = UIColor.themeColor(.OffWhite).colorWithAlphaComponent(0.95)
+            // This colour is midway between OffWhite and OffWhiteShaded (for less contrast)
+            label.backgroundColor = UIColor(hex: "#F4EBD8").colorWithAlphaComponent(0.95)
         }
         shadowLayer.hidden = type == .Static
     }
