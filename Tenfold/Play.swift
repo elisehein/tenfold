@@ -71,9 +71,7 @@ class Play: UIViewController {
 
         let pan = UIPanGestureRecognizer(target: self, action: #selector(Play.detectPan))
 
-        floatingScorePill.anchorEdge = .Top
         floatingScorePill.onTap = handleScorePillTap
-        staticScorePill.anchorEdge = .Top
         updateScore()
 
         view.backgroundColor = Play.defaultBGColor

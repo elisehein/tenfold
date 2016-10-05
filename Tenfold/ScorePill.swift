@@ -49,6 +49,8 @@ class ScorePill: Pill {
         self.type = type
         super.init(type: .Text)
 
+        anchorEdge = .Top
+
         text = "ROUND TO GO"
         configureBackground()
 
@@ -59,14 +61,14 @@ class ScorePill: Pill {
         roundLabel.transform = countLabelTransform()
         numbersLabel.transform = countLabelTransform()
 
-        shadowLayer.layer.shadowOpacity = 0.3
+        shadowLayer.layer.shadowOpacity = 0.15
 
         let tap = UITapGestureRecognizer(target: self, action: #selector(ScorePill.didReceiveTap))
 
         addGestureRecognizer(tap)
-        addSubview(logo)
-        addSubview(roundLabel)
-        addSubview(numbersLabel)
+        label.addSubview(logo)
+        label.addSubview(roundLabel)
+        label.addSubview(numbersLabel)
     }
 
     override func layoutSubviews() {
@@ -74,16 +76,26 @@ class ScorePill: Pill {
 
         guard isShowing else { return }
 
+        if type == .Floating {
+            var labelFrame = label.frame
+            labelFrame.origin.y -= Pill.margin
+            labelFrame.size.height += 10
+            label.frame = labelFrame
+
+            label.layer.cornerRadius = 0
+            shadowLayer.layer.shadowPath = UIBezierPath(rect: label.frame).CGPath
+        }
+
         let logoSize: CGFloat = 18
-        logo.frame = CGRect(x: (bounds.size.width - logoSize) / 2,
-                            y: (bounds.size.height - logoSize) / 2,
+        logo.frame = CGRect(x: (label.frame.size.width - logoSize) / 2,
+                            y: (label.frame.size.height - logoSize) / 2,
                             width: logoSize,
                             height: logoSize)
 
         // First make a narrower box in the middle of the pill
-        var countFrame = bounds
-        countFrame.size.width = 150
-        countFrame.origin.x = (bounds.size.width - countFrame.size.width) / 2
+        var countFrame = label.bounds
+        countFrame.size.width = 170
+        countFrame.origin.x = (label.bounds.size.width - countFrame.size.width) / 2
 
         // Then cut it in half & use one half for each count
         countFrame.size.width /= 2
@@ -101,7 +113,7 @@ class ScorePill: Pill {
         let attrString = super.constructAttributedString(withText: text)
 
         let gap = NSTextAttachment()
-        gap.bounds = CGRect(x: 0, y: 0, width: 140, height: 0)
+        gap.bounds = CGRect(x: 0, y: 0, width: 170, height: 0)
         let gapString = NSAttributedString(attachment: gap)
 
         attrString.replaceCharactersInRange(NSRange(location: 5, length: 1), withAttributedString: gapString)
@@ -113,14 +125,15 @@ class ScorePill: Pill {
     }
 
     override func textLabelWidth() -> CGFloat {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 300 : 260
+        guard superview != nil else { return 0 }
+        return superview!.bounds.size.width
     }
 
     private func configureBackground() {
         if type == .Static {
             label.backgroundColor = UIColor.clearColor()
         } else {
-            label.backgroundColor = UIColor.themeColor(.OffWhite).colorWithAlphaComponent(0.92)
+            label.backgroundColor = UIColor.themeColor(.OffWhite).colorWithAlphaComponent(0.95)
         }
         shadowLayer.hidden = type == .Static
     }
