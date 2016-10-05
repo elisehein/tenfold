@@ -28,7 +28,8 @@ class Play: UIViewController {
     private let nextRoundPill = NextRoundPill()
     private let gameplayMessagePill = GameplayMessagePill()
     private let undoPill = Pill(type: .Icon)
-    private let scorePill = ScorePill()
+    private let floatingScorePill = ScorePill(type: .Floating)
+    private let staticScorePill = ScorePill(type: .Static)
 
     private var passedNextRoundThreshold = false
 
@@ -70,8 +71,9 @@ class Play: UIViewController {
 
         let pan = UIPanGestureRecognizer(target: self, action: #selector(Play.detectPan))
 
-        scorePill.anchorEdge = .Top
-        scorePill.onTap = handleScorePillTap
+        floatingScorePill.anchorEdge = .Top
+        floatingScorePill.onTap = handleScorePillTap
+        staticScorePill.anchorEdge = .Top
         updateScore()
 
         view.backgroundColor = Play.defaultBGColor
@@ -81,7 +83,8 @@ class Play: UIViewController {
         view.addSubview(gameplayMessagePill)
         view.addSubview(nextRoundPill)
         view.addSubview(undoPill)
-        view.addSubview(scorePill)
+        view.addSubview(floatingScorePill)
+        view.addSubview(staticScorePill)
     }
 
     override func viewDidLoad() {
@@ -233,7 +236,7 @@ class Play: UIViewController {
         // game move, and then when we've chosen two, we ensure the score becomes visible, too.
         if !isOnboarding {
             menu.hideTipsIfNeeded()
-            scorePill.toggle(inFrame: view.bounds, showing: true, animated: true)
+            staticScorePill.toggle(inFrame: view.bounds, showing: true, animated: true)
         }
     }
 
@@ -281,7 +284,7 @@ class Play: UIViewController {
         }
         // These only apply when returning from onboarding
         menu.hideIfNeeded()
-        scorePill.toggle(inFrame: view.bounds, showing: true, animated: true)
+        staticScorePill.toggle(inFrame: view.bounds, showing: true, animated: true)
 
         if game.latestMoveType() == .CrossingOutPair {
             undoLatestPairing()
@@ -386,8 +389,10 @@ class Play: UIViewController {
     }
 
     private func updateScore() {
-        scorePill.numbers = game.numbersRemaining()
-        scorePill.round = game.currentRound
+        floatingScorePill.numbers = game.numbersRemaining()
+        floatingScorePill.round = game.currentRound
+        staticScorePill.numbers = game.numbersRemaining()
+        staticScorePill.round = game.currentRound
     }
 
     private func playSound(sound: Sound) {
@@ -404,8 +409,7 @@ class Play: UIViewController {
 
     private func handleWillSnapToStartingPosition() {
         view.backgroundColor = Play.defaultBGColor
-        scorePill.toggle(inFrame: view.frame, showing: false)
-        scorePill.isActive = false
+        staticScorePill.toggle(inFrame: view.frame, showing: false)
         menu.showIfNeeded(atDefaultPosition: true)
     }
 
@@ -418,9 +422,8 @@ class Play: UIViewController {
     }
 
     func handleDidSnapToGameplayPosition() {
-        scorePill.alpha = 1
-        scorePill.toggle(inFrame: view.frame, showing: true, animated: true)
-        scorePill.isActive = true
+        staticScorePill.alpha = 1
+        staticScorePill.toggle(inFrame: view.frame, showing: true, animated: true)
     }
 
     func handlePullUpThresholdExceeded() {
@@ -432,8 +435,7 @@ class Play: UIViewController {
 
         if !isOnboarding {
             menu.hideIfNeeded()
-            scorePill.toggle(inFrame: view.bounds, showing: true, animated: true)
-            scorePill.isActive = true
+            staticScorePill.toggle(inFrame: view.bounds, showing: true, animated: true)
         }
     }
 
@@ -464,18 +466,33 @@ class Play: UIViewController {
             passedNextRoundThreshold = false
         }
 
-        scorePill.type = gameGrid.scrolledToTop() ? .Static : .Floating
+        positionScore()
         menu.position()
     }
 
     private func handlePullingDown(withFraction fraction: CGFloat) {
         guard menu.hidden else { return }
-        scorePill.alpha = 1 - fraction
+        staticScorePill.alpha = 1 - fraction
         view.backgroundColor = Play.gameplayBGColor.interpolateTo(Play.defaultBGColor, fraction: fraction)
     }
 
     private func handlePullingUpFromStartingPosition(withFraction fraction: CGFloat) {
         view.backgroundColor = Play.defaultBGColor.interpolateTo(Play.gameplayBGColor, fraction: fraction)
+    }
+
+    private func positionScore() {
+        // Keep the static pill scrolling with the grid
+        let y = min(gameGrid.spaceForScore, -gameGrid.contentOffset.y)
+        staticScorePill.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 0, y)
+
+        // Toggle the floating pill when the static one is nearly hidden
+        if gameGrid.contentOffset.y > -(gameGrid.spaceForScore * 0.25) {
+            floatingScorePill.toggle(inFrame: view.bounds, showing: true, animated: true)
+            staticScorePill.alpha = 0
+        } else {
+            floatingScorePill.toggle(inFrame: view.bounds, showing: false)
+            staticScorePill.alpha = 1
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -486,7 +503,7 @@ class Play: UIViewController {
 
     private func handleOnboardingWillDismissWithGame(onboardingGame: Game) {
         view.backgroundColor = Play.gameplayBGColor
-        scorePill.alpha = 1
+        staticScorePill.alpha = 1
         restart(withGame: onboardingGame, inGameplayPosition: true)
 
         // Don't know why... Possibly because we don't call handleScroll()

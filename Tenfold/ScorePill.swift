@@ -22,31 +22,7 @@ class ScorePill: Pill {
     private static let countLabelTransformFactor: CGFloat = 1.45
 
     var onTap: (() -> Void)? = nil
-
-    // This is annoying, but we need a way of knowing whether we can reveal
-    // the static type pill after hiding the floating type pill -- that the grid
-    // hasn't gone to starting position in the meantime.
-    var isActive = false
-
-    var type: ScorePillType = .Static {
-        didSet {
-            guard type != oldValue else { return }
-            guard superview != nil else { return }
-
-            if type == .Floating {
-                isShowing = false
-                configureBackground()
-                toggle(inFrame: superview!.frame, showing: true, animated: true)
-            } else {
-                toggle(inFrame: superview!.frame, showing: false, animated: true, completion: {
-                    self.configureBackground()
-
-                    guard self.isActive else { return }
-                    self.toggle(inFrame: self.superview!.frame, showing: true, animated: true)
-                })
-            }
-        }
-    }
+    var type: ScorePillType = .Static
 
     var numbers: Int = 0 {
         didSet {
@@ -69,7 +45,8 @@ class ScorePill: Pill {
         }
     }
 
-    init() {
+    init(type: ScorePillType) {
+        self.type = type
         super.init(type: .Text)
 
         text = "ROUND TO GO"
@@ -81,6 +58,8 @@ class ScorePill: Pill {
 
         roundLabel.transform = countLabelTransform()
         numbersLabel.transform = countLabelTransform()
+
+        shadowLayer.layer.shadowOpacity = 0.3
 
         let tap = UITapGestureRecognizer(target: self, action: #selector(ScorePill.didReceiveTap))
 
