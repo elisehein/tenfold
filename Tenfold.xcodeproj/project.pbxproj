@@ -164,6 +164,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0C1C36CC1DA661390032A56D /* Modals */ = {
+			isa = PBXGroup;
+			children = (
+				0C8E73041D7AF3FF00DFE757 /* AppInfoModal.swift */,
+				0C70C4041D71B95500A9E8B8 /* ConfirmationModal.swift */,
+				0CE5BD121D8DB81F0007F405 /* UpdatesModal.swift */,
+			);
+			name = Modals;
+			sourceTree = "<group>";
+		};
 		0C69CE4C1C6DCDDD002E0D29 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -294,13 +304,11 @@
 		0C90AEA31C6D1AE800E1E42E /* Screens */ = {
 			isa = PBXGroup;
 			children = (
-				0C8E73041D7AF3FF00DFE757 /* AppInfoModal.swift */,
-				0C70C4041D71B95500A9E8B8 /* ConfirmationModal.swift */,
+				0C1C36CC1DA661390032A56D /* Modals */,
 				0CADBDF51D6D92850090C13F /* GameFinished.swift */,
 				0CD93E831D79846100D7DF96 /* Onboarding.swift */,
 				0C738ADC1C69D811007C9548 /* Play.swift */,
 				0C68BE7D1D3A4B3A00A6ACDC /* Rules.swift */,
-				0CE5BD121D8DB81F0007F405 /* UpdatesModal.swift */,
 			);
 			name = Screens;
 			sourceTree = "<group>";
