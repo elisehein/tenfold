@@ -26,8 +26,6 @@ class Game: NSObject, NSCoding {
                                              1, 1, 1, 2, 1, 3, 1, 4, 1,
                                              5, 1, 6, 1, 7, 1, 8, 1, 9]
 
-    private static let initialValueCounts: [Int: Int] = [1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0]
-
     private var numbers: [Number] = []
     private var valueCounts: [Int: Int]
     private var latestMove: GameMove? = nil
@@ -60,9 +58,13 @@ class Game: NSObject, NSCoding {
     }
 
     private class func valueCounts(inNumbers givenNumbers: Array<Number>) -> [Int: Int] {
-        var counts = initialValueCounts
+        var counts = [Int: Int]()
         for number in givenNumbers {
-            counts[number.value!]! += 1
+            if counts[number.value!] == nil {
+                counts[number.value!] = 1
+            } else {
+                counts[number.value!]! += 1
+            }
         }
         return counts
     }

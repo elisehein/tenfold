@@ -13,11 +13,10 @@ import PureLayout
 class OptionsModal: ModalOverlay {
 
     private let soundLabel = UILabel()
-    private let soundButton = Button()
+    private let soundButton = BooleanStrikethroughButton()
 
     private let initialNumbersLabel = UILabel()
-    private let classicGameButton = Button()
-    private let randomGameButton = Button()
+    private let initialNumbersButton = SlidingStrikethroughButton()
     private let initialNumbersDetail = UILabel()
 
     private let doneButton = Button()
@@ -27,10 +26,8 @@ class OptionsModal: ModalOverlay {
     init() {
         super.init(position: .Center)
 
-        soundLabel.attributedText = NSMutableAttributedString.themeString(.OptionTitle, "Play sounds")
-
-        initialNumbersLabel.attributedText = NSMutableAttributedString.themeString(.OptionTitle,
-                                                                                   "New game numbers")
+        soundLabel.attributedText = NSMutableAttributedString.themeString(.OptionTitle, "Sound effects")
+        initialNumbersLabel.attributedText = NSMutableAttributedString.themeString(.OptionTitle, "Starting point")
 
         let detailText = "In the classic version, you always begin with the same " +
                          "27 numbers (1, 2, 3, ... 1, 9). Wheter you keep it traditional " +
@@ -42,29 +39,24 @@ class OptionsModal: ModalOverlay {
         ModalOverlay.configureModalButton(soundButton,
                                           color: UIColor.themeColor(.OffWhiteShaded),
                                           shouldHighlight: false)
-        ModalOverlay.configureModalButton(classicGameButton,
-                                          color: UIColor.themeColor(.OffWhiteShaded),
-                                          shouldHighlight: false)
-        ModalOverlay.configureModalButton(randomGameButton,
+        ModalOverlay.configureModalButton(initialNumbersButton,
                                           color: UIColor.themeColor(.OffWhiteShaded),
                                           shouldHighlight: false)
         ModalOverlay.configureModalButton(doneButton, color: UIColor.themeColor(.SecondaryAccent))
 
-        soundButton.setTitle("Sound", forState: .Normal)
-        classicGameButton.setTitle("Classic 1-19", forState: .Normal)
-        randomGameButton.setTitle("Random", forState: .Normal)
+        soundButton.setTitle("Sound effects", forState: .Normal)
+        soundButton.struckthrough = !StorageService.currentFlag(forSetting: .SoundOn)
+
         doneButton.setTitle("Done", forState: .Normal)
 
-        randomGameButton.strikeThrough = !StorageService.currentFlag(forSetting: .RandomInitialNumbers)
-        classicGameButton.strikeThrough = !randomGameButton.strikeThrough
+        // swiftlint:disable:next line_length
+        initialNumbersButton.struckthroughIndex = StorageService.currentFlag(forSetting: .RandomInitialNumbers) ? 0 : 1
+        initialNumbersButton.options = ["Classic 1-19", "Random"]
 
         soundButton.addTarget(self, action: #selector(OptionsModal.toggleSound), forControlEvents: .TouchUpInside)
-        classicGameButton.addTarget(self,
+        initialNumbersButton.addTarget(self,
                                     action: #selector(OptionsModal.toggleInitialNumbers),
                                     forControlEvents: .TouchUpInside)
-        randomGameButton.addTarget(self,
-                                   action: #selector(OptionsModal.toggleInitialNumbers),
-                                   forControlEvents: .TouchUpInside)
         doneButton.addTarget(self,
                              action: #selector(OptionsModal.dismiss),
                              forControlEvents: .TouchUpInside)
@@ -72,8 +64,7 @@ class OptionsModal: ModalOverlay {
         modal.addSubview(soundLabel)
         modal.addSubview(soundButton)
         modal.addSubview(initialNumbersLabel)
-        modal.addSubview(classicGameButton)
-        modal.addSubview(randomGameButton)
+        modal.addSubview(initialNumbersButton)
         modal.addSubview(initialNumbersDetail)
         modal.addSubview(doneButton)
     }
@@ -83,7 +74,6 @@ class OptionsModal: ModalOverlay {
         view.setNeedsUpdateConstraints()
     }
 
-
     override func updateViewConstraints() {
         if !hasLoadedConstraints {
             soundLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: 30)
@@ -92,6 +82,7 @@ class OptionsModal: ModalOverlay {
 
             soundButton.autoAlignAxisToSuperviewAxis(.Vertical)
             soundButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: soundLabel, withOffset: 10)
+//            soundButton.autoPinEdgeToSuperviewEdge(.Top)
             soundButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
             soundButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
 
@@ -99,22 +90,17 @@ class OptionsModal: ModalOverlay {
             initialNumbersLabel.autoAlignAxisToSuperviewAxis(.Vertical)
             initialNumbersLabel.autoMatchDimension(.Width, toDimension: .Width, ofView: modal, withMultiplier: 0.9)
 
-            classicGameButton.autoPinEdgeToSuperviewEdge(.Left)
-            classicGameButton.autoPinEdge(.Top,
+            initialNumbersButton.autoPinEdgeToSuperviewEdge(.Left)
+            initialNumbersButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
+            initialNumbersButton.autoPinEdge(.Top,
                                           toEdge: .Bottom,
                                           ofView: initialNumbersLabel,
                                           withOffset: 10)
-            classicGameButton.autoConstrainAttribute(.Right, toAttribute: .Vertical, ofView: modal, withOffset: 1)
-            classicGameButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
-
-            randomGameButton.autoPinEdgeToSuperviewEdge(.Right)
-            randomGameButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: initialNumbersLabel, withOffset: 10)
-            randomGameButton.autoConstrainAttribute(.Left, toAttribute: .Vertical, ofView: modal, withOffset: -1)
-            randomGameButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
+            initialNumbersButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
 
             initialNumbersDetail.autoPinEdge(.Top,
                                              toEdge: .Bottom,
-                                             ofView: classicGameButton,
+                                             ofView: initialNumbersButton,
                                              withOffset: 10)
             initialNumbersDetail.autoMatchDimension(.Width,
                                                     toDimension: .Width,
@@ -136,13 +122,12 @@ class OptionsModal: ModalOverlay {
 
     func toggleSound() {
         StorageService.toggleFlag(forSetting: .SoundOn)
-        soundButton.strikeThrough = !StorageService.currentFlag(forSetting: .SoundOn)
+        soundButton.toggle()
     }
 
     func toggleInitialNumbers() {
         StorageService.toggleFlag(forSetting: .RandomInitialNumbers)
-        randomGameButton.strikeThrough = !StorageService.currentFlag(forSetting: .RandomInitialNumbers)
-        classicGameButton.strikeThrough = !randomGameButton.strikeThrough
+        initialNumbersButton.toggle()
     }
 
     func dismiss() {

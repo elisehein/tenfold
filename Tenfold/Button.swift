@@ -51,8 +51,8 @@ class Button: UIButton {
                            forState: .Normal)
     }
 
-    private func constructAttributedString(withText text: String?,
-                                           color: UIColor) -> NSAttributedString {
+    func constructAttributedString(withText text: String?,
+                                           color: UIColor) -> NSMutableAttributedString {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .Center
 
@@ -70,6 +70,6 @@ class Button: UIButton {
             NSStrikethroughStyleAttributeName: strikeThrough ? 1 : 0
         ]
 
-        return NSAttributedString(string: (text?.uppercaseString)!, attributes: attributes)
+        return NSMutableAttributedString(string: (text?.uppercaseString)!, attributes: attributes)
     }
 }
