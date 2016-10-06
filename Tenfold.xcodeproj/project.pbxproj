@@ -15,6 +15,7 @@
 		0C1C36D21DA6AFFE0032A56D /* BooleanStrikethroughButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1C36D11DA6AFFE0032A56D /* BooleanStrikethroughButton.swift */; };
 		0C1C36D51DA6DA280032A56D /* Game+Queries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1C36D41DA6DA280032A56D /* Game+Queries.swift */; };
 		0C1C36D81DA6DAB50032A56D /* Game+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1C36D71DA6DAB50032A56D /* Game+Actions.swift */; };
+		0C1C36DA1DA6EFDF0032A56D /* NoMorePairsPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1C36D91DA6EFDF0032A56D /* NoMorePairsPill.swift */; };
 		0C1E317D1D86AE6E00ABA583 /* EndOfRoundMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1E317C1D86AE6E00ABA583 /* EndOfRoundMarker.swift */; };
 		0C34638F1C6F89B30086D3CC /* GameGridCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C34638E1C6F89B30086D3CC /* GameGridCell.swift */; };
 		0C3463931C6F8C340086D3CC /* Pairing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3463921C6F8C340086D3CC /* Pairing.swift */; };
@@ -91,6 +92,7 @@
 		0C1C36D11DA6AFFE0032A56D /* BooleanStrikethroughButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BooleanStrikethroughButton.swift; sourceTree = "<group>"; };
 		0C1C36D41DA6DA280032A56D /* Game+Queries.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Game+Queries.swift"; sourceTree = "<group>"; };
 		0C1C36D71DA6DAB50032A56D /* Game+Actions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Game+Actions.swift"; sourceTree = "<group>"; };
+		0C1C36D91DA6EFDF0032A56D /* NoMorePairsPill.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoMorePairsPill.swift; sourceTree = "<group>"; };
 		0C1E317C1D86AE6E00ABA583 /* EndOfRoundMarker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndOfRoundMarker.swift; sourceTree = "<group>"; };
 		0C34638E1C6F89B30086D3CC /* GameGridCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameGridCell.swift; sourceTree = "<group>"; };
 		0C3463921C6F8C340086D3CC /* Pairing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pairing.swift; sourceTree = "<group>"; };
@@ -374,6 +376,7 @@
 			children = (
 				0CA5A79A1DA2E86200917DAA /* GameplayMessagePill.swift */,
 				0C99B0BC1DA3C23100D2728C /* NextRoundPill.swift */,
+				0C1C36D91DA6EFDF0032A56D /* NoMorePairsPill.swift */,
 				0CB693B51DA500BA00E1B409 /* ScorePill.swift */,
 			);
 			name = Pills;
@@ -539,6 +542,7 @@
 				4EA695801D36992E00F9A315 /* Menu.swift in Sources */,
 				0CDA88BF1D87105F0047A461 /* GameMove.swift in Sources */,
 				0CB109341C7234FB00182663 /* UIColor.swift in Sources */,
+				0C1C36DA1DA6EFDF0032A56D /* NoMorePairsPill.swift in Sources */,
 				0CE682961D6DB46300CA5787 /* String.swift in Sources */,
 				0CB9388D1D202832005B81F4 /* NextRoundCell.swift in Sources */,
 				0CA050A81C6B23D9006A42B9 /* UIColor+Theme.swift in Sources */,

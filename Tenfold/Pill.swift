@@ -40,7 +40,7 @@ class Pill: UIView {
 
     let label = UILabel()
     let shadowLayer = UIView()
-    private let iconView = UIImageView()
+    let iconView = UIImageView()
 
     var iconName: String? {
         didSet {

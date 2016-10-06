@@ -30,6 +30,7 @@ class Play: UIViewController {
     private let undoPill = Pill(type: .Icon)
     private let floatingScorePill = ScorePill(type: .Floating)
     private let staticScorePill = ScorePill(type: .Static)
+    private let noMorePairsPill = NoMorePairsPill()
 
     private var passedNextRoundThreshold = false
 
@@ -82,6 +83,7 @@ class Play: UIViewController {
         view.addSubview(gameplayMessagePill)
         view.addSubview(nextRoundPill)
         view.addSubview(undoPill)
+        view.addSubview(noMorePairsPill)
         view.addSubview(floatingScorePill)
         view.addSubview(staticScorePill)
     }
@@ -357,13 +359,21 @@ class Play: UIViewController {
                         self.restart()
                     })
                 } else {
+                    self.checkForRemainingPairs()
                     self.updateState()
                 }
             })
 
             return true
         } else {
+            self.checkForRemainingPairs()
             return false
+        }
+    }
+
+    private func checkForRemainingPairs() {
+        if game.potentialPairs().count == 0 {
+            noMorePairsPill.flash(inFrame: view.bounds)
         }
     }
 
