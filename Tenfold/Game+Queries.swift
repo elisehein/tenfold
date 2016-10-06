@@ -114,7 +114,66 @@ extension Game {
         }
     }
 
-    private func remainingNumbers() -> [Number] {
+    func potentialPairs() -> [Pair] {
+        var pairs = [Pair]()
+
+        for number in remainingNumbers() {
+            let index = numbers.indexOf(number)
+            let potentialPartners = potentialPartnerIndeces(forIndex: index!)
+
+            for partnerIndex in potentialPartners {
+                let pair = Pair(index!, partnerIndex)
+                if Pairing.validate(pair, inGame: self) {
+                    pairs.append(pair)
+                }
+            }
+        }
+
+        return pairs
+    }
+}
+
+// MARK: Querying helpers
+
+private extension Game {
+    func remainingNumbers() -> [Number] {
         return numbers.filter({ !$0.crossedOut })
+    }
+
+    func potentialPartnerIndeces(forIndex index: Int) -> [Int] {
+        var potentialIndeces = [Int]()
+
+        guard !numbers[index].crossedOut else { return potentialIndeces }
+
+        // By only checking the ahead and not backwards, we don't end up with duplicate pairs,
+        // And can bypass checking later.
+
+        if let partnerAfter = nextAvailable(to: index, step: 1) {
+            potentialIndeces.append(partnerAfter)
+        }
+
+        if let partnerDown = nextAvailable(to: index, step: 9) {
+            potentialIndeces.append(partnerDown)
+        }
+
+        return potentialIndeces
+    }
+
+    func nextAvailable(to index: Int, step: Int) -> Int? {
+        var siblingIndex = index + step
+
+        if siblingIndex < numbers.count && siblingIndex >= 0 {
+            while siblingIndex + step < numbers.count &&
+                  siblingIndex + step > 0 &&
+                  numbers[siblingIndex].crossedOut {
+                siblingIndex = siblingIndex + step
+            }
+
+            if !numbers[siblingIndex].crossedOut {
+                return siblingIndex
+            }
+        }
+
+        return nil
     }
 }
