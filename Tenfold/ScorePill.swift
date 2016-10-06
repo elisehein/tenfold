@@ -143,7 +143,7 @@ class ScorePill: Pill {
         let attrString = super.constructAttributedString(withText: "\(count)")
 
         // Start from a scaled down font size so the pulse doesn't look blurry
-        let originalPillFontSize = NSMutableAttributedString.themeFontSize(forTextStyle: .Pill)
+        let originalPillFontSize = TextStyleProperties.fontSize[.Pill]!
 
         let attrs = [
             NSForegroundColorAttributeName: UIColor(hex: "#5A491B"),

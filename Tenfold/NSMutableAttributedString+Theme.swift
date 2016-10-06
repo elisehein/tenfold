@@ -18,7 +18,47 @@ enum TextStyle {
     case OptionDetail
 }
 
+struct TextStyleProperties {
+    private static let isIPad: Bool = {
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad
+    }()
+
+    static let fontSize: [TextStyle: CGFloat] = {
+        return [
+            .Title:        isIPad ? 22 : 16,
+            .Paragraph:    isIPad ? 18 : 14,
+            .Pill:         isIPad ? 16 : 13,
+            .Tip:          isIPad ? 14 : 13,
+            .OptionTitle:  isIPad ? 14 : 13,
+            .OptionDetail: isIPad ? 14 : 12
+        ]
+    }()
+
+    private static let fontWeight: [TextStyle: FontWeight] = {
+        return [
+            .Title:        .Bold,
+            .Paragraph:    .Regular,
+            .Pill:         .Regular,
+            .Tip:          .Italic,
+            .OptionTitle:  .Bold,
+            .OptionDetail: .Regular
+        ]
+    }()
+
+    private static let lineSpacing: [TextStyle: CGFloat] = {
+        return [
+            .Title:        7,
+            .Paragraph:    isIPad ? 7 : 4,
+            .Pill:         0,
+            .Tip:          isIPad ? 5 : 4,
+            .OptionTitle:  isIPad ? 7 : 4,
+            .OptionDetail: isIPad ? 7 : 4
+        ]
+    }()
+}
+
 extension NSMutableAttributedString {
+
     class func themeString(textStyle: TextStyle, _ string: String) -> NSMutableAttributedString {
         return NSMutableAttributedString(string: string, attributes: attributes(forTextStyle: textStyle))
     }
@@ -26,13 +66,13 @@ extension NSMutableAttributedString {
     class func attributes(forTextStyle textStyle: TextStyle) -> [String: AnyObject] {
 
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = themeLineSpacing(forTextStyle: textStyle)
+        paragraphStyle.lineSpacing = TextStyleProperties.lineSpacing[textStyle]!
         paragraphStyle.alignment = textStyle == .OptionTitle || textStyle == .OptionDetail ?
                                    .Left :
                                    .Center
 
-        let font = UIFont.themeFontWithSize(themeFontSize(forTextStyle: textStyle),
-                                            weight: themeFontWeight(forTextStyle: textStyle))
+        let font = UIFont.themeFontWithSize(TextStyleProperties.fontSize[textStyle]!,
+                                            weight: TextStyleProperties.fontWeight[textStyle]!)
 
         var attributes = [
             NSParagraphStyleAttributeName: paragraphStyle,
@@ -45,75 +85,5 @@ extension NSMutableAttributedString {
         }
 
         return attributes
-    }
-
-    private class func themeLineSpacing(forTextStyle textStyle: TextStyle) -> CGFloat {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-
-            switch textStyle {
-            case .Pill:
-                return 0
-            case .Tip:
-                return 5
-            default:
-                return 7
-            }
-
-        } else {
-
-            switch textStyle {
-            case .Pill:
-                return 0
-            case .Title:
-                return 7
-            default:
-                return 4
-            }
-        }
-    }
-
-    class func themeFontSize(forTextStyle textStyle: TextStyle) -> CGFloat {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-
-            switch textStyle {
-            case .Pill:
-                return 16
-            case .Title:
-                return 22
-            case .Tip:
-                return 14
-            case .OptionDetail:
-                return 14
-            default:
-                return 18
-            }
-
-        } else {
-
-            switch textStyle {
-            case .Paragraph:
-                return 14
-            case .Title:
-                return 16
-            case .OptionDetail:
-                return 12
-            default:
-                return 13
-            }
-        }
-
-    }
-
-    private class func themeFontWeight(forTextStyle textStyle: TextStyle) -> FontWeight {
-        switch textStyle {
-        case .Title:
-            return .Bold
-        case .Tip:
-            return .Italic
-        case .OptionTitle:
-            return .Bold
-        default:
-            return .Regular
-        }
     }
 }
