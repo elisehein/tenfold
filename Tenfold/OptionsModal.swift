@@ -50,7 +50,7 @@ class OptionsModal: ModalOverlay {
         doneButton.setTitle("Done", forState: .Normal)
 
         // swiftlint:disable:next line_length
-        initialNumbersButton.struckthroughIndex = StorageService.currentFlag(forSetting: .RandomInitialNumbers) ? 0 : 1
+        initialNumbersButton.struckthroughOption = StorageService.currentFlag(forSetting: .RandomInitialNumbers) ? .Left : .Right
         initialNumbersButton.options = ["Classic 1-19", "Random"]
 
         soundButton.addTarget(self, action: #selector(OptionsModal.toggleSound), forControlEvents: .TouchUpInside)

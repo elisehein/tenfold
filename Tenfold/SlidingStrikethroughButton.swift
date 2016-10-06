@@ -9,10 +9,19 @@
 import Foundation
 import UIKit
 
+enum SlidingStrikethroughButtonOption: Int {
+    case Left
+    case Right
+
+    mutating func toggle() {
+        self = self == .Left ? .Right : .Left
+    }
+}
+
 class SlidingStrikethroughButton: Button {
 
     private let lineLayer = CAShapeLayer()
-    var struckthroughIndex: Int = 0
+    var struckthroughOption: SlidingStrikethroughButtonOption = .Left
 
     var options: [String] = [] {
         didSet {
@@ -29,8 +38,8 @@ class SlidingStrikethroughButton: Button {
 
     func toggle() {
         let animation = CABasicAnimation(keyPath: "path")
-        animation.fromValue = startingPathWhenChoosingOption(struckthroughIndex)
-        animation.toValue = endPathWhenChoosingOption(struckthroughIndex)
+        animation.fromValue = startingPathWhenSlidingFrom(struckthroughOption)
+        animation.toValue = fullWidthLinePath()
 
         animation.duration = 0.3
         animation.delegate = self
@@ -40,44 +49,16 @@ class SlidingStrikethroughButton: Button {
         lineLayer.addAnimation(animation, forKey: "startAnimation")
     }
 
-    private func startingPathWhenChoosingOption(optionIndex: Int?) -> CGPath {
-        let textWidth = attributedTitleForState(.Normal)?.size().width
-        let y = bounds.size.height / 2 + 2
-        let startX = (bounds.size.width - textWidth!) / 2
-        let endX = startX + textWidth!
-        let point = CGPoint(x: optionIndex == 0 ? startX : endX, y: y)
-        let path = UIBezierPath()
-        path.moveToPoint(point)
-        path.addLineToPoint(point)
-        return path.CGPath
-    }
-
-    private func endPathWhenChoosingOption(optionIndex: Int?) -> CGPath {
-        return fullWidthLinePath()
-    }
-
-    private func fullWidthLinePath() -> CGPath {
-        let textWidth = attributedTitleForState(.Normal)?.size().width
-        let startX = (bounds.size.width - textWidth!) / 2
-        let endX = startX + textWidth!
-        let y = bounds.size.height / 2 + 2
-        let path = UIBezierPath()
-        path.moveToPoint(CGPoint(x: startX, y: y))
-        path.addLineToPoint(CGPoint(x: endX, y: y))
-        return path.CGPath
-    }
-
     override func animationDidStop(anim: CAAnimation, finished flag: Bool) {
         guard anim == lineLayer.animationForKey("startAnimation") else { return }
         lineLayer.removeAllAnimations()
 
-        // Naive toggle. Assumes only two options
-        struckthroughIndex = struckthroughIndex == 0 ? 1 : 0
+        struckthroughOption.toggle()
         configure()
 
         let animation = CABasicAnimation(keyPath: "path")
         animation.fromValue = fullWidthLinePath()
-        animation.toValue = startingPathWhenChoosingOption(struckthroughIndex)
+        animation.toValue = startingPathWhenSlidingFrom(struckthroughOption)
 
         animation.duration = 0.2
         animation.delegate = self
@@ -90,14 +71,14 @@ class SlidingStrikethroughButton: Button {
         let titleString = NSMutableAttributedString()
 
         let gap = NSTextAttachment()
-        gap.bounds = CGRect(x: 0, y: 0, width: 40, height: 0)
+        gap.bounds = CGRect(x: 0, y: 0, width: 50, height: 0)
         let gapString = NSAttributedString(attachment: gap)
 
         for option in options {
             let attrString = constructAttributedString(withText: option,
                                                        color: UIColor.themeColor(.OffBlack))
 
-            if options.indexOf(option) == struckthroughIndex {
+            if options.indexOf(option) == struckthroughOption.rawValue {
                 attrString.addAttributes([NSStrikethroughStyleAttributeName: 1],
                                          range: NSRange(location: 0, length: option.characters.count))
             }
@@ -110,6 +91,31 @@ class SlidingStrikethroughButton: Button {
         }
 
         setAttributedTitle(titleString, forState: .Normal)
+    }
+
+    private func startingPathWhenSlidingFrom(option: SlidingStrikethroughButtonOption) -> CGPath {
+        let textWidth = attributedTitleForState(.Normal)?.size().width
+        let textStartX = (bounds.size.width - textWidth!) / 2
+        let textEndX = textStartX + textWidth!
+        let point = CGPoint(x: option == .Left ? textStartX : textEndX, y: linePathY())
+        let path = UIBezierPath()
+        path.moveToPoint(point)
+        path.addLineToPoint(point)
+        return path.CGPath
+    }
+
+    private func fullWidthLinePath() -> CGPath {
+        let textWidth = attributedTitleForState(.Normal)?.size().width
+        let startX = (bounds.size.width - textWidth!) / 2
+        let endX = startX + textWidth!
+        let path = UIBezierPath()
+        path.moveToPoint(CGPoint(x: startX, y: linePathY()))
+        path.addLineToPoint(CGPoint(x: endX, y: linePathY()))
+        return path.CGPath
+    }
+
+    private func linePathY() -> CGFloat {
+        return bounds.size.height / 2 + 2
     }
 
     required init?(coder aDecoder: NSCoder) {
