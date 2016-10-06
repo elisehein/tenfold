@@ -38,8 +38,8 @@ class Pill: UIView {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 50 : 30
     }()
 
-    internal let label = UILabel()
-    internal let shadowLayer = UIView()
+    let label = UILabel()
+    let shadowLayer = UIView()
     private let iconView = UIImageView()
 
     var iconName: String? {
@@ -55,7 +55,7 @@ class Pill: UIView {
         }
     }
 
-    internal var isShowing = false
+    var isShowing = false
     private var dismissalInProgress = false
     private var popupInProgress = false
     private var popupCompletion: (() -> Void)?

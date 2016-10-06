@@ -55,7 +55,7 @@ class Grid: UICollectionView {
     // be visible while the other is not (in which case it is nil). We still
     // want to
     // cross out the visible one
-    internal func performActionOnCells(withIndeces indeces: [Int],
+    func performActionOnCells(withIndeces indeces: [Int],
                                        _ action: ((GameGridCell) -> Void)) {
         for index in indeces {
             let indexPath = NSIndexPath(forItem: index, inSection: 0)

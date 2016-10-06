@@ -10,17 +10,17 @@ import Foundation
 import UIKit
 
 class GameGrid: Grid {
-    internal let reuseIdentifier = "GameGridCell"
+    let reuseIdentifier = "GameGridCell"
 
-    internal var game: Game
-    internal var snappingInProgress = false
-    internal var bouncingInProgress = false
-    internal var currentScrollCycleHandled = false
+    var game: Game
+    var snappingInProgress = false
+    var bouncingInProgress = false
+    var currentScrollCycleHandled = false
 
     var gridAtStartingPosition = true
     var automaticallySnapToGameplayPosition = true
 
-    internal var pullUpThreshold: CGFloat?
+    var pullUpThreshold: CGFloat?
     var snapToStartingPositionThreshold: CGFloat?
     var snapToGameplayPositionThreshold: CGFloat?
 
@@ -35,18 +35,18 @@ class GameGrid: Grid {
     var onWillSnapToStartingPosition: (() -> Void)?
     var onPairingAttempt: ((Pair) -> Void)?
 
-    internal static let scaleFactor = UIScreen.mainScreen().scale
-    internal static let prematureBounceReductionFactor: CGFloat = 0.2
+    static let scaleFactor = UIScreen.mainScreen().scale
+    static let prematureBounceReductionFactor: CGFloat = 0.2
 
-    internal var prevPrematureBounceOffset: CGFloat = 0
-    internal var totalPrematureBounceDistance: CGFloat = 0
+    var prevPrematureBounceOffset: CGFloat = 0
+    var totalPrematureBounceDistance: CGFloat = 0
 
     // Selection and deselection are the core of the game. But because a UICollectionView
     // cannot deselect items that are not currently visible (which can often be required for us,
     // say when pairing two items so far from each other that they cannot be seen on screen
     // at the same time), it's easier to keep track of selection ourselves, rather than natively
-    internal var selectedIndexPaths: [NSIndexPath] = []
-    internal var indecesPermittedForSelection: [Int]? = nil
+    var selectedIndexPaths: [NSIndexPath] = []
+    var indecesPermittedForSelection: [Int]? = nil
 
     // When you scroll while row insertion or removal is in progress, cellForItemWithIndexPath will
     // for some reason get corrupt data. We can disable user interaction completely to also
@@ -57,7 +57,7 @@ class GameGrid: Grid {
         }
     }
 
-    internal var rowInsertionInProgressWithIndeces: [Int]? = nil {
+    var rowInsertionInProgressWithIndeces: [Int]? = nil {
         didSet {
             userInteractionEnabled = rowInsertionInProgressWithIndeces == nil
         }
@@ -85,7 +85,7 @@ class GameGrid: Grid {
         adjustTopInset(enforceStartingPosition: true)
     }
 
-    internal func toggleBounce(shouldBounce: Bool) {
+    func toggleBounce(shouldBounce: Bool) {
         guard !snappingInProgress else { return }
 
         // We should *never* disable bounce if there is more space above the grid than is needed for the score

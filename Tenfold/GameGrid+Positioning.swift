@@ -30,18 +30,18 @@ extension GameGrid {
         setContentOffset(CGPoint(x: 0, y: -spaceForScore), animated: true)
     }
 
-    internal func adjustTopInset(enforceStartingPosition enforceStartingPosition: Bool = false) {
+    func adjustTopInset(enforceStartingPosition enforceStartingPosition: Bool = false) {
         contentInset.top = topInset(atStartingPosition: enforceStartingPosition)
         gridAtStartingPosition = enforceStartingPosition
         toggleBounce(contentInset.top > spaceForScore)
     }
 
-    internal func initialGameHeight() -> CGFloat {
+    func initialGameHeight() -> CGFloat {
         let initialRows = Matrix.singleton.totalRows(Game.initialNumberValues.count)
         return heightForGame(withTotalRows: initialRows)
     }
 
-    internal func ensureGridPositionedForGameplay() {
+    func ensureGridPositionedForGameplay() {
         guard automaticallySnapToGameplayPosition else { return }
 
         // This handler needs to be called *before* the animation block,
