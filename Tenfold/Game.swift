@@ -11,6 +11,7 @@ import Foundation
 class Game: NSObject, NSCoding {
 
     static let numbersPerRow = 9
+    static let initialNumberCount = 27
 
     // Take care not to rename the actual literals, as they are used as storage keys on
     // devices that already have the game installed
@@ -21,11 +22,11 @@ class Game: NSObject, NSCoding {
     private static let valueCountsCoderKey = "gameValueCountsCoderKey"
     private static let startTimeCoderKey = "gameStartTimeCoderKey"
 
-    static let initialNumberValues = [1, 2, 3, 4, 5, 6, 7, 8, 9,
-                                      1, 1, 1, 2, 1, 3, 1, 4, 1,
-                                      5, 1, 6, 1, 7, 1, 8, 1, 9]
+    static let defaultInitialNumberValues = [1, 2, 3, 4, 5, 6, 7, 8, 9,
+                                             1, 1, 1, 2, 1, 3, 1, 4, 1,
+                                             5, 1, 6, 1, 7, 1, 8, 1, 9]
 
-    private static let initialValueCounts: [Int: Int] = [1: 11, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2, 7: 2, 8: 2, 9: 2]
+    private static let initialValueCounts: [Int: Int] = [1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0]
 
     private var numbers: [Number] = []
     private var valueCounts: [Int: Int]
@@ -35,8 +36,8 @@ class Game: NSObject, NSCoding {
     var currentRound: Int = 1
     var startTime: NSDate? = nil
 
-    class func initialNumbers() -> [Number] {
-        let initialNumbers: [Number] = initialNumberValues.map({ value in
+    private class func initialNumbers() -> [Number] {
+        let initialNumbers: [Number] = initialNumberValues().map({ value in
             return Number(value: value, crossedOut: false, marksEndOfRound: false)
         })
 
@@ -44,10 +45,36 @@ class Game: NSObject, NSCoding {
         return initialNumbers
     }
 
+    private class func initialNumberValues() -> [Int] {
+        var numberValues = [Int]()
+
+        if StorageService.currentFlag(forSetting: .RandomInitialNumbers) {
+            for _ in 0..<(Game.initialNumberCount) {
+                numberValues.append(Int(arc4random_uniform(9) + 1))
+            }
+            print("Using random")
+        } else {
+            print("Using default")
+            numberValues = Game.defaultInitialNumberValues
+        }
+
+        return numberValues
+    }
+
+    private class func valueCounts(inNumbers givenNumbers: Array<Number>) -> [Int: Int] {
+        var counts = initialValueCounts
+        for number in givenNumbers {
+            counts[number.value!]! += 1
+        }
+        return counts
+    }
+
     override init() {
         numbers = Game.initialNumbers()
         historicNumberCount = numbers.count
-        valueCounts = Game.initialValueCounts
+        valueCounts = Game.valueCounts(inNumbers: numbers)
+
+        print("Initialised with value counts", valueCounts)
         super.init()
     }
 

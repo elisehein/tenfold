@@ -84,7 +84,7 @@ class Menu: UIView {
                                          forControlEvents: .TouchUpInside)
 
             soundButton.hidden = true
-            soundButton.strikeThrough = !StorageService.currentSoundPreference()
+            soundButton.strikeThrough = !StorageService.currentFlag(forSetting: .SoundOn)
             soundButton.setTitle("Sound", forState: .Normal)
             soundButton.addTarget(self,
                                   action: #selector(Menu.didTapSound),
@@ -161,8 +161,8 @@ class Menu: UIView {
     }
 
     func didTapSound() {
-        StorageService.toggleSoundPreference()
-        soundButton.strikeThrough = !StorageService.currentSoundPreference()
+        StorageService.toggleFlag(forSetting: .SoundOn)
+        soundButton.strikeThrough = !StorageService.currentFlag(forSetting: .SoundOn)
     }
 
     func showDefaultView() {

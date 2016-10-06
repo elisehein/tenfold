@@ -61,7 +61,7 @@ class SoundService {
     }
 
     func playIfAllowed(sound: Sound) {
-        if StorageService.currentSoundPreference() == true {
+        if StorageService.currentFlag(forSetting: .SoundOn) == true {
             (players[sound]!)!.play()
         }
     }
