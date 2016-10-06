@@ -20,6 +20,10 @@ enum SlidingStrikethroughButtonOption: Int {
 
 class SlidingStrikethroughButton: Button {
 
+    private static let gapSize: CGFloat = {
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 50 : 40
+    }()
+
     private let lineLayer = CAShapeLayer()
     var struckthroughOption: SlidingStrikethroughButtonOption = .Left
 
@@ -71,7 +75,7 @@ class SlidingStrikethroughButton: Button {
         let titleString = NSMutableAttributedString()
 
         let gap = NSTextAttachment()
-        gap.bounds = CGRect(x: 0, y: 0, width: 50, height: 0)
+        gap.bounds = CGRect(x: 0, y: 0, width: SlidingStrikethroughButton.gapSize, height: 0)
         let gapString = NSAttributedString(attachment: gap)
 
         for option in options {
