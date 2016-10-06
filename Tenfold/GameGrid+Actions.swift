@@ -127,7 +127,7 @@ extension GameGrid {
             if self.rowRemovalInProgress {
                 self.deleteItemsAtIndexPaths(indexPaths)
 
-                if self.contentInset.top > 0 {
+                if self.contentInset.top > self.spaceForScore {
                     self.setContentOffset(CGPoint(x: 0, y: -self.contentInset.top), animated: true)
                 }
 
@@ -179,7 +179,7 @@ extension GameGrid {
             return
         }
 
-        if contentInset.top > 0 {
+        if contentInset.top > spaceForScore {
             let rowDelta = Matrix.singleton.totalRows(indeces.count)
             let gameHeightDelta = heightForGame(withTotalRows: rowDelta)
             setContentOffset(CGPoint(x: 0, y: -contentInset.top + gameHeightDelta), animated: true)

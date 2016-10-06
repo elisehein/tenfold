@@ -1,5 +1,5 @@
 //
-//  Notification.swift
+//  Pill.swift
 //  Tenfold
 //
 //  Created by Elise Hein on 23/08/2016.
@@ -11,30 +11,36 @@ import SwiftyJSON
 import UIKit
 import PureLayout
 
-enum NotificationType {
+enum PillType {
     case Text
     case Icon
 }
 
-class Notification: UIView {
+class Pill: UIView {
+
+    static let detailFontSize: CGFloat = {
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 14 : 11
+
+    }()
 
     private static let iconSize: CGFloat = 70
+    private static let pulseDuration = GameGridCell.animationDuration
 
-    private static let margin: CGFloat = {
+    static let margin: CGFloat = {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 25 : 15
     }()
 
-    private static let labelHeight: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 50 : 35
+    static let labelHeight: CGFloat = {
+        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 50 : 38
     }()
 
-    private static let labelWidthAddition: CGFloat = {
+    static let labelWidthAddition: CGFloat = {
         return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 50 : 30
     }()
 
-    private let label = UILabel()
+    internal let label = UILabel()
+    internal let shadowLayer = UIView()
     private let iconView = UIImageView()
-    private let shadowLayer = UIView()
 
     var iconName: String? {
         didSet {
@@ -46,28 +52,18 @@ class Notification: UIView {
     var text: String = "" {
         didSet {
             label.attributedText = constructAttributedString(withText: text)
-            setNeedsLayout()
         }
     }
 
-    var newlyUnrepresentedNumber: Int? {
-        didSet {
-            if let number = newlyUnrepresentedNumber {
-                let phrases = CopyService.phrasebook(.LastNumberInstance).arrayValue
-                let phrase = phrases.randomElement().string
-                text = String(format: phrase!, number)
-            }
-        }
-    }
-
+    internal var isShowing = false
     private var dismissalInProgress = false
     private var popupInProgress = false
     private var popupCompletion: (() -> Void)?
-    private var type: NotificationType
+    private var type: PillType
 
     var anchorEdge: ALEdge = .Bottom
 
-    init(type: NotificationType) {
+    init(type: PillType) {
         self.type = type
         super.init(frame: CGRect.zero)
 
@@ -111,20 +107,8 @@ class Notification: UIView {
         shadowLayer.frame = bounds
     }
 
-    private func constructAttributedString(withText text: String) -> NSMutableAttributedString {
-        let attrString = NSAttributedString.styled(as: .Notification, usingText: text)
-
-        let grayedOutSubstrings = ["|", "nums"]
-
-        for substring in grayedOutSubstrings {
-            if let index = text.indexOf(substring) {
-                attrString.addAttribute(NSForegroundColorAttributeName,
-                                        value: UIColor.whiteColor().colorWithAlphaComponent(0.55),
-                                        range: NSRange(location: index, length: substring.characters.count))
-            }
-        }
-
-        return attrString
+    func constructAttributedString(withText text: String) -> NSMutableAttributedString {
+        return NSAttributedString.styled(as: .Pill, usingText: text)
     }
 
     func popup(forSeconds seconds: Double,
@@ -154,10 +138,10 @@ class Notification: UIView {
     func flash(inFrame parentFrame: CGRect) {
         alpha = 0
 
-        frame = CGRect(x: -Notification.iconSize,
-                       y: (parentFrame.height - Notification.iconSize) / 2,
-                       width: Notification.iconSize,
-                       height: Notification.iconSize)
+        frame = CGRect(x: -Pill.iconSize,
+                       y: (parentFrame.height - Pill.iconSize) / 2,
+                       width: Pill.iconSize,
+                       height: Pill.iconSize)
         center = CGPoint(x: parentFrame.width / 2, y: parentFrame.height / 2)
         transform = CGAffineTransformMakeScale(0.001, 0.001)
 
@@ -185,9 +169,11 @@ class Notification: UIView {
         triggerPendingPopupCompletion()
 
         guard !dismissalInProgress else { return }
-        guard !CGRectEqualToRect(frame, frameInside(frame: parentFrame,
-            showing: showing)) else { return }
+        guard isShowing != showing else { return }
 
+        // We need to toggle this flag straight away (not during completion) so that it automatically
+        // takes care of cases where the toggling is still in progress
+        self.isShowing = showing
 
         // Ensure we begin the transition from the correct position
         frame = frameInside(frame: parentFrame, showing: !showing)
@@ -208,7 +194,7 @@ class Notification: UIView {
     func dismiss(inFrame parentFrame: CGRect, completion: (() -> Void)) {
         dismissalInProgress = true
 
-        UIView.animateWithDuration(1.0,
+        UIView.animateWithDuration(1,
                                    delay: 0,
                                    options: .CurveEaseOut,
                                    animations: {
@@ -224,40 +210,41 @@ class Notification: UIView {
     }
 
     private func frameInside(frame parentFrame: CGRect, showing: Bool) -> CGRect {
-        let width = type == .Icon ?
-            Notification.iconSize :
-            label.intrinsicContentSize().width + Notification.labelWidthAddition
-
-        let height = type == .Icon ? Notification.iconSize : Notification.labelHeight
+        let width = type == .Icon ? Pill.iconSize : textLabelWidth()
+        let height = type == .Icon ? Pill.iconSize : Pill.labelHeight
 
         var y: CGFloat = 0
         var x: CGFloat = 0
 
         if showing {
             if anchorEdge == .Bottom {
-                y = parentFrame.height - height - Notification.margin
+                y = parentFrame.height - height - Pill.margin
                 x = (parentFrame.width - width) / 2
             } else if anchorEdge == .Top {
-                y = Notification.margin
+                y = Pill.margin
                 x = (parentFrame.width - width) / 2
             } else if anchorEdge == .Left {
                 y = (parentFrame.height - height) / 2
-                x = Notification.margin
+                x = Pill.margin
             }
         } else {
             if anchorEdge == .Bottom {
                 y = parentFrame.height + 10
                 x = (parentFrame.width - width) / 2
             } else if anchorEdge == .Top {
-                y = -10
+                y = -(height + 10)
                 x = (parentFrame.width - width) / 2
             } else if anchorEdge == .Left {
                 y = (parentFrame.height - height) / 2
-                x = -10
+                x = -(width + 10)
             }
         }
 
         return CGRect(x: x, y: y, width: width, height: height)
+    }
+
+    func textLabelWidth() -> CGFloat {
+        return label.intrinsicContentSize().width + Pill.labelWidthAddition
     }
 
     private func triggerPendingPopupCompletion() {

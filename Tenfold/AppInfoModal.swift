@@ -25,6 +25,7 @@ class AppInfoModal: ModalOverlay {
     let appNameLabel = UILabel()
     let appVersionLabel = UILabel()
     let developerNameLabel = UILabel()
+    let emailLabel = UILabel()
     let specialThanksLabel = UILabel()
 
     let feedbackButton = Button()
@@ -49,6 +50,9 @@ class AppInfoModal: ModalOverlay {
         developerNameLabel.attributedText = NSAttributedString(string: "by Elise Hein",
                                                                attributes: attributes)
 
+        emailLabel.attributedText = NSAttributedString(string: "hello@tenfoldapp.com",
+                                                       attributes: labelAttributes(withBoldText: false))
+
         specialThanksLabel.numberOfLines = 0
         let specialThanksText = CopyService.phrasebook(.AppInfo)["specialThanks"].string!
         specialThanksLabel.attributedText = NSAttributedString(string: specialThanksText,
@@ -56,7 +60,7 @@ class AppInfoModal: ModalOverlay {
 
         ModalOverlay.configureModalButton(feedbackButton,
                                           color: UIColor.themeColor(.SecondaryAccent))
-        feedbackButton.setTitle("Send feedback", forState: .Normal)
+        feedbackButton.setTitle("Help & feedback", forState: .Normal)
         feedbackButton.addTarget(self,
                                  action: #selector(AppInfoModal.didTapFeedback),
                                  forControlEvents: .TouchUpInside)
@@ -72,6 +76,7 @@ class AppInfoModal: ModalOverlay {
         modal.addSubview(appNameLabel)
         modal.addSubview(appVersionLabel)
         modal.addSubview(developerNameLabel)
+        modal.addSubview(emailLabel)
         modal.addSubview(specialThanksLabel)
         modal.addSubview(feedbackButton)
         modal.addSubview(rateButton)
@@ -106,6 +111,7 @@ class AppInfoModal: ModalOverlay {
                                        toEdge: .Bottom,
                                        ofView: appVersionLabel,
                                        withOffset: AppInfoModal.paragraphSpacing)
+        emailLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: developerNameLabel, withOffset:5)
 
         specialThanksLabel.autoMatchDimension(.Width,
                                               toDimension: .Width,
@@ -114,7 +120,7 @@ class AppInfoModal: ModalOverlay {
         let labelTopSpacing = specialThanksLabel.text == nil ? 0 : AppInfoModal.paragraphSpacing
         specialThanksLabel.autoPinEdge(.Top,
                                        toEdge: .Bottom,
-                                       ofView: developerNameLabel,
+                                       ofView: emailLabel,
                                        withOffset: CGFloat(labelTopSpacing))
 
         feedbackButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
@@ -130,7 +136,7 @@ class AppInfoModal: ModalOverlay {
         rateButton.autoPinEdgeToSuperviewEdge(.Bottom)
 
         // swiftlint:disable:next line_length
-        [logo, appNameLabel, appVersionLabel, developerNameLabel, specialThanksLabel, feedbackButton, rateButton].autoAlignViewsToAxis(.Vertical)
+        [logo, appNameLabel, appVersionLabel, developerNameLabel, emailLabel, specialThanksLabel, feedbackButton, rateButton].autoAlignViewsToAxis(.Vertical)
 
         hasLoadedConstraints = true
         super.updateViewConstraints()

@@ -36,7 +36,7 @@ class Menu: UIView {
     private let newGameButton = Button()
     private let instructionsButton = Button()
     private let soundButton = Button()
-    private let showMenuTip = Notification(type: .Text)
+    private let showMenuTip = Pill(type: .Text)
     let onboardingSteps = OnboardingSteps()
 
     private var hasLoadedConstraints = false
@@ -50,7 +50,6 @@ class Menu: UIView {
     }
 
     var emptySpaceAvailable: ((atDefaultPosition: Bool) -> CGFloat)?
-    var onTapLogo: (() -> Void)?
     var onTapNewGame: (() -> Void)?
     var onTapInstructions: (() -> Void)?
 
@@ -72,10 +71,6 @@ class Menu: UIView {
         if state == .Onboarding {
             addSubview(onboardingSteps)
         } else {
-            let logoTap = UITapGestureRecognizer(target: self, action: #selector(Menu.didTapLogo))
-            logo.userInteractionEnabled = true
-            logo.addGestureRecognizer(logoTap)
-
             newGameButton.hidden = true
             newGameButton.setTitle("Start over", forState: .Normal)
             newGameButton.addTarget(self,
@@ -157,10 +152,6 @@ class Menu: UIView {
         [logo, newGameButton, instructionsButton, soundButton].autoAlignViewsToAxis(.Vertical)
     }
 
-    func didTapLogo() {
-        onTapLogo!()
-    }
-
     func didTapNewGame() {
         onTapNewGame!()
     }
@@ -183,6 +174,10 @@ class Menu: UIView {
                 button.alpha = 1
             })
         }
+    }
+
+    func hideTipsIfNeeded() {
+        showMenuTip.hidden = true
     }
 
     private func showTipsIfNeeded() {
@@ -275,8 +270,7 @@ class Menu: UIView {
     }
 
     override func hitTest(point: CGPoint, withEvent event: UIEvent?) -> UIView? {
-        let hitCapturingViews = [logo,
-                                 newGameButton,
+        let hitCapturingViews = [newGameButton,
                                  instructionsButton,
                                  soundButton,
                                  onboardingSteps.buttonsContainer]
