@@ -258,6 +258,8 @@
 				0CF5C54A1D6F76C5006D46B8 /* Button.swift */,
 				0C1E317C1D86AE6E00ABA583 /* EndOfRoundMarker.swift */,
 				0C5998BF1D8C3AED00D73EF6 /* Gesture.swift */,
+				0C39D3091D3BC3B90047CE74 /* Grid.swift */,
+				0C8E73021D7AF33500DFE757 /* ModalOverlay.swift */,
 				0CD93E811D78A14900D7DF96 /* PageDownIndicator.swift */,
 				0CADBDF31D6C65110090C13F /* Pill.swift */,
 			);
@@ -280,9 +282,7 @@
 				0C70C4161D74B5C300A9E8B8 /* GameGrid */,
 				0CA5A79E1DA2E98900917DAA /* Pills */,
 				0C8E72FF1D7ABED000DFE757 /* Rules */,
-				0C39D3091D3BC3B90047CE74 /* Grid.swift */,
 				4EA6957F1D36992E00F9A315 /* Menu.swift */,
-				0C8E73021D7AF33500DFE757 /* ModalOverlay.swift */,
 				0CB938901D20389C005B81F4 /* NextRoundGrid.swift */,
 				0CB9388C1D202832005B81F4 /* NextRoundCell.swift */,
 				0CD93E851D79875500D7DF96 /* OnboardingSteps.swift */,
