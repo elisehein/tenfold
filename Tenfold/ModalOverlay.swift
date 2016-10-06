@@ -92,9 +92,14 @@ class ModalOverlay: UIViewController {
         super.updateViewConstraints()
     }
 
-    class func configureModalButton(button: UIButton, color: UIColor) {
+    class func configureModalButton(button: UIButton, color: UIColor, shouldHighlight: Bool = true) {
         button.setBackgroundImage(UIImage.imageWithColor(color), forState: .Normal)
-        button.setBackgroundImage(UIImage.imageWithColor(color.darken()), forState: .Highlighted)
+
+        if shouldHighlight {
+            button.setBackgroundImage(UIImage.imageWithColor(color.darken()), forState: .Highlighted)
+        } else {
+            button.setBackgroundImage(UIImage.imageWithColor(color), forState: .Highlighted)
+        }
 
         button.layer.borderColor = UIColor.themeColor(.OffWhite).CGColor
         button.layer.borderWidth = 2.0

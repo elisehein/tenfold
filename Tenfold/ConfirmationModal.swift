@@ -28,13 +28,7 @@ class ConfirmationModal: ModalOverlay {
         self.game = game
         super.init(position: .Bottom)
 
-        titleLabel.text = "Are you sure?"
-        titleLabel.font = UIFont.themeFontWithSize(15, weight: .Bold)
-
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            titleLabel.font = UIFont.themeFontWithSize(20, weight: .Bold)
-        }
-
+        titleLabel.attributedText = NSMutableAttributedString.themeString(.Title, "Are you sure?"   )
         titleLabel.textColor = UIColor.themeColor(.OffBlack)
         titleLabel.textAlignment = .Center
 

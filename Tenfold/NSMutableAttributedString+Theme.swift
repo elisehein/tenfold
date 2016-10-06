@@ -14,6 +14,8 @@ enum TextStyle {
     case Paragraph
     case Pill
     case Tip
+    case OptionTitle
+    case OptionDetail
 }
 
 extension NSMutableAttributedString {
@@ -25,7 +27,9 @@ extension NSMutableAttributedString {
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = themeLineSpacing(forTextStyle: textStyle)
-        paragraphStyle.alignment = .Center
+        paragraphStyle.alignment = textStyle == .OptionTitle || textStyle == .OptionDetail ?
+                                   .Left :
+                                   .Center
 
         let font = UIFont.themeFontWithSize(themeFontSize(forTextStyle: textStyle),
                                             weight: themeFontWeight(forTextStyle: textStyle))
@@ -47,26 +51,22 @@ extension NSMutableAttributedString {
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
 
             switch textStyle {
-            case .Paragraph:
-                return 7
             case .Pill:
                 return 0
-            case .Title:
-                return 7
             case .Tip:
                 return 5
+            default:
+                return 7
             }
 
         } else {
 
             switch textStyle {
-            case .Paragraph:
-                return 4
             case .Pill:
                 return 0
             case .Title:
                 return 7
-            case .Tip:
+            default:
                 return 4
             }
         }
@@ -76,14 +76,16 @@ extension NSMutableAttributedString {
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
 
             switch textStyle {
-            case .Paragraph:
-                return 18
             case .Pill:
                 return 16
             case .Title:
                 return 22
             case .Tip:
                 return 14
+            case .OptionDetail:
+                return 14
+            default:
+                return 18
             }
 
         } else {
@@ -91,11 +93,11 @@ extension NSMutableAttributedString {
             switch textStyle {
             case .Paragraph:
                 return 14
-            case .Pill:
-                return 13
             case .Title:
                 return 16
-            case .Tip:
+            case .OptionDetail:
+                return 12
+            default:
                 return 13
             }
         }
@@ -108,6 +110,8 @@ extension NSMutableAttributedString {
             return .Bold
         case .Tip:
             return .Italic
+        case .OptionTitle:
+            return .Bold
         default:
             return .Regular
         }

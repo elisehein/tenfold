@@ -52,9 +52,7 @@ class Game: NSObject, NSCoding {
             for _ in 0..<(Game.initialNumberCount) {
                 numberValues.append(Int(arc4random_uniform(9) + 1))
             }
-            print("Using random")
         } else {
-            print("Using default")
             numberValues = Game.defaultInitialNumberValues
         }
 
@@ -73,8 +71,6 @@ class Game: NSObject, NSCoding {
         numbers = Game.initialNumbers()
         historicNumberCount = numbers.count
         valueCounts = Game.valueCounts(inNumbers: numbers)
-
-        print("Initialised with value counts", valueCounts)
         super.init()
     }
 
