@@ -13,6 +13,8 @@
 		0C1C36CE1DA66BA70032A56D /* OptionsModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1C36CD1DA66BA70032A56D /* OptionsModal.swift */; };
 		0C1C36D01DA699370032A56D /* SlidingStrikethroughButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1C36CF1DA699370032A56D /* SlidingStrikethroughButton.swift */; };
 		0C1C36D21DA6AFFE0032A56D /* BooleanStrikethroughButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1C36D11DA6AFFE0032A56D /* BooleanStrikethroughButton.swift */; };
+		0C1C36D51DA6DA280032A56D /* Game+Queries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1C36D41DA6DA280032A56D /* Game+Queries.swift */; };
+		0C1C36D81DA6DAB50032A56D /* Game+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1C36D71DA6DAB50032A56D /* Game+Actions.swift */; };
 		0C1E317D1D86AE6E00ABA583 /* EndOfRoundMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1E317C1D86AE6E00ABA583 /* EndOfRoundMarker.swift */; };
 		0C34638F1C6F89B30086D3CC /* GameGridCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C34638E1C6F89B30086D3CC /* GameGridCell.swift */; };
 		0C3463931C6F8C340086D3CC /* Pairing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3463921C6F8C340086D3CC /* Pairing.swift */; };
@@ -87,6 +89,8 @@
 		0C1C36CD1DA66BA70032A56D /* OptionsModal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionsModal.swift; sourceTree = "<group>"; };
 		0C1C36CF1DA699370032A56D /* SlidingStrikethroughButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlidingStrikethroughButton.swift; sourceTree = "<group>"; };
 		0C1C36D11DA6AFFE0032A56D /* BooleanStrikethroughButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BooleanStrikethroughButton.swift; sourceTree = "<group>"; };
+		0C1C36D41DA6DA280032A56D /* Game+Queries.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Game+Queries.swift"; sourceTree = "<group>"; };
+		0C1C36D71DA6DAB50032A56D /* Game+Actions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Game+Actions.swift"; sourceTree = "<group>"; };
 		0C1E317C1D86AE6E00ABA583 /* EndOfRoundMarker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndOfRoundMarker.swift; sourceTree = "<group>"; };
 		0C34638E1C6F89B30086D3CC /* GameGridCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameGridCell.swift; sourceTree = "<group>"; };
 		0C3463921C6F8C340086D3CC /* Pairing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pairing.swift; sourceTree = "<group>"; };
@@ -189,6 +193,16 @@
 				0C1C36CF1DA699370032A56D /* SlidingStrikethroughButton.swift */,
 			);
 			name = Buttons;
+			sourceTree = "<group>";
+		};
+		0C1C36D61DA6DAA50032A56D /* Game */ = {
+			isa = PBXGroup;
+			children = (
+				0C90AEA61C6D1BCF00E1E42E /* Game.swift */,
+				0C1C36D71DA6DAB50032A56D /* Game+Actions.swift */,
+				0C1C36D41DA6DA280032A56D /* Game+Queries.swift */,
+			);
+			name = Game;
 			sourceTree = "<group>";
 		};
 		0C69CE4C1C6DCDDD002E0D29 /* Extensions */ = {
@@ -333,7 +347,7 @@
 		0C90AEA81C6D1BD200E1E42E /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				0C90AEA61C6D1BCF00E1E42E /* Game.swift */,
+				0C1C36D61DA6DAA50032A56D /* Game */,
 				0CDA88BE1D87105F0047A461 /* GameMove.swift */,
 				0CC94F721D75D09E00FAF4B2 /* GameSnapshot.swift */,
 				4EE46E1F1D22CD55005C4493 /* Matrix.swift */,
@@ -478,6 +492,7 @@
 			files = (
 				0C39D30A1D3BC3B90047CE74 /* Grid.swift in Sources */,
 				0CC94F6F1D75866600FAF4B2 /* RankingService.swift in Sources */,
+				0C1C36D51DA6DA280032A56D /* Game+Queries.swift in Sources */,
 				0CD93E861D79875500D7DF96 /* OnboardingSteps.swift in Sources */,
 				0C8E73051D7AF3FF00DFE757 /* AppInfoModal.swift in Sources */,
 				0C738ADD1C69D811007C9548 /* Play.swift in Sources */,
@@ -518,6 +533,7 @@
 				0CB938911D20389C005B81F4 /* NextRoundGrid.swift in Sources */,
 				4EE46E201D22CD55005C4493 /* Matrix.swift in Sources */,
 				0CB938831D1FE6DD005B81F4 /* StorageService.swift in Sources */,
+				0C1C36D81DA6DAB50032A56D /* Game+Actions.swift in Sources */,
 				0C70C3FB1D7186F400A9E8B8 /* SoundService.swift in Sources */,
 				0C99B0BD1DA3C23100D2728C /* NextRoundPill.swift in Sources */,
 				4EA695801D36992E00F9A315 /* Menu.swift in Sources */,
