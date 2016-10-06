@@ -39,7 +39,7 @@ class UpdatesModal: ModalOverlay {
                    "Ever make an annoying mistake while playing? " +
                    "You can now undo your latest move by swiping right."
         textLabel.numberOfLines = 0
-        textLabel.attributedText = NSAttributedString.styled(as: .Paragraph, usingText: text)
+        textLabel.attributedText = NSMutableAttributedString.themeString(.Paragraph, text)
 
         ruleGrid.animationType = RuleGridAnimationType(rawValue: UpdatesModal.gridData["animationType"].string!)!
         ruleGrid.values = UpdatesModal.gridData["values"].arrayValue.map({ $0.int })

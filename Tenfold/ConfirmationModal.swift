@@ -120,7 +120,7 @@ class ConfirmationModal: ModalOverlay {
                    randomMotivationalQuote()
         }
 
-        textLabel.attributedText = NSAttributedString.styled(as: .Paragraph, usingText: text)
+        textLabel.attributedText = NSMutableAttributedString.themeString(.Paragraph, text)
     }
 
     func didTapYes() {

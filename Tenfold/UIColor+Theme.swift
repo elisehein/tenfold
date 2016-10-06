@@ -41,4 +41,13 @@ extension UIColor {
             return UIColor.themeColor(themeColor)
         }
     }
+
+    class func themeColor(forTextStyle textStyle: TextStyle) -> UIColor {
+        switch textStyle {
+        case .Pill:
+            return UIColor.whiteColor().colorWithAlphaComponent(0.95)
+        default:
+            return UIColor.themeColor(.OffBlack)
+        }
+    }
 }

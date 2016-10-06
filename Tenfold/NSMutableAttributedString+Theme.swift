@@ -1,8 +1,8 @@
 //
-//  NSAttributedString.swift
+//  NSMutableAttributedString+Theme.swift
 //  Tenfold
 //
-//  Created by Elise Hein on 17/09/2016.
+//  Created by Elise Hein on 06/10/2016.
 //  Copyright © 2016 Elise Hein. All rights reserved.
 //
 
@@ -16,39 +16,34 @@ enum TextStyle {
     case Tip
 }
 
-extension NSAttributedString {
-    class func styled(as textStyle: TextStyle, usingText text: String) -> NSMutableAttributedString {
+extension NSMutableAttributedString {
+    class func themeString(textStyle: TextStyle, _ string: String) -> NSMutableAttributedString {
+        return NSMutableAttributedString(string: string, attributes: attributes(forTextStyle: textStyle))
+    }
+
+    class func attributes(forTextStyle textStyle: TextStyle) -> [String: AnyObject] {
 
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = lineSpacing(forTextStyle: textStyle)
+        paragraphStyle.lineSpacing = themeLineSpacing(forTextStyle: textStyle)
         paragraphStyle.alignment = .Center
 
-        let font = UIFont.themeFontWithSize(fontSize(forTextStyle: textStyle),
-                                            weight: fontWeight(forTextStyle: textStyle))
+        let font = UIFont.themeFontWithSize(themeFontSize(forTextStyle: textStyle),
+                                            weight: themeFontWeight(forTextStyle: textStyle))
 
         var attributes = [
             NSParagraphStyleAttributeName: paragraphStyle,
             NSFontAttributeName: font,
-            NSForegroundColorAttributeName: color(forTextStyle: textStyle)
+            NSForegroundColorAttributeName: UIColor.themeColor(forTextStyle: textStyle)
         ]
 
         if textStyle == .Pill {
             attributes[NSKernAttributeName] = 1.2
         }
 
-        return NSMutableAttributedString(string: text, attributes: attributes)
+        return attributes
     }
 
-    private class func color(forTextStyle textStyle: TextStyle) -> UIColor {
-        switch textStyle {
-        case .Pill:
-            return UIColor.whiteColor().colorWithAlphaComponent(0.95)
-        default:
-            return UIColor.themeColor(.OffBlack)
-        }
-    }
-
-    private class func lineSpacing(forTextStyle textStyle: TextStyle) -> CGFloat {
+    private class func themeLineSpacing(forTextStyle textStyle: TextStyle) -> CGFloat {
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
 
             switch textStyle {
@@ -77,7 +72,7 @@ extension NSAttributedString {
         }
     }
 
-    class func fontSize(forTextStyle textStyle: TextStyle) -> CGFloat {
+    class func themeFontSize(forTextStyle textStyle: TextStyle) -> CGFloat {
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
 
             switch textStyle {
@@ -107,7 +102,7 @@ extension NSAttributedString {
 
     }
 
-    private class func fontWeight(forTextStyle textStyle: TextStyle) -> FontWeight {
+    private class func themeFontWeight(forTextStyle textStyle: TextStyle) -> FontWeight {
         switch textStyle {
         case .Title:
             return .Bold

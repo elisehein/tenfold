@@ -70,7 +70,7 @@ class GameFinished: UIViewController {
         titleLabel.textColor = UIColor.themeColor(.OffBlack)
 
         statsLabel.numberOfLines = 0
-        statsLabel.attributedText = NSAttributedString.styled(as: .Paragraph, usingText: statsText())
+        statsLabel.attributedText = NSMutableAttributedString.themeString(.Paragraph, statsText())
 
         closeButton.addTarget(self,
                               action: #selector(GameFinished.dismiss),
