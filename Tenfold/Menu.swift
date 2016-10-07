@@ -172,8 +172,9 @@ class Menu: UIView {
 
         [logo, newGameButton, instructionsButton, optionsButton].autoAlignViewsToAxis(.Vertical)
 
+        let newFeatureOffset: CGFloat = UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 90 : 70
         newFeatureLabel.autoAlignAxis(.Horizontal, toSameAxisOfView: optionsButton)
-        newFeatureLabel.autoAlignAxis(.Vertical, toSameAxisOfView: optionsButton, withOffset: 70)
+        newFeatureLabel.autoAlignAxis(.Vertical, toSameAxisOfView: optionsButton, withOffset: newFeatureOffset)
     }
 
     func didTapNewGame() {
