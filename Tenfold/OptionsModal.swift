@@ -31,7 +31,7 @@ class OptionsModal: ModalOverlay {
 
         let detailText = "Take on the original 1-19 challenge , " +
                          "or start out with a random set of numbers every time. " +
-                         "Either way, there are endless ways for each game to unfold."
+                         "In both cases, there are endless ways for each game to unfold."
 
         initialNumbersDetail.numberOfLines = 0
         initialNumbersDetail.attributedText = NSMutableAttributedString.themeString(.OptionDetail, detailText)
