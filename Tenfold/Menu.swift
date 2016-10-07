@@ -35,7 +35,7 @@ class Menu: UIView {
     private let logo = UIImageView()
     private let newGameButton = Button()
     private let instructionsButton = Button()
-    private let soundButton = Button()
+    private let optionsButton = Button()
     private let showMenuTip = Pill(type: .Text)
     let onboardingSteps = OnboardingSteps()
 
@@ -52,6 +52,7 @@ class Menu: UIView {
     var emptySpaceAvailable: ((atDefaultPosition: Bool) -> CGFloat)?
     var onTapNewGame: (() -> Void)?
     var onTapInstructions: (() -> Void)?
+    var onTapOptions: (() -> Void)?
 
     var animationInProgress = false
 
@@ -83,16 +84,15 @@ class Menu: UIView {
                                          action: #selector(Menu.didTapInstructions),
                                          forControlEvents: .TouchUpInside)
 
-            soundButton.hidden = true
-            soundButton.strikeThrough = !StorageService.currentSoundPreference()
-            soundButton.setTitle("Sound", forState: .Normal)
-            soundButton.addTarget(self,
-                                  action: #selector(Menu.didTapSound),
+            optionsButton.hidden = true
+            optionsButton.setTitle("Options", forState: .Normal)
+            optionsButton.addTarget(self,
+                                  action: #selector(Menu.didTapOptions),
                                   forControlEvents: .TouchUpInside)
 
             addSubview(newGameButton)
             addSubview(instructionsButton)
-            addSubview(soundButton)
+            addSubview(optionsButton)
         }
 
         addSubview(logoContainer)
@@ -138,7 +138,7 @@ class Menu: UIView {
     private func loadDefaultStateConstraints() {
         logoContainer.autoPinEdge(.Bottom, toEdge: .Top, ofView: newGameButton)
 
-        for button in [newGameButton, instructionsButton, soundButton] {
+        for button in [newGameButton, instructionsButton, optionsButton] {
             button.autoSetDimension(.Height, toSize: Menu.buttonHeight)
         }
 
@@ -147,9 +147,9 @@ class Menu: UIView {
                                              ofView: self,
                                              withOffset: Menu.centerPointOffset)
         instructionsButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: newGameButton)
-        soundButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: instructionsButton)
+        optionsButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: instructionsButton)
 
-        [logo, newGameButton, instructionsButton, soundButton].autoAlignViewsToAxis(.Vertical)
+        [logo, newGameButton, instructionsButton, optionsButton].autoAlignViewsToAxis(.Vertical)
     }
 
     func didTapNewGame() {
@@ -160,13 +160,12 @@ class Menu: UIView {
         onTapInstructions!()
     }
 
-    func didTapSound() {
-        StorageService.toggleSoundPreference()
-        soundButton.strikeThrough = !StorageService.currentSoundPreference()
+    func didTapOptions() {
+        onTapOptions!()
     }
 
     func showDefaultView() {
-        for button in [newGameButton, instructionsButton, soundButton] {
+        for button in [newGameButton, instructionsButton, optionsButton] {
             button.alpha = 0
             button.hidden = false
 
@@ -272,7 +271,7 @@ class Menu: UIView {
     override func hitTest(point: CGPoint, withEvent event: UIEvent?) -> UIView? {
         let hitCapturingViews = [newGameButton,
                                  instructionsButton,
-                                 soundButton,
+                                 optionsButton,
                                  onboardingSteps.buttonsContainer]
 
         for view in hitCapturingViews {

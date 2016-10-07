@@ -68,6 +68,7 @@ class Play: UIViewController {
 
         menu.onTapNewGame = confirmNewGame
         menu.onTapInstructions = showInstructions
+        menu.onTapOptions = { self.presentViewController(OptionsModal(), animated: true, completion: nil) }
 
         let pan = UIPanGestureRecognizer(target: self, action: #selector(Play.detectPan))
 

@@ -11,8 +11,14 @@ import UIKit
 
 class Button: UIButton {
 
-    var strikeThrough = false
     var highlightText = true
+    var strikeThrough = false {
+        didSet {
+            setAttributedTitle(constructAttributedString(withText: titleLabel?.text,
+                                                         color: UIColor.themeColor(.OffBlack)),
+                               forState: .Normal)
+        }
+    }
 
     override func setTitle(title: String?, forState state: UIControlState) {
         super.setAttributedTitle(constructAttributedString(withText: title,
@@ -45,8 +51,8 @@ class Button: UIButton {
                            forState: .Normal)
     }
 
-    private func constructAttributedString(withText text: String?,
-                                           color: UIColor) -> NSAttributedString {
+    func constructAttributedString(withText text: String?,
+                                           color: UIColor) -> NSMutableAttributedString {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .Center
 
@@ -64,6 +70,6 @@ class Button: UIButton {
             NSStrikethroughStyleAttributeName: strikeThrough ? 1 : 0
         ]
 
-        return NSAttributedString(string: (text?.uppercaseString)!, attributes: attributes)
+        return NSMutableAttributedString(string: (text?.uppercaseString)!, attributes: attributes)
     }
 }
