@@ -65,7 +65,6 @@ class SlidingStrikethroughButton: Button {
         animation.toValue = startingPathWhenSlidingFrom(struckthroughOption)
 
         animation.duration = 0.2
-        animation.delegate = self
         animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
         animation.fillMode = kCAFillModeBoth
         lineLayer.addAnimation(animation, forKey: "endAnimation")
@@ -110,11 +109,11 @@ class SlidingStrikethroughButton: Button {
 
     private func fullWidthLinePath() -> CGPath {
         let textWidth = attributedTitleForState(.Normal)?.size().width
-        let startX = (bounds.size.width - textWidth!) / 2
-        let endX = startX + textWidth!
+        let textStartX = (bounds.size.width - textWidth!) / 2
+        let textEndX = textStartX + textWidth!
         let path = UIBezierPath()
-        path.moveToPoint(CGPoint(x: startX, y: linePathY()))
-        path.addLineToPoint(CGPoint(x: endX, y: linePathY()))
+        path.moveToPoint(CGPoint(x: textStartX, y: linePathY()))
+        path.addLineToPoint(CGPoint(x: textEndX, y: linePathY()))
         return path.CGPath
     }
 

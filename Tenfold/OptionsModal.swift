@@ -82,7 +82,6 @@ class OptionsModal: ModalOverlay {
 
             soundButton.autoAlignAxisToSuperviewAxis(.Vertical)
             soundButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: soundLabel, withOffset: 10)
-//            soundButton.autoPinEdgeToSuperviewEdge(.Top)
             soundButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
             soundButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
 

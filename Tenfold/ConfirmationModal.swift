@@ -28,7 +28,7 @@ class ConfirmationModal: ModalOverlay {
         self.game = game
         super.init(position: .Bottom)
 
-        titleLabel.attributedText = NSMutableAttributedString.themeString(.Title, "Are you sure?"   )
+        titleLabel.attributedText = NSMutableAttributedString.themeString(.Title, "Are you sure?")
         titleLabel.textColor = UIColor.themeColor(.OffBlack)
         titleLabel.textAlignment = .Center
 

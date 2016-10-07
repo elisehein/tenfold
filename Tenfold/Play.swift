@@ -68,7 +68,7 @@ class Play: UIViewController {
 
         menu.onTapNewGame = confirmNewGame
         menu.onTapInstructions = showInstructions
-        menu.onTapOptions = showOptions
+        menu.onTapOptions = { self.presentViewController(OptionsModal(), animated: true, completion: nil) }
 
         let pan = UIPanGestureRecognizer(target: self, action: #selector(Play.detectPan))
 
@@ -215,10 +215,6 @@ class Play: UIViewController {
 
     func showInstructions() {
         navigationController?.pushViewController(Rules(), animated: true)
-    }
-
-    func showOptions() {
-        presentViewController(OptionsModal(), animated: true, completion: nil)
     }
 
     // MARK: Gameplay logic

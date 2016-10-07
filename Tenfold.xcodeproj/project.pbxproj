@@ -205,6 +205,17 @@
 			name = Game;
 			sourceTree = "<group>";
 		};
+		0C1C36DB1DA78CF10032A56D /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				0C90AEA11C6D19AC00E1E42E /* Components */,
+				0C8E73011D7ABEF100DFE757 /* Reusables */,
+				0C90AEA31C6D1AE800E1E42E /* Screens */,
+				0CA050A61C6B23AB006A42B9 /* Theming */,
+			);
+			name = UI;
+			sourceTree = "<group>";
+		};
 		0C69CE4C1C6DCDDD002E0D29 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -270,11 +281,8 @@
 				0C90AE991C6B29A700E1E42E /* Fonts */,
 				0CD93E871D798D2800D7DF96 /* JSON */,
 				0C90AEA81C6D1BD200E1E42E /* Models */,
-				0C90AEA11C6D19AC00E1E42E /* Modules */,
-				0C8E73011D7ABEF100DFE757 /* Reusable UI */,
 				0C70C3F91D71846B00A9E8B8 /* Services */,
-				0C90AEA31C6D1AE800E1E42E /* Screens */,
-				0CA050A61C6B23AB006A42B9 /* Theming */,
+				0C1C36DB1DA78CF10032A56D /* UI */,
 				0C738ADA1C69D811007C9548 /* AppDelegate.swift */,
 				0C738AE61C69D811007C9548 /* Info.plist */,
 				0CADBDF11D6C50CB0090C13F /* Launch Screen.storyboard */,
@@ -293,7 +301,7 @@
 			name = Rules;
 			sourceTree = "<group>";
 		};
-		0C8E73011D7ABEF100DFE757 /* Reusable UI */ = {
+		0C8E73011D7ABEF100DFE757 /* Reusables */ = {
 			isa = PBXGroup;
 			children = (
 				0C1C36D31DA6B0070032A56D /* Buttons */,
@@ -304,7 +312,7 @@
 				0CD93E811D78A14900D7DF96 /* PageDownIndicator.swift */,
 				0CADBDF31D6C65110090C13F /* Pill.swift */,
 			);
-			name = "Reusable UI";
+			name = Reusables;
 			sourceTree = "<group>";
 		};
 		0C90AE991C6B29A700E1E42E /* Fonts */ = {
@@ -317,7 +325,7 @@
 			path = Fonts;
 			sourceTree = "<group>";
 		};
-		0C90AEA11C6D19AC00E1E42E /* Modules */ = {
+		0C90AEA11C6D19AC00E1E42E /* Components */ = {
 			isa = PBXGroup;
 			children = (
 				0C70C4161D74B5C300A9E8B8 /* GameGrid */,
@@ -329,7 +337,7 @@
 				0CD93E851D79875500D7DF96 /* OnboardingSteps.swift */,
 				0CC94F701D7588AF00FAF4B2 /* RankingTable.swift */,
 			);
-			name = Modules;
+			name = Components;
 			sourceTree = "<group>";
 		};
 		0C90AEA31C6D1AE800E1E42E /* Screens */ = {
