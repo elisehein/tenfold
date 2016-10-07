@@ -19,7 +19,7 @@ class RulesFooter: UICollectionReusableView {
 
         let tip = "Swipe left any time to see these instructions."
         label.numberOfLines = 0
-        label.attributedText = NSAttributedString.styled(as: .Tip, usingText: tip)
+        label.attributedText = NSMutableAttributedString.themeString(.Tip, tip)
 
         addSubview(label)
     }

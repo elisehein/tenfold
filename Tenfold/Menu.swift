@@ -35,13 +35,15 @@ class Menu: UIView {
     private let logo = UIImageView()
     private let newGameButton = Button()
     private let instructionsButton = Button()
-    private let soundButton = Button()
+    private let optionsButton = Button()
     private let showMenuTip = Pill(type: .Text)
     let onboardingSteps = OnboardingSteps()
 
     private var hasLoadedConstraints = false
     private let state: MenuState
-    private var shouldShowTips: Bool
+    private var firstLaunch: Bool
+
+    private var newFeatureLabel = UILabel()
 
     var anchorFrame: CGRect = CGRect.zero {
         didSet {
@@ -52,16 +54,17 @@ class Menu: UIView {
     var emptySpaceAvailable: ((atDefaultPosition: Bool) -> CGFloat)?
     var onTapNewGame: (() -> Void)?
     var onTapInstructions: (() -> Void)?
+    var onTapOptions: (() -> Void)?
 
     var animationInProgress = false
 
-    init(state: MenuState, shouldShowTips: Bool) {
+    init(state: MenuState, firstLaunch: Bool) {
         self.state = state
-        self.shouldShowTips = shouldShowTips
+        self.firstLaunch = firstLaunch
 
         super.init(frame: CGRect.zero)
 
-        if shouldShowTips {
+        if firstLaunch {
             showMenuTip.text = "Pull down to see menu"
         }
 
@@ -71,6 +74,8 @@ class Menu: UIView {
         if state == .Onboarding {
             addSubview(onboardingSteps)
         } else {
+            configureNewFeatureLabel()
+
             newGameButton.hidden = true
             newGameButton.setTitle("Start over", forState: .Normal)
             newGameButton.addTarget(self,
@@ -83,22 +88,38 @@ class Menu: UIView {
                                          action: #selector(Menu.didTapInstructions),
                                          forControlEvents: .TouchUpInside)
 
-            soundButton.hidden = true
-            soundButton.strikeThrough = !StorageService.currentSoundPreference()
-            soundButton.setTitle("Sound", forState: .Normal)
-            soundButton.addTarget(self,
-                                  action: #selector(Menu.didTapSound),
+            optionsButton.hidden = true
+            optionsButton.setTitle("Options", forState: .Normal)
+            optionsButton.addTarget(self,
+                                  action: #selector(Menu.didTapOptions),
                                   forControlEvents: .TouchUpInside)
 
             addSubview(newGameButton)
             addSubview(instructionsButton)
-            addSubview(soundButton)
+            addSubview(optionsButton)
+            addSubview(newFeatureLabel)
         }
 
         addSubview(logoContainer)
         logoContainer.addSubview(logo)
 
         setNeedsUpdateConstraints()
+    }
+
+    func configureNewFeatureLabel() {
+        guard !StorageService.hasSeenFeatureAnnouncement(.Options) && !firstLaunch else {
+            StorageService.markFeatureAnnouncementSeen(.Options)
+            return
+        }
+
+        var attrs = NSMutableAttributedString.attributes(forTextStyle: .Pill)
+        attrs[NSForegroundColorAttributeName] = UIColor.themeColor(.Tan)
+        attrs[NSFontAttributeName] = UIFont.themeFontWithSize(12)
+        newFeatureLabel.attributedText = NSAttributedString(string: "👈🏻 New!", attributes: attrs)
+
+        UIView.animateWithDuration(1, delay: 0, options: [.Autoreverse, .Repeat, .CurveEaseInOut], animations: {
+            self.newFeatureLabel.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 10, 0)
+        }, completion: nil)
     }
 
     override func updateConstraints() {
@@ -138,7 +159,7 @@ class Menu: UIView {
     private func loadDefaultStateConstraints() {
         logoContainer.autoPinEdge(.Bottom, toEdge: .Top, ofView: newGameButton)
 
-        for button in [newGameButton, instructionsButton, soundButton] {
+        for button in [newGameButton, instructionsButton, optionsButton] {
             button.autoSetDimension(.Height, toSize: Menu.buttonHeight)
         }
 
@@ -147,9 +168,12 @@ class Menu: UIView {
                                              ofView: self,
                                              withOffset: Menu.centerPointOffset)
         instructionsButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: newGameButton)
-        soundButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: instructionsButton)
+        optionsButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: instructionsButton)
 
-        [logo, newGameButton, instructionsButton, soundButton].autoAlignViewsToAxis(.Vertical)
+        [logo, newGameButton, instructionsButton, optionsButton].autoAlignViewsToAxis(.Vertical)
+
+        newFeatureLabel.autoAlignAxis(.Horizontal, toSameAxisOfView: optionsButton)
+        newFeatureLabel.autoAlignAxis(.Vertical, toSameAxisOfView: optionsButton, withOffset: 70)
     }
 
     func didTapNewGame() {
@@ -160,13 +184,14 @@ class Menu: UIView {
         onTapInstructions!()
     }
 
-    func didTapSound() {
-        StorageService.toggleSoundPreference()
-        soundButton.strikeThrough = !StorageService.currentSoundPreference()
+    func didTapOptions() {
+        StorageService.markFeatureAnnouncementSeen(.Options)
+        newFeatureLabel.hidden = true
+        onTapOptions!()
     }
 
     func showDefaultView() {
-        for button in [newGameButton, instructionsButton, soundButton] {
+        for button in [newGameButton, instructionsButton, optionsButton] {
             button.alpha = 0
             button.hidden = false
 
@@ -181,13 +206,13 @@ class Menu: UIView {
     }
 
     private func showTipsIfNeeded() {
-        if shouldShowTips {
+        if firstLaunch {
             UIApplication.sharedApplication().delegate?.window??.addSubview(showMenuTip)
             let windowFrame = showMenuTip.superview?.bounds
             showMenuTip.anchorEdge = .Top
             showMenuTip.toggle(inFrame: windowFrame!, showing: false)
             showMenuTip.popup(forSeconds: 4, inFrame: windowFrame!)
-            shouldShowTips = false
+            firstLaunch = false
         }
     }
 
@@ -272,7 +297,7 @@ class Menu: UIView {
     override func hitTest(point: CGPoint, withEvent event: UIEvent?) -> UIView? {
         let hitCapturingViews = [newGameButton,
                                  instructionsButton,
-                                 soundButton,
+                                 optionsButton,
                                  onboardingSteps.buttonsContainer]
 
         for view in hitCapturingViews {

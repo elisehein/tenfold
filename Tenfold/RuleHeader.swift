@@ -23,8 +23,7 @@ class RuleHeader: UICollectionReusableView {
     var text: String? {
         didSet {
             if let text = text {
-                // swiftlint:disable:next line_length
-                label.attributedText = NSAttributedString.styled(as: .Title, usingText: text)
+                label.attributedText = NSMutableAttributedString.themeString(.Title, text)
             }
         }
     }
@@ -34,7 +33,7 @@ class RuleHeader: UICollectionReusableView {
         let width = RuleHeader.widthFactor * availableWidth
         let availableSize = CGSize(width: width, height: CGFloat(MAXFLOAT))
         let label = UILabel()
-        label.attributedText = NSAttributedString.styled(as: .Title, usingText: text)
+        label.attributedText = NSMutableAttributedString.themeString(.Title, text)
         label.numberOfLines = 0
         var size = label.sizeThatFits(availableSize)
         size.width = min(width, availableSize.width)

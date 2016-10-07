@@ -37,7 +37,7 @@ extension GameGrid {
     }
 
     func initialGameHeight() -> CGFloat {
-        let initialRows = Matrix.singleton.totalRows(Game.initialNumberValues.count)
+        let initialRows = Matrix.singleton.totalRows(Game.initialNumberCount)
         return heightForGame(withTotalRows: initialRows)
     }
 

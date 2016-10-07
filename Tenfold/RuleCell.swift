@@ -39,7 +39,7 @@ class RuleCell: UICollectionViewCell {
     var text: String? {
         didSet {
             if let text = text {
-                label.attributedText = NSAttributedString.styled(as: .Paragraph, usingText: text)
+                label.attributedText = NSMutableAttributedString.themeString(.Paragraph, text)
             }
         }
     }
@@ -47,7 +47,7 @@ class RuleCell: UICollectionViewCell {
     var detailText: String? {
         didSet {
             if let detailText = detailText {
-                detailLabel.attributedText = NSAttributedString.styled(as: .Tip, usingText: detailText)
+                detailLabel.attributedText = NSMutableAttributedString.themeString(.Tip, detailText)
             } else {
                 detailLabel.text = ""
             }
@@ -169,7 +169,7 @@ class RuleCell: UICollectionViewCell {
     class func labelWithAttributedText(text: String? = nil) -> UILabel {
         let l = UILabel()
         l.numberOfLines = 0
-        l.attributedText = NSAttributedString.styled(as: .Paragraph, usingText: text == nil ? "" : text!)
+        l.attributedText = NSMutableAttributedString.themeString(.Paragraph, text == nil ? "" : text!)
         return l
 
     }

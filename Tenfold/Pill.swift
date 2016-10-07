@@ -108,7 +108,7 @@ class Pill: UIView {
     }
 
     func constructAttributedString(withText text: String) -> NSMutableAttributedString {
-        return NSAttributedString.styled(as: .Pill, usingText: text)
+        return NSMutableAttributedString.themeString(.Pill, text)
     }
 
     func popup(forSeconds seconds: Double,
