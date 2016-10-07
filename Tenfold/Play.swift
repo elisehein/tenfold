@@ -206,6 +206,8 @@ class Play: UIViewController {
             self.updateNextRoundPillText()
             self.updateScore()
             self.updateState()
+            self.staticScorePill.toggle(inFrame: self.view.bounds, showing: false)
+            self.floatingScorePill.toggle(inFrame: self.view.bounds, showing: false)
             self.nextRoundGrid?.hide(animated: false)
             self.menu.showIfNeeded(atDefaultPosition: !inGameplayPosition)
         })
