@@ -24,10 +24,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         if let window = window {
             let firstLaunch = StorageService.toggleFirstLaunchFlag()
-            let shouldShowUpdatesModal = StorageService.toggleFeatureAnnouncementsFlag() && !firstLaunch
+            let shouldShowUpdatesModal = StorageService.toggleFeatureAnnouncementFlag(.Undo) && !firstLaunch
 
             let play = Play(shouldShowUpdatesModal: shouldShowUpdatesModal,
-                            shouldLaunchOnboarding: firstLaunch)
+                            firstLaunch: firstLaunch)
             let navigationController = UINavigationController(rootViewController: play)
             navigationController.navigationBarHidden = true
 

@@ -18,8 +18,9 @@ enum StorageKey: String {
         case RandomInitialNumbers = "tenfoldRandomInitialNumbersFlagStorageKey"
     }
 
-    enum FeatureAnnouncements: String {
+    enum FeatureAnnouncement: String {
        case Undo = "tenfoldUndoFeatureAnnouncementStorageKey"
+       case Options = "tenfoldOptionsFeatureAnnouncementStorageKey"
     }
 }
 
@@ -30,7 +31,8 @@ class StorageService {
             StorageKey.FirstLaunchFlag.rawValue: true,
             StorageKey.SettingsFlag.SoundOn.rawValue: true,
             StorageKey.SettingsFlag.RandomInitialNumbers.rawValue: false,
-            StorageKey.FeatureAnnouncements.Undo.rawValue: false
+            StorageKey.FeatureAnnouncement.Undo.rawValue: false,
+            StorageKey.FeatureAnnouncement.Options.rawValue: false
         ])
     }
 
@@ -99,9 +101,9 @@ class StorageService {
         RankingService.singleton.orderedGameSnapshots = orderedSnapshots
     }
 
-    class func toggleFeatureAnnouncementsFlag() -> Bool {
-        let shouldShow = !hasSeenFeatureAnnouncement(.Undo)
-        markFeatureAnnouncementSeen(.Undo)
+    class func toggleFeatureAnnouncementFlag(feature: StorageKey.FeatureAnnouncement) -> Bool {
+        let shouldShow = !hasSeenFeatureAnnouncement(feature)
+        markFeatureAnnouncementSeen(feature)
         return shouldShow
     }
 
@@ -115,12 +117,12 @@ class StorageService {
         return defaults.boolForKey(setting.rawValue)
     }
 
-    class func hasSeenFeatureAnnouncement(featureAnnouncement: StorageKey.FeatureAnnouncements) -> Bool {
+    class func hasSeenFeatureAnnouncement(featureAnnouncement: StorageKey.FeatureAnnouncement) -> Bool {
         let defaults = NSUserDefaults.standardUserDefaults()
         return defaults.boolForKey(featureAnnouncement.rawValue)
     }
 
-    class func markFeatureAnnouncementSeen(featureAnnouncement: StorageKey.FeatureAnnouncements) {
+    class func markFeatureAnnouncementSeen(featureAnnouncement: StorageKey.FeatureAnnouncement) {
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setBool(true, forKey:featureAnnouncement.rawValue)
     }

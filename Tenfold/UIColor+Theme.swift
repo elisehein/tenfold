@@ -13,6 +13,7 @@ enum ThemeColor {
     case OffWhite
     case OffWhiteShaded
     case OffBlack
+    case Tan
     case Accent
     case SecondaryAccent
 }
@@ -26,6 +27,8 @@ extension UIColor {
             return UIColor(hex: "#F0E4C3") // Dutch white
         case .OffBlack:
             return UIColor(hex: "#02293D") // Maastricht blue
+        case .Tan:
+            return UIColor(hex: "#94855D") // Gold fusion
         case .Accent:
             return UIColor(hex: "#F38D68") // Atomic tangerine
         case .SecondaryAccent:
@@ -37,6 +40,8 @@ extension UIColor {
         switch themeColor {
         case .SecondaryAccent:
             return UIColor(hex: "#2F4720") // Kombu green
+        case .Tan:
+            return UIColor(hex: "#5A491B") // Liver
         default:
             return UIColor.themeColor(themeColor)
         }

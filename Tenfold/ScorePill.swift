@@ -119,7 +119,7 @@ class ScorePill: Pill {
         attrString.replaceCharactersInRange(NSRange(location: 5, length: 1), withAttributedString: gapString)
 
         let attrs = [NSFontAttributeName: UIFont.themeFontWithSize(Pill.detailFontSize),
-                     NSForegroundColorAttributeName: UIColor(hex: "#94855D")]
+                     NSForegroundColorAttributeName: UIColor.themeColor(.Tan)]
         attrString.addAttributes(attrs, range: NSRange(location: 0, length: text.characters.count))
         return attrString
     }
@@ -146,7 +146,7 @@ class ScorePill: Pill {
         let originalPillFontSize = TextStyleProperties.fontSize[.Pill]!
 
         let attrs = [
-            NSForegroundColorAttributeName: UIColor(hex: "#5A491B"),
+            NSForegroundColorAttributeName: UIColor.themeColorDarker(.Tan),
             NSFontAttributeName: UIFont.themeFontWithSize(originalPillFontSize *
                                                           ScorePill.countLabelTransformFactor)
         ]
