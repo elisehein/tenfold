@@ -29,9 +29,9 @@ class OptionsModal: ModalOverlay {
         soundLabel.attributedText = NSMutableAttributedString.themeString(.OptionTitle, "Sound effects")
         initialNumbersLabel.attributedText = NSMutableAttributedString.themeString(.OptionTitle, "Starting point")
 
-        let detailText = "In the classic version, you always begin with the same " +
-                         "27 numbers (1, 2, 3, ... 1, 9). Wheter you keep it traditional " +
-                         "or go random, there are endless ways for each game to unfold."
+        let detailText = "Take on the original 1-19 challenge , " +
+                         "or start out with a random set of numbers every time. " +
+                         "Either way, there are endless ways for each game to unfold."
 
         initialNumbersDetail.numberOfLines = 0
         initialNumbersDetail.attributedText = NSMutableAttributedString.themeString(.OptionDetail, detailText)
@@ -51,7 +51,7 @@ class OptionsModal: ModalOverlay {
 
         // swiftlint:disable:next line_length
         initialNumbersButton.struckthroughOption = StorageService.currentFlag(forSetting: .RandomInitialNumbers) ? .Left : .Right
-        initialNumbersButton.options = ["Classic 1-19", "Random"]
+        initialNumbersButton.options = ["1-19 Challenge", "Random"]
 
         soundButton.addTarget(self, action: #selector(OptionsModal.toggleSound), forControlEvents: .TouchUpInside)
         initialNumbersButton.addTarget(self,
