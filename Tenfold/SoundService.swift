@@ -8,6 +8,7 @@
 
 import UIKit
 import AVFoundation
+import AudioToolbox
 
 enum Sound {
     case CrossOut
@@ -61,8 +62,22 @@ class SoundService {
     }
 
     func playIfAllowed(sound: Sound) {
-        if StorageService.currentFlag(forSetting: .SoundOn) == true {
+        if StorageService.currentFlag(forSetting: .SoundOn) {
             (players[sound]!)!.play()
+        }
+    }
+
+    func vibrateIfAllowed(sound: Sound) {
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            return
+        }
+
+        if StorageService.currentFlag(forSetting: .VibrationOn) {
+            if sound == .CrossOut {
+                AudioServicesPlaySystemSound(1519)
+            } else {
+                AudioServicesPlaySystemSound(1521)
+            }
         }
     }
 }

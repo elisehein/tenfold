@@ -14,6 +14,7 @@ class OptionsModal: ModalOverlay {
 
     private let soundLabel = UILabel()
     private let soundButton = BooleanStrikethroughButton()
+    private let vibrationButton = BooleanStrikethroughButton()
 
     private let initialNumbersLabel = UILabel()
     private let initialNumbersButton = SlidingStrikethroughButton()
@@ -26,7 +27,12 @@ class OptionsModal: ModalOverlay {
     init() {
         super.init(position: .Center)
 
-        soundLabel.attributedText = NSMutableAttributedString.themeString(.OptionTitle, "Sound effects")
+        var soundLabelText = "Sound and vibration effects"
+        if UIDevice.currentDevice().userInterfaceIdiom != .Pad {
+            soundLabelText = "Sound effects"
+        }
+        soundLabel.attributedText = NSMutableAttributedString.themeString(.OptionTitle, soundLabelText)
+
         initialNumbersLabel.attributedText = NSMutableAttributedString.themeString(.OptionTitle, "Starting point")
 
         let detailText = "Take on the original 1-19 challenge , " +
@@ -39,13 +45,19 @@ class OptionsModal: ModalOverlay {
         ModalOverlay.configureModalButton(soundButton,
                                           color: UIColor.themeColor(.OffWhiteShaded),
                                           shouldHighlight: false)
+        ModalOverlay.configureModalButton(vibrationButton,
+                                          color: UIColor.themeColor(.OffWhiteShaded),
+                                          shouldHighlight: false)
         ModalOverlay.configureModalButton(initialNumbersButton,
                                           color: UIColor.themeColor(.OffWhiteShaded),
                                           shouldHighlight: false)
         ModalOverlay.configureModalButton(doneButton, color: UIColor.themeColor(.SecondaryAccent))
 
-        soundButton.setTitle("Sound effects", forState: .Normal)
+        soundButton.setTitle("Sounds", forState: .Normal)
         soundButton.struckthrough = !StorageService.currentFlag(forSetting: .SoundOn)
+
+        vibrationButton.setTitle("Vibrations", forState: .Normal)
+        vibrationButton.struckthrough = !StorageService.currentFlag(forSetting: .VibrationOn)
 
         doneButton.setTitle("Done", forState: .Normal)
 
@@ -54,6 +66,9 @@ class OptionsModal: ModalOverlay {
         initialNumbersButton.options = ["1-19 Challenge", "Random"]
 
         soundButton.addTarget(self, action: #selector(OptionsModal.toggleSound), forControlEvents: .TouchUpInside)
+        vibrationButton.addTarget(self,
+                                  action: #selector(OptionsModal.toggleVibration),
+                                  forControlEvents: .TouchUpInside)
         initialNumbersButton.addTarget(self,
                                     action: #selector(OptionsModal.toggleInitialNumbers),
                                     forControlEvents: .TouchUpInside)
@@ -67,6 +82,10 @@ class OptionsModal: ModalOverlay {
         modal.addSubview(initialNumbersButton)
         modal.addSubview(initialNumbersDetail)
         modal.addSubview(doneButton)
+
+        if UIDevice.currentDevice().userInterfaceIdiom != .Pad {
+            modal.addSubview(vibrationButton)
+        }
     }
 
     override func viewDidLoad() {
@@ -85,7 +104,18 @@ class OptionsModal: ModalOverlay {
             soundButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
             soundButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
 
-            initialNumbersLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: soundButton, withOffset: 30)
+            if UIDevice.currentDevice().userInterfaceIdiom != .Pad {
+                vibrationButton.autoAlignAxisToSuperviewAxis(.Vertical)
+                vibrationButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: soundButton, withOffset: -2)
+                vibrationButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
+                vibrationButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
+            }
+
+            let referenceView = UIDevice.currentDevice().userInterfaceIdiom == .Pad ?
+                                soundButton :
+                                vibrationButton
+
+            initialNumbersLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: referenceView, withOffset: 30)
             initialNumbersLabel.autoAlignAxisToSuperviewAxis(.Vertical)
             initialNumbersLabel.autoMatchDimension(.Width, toDimension: .Width, ofView: modal, withMultiplier: 0.9)
 
@@ -122,6 +152,11 @@ class OptionsModal: ModalOverlay {
     func toggleSound() {
         StorageService.toggleFlag(forSetting: .SoundOn)
         soundButton.toggle()
+    }
+
+    func toggleVibration() {
+        StorageService.toggleFlag(forSetting: .VibrationOn)
+        vibrationButton.toggle()
     }
 
     func toggleInitialNumbers() {
