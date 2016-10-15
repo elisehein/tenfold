@@ -67,8 +67,8 @@ class SoundService {
         }
     }
 
-    func vibrateIfAllowed(sound: Sound, inView view: UIView) {
-        guard forceTouchVibrationsAvailable(inView: view) else { return }
+    func vibrateIfAllowed(sound: Sound) {
+        guard forceTouchVibrationsAvailable() else { return }
 
         if StorageService.currentFlag(forSetting: .VibrationOn) {
             if sound == .CrossOut {
@@ -79,8 +79,8 @@ class SoundService {
         }
     }
 
-    func forceTouchVibrationsAvailable(inView view: UIView) -> Bool {
+    func forceTouchVibrationsAvailable() -> Bool {
         return UIDevice.currentDevice().userInterfaceIdiom != .Pad &&
-               view.traitCollection.forceTouchCapability == .Available
+               UIApplication.sharedApplication().keyWindow?.rootViewController?.traitCollection.forceTouchCapability == .Available
     }
 }

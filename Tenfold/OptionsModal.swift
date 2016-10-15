@@ -83,7 +83,7 @@ class OptionsModal: ModalOverlay {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if SoundService.singleton!.forceTouchVibrationsAvailable(inView: view) {
+        if SoundService.singleton!.forceTouchVibrationsAvailable() {
             soundLabel.attributedText = NSMutableAttributedString.themeString(.OptionTitle,
                                                                               "Sound and vibration effects")
             modal.addSubview(vibrationButton)
@@ -103,14 +103,14 @@ class OptionsModal: ModalOverlay {
             soundButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
             soundButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
 
-            if SoundService.singleton!.forceTouchVibrationsAvailable(inView: view) {
+            if SoundService.singleton!.forceTouchVibrationsAvailable() {
                 vibrationButton.autoAlignAxisToSuperviewAxis(.Vertical)
                 vibrationButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: soundButton, withOffset: -2)
                 vibrationButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
                 vibrationButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
             }
 
-            let referenceView = SoundService.singleton!.forceTouchVibrationsAvailable(inView: view) ?
+            let referenceView = SoundService.singleton!.forceTouchVibrationsAvailable() ?
                                 vibrationButton:
                                 soundButton
 
