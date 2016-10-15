@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AudioToolbox
 import AVFoundation
 
 class Play: UIViewController {
@@ -399,6 +400,8 @@ class Play: UIViewController {
         if !isOnboarding {
             SoundService.singleton!.playIfAllowed(sound)
         }
+
+        SoundService.singleton!.vibrateIfAllowed(sound)
     }
 
     // MARK: Scrolling interactions

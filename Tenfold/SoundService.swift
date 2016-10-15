@@ -8,6 +8,7 @@
 
 import UIKit
 import AVFoundation
+import AudioToolbox
 
 enum Sound {
     case CrossOut
@@ -61,8 +62,26 @@ class SoundService {
     }
 
     func playIfAllowed(sound: Sound) {
-        if StorageService.currentFlag(forSetting: .SoundOn) == true {
+        if StorageService.currentFlag(forSetting: .SoundOn) {
             (players[sound]!)!.play()
         }
+    }
+
+    func vibrateIfAllowed(sound: Sound) {
+        guard forceTouchVibrationsAvailable() else { return }
+
+        if StorageService.currentFlag(forSetting: .VibrationOn) {
+            if sound == .CrossOut {
+                AudioServicesPlaySystemSound(1519)
+            } else {
+                AudioServicesPlaySystemSound(1521)
+            }
+        }
+    }
+
+    func forceTouchVibrationsAvailable() -> Bool {
+        // swiftlint:disable line_length
+        return UIDevice.currentDevice().userInterfaceIdiom != .Pad &&
+               UIApplication.sharedApplication().keyWindow?.rootViewController?.traitCollection.forceTouchCapability == .Available
     }
 }

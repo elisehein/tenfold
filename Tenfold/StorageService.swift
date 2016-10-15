@@ -15,6 +15,7 @@ enum StorageKey: String {
 
     enum SettingsFlag: String {
         case SoundOn = "tenfoldSoundPrefStorageKey"
+        case VibrationOn = "tenfoldVibrationFlagStorageKey"
         case RandomInitialNumbers = "tenfoldRandomInitialNumbersFlagStorageKey"
     }
 
@@ -30,6 +31,7 @@ class StorageService {
         NSUserDefaults.standardUserDefaults().registerDefaults([
             StorageKey.FirstLaunchFlag.rawValue: true,
             StorageKey.SettingsFlag.SoundOn.rawValue: true,
+            StorageKey.SettingsFlag.VibrationOn.rawValue: true,
             StorageKey.SettingsFlag.RandomInitialNumbers.rawValue: false,
             StorageKey.FeatureAnnouncement.Undo.rawValue: false,
             StorageKey.FeatureAnnouncement.Options.rawValue: false
