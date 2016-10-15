@@ -401,7 +401,7 @@ class Play: UIViewController {
             SoundService.singleton!.playIfAllowed(sound)
         }
 
-        SoundService.singleton!.vibrateIfAllowed(sound)
+        SoundService.singleton!.vibrateIfAllowed(sound, inView: view)
     }
 
     // MARK: Scrolling interactions

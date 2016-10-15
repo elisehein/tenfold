@@ -27,11 +27,7 @@ class OptionsModal: ModalOverlay {
     init() {
         super.init(position: .Center)
 
-        var soundLabelText = "Sound and vibration effects"
-        if UIDevice.currentDevice().userInterfaceIdiom != .Pad {
-            soundLabelText = "Sound effects"
-        }
-        soundLabel.attributedText = NSMutableAttributedString.themeString(.OptionTitle, soundLabelText)
+        soundLabel.attributedText = NSMutableAttributedString.themeString(.OptionTitle, "Sound effects")
 
         initialNumbersLabel.attributedText = NSMutableAttributedString.themeString(.OptionTitle, "Starting point")
 
@@ -82,14 +78,17 @@ class OptionsModal: ModalOverlay {
         modal.addSubview(initialNumbersButton)
         modal.addSubview(initialNumbersDetail)
         modal.addSubview(doneButton)
-
-        if UIDevice.currentDevice().userInterfaceIdiom != .Pad {
-            modal.addSubview(vibrationButton)
-        }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        if SoundService.singleton!.forceTouchVibrationsAvailable(inView: view) {
+            soundLabel.attributedText = NSMutableAttributedString.themeString(.OptionTitle,
+                                                                              "Sound and vibration effects")
+            modal.addSubview(vibrationButton)
+        }
+
         view.setNeedsUpdateConstraints()
     }
 
@@ -104,16 +103,16 @@ class OptionsModal: ModalOverlay {
             soundButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
             soundButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
 
-            if UIDevice.currentDevice().userInterfaceIdiom != .Pad {
+            if SoundService.singleton!.forceTouchVibrationsAvailable(inView: view) {
                 vibrationButton.autoAlignAxisToSuperviewAxis(.Vertical)
                 vibrationButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: soundButton, withOffset: -2)
                 vibrationButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
                 vibrationButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
             }
 
-            let referenceView = UIDevice.currentDevice().userInterfaceIdiom == .Pad ?
-                                soundButton :
-                                vibrationButton
+            let referenceView = SoundService.singleton!.forceTouchVibrationsAvailable(inView: view) ?
+                                vibrationButton:
+                                soundButton
 
             initialNumbersLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: referenceView, withOffset: 30)
             initialNumbersLabel.autoAlignAxisToSuperviewAxis(.Vertical)

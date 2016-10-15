@@ -67,10 +67,8 @@ class SoundService {
         }
     }
 
-    func vibrateIfAllowed(sound: Sound) {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            return
-        }
+    func vibrateIfAllowed(sound: Sound, inView view: UIView) {
+        guard forceTouchVibrationsAvailable(inView: view) else { return }
 
         if StorageService.currentFlag(forSetting: .VibrationOn) {
             if sound == .CrossOut {
@@ -79,5 +77,10 @@ class SoundService {
                 AudioServicesPlaySystemSound(1521)
             }
         }
+    }
+
+    func forceTouchVibrationsAvailable(inView view: UIView) -> Bool {
+        return UIDevice.currentDevice().userInterfaceIdiom != .Pad &&
+               view.traitCollection.forceTouchCapability == .Available
     }
 }
