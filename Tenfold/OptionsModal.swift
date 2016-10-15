@@ -24,6 +24,7 @@ class OptionsModal: ModalOverlay {
 
     var hasLoadedConstraints = false
 
+    // swiftlint:disable:next function_body_length
     init() {
         super.init(position: .Center)
 
@@ -92,6 +93,7 @@ class OptionsModal: ModalOverlay {
         view.setNeedsUpdateConstraints()
     }
 
+    // swiftlint:disable:next function_body_length
     override func updateViewConstraints() {
         if !hasLoadedConstraints {
             soundLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: 30)

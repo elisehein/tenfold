@@ -80,6 +80,7 @@ class SoundService {
     }
 
     func forceTouchVibrationsAvailable() -> Bool {
+        // swiftlint:disable line_length
         return UIDevice.currentDevice().userInterfaceIdiom != .Pad &&
                UIApplication.sharedApplication().keyWindow?.rootViewController?.traitCollection.forceTouchCapability == .Available
     }
