@@ -32,29 +32,18 @@ class EndOfRoundMarker: CAShapeLayer {
         let totalWidth: CGFloat = bounds.size.width
         let totalHeight: CGFloat = bounds.size.height
 
-        CGPathMoveToPoint(markerPath, nil,
-                          totalWidth - EndOfRoundMarker.margin,
-                          totalHeight - EndOfRoundMarker.margin)
-        CGPathAddLineToPoint(markerPath,
-                             nil,
-                             totalWidth - EndOfRoundMarker.margin,
-                             totalHeight - EndOfRoundMarker.margin - EndOfRoundMarker.length)
-        CGPathAddLineToPoint(markerPath,
-                             nil,
-                             totalWidth - EndOfRoundMarker.margin - EndOfRoundMarker.depth,
-                             totalHeight - EndOfRoundMarker.margin - EndOfRoundMarker.length)
-        CGPathAddLineToPoint(markerPath,
-                             nil,
-                             totalWidth - EndOfRoundMarker.margin - EndOfRoundMarker.depth,
-                             totalHeight - EndOfRoundMarker.margin - EndOfRoundMarker.depth)
-        CGPathAddLineToPoint(markerPath,
-                             nil,
-                             totalWidth - EndOfRoundMarker.margin - EndOfRoundMarker.length,
-                             totalHeight - EndOfRoundMarker.margin - EndOfRoundMarker.depth)
-        CGPathAddLineToPoint(markerPath,
-                             nil,
-                             totalWidth - EndOfRoundMarker.margin - EndOfRoundMarker.length,
-                             totalHeight - EndOfRoundMarker.margin)
+        markerPath.move(to: CGPoint(x: totalWidth - EndOfRoundMarker.margin,
+                                    y: totalHeight - EndOfRoundMarker.margin))
+        markerPath.addLine(to: CGPoint(x: totalWidth - EndOfRoundMarker.margin,
+                                       y: totalHeight - EndOfRoundMarker.margin - EndOfRoundMarker.length))
+        markerPath.addLine(to: CGPoint(x: totalWidth - EndOfRoundMarker.margin - EndOfRoundMarker.depth,
+                                       y: totalHeight - EndOfRoundMarker.margin - EndOfRoundMarker.length))
+        markerPath.addLine(to: CGPoint(x: totalWidth - EndOfRoundMarker.margin - EndOfRoundMarker.depth,
+                                       y: totalHeight - EndOfRoundMarker.margin - EndOfRoundMarker.depth))
+        markerPath.addLine(to: CGPoint(x: totalWidth - EndOfRoundMarker.margin - EndOfRoundMarker.length,
+                                       y: totalHeight - EndOfRoundMarker.margin - EndOfRoundMarker.depth))
+        markerPath.addLine(to: CGPoint(x: totalWidth - EndOfRoundMarker.margin - EndOfRoundMarker.length,
+                                       y: totalHeight - EndOfRoundMarker.margin))
         markerPath.closeSubpath()
 
         path = markerPath

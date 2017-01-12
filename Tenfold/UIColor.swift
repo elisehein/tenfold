@@ -36,13 +36,13 @@ extension UIColor {
     // http://stackoverflow.com/a/38638676/2026098
     func interpolateTo(_ targetColor: UIColor, fraction: CGFloat) -> UIColor {
         var f = max(0, fraction)
-        f = min(1, fraction)
+        f = CGFloat(min(1, fraction))
         let c1 = self.cgColor.components
         let c2 = targetColor.cgColor.components
-        let r: CGFloat = CGFloat(c1[0] + (c2[0] - c1[0]) * f)
-        let g: CGFloat = CGFloat(c1[1] + (c2[1] - c1[1]) * f)
-        let b: CGFloat = CGFloat(c1[2] + (c2[2] - c1[2]) * f)
-        let a: CGFloat = CGFloat(c1[3] + (c2[3] - c1[3]) * f)
+        let r: CGFloat = CGFloat(CGFloat(c1![0]) + CGFloat((c2![0]) - CGFloat(c1![0])) * f)
+        let g: CGFloat = CGFloat(CGFloat(c1![1]) + (CGFloat(c2![1]) - CGFloat(c1![1])) * f)
+        let b: CGFloat = CGFloat(CGFloat(c1![2]) + (CGFloat(c2![2]) - CGFloat(c1![2])) * f)
+        let a: CGFloat = CGFloat(CGFloat(c1![3]) + (CGFloat(c2![3]) - CGFloat(c1![3])) * f)
         return UIColor.init(red: r, green: g, blue: b, alpha: a)
     }
 

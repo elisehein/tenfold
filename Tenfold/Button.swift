@@ -63,12 +63,12 @@ class Button: UIButton {
         }
 
         let attributes = [
-            NSKernAttributeName: 2.2,
+            NSKernAttributeName: 2.2 as AnyObject,
             NSFontAttributeName: font,
             NSForegroundColorAttributeName: color,
             NSParagraphStyleAttributeName: paragraphStyle,
-            NSStrikethroughStyleAttributeName: strikeThrough ? 1 : 0
-        ]
+            NSStrikethroughStyleAttributeName: (strikeThrough ? 1 : 0) as AnyObject
+        ] as [String : AnyObject]
 
         return NSMutableAttributedString(string: (text?.uppercased())!, attributes: attributes)
     }

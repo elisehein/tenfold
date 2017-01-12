@@ -21,12 +21,13 @@ class MaybeRemoteJSON {
         let URLRequest = NSMutableURLRequest(url: URL)
         URLRequest.cachePolicy = .reloadIgnoringCacheData
 
-        Alamofire.request(URLRequest).response { request, response, remoteData, error in
-                guard error == nil else { return }
-                guard remoteData != nil else { return }
-                guard response?.statusCode == 200 else { return }
+        Alamofire.request(urlString).responseJSON { response in
+            guard response.result.value != nil else { return }
+            guard response.response?.statusCode == 200 else { return }
 
-                self.data = JSON(data: remoteData!)
+            if let responseData = response.result.value as? Data {
+                self.data = JSON(data: responseData)
+            }
         }
     }
 }

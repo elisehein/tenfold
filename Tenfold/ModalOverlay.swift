@@ -28,7 +28,7 @@ class ModalOverlay: UIViewController {
         return UIDevice.current.userInterfaceIdiom == .pad ? 25 : 15
     }()
 
-    let modal = UIView()
+    let modalBox = UIView()
     let position: ModalPosition
 
     static let modalButtonHeight: CGFloat = {
@@ -44,13 +44,13 @@ class ModalOverlay: UIViewController {
 
         view.backgroundColor = UIColor.themeColor(.offBlack).withAlphaComponent(0.65)
 
-        modal.backgroundColor = UIColor.themeColor(.offWhite)
-        modal.layer.shadowColor = UIColor.themeColor(.offBlack).cgColor
-        modal.layer.shadowOffset = CGSize(width: 2, height: 2)
-        modal.layer.shadowRadius = 2
-        modal.layer.shadowOpacity = 0.5
+        modalBox.backgroundColor = UIColor.themeColor(.offWhite)
+        modalBox.layer.shadowColor = UIColor.themeColor(.offBlack).cgColor
+        modalBox.layer.shadowOffset = CGSize(width: 2, height: 2)
+        modalBox.layer.shadowRadius = 2
+        modalBox.layer.shadowOpacity = 0.5
 
-        view.addSubview(modal)
+        view.addSubview(modalBox)
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -59,7 +59,7 @@ class ModalOverlay: UIViewController {
         if touches.count == 1 {
             let touch = touches.first
             if let point = touch?.location(in: view) {
-                if !modal.frame.contains(point) {
+                if !modalBox.frame.contains(point) {
                     dismiss(animated: true, completion: nil)
                 }
             }
@@ -70,22 +70,22 @@ class ModalOverlay: UIViewController {
         switch position {
         case .center:
             if UIDevice.current.userInterfaceIdiom == .pad {
-                modal.autoSetDimension(.width, toSize: 460)
+                modalBox.autoSetDimension(.width, toSize: 460)
             } else {
-                modal.autoPinEdge(toSuperviewEdge: .left, withInset: 8)
-                modal.autoPinEdge(toSuperviewEdge: .right, withInset: 8)
+                modalBox.autoPinEdge(toSuperviewEdge: .left, withInset: 8)
+                modalBox.autoPinEdge(toSuperviewEdge: .right, withInset: 8)
             }
 
-            modal.autoCenterInSuperview()
+            modalBox.autoCenterInSuperview()
 
         case .bottom:
             if UIDevice.current.userInterfaceIdiom == .pad {
-                modal.autoSetDimension(.width, toSize: 460)
-                modal.autoCenterInSuperview()
+                modalBox.autoSetDimension(.width, toSize: 460)
+                modalBox.autoCenterInSuperview()
             } else {
-                modal.autoPinEdge(toSuperviewEdge: .left, withInset: 8)
-                modal.autoPinEdge(toSuperviewEdge: .bottom, withInset: 8)
-                modal.autoPinEdge(toSuperviewEdge: .right, withInset: 8)
+                modalBox.autoPinEdge(toSuperviewEdge: .left, withInset: 8)
+                modalBox.autoPinEdge(toSuperviewEdge: .bottom, withInset: 8)
+                modalBox.autoPinEdge(toSuperviewEdge: .right, withInset: 8)
             }
         }
 

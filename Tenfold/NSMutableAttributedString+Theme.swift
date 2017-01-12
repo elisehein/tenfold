@@ -81,7 +81,7 @@ extension NSMutableAttributedString {
         ]
 
         if textStyle == .pill {
-            attributes[NSKernAttributeName] = 1.2
+            attributes[NSKernAttributeName] = 1.2 as NSObject?
         }
 
         return attributes

@@ -47,7 +47,7 @@ class OnboardingSteps: UIView {
             NSForegroundColorAttributeName: UIColor.themeColor(.offBlack),
             NSParagraphStyleAttributeName: paragraphStyle,
             NSFontAttributeName: UIFont.themeFontWithSize(isIPad ? 18 : 14)
-        ]
+        ] as [String : AnyObject]
 
         return attributes
     }()

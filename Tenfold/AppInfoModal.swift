@@ -72,14 +72,14 @@ class AppInfoModal: ModalOverlay {
                              action: #selector(AppInfoModal.didTapRate),
                              for: .touchUpInside)
 
-        modal.addSubview(logo)
-        modal.addSubview(appNameLabel)
-        modal.addSubview(appVersionLabel)
-        modal.addSubview(developerNameLabel)
-        modal.addSubview(emailLabel)
-        modal.addSubview(specialThanksLabel)
-        modal.addSubview(feedbackButton)
-        modal.addSubview(rateButton)
+        modalBox.addSubview(logo)
+        modalBox.addSubview(appNameLabel)
+        modalBox.addSubview(appVersionLabel)
+        modalBox.addSubview(developerNameLabel)
+        modalBox.addSubview(emailLabel)
+        modalBox.addSubview(specialThanksLabel)
+        modalBox.addSubview(feedbackButton)
+        modalBox.addSubview(rateButton)
     }
 
     func didTapRate() {
@@ -115,7 +115,7 @@ class AppInfoModal: ModalOverlay {
 
         specialThanksLabel.autoMatch(.width,
                                               to: .width,
-                                              of: modal,
+                                              of: modalBox,
                                               withMultiplier: 0.8)
         let labelTopSpacing = specialThanksLabel.text == nil ? 0 : AppInfoModal.paragraphSpacing
         specialThanksLabel.autoPinEdge(.top,
@@ -123,20 +123,20 @@ class AppInfoModal: ModalOverlay {
                                        of: emailLabel,
                                        withOffset: CGFloat(labelTopSpacing))
 
-        feedbackButton.autoMatch(.width, to: .width, of: modal)
+        feedbackButton.autoMatch(.width, to: .width, of: modalBox)
         feedbackButton.autoPinEdge(.top,
                                    to: .bottom,
                                    of: specialThanksLabel,
                                    withOffset: AppInfoModal.modalInset)
         feedbackButton.autoSetDimension(.height, toSize: ModalOverlay.modalButtonHeight)
 
-        rateButton.autoMatch(.width, to: .width, of: modal)
+        rateButton.autoMatch(.width, to: .width, of: modalBox)
         rateButton.autoPinEdge(.top, to: .bottom, of: feedbackButton, withOffset: -2)
         rateButton.autoSetDimension(.height, toSize: ModalOverlay.modalButtonHeight)
         rateButton.autoPinEdge(toSuperviewEdge: .bottom)
 
-        // swiftlint:disable:next line_length
-        [logo, appNameLabel, appVersionLabel, developerNameLabel, emailLabel, specialThanksLabel, feedbackButton, rateButton].autoAlignViews(to: .vertical)
+        ([logo, appNameLabel, appVersionLabel, developerNameLabel,
+          emailLabel, specialThanksLabel, feedbackButton, rateButton] as NSArray).autoAlignViews(to: .vertical)
 
         hasLoadedConstraints = true
         super.updateViewConstraints()

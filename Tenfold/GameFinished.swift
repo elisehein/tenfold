@@ -73,7 +73,7 @@ class GameFinished: UIViewController {
         statsLabel.attributedText = NSMutableAttributedString.themeString(.paragraph, statsText())
 
         closeButton.addTarget(self,
-                              action: #selector(GameFinished.dismiss),
+                              action: #selector(self.dismissScreen),
                               for: .touchUpInside)
         closeButton.setTitle("Take me back", for: UIControlState())
 
@@ -125,7 +125,8 @@ class GameFinished: UIViewController {
                                                    withInset: GameFinished.closeButtonBottomInset)
 
             // swiftlint:disable:next line_length
-            [titleLabel, imageView, statsLabel, rankingTable, closeButton].autoAlignViews(to: .vertical)
+            ([titleLabel, imageView, statsLabel, rankingTable, closeButton] as NSArray).autoAlignViews(to: .vertical)
+        
 
             hasLoadedConstraints = true
         }
@@ -165,7 +166,7 @@ class GameFinished: UIViewController {
         return text
     }
 
-    func dismiss() {
+    func dismissScreen() {
         self.dismiss(animated: true, completion: nil)
     }
 

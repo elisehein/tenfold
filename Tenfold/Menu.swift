@@ -170,7 +170,7 @@ class Menu: UIView {
         instructionsButton.autoPinEdge(.top, to: .bottom, of: newGameButton)
         optionsButton.autoPinEdge(.top, to: .bottom, of: instructionsButton)
 
-        [logo, newGameButton, instructionsButton, optionsButton].autoAlignViews(to: .vertical)
+        ([logo, newGameButton, instructionsButton, optionsButton] as NSArray).autoAlignViews(to: .vertical)
 
         let newFeatureOffset: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 90 : 70
         newFeatureLabel.autoAlignAxis(.horizontal, toSameAxisOf: optionsButton)

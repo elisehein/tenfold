@@ -31,7 +31,7 @@ enum SlidingStrikethroughButtonOption: Int {
     }
 }
 
-class SlidingStrikethroughButton: Button {
+class SlidingStrikethroughButton: Button, CAAnimationDelegate {
 
     fileprivate static let gapSize: CGFloat = {
         return UIDevice.current.userInterfaceIdiom == .pad ? 50 : 40
@@ -66,7 +66,7 @@ class SlidingStrikethroughButton: Button {
         lineLayer.add(animation, forKey: "startAnimation")
     }
 
-    override func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
         guard anim == lineLayer.animation(forKey: "startAnimation") else { return }
         lineLayer.removeAllAnimations()
 

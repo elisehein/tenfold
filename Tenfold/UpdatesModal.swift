@@ -53,10 +53,10 @@ class UpdatesModal: ModalOverlay {
         okButton.setTitle("Back to the game", for: UIControlState())
         okButton.addTarget(self, action: #selector(UpdatesModal.didTapOK), for: .touchUpInside)
 
-        modal.addSubview(titleLabel)
-        modal.addSubview(textLabel)
-        modal.addSubview(ruleGrid)
-        modal.addSubview(okButton)
+        modalBox.addSubview(titleLabel)
+        modalBox.addSubview(textLabel)
+        modalBox.addSubview(ruleGrid)
+        modalBox.addSubview(okButton)
     }
 
     override func viewDidLoad() {
@@ -82,30 +82,21 @@ class UpdatesModal: ModalOverlay {
     override func updateViewConstraints() {
         if !hasLoadedConstraints {
             titleLabel.autoAlignAxis(toSuperviewAxis: .vertical)
-            titleLabel.autoMatch(.width, to: .width, of: modal)
+            titleLabel.autoMatch(.width, to: .width, of: modalBox)
             titleLabel.autoPinEdge(toSuperviewEdge: .top, withInset: ModalOverlay.contentPadding)
 
             textLabel.autoPinEdge(toSuperviewEdge: .left, withInset: 25)
             textLabel.autoPinEdge(toSuperviewEdge: .right, withInset: 25)
-            textLabel.autoPinEdge(.top,
-                                  to: .bottom,
-                                  of: titleLabel,
-                                  withOffset: ModalOverlay.titleTextSpacing)
+            textLabel.autoPinEdge(.top, to: .bottom, of: titleLabel, withOffset: ModalOverlay.titleTextSpacing)
 
             ruleGrid.autoSetDimensions(to: gridSize())
             ruleGrid.autoAlignAxis(toSuperviewAxis: .vertical)
-            ruleGrid.autoPinEdge(.top,
-                                 to: .bottom,
-                                 of: textLabel,
-                                 withOffset: ModalOverlay.contentPadding * 1.5)
-            ruleGrid.autoPinEdge(.bottom,
-                                 to: .top,
-                                 of: okButton,
-                                 withOffset: -ModalOverlay.contentPadding * 1.5)
+            ruleGrid.autoPinEdge(.top, to: .bottom, of: textLabel, withOffset: ModalOverlay.contentPadding * 1.5)
+            ruleGrid.autoPinEdge(.bottom, to: .top, of: okButton, withOffset: -ModalOverlay.contentPadding * 1.5)
 
             okButton.autoAlignAxis(toSuperviewAxis: .vertical)
             okButton.autoPinEdge(toSuperviewEdge: .bottom)
-            okButton.autoMatch(.width, to: .width, of: modal)
+            okButton.autoMatch(.width, to: .width, of: modalBox)
             okButton.autoSetDimension(.height, toSize: ModalOverlay.modalButtonHeight)
 
             hasLoadedConstraints = true

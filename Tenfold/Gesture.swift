@@ -27,7 +27,7 @@ private struct GestureConfiguration {
     var disappearanceDelay: Double = 0
 }
 
-class Gesture: CAShapeLayer {
+class Gesture: CAShapeLayer, CAAnimationDelegate {
 
     static let fingerDiameter: CGFloat = 16
     fileprivate var completionBlock: (() -> Void)?
@@ -185,7 +185,7 @@ class Gesture: CAShapeLayer {
         return bezierPath.cgPath
     }
 
-    override func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
         if anim == animation(forKey: "swooshStart") {
             endSwoosh()
         } else {

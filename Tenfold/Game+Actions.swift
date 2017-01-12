@@ -129,7 +129,7 @@ extension Game {
 
     func makeNextRound(usingNumbers nextRoundNumbers: [Number]) -> Bool {
         if nextRoundNumbers.count > 0 {
-            numbers.last.marksEndOfRound = true // In case this was lost with row removals
+            numbers.last?.marksEndOfRound = true // In case this was lost with row removals
             numbers += nextRoundNumbers
             historicNumberCount += nextRoundNumbers.count
             currentRound += 1

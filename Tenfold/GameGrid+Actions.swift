@@ -113,7 +113,7 @@ extension GameGrid {
 
 extension GameGrid {
 
-    func removeRows(withNumberIndeces indeces: [Int], completion: (() -> Void)) {
+    func removeRows(withNumberIndeces indeces: [Int], completion: @escaping (() -> Void)) {
         guard indeces.count > 0 else { return }
         rowRemovalInProgress = true
 
@@ -152,7 +152,7 @@ extension GameGrid {
         })
     }
 
-    fileprivate func prepareForRemoval(_ indexPaths: [IndexPath], completion: (() -> Void)) {
+    fileprivate func prepareForRemoval(_ indexPaths: [IndexPath], completion: @escaping (() -> Void)) {
         for indexPath in indexPaths {
             if let cell = cellForItem(at: indexPath) as? GameGridCell {
                 cell.prepareForRemoval(completion: completion)

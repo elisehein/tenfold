@@ -56,7 +56,7 @@ class Rules: UIViewController {
 
             let attributes = [NSFontAttributeName: UIFont.themeFontWithSize(isIPad ? 18 : 14),
                               NSForegroundColorAttributeName: UIColor.themeColor(.offBlack),
-                              NSKernAttributeName: 2.2]
+                              NSKernAttributeName: 2.2 as AnyObject] as [String : AnyObject]
 
             label.attributedText = NSAttributedString(string: title!.uppercased(),
                                                       attributes: attributes)

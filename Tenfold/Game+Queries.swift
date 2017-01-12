@@ -20,7 +20,7 @@ extension Game {
             return newNumber!
         })
 
-        nextRoundNumbers.last.marksEndOfRound = true
+        nextRoundNumbers.last?.marksEndOfRound = true
         return nextRoundNumbers
     }
 

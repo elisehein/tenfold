@@ -47,10 +47,10 @@ class ConfirmationModal: ModalOverlay {
                                action: #selector(ConfirmationModal.didTapCancel),
                                for: .touchUpInside)
 
-        modal.addSubview(titleLabel)
-        modal.addSubview(textLabel)
-        modal.addSubview(yesButton)
-        modal.addSubview(cancelButton)
+        modalBox.addSubview(titleLabel)
+        modalBox.addSubview(textLabel)
+        modalBox.addSubview(yesButton)
+        modalBox.addSubview(cancelButton)
     }
 
     override func viewDidLoad() {
@@ -61,28 +61,22 @@ class ConfirmationModal: ModalOverlay {
     override func updateViewConstraints() {
         if !hasLoadedConstraints {
             titleLabel.autoAlignAxis(toSuperviewAxis: .vertical)
-            titleLabel.autoMatch(.width, to: .width, of: modal)
+            titleLabel.autoMatch(.width, to: .width, of: modalBox)
             titleLabel.autoPinEdge(toSuperviewEdge: .top, withInset: ModalOverlay.contentPadding)
 
             textLabel.autoPinEdge(toSuperviewEdge: .left, withInset: ModalOverlay.horizontalInset)
             textLabel.autoPinEdge(toSuperviewEdge: .right, withInset: ModalOverlay.horizontalInset)
-            textLabel.autoPinEdge(.top,
-                                  to: .bottom,
-                                  of: titleLabel,
-                                  withOffset: ModalOverlay.titleTextSpacing)
-            textLabel.autoPinEdge(.bottom,
-                                  to: .top,
-                                  of: yesButton,
-                                  withOffset: -ModalOverlay.contentPadding)
+            textLabel.autoPinEdge(.top, to: .bottom, of: titleLabel, withOffset: ModalOverlay.titleTextSpacing)
+            textLabel.autoPinEdge(.bottom, to: .top, of: yesButton, withOffset: -ModalOverlay.contentPadding)
 
             yesButton.autoAlignAxis(toSuperviewAxis: .vertical)
             yesButton.autoPinEdge(.bottom, to: .top, of: cancelButton, withOffset: 2)
-            yesButton.autoMatch(.width, to: .width, of: modal)
+            yesButton.autoMatch(.width, to: .width, of: modalBox)
             yesButton.autoSetDimension(.height, toSize: ModalOverlay.modalButtonHeight)
 
             cancelButton.autoAlignAxis(toSuperviewAxis: .vertical)
             cancelButton.autoPinEdge(toSuperviewEdge: .bottom)
-            cancelButton.autoMatch(.width, to: .width, of: modal)
+            cancelButton.autoMatch(.width, to: .width, of: modalBox)
             cancelButton.autoSetDimension(.height, toSize: ModalOverlay.modalButtonHeight)
 
             hasLoadedConstraints = true

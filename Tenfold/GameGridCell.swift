@@ -82,7 +82,7 @@ class GameGridCell: UICollectionViewCell {
         bottomColorFiller.transform = CGAffineTransform(scaleX: 0, y: 0)
         topColorFiller.transform = CGAffineTransform(scaleX: 0, y: 0)
         marksEndOfRound = false
-        state == .available
+        state = .available
         value = nil
         aboutToBeRevealed = false
         resetColors()

@@ -175,7 +175,7 @@ class RuleGrid: Grid {
         }
     }
 
-    fileprivate func prepareToStartOver(completion: (() -> Void)) {
+    fileprivate func prepareToStartOver(completion: @escaping (() -> Void)) {
         var dirtyCells = Array(Set(pairs.joined()))
         dirtyCells += crossedOutIndeces
 

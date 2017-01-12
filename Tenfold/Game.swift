@@ -46,7 +46,7 @@ class Game: NSObject, NSCoding {
             return Number(value: value, crossedOut: false, marksEndOfRound: false)
         })
 
-        initialNumbers.last.marksEndOfRound = true
+        initialNumbers.last?.marksEndOfRound = true
         return initialNumbers
     }
 
@@ -64,7 +64,7 @@ class Game: NSObject, NSCoding {
         return numberValues
     }
 
-    fileprivate class func valueCounts(inNumbers givenNumbers: Array<Number>) -> [Int: Int] {
+    fileprivate class func valueCounts(inNumbers givenNumbers: [Number]) -> [Int: Int] {
         var counts = [Int: Int]()
         for number in givenNumbers {
             if counts[number.value!] == nil {
