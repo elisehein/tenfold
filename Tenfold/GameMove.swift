@@ -53,9 +53,9 @@ class GameMove: NSObject, NSCoding {
     }
 
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(crossedOutPair, forKey: GameMove.pairCoderKey)
-        aCoder.encode(rowsRemoved, forKey: GameMove.rowsRemovedCoderKey)
-        aCoder.encode(placeholdersForRowsRemoved, forKey: GameMove.placeholdersCoderKey)
+        aCoder.encode(crossedOutPair as Any?, forKey: GameMove.pairCoderKey)
+        aCoder.encode(rowsRemoved as Any?, forKey: GameMove.rowsRemovedCoderKey)
+        aCoder.encode(placeholdersForRowsRemoved as Any?, forKey: GameMove.placeholdersCoderKey)
         aCoder.encode(numbersAdded, forKey: GameMove.numbersAddedCoderKey)
     }
 }

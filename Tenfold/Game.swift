@@ -115,11 +115,13 @@ class Game: NSObject, NSCoding {
     }
 
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(numbers, forKey: Game.numbersCoderKey)
-        aCoder.encode(historicNumberCount, forKey: Game.historicNumberCountCoderKey)
-        aCoder.encode(currentRound, forKey: Game.currentRoundCoderKey)
-        aCoder.encode(startTime, forKey: Game.startTimeCoderKey)
-        aCoder.encode(valueCounts, forKey: Game.valueCountsCoderKey)
-        aCoder.encode(latestMove, forKey: Game.latestMoveCoderKey)
+        // Using as Any? because of Swift 3
+        // http://stackoverflow.com/a/41604269/2026098
+        aCoder.encode(numbers as Any?, forKey: Game.numbersCoderKey)
+        aCoder.encode(historicNumberCount as Any?, forKey: Game.historicNumberCountCoderKey)
+        aCoder.encode(currentRound as Any?, forKey: Game.currentRoundCoderKey)
+        aCoder.encode(startTime as Any?, forKey: Game.startTimeCoderKey)
+        aCoder.encode(valueCounts as Any?, forKey: Game.valueCountsCoderKey)
+        aCoder.encode(latestMove as Any?, forKey: Game.latestMoveCoderKey)
     }
 }

@@ -56,7 +56,7 @@ class GameSnapshot: NSObject, NSCoding {
         aCoder.encodeCInt(Int32(historicNumberCount), forKey: GameSnapshot.historicNumberCountCoderKey)
         aCoder.encodeCInt(Int32(numbersRemaining), forKey: GameSnapshot.numbersRemainingCoderKey)
         aCoder.encodeCInt(Int32(totalRounds), forKey: GameSnapshot.totalRoundsCoderKey)
-        aCoder.encode(startTime!, forKey: GameSnapshot.startTimeCoderKey)
-        aCoder.encode(endTime, forKey: GameSnapshot.endTimeCoderKey)
+        aCoder.encode(startTime! as Any?, forKey: GameSnapshot.startTimeCoderKey)
+        aCoder.encode(endTime as Any?, forKey: GameSnapshot.endTimeCoderKey)
     }
 }
