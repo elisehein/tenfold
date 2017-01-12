@@ -693,7 +693,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.elisehein.Tenfold;
 				PRODUCT_NAME = Tenfold;
 				PROVISIONING_PROFILE = "079e4cdb-5b13-41dc-b717-4809333e781d";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.elisehein.Tenfold";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.elisehein.Tenfold";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
