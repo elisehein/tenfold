@@ -8,18 +8,6 @@
 
 import Foundation
 import UIKit
-// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
-// Consider refactoring the code to use the non-optional operators.
-fileprivate func < <T: Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l < r
-  case (nil, _?):
-    return true
-  default:
-    return false
-  }
-}
 
 enum SlidingStrikethroughButtonOption: Int {
     case left
@@ -100,7 +88,7 @@ class SlidingStrikethroughButton: Button, CAAnimationDelegate {
 
             titleString.append(attrString)
 
-            if options.index(of: option) < options.count - 1 {
+            if options.index(of: option)! < options.count - 1 {
                 titleString.append(gapString)
             }
         }
