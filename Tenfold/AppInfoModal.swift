@@ -87,7 +87,7 @@ class AppInfoModal: ModalOverlay {
     }
 
     func didTapFeedback() {
-        UIApplication.shared.openURL(URL(string: "mailto:hello@tenfoldapp.com")!)
+        UIApplication.shared.openURL(URL(string: "http://tenfoldapp.com/faq.html")!)
     }
 
     override func viewWillAppear(_ animated: Bool) {
