@@ -210,7 +210,6 @@ class GameGridCell: UICollectionViewCell {
         })
     }
 
-
     fileprivate func unfill(usingColor color: UIColor,
                         filler: UIView,
                         withDelay delay: Double,

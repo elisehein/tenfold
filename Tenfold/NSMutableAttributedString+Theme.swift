@@ -23,6 +23,8 @@ struct TextStyleProperties {
         return UIDevice.current.userInterfaceIdiom == .pad
     }()
 
+    // swiftlint:disable colon
+
     static let fontSize: [TextStyle: CGFloat] = {
         return [
             .title:        isIPad ? 22 : 16,
@@ -55,6 +57,8 @@ struct TextStyleProperties {
             .optionDetail: isIPad ? 7 : 4
         ]
     }()
+
+    // swiftlint:enable colon
 }
 
 extension NSMutableAttributedString {

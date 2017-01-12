@@ -81,7 +81,7 @@ class RuleGrid: Grid {
             performPairings()
 
             // swiftlint:disable:next line_length
-            after(seconds: Double(pairs.count) * RuleGrid.pairingLoopDuration + RuleGrid.pairingLoopReloadDuration,
+            _ = after(seconds: Double(pairs.count) * RuleGrid.pairingLoopDuration + RuleGrid.pairingLoopReloadDuration,
                   performSelector: #selector(RuleGrid.performPairings),
                   repeats: true)
         } else {
@@ -89,11 +89,11 @@ class RuleGrid: Grid {
 
             // We are delaying the first pull up because for some reason the initial offset will
             // be corrupt if we position the grid and immediately pull up.
-            after(seconds: 0.1,
-                  performSelector: #selector(RuleGrid.pullUp))
-            after(seconds: 6,
-                  performSelector: #selector(RuleGrid.pullUp),
-                  repeats: true)
+            _ = after(seconds: 0.1,
+                      performSelector: #selector(RuleGrid.pullUp))
+            _ = after(seconds: 6,
+                      performSelector: #selector(RuleGrid.pullUp),
+                      repeats: true)
         }
     }
 
@@ -118,7 +118,7 @@ class RuleGrid: Grid {
             self.contentOffset = CGPoint(x: 0, y: -Grid.cellSpacing)
         }, completion: nil)
 
-        after(seconds: 5, performSelector: #selector(RuleGrid.releasePullUp))
+        _ = after(seconds: 5, performSelector: #selector(RuleGrid.releasePullUp))
     }
 
     func releasePullUp() {
@@ -170,7 +170,7 @@ class RuleGrid: Grid {
                            #selector(RuleGrid.undoPairing(_:)) :
                            #selector(RuleGrid.selectAndCrossOutPair(_:))
 
-            after(seconds: delay, performSelector: selector, withUserInfo: userInfo)
+            _ = after(seconds: delay, performSelector: selector, withUserInfo: userInfo)
             delay += RuleGrid.pairingLoopDuration
         }
     }
@@ -187,9 +187,9 @@ class RuleGrid: Grid {
     func selectAndCrossOutPair(_ timer: Timer) {
         if let userInfo = timer.userInfo! as? [String: AnyObject] {
             selectCell((userInfo["index"]! as? Int)!)
-            after(seconds: 0.7,
-                  performSelector: #selector(RuleGrid.crossOutPairWithUserInfo(_:)),
-                  withUserInfo: userInfo)
+            _ = after(seconds: 0.7,
+                      performSelector: #selector(RuleGrid.crossOutPairWithUserInfo(_:)),
+                      withUserInfo: userInfo)
         }
     }
 

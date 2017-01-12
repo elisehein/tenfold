@@ -135,7 +135,7 @@ class Rules: UIViewController {
     }
 
     func goBack() {
-        navigationController?.popViewController(animated: true)
+        _ = navigationController?.popViewController(animated: true)
     }
 
     fileprivate func headerViewForIndexPath(_ indexPath: IndexPath) -> UICollectionReusableView {

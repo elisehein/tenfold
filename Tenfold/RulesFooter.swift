@@ -9,7 +9,6 @@
 import Foundation
 import UIKit
 
-
 class RulesFooter: UICollectionReusableView {
 
     let label = UILabel()

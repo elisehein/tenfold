@@ -349,9 +349,7 @@ class Play: UIViewController {
             gameGrid.removeRows(withNumberIndeces: surplusIndeces, completion: {
                 if self.game.ended() {
                     StorageService.saveGameSnapshot(self.game, forced: true)
-                    self.present(GameFinished(game: self.game),
-                                               animated: true,
-                                               completion: { _ in
+                    self.present(GameFinished(game: self.game), animated: true, completion: { _ in
                         self.restart()
                     })
                 } else {

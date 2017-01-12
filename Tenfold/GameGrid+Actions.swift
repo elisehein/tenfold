@@ -145,7 +145,7 @@ extension GameGrid {
 
         performBatchUpdates({
             self.insertItems(at: indexPaths)
-        }, completion: { finished in
+        }, completion: { _ in
             self.adjustTopInset()
             self.revealCellsAtIndeces(indeces)
             completion()

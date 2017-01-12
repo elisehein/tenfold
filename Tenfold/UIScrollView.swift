@@ -6,7 +6,6 @@
 //  Copyright © 2016 Elise Hein. All rights reserved.
 //
 
-
 // FOR REFERENCE
 //
 // contentOffset = CGPoint(x: 0.0, y: 42.0)

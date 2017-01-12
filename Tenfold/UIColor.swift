@@ -13,9 +13,15 @@ extension UIColor {
     // http://stackoverflow.com/questions/1560081/how-can-i-create-a-uicolor-from-a-hex-string
     // Initialiser for strings of format '#_RED_GREEN_BLUE_'
     convenience init(hex: String) {
-        let redRange    = hex.characters.index(hex.startIndex, offsetBy: 1)..<hex.characters.index(hex.startIndex, offsetBy: 3)
-        let greenRange  = hex.characters.index(hex.startIndex, offsetBy: 3)..<hex.characters.index(hex.startIndex, offsetBy: 5)
-        let blueRange   = hex.characters.index(hex.startIndex, offsetBy: 5)..<hex.characters.index(hex.startIndex, offsetBy: 7)
+        let redRange    = hex.characters.index(hex.startIndex,
+                                               offsetBy: 1)..<hex.characters.index(hex.startIndex,
+                                                                                   offsetBy: 3)
+        let greenRange  = hex.characters.index(hex.startIndex,
+                                               offsetBy: 3)..<hex.characters.index(hex.startIndex,
+                                                                                   offsetBy: 5)
+        let blueRange   = hex.characters.index(hex.startIndex,
+                                               offsetBy: 5)..<hex.characters.index(hex.startIndex,
+                                                                                   offsetBy: 7)
 
         var red: UInt32 = 0
         var green: UInt32 = 0

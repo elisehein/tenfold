@@ -64,9 +64,7 @@ class OptionsModal: ModalOverlay {
 
         soundButton.addTarget(self, action: #selector(self.toggleSound), for: .touchUpInside)
         vibrationButton.addTarget(self, action: #selector(self.toggleVibration), for: .touchUpInside)
-        initialNumbersButton.addTarget(self, 
-                                       action: #selector(self.toggleInitialNumbers), 
-                                       for: .touchUpInside)
+        initialNumbersButton.addTarget(self, action: #selector(self.toggleInitialNumbers), for: .touchUpInside)
         doneButton.addTarget(self, action: #selector(self.dismissModal), for: .touchUpInside)
 
         modalBox.addSubview(soundLabel)

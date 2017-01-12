@@ -126,7 +126,6 @@ class GameFinished: UIViewController {
 
             // swiftlint:disable:next line_length
             ([titleLabel, imageView, statsLabel, rankingTable, closeButton] as NSArray).autoAlignViews(to: .vertical)
-        
 
             hasLoadedConstraints = true
         }
