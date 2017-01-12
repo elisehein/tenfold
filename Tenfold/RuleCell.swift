@@ -11,24 +11,24 @@ import UIKit
 
 class RuleCell: UICollectionViewCell {
 
-    private static let textWidthFactor: CGFloat = {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+    fileprivate static let textWidthFactor: CGFloat = {
+        if UIDevice.current.userInterfaceIdiom == .pad {
             return 0.5
         } else {
             return 0.88
         }
     }()
 
-    private static let gridWidthFactor: CGFloat = {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+    fileprivate static let gridWidthFactor: CGFloat = {
+        if UIDevice.current.userInterfaceIdiom == .pad {
             return 0.5
         } else {
             return 0.75
         }
     }()
 
-    private static let textGridSpacing: CGFloat = {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+    fileprivate static let textGridSpacing: CGFloat = {
+        if UIDevice.current.userInterfaceIdiom == .pad {
             return 40
         } else {
             return 30
@@ -39,7 +39,7 @@ class RuleCell: UICollectionViewCell {
     var text: String? {
         didSet {
             if let text = text {
-                label.attributedText = NSMutableAttributedString.themeString(.Paragraph, text)
+                label.attributedText = NSMutableAttributedString.themeString(.paragraph, text)
             }
         }
     }
@@ -47,7 +47,7 @@ class RuleCell: UICollectionViewCell {
     var detailText: String? {
         didSet {
             if let detailText = detailText {
-                detailLabel.attributedText = NSMutableAttributedString.themeString(.Tip, detailText)
+                detailLabel.attributedText = NSMutableAttributedString.themeString(.tip, detailText)
             } else {
                 detailLabel.text = ""
             }
@@ -78,9 +78,9 @@ class RuleCell: UICollectionViewCell {
         }
     }
 
-    private let label = RuleCell.labelWithAttributedText()
-    private let detailLabel = UILabel()
-    private let exampleGrid = RuleGrid()
+    fileprivate let label = RuleCell.labelWithAttributedText()
+    fileprivate let detailLabel = UILabel()
+    fileprivate let exampleGrid = RuleGrid()
 
     class func sizeOccupiedByLabel(forAvailableWidth availableWidth: CGFloat,
                                    usingText text: String) -> CGSize {
@@ -146,7 +146,7 @@ class RuleCell: UICollectionViewCell {
                                   height: gridSize.height)
 
         exampleGrid.initialisePositionWithinFrame(frameForGrid,
-                                                  withInsets: UIEdgeInsetsZero)
+                                                  withInsets: UIEdgeInsets.zero)
     }
 
     func prepareGrid() {
@@ -166,10 +166,10 @@ class RuleCell: UICollectionViewCell {
         stopExampleLoop()
     }
 
-    class func labelWithAttributedText(text: String? = nil) -> UILabel {
+    class func labelWithAttributedText(_ text: String? = nil) -> UILabel {
         let l = UILabel()
         l.numberOfLines = 0
-        l.attributedText = NSMutableAttributedString.themeString(.Paragraph, text == nil ? "" : text!)
+        l.attributedText = NSMutableAttributedString.themeString(.paragraph, text == nil ? "" : text!)
         return l
 
     }

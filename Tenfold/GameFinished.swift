@@ -11,40 +11,40 @@ import PureLayout
 import UIKit
 
 class GameFinished: UIViewController {
-    private let imageView = UIImageView()
-    private let titleLabel = UILabel()
-    private let statsLabel = UILabel()
-    private let rankingTable: RankingTable
-    private let closeButton = Button()
+    fileprivate let imageView = UIImageView()
+    fileprivate let titleLabel = UILabel()
+    fileprivate let statsLabel = UILabel()
+    fileprivate let rankingTable: RankingTable
+    fileprivate let closeButton = Button()
 
-    private let game: Game
+    fileprivate let game: Game
 
-    private var hasLoadedConstraints = false
+    fileprivate var hasLoadedConstraints = false
 
-    private static let imageSize: CGSize = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ?
+    fileprivate static let imageSize: CGSize = {
+        return UIDevice.current.userInterfaceIdiom == .pad ?
                CGSize(width: 120, height: 220) :
                CGSize(width: 80, height: 150)
     }()
 
-    private static let imageBottomSpacing: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 70 : 30
+    fileprivate static let imageBottomSpacing: CGFloat = {
+        return UIDevice.current.userInterfaceIdiom == .pad ? 70 : 30
     }()
 
-    private static let titleBottomSpacing: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 20 : 10
+    fileprivate static let titleBottomSpacing: CGFloat = {
+        return UIDevice.current.userInterfaceIdiom == .pad ? 20 : 10
     }()
 
-    private static let tableTopSpacing: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 80 : 40
+    fileprivate static let tableTopSpacing: CGFloat = {
+        return UIDevice.current.userInterfaceIdiom == .pad ? 80 : 40
     }()
 
-    private static let statsLabelWidthFactor: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 0.65 : 0.85
+    fileprivate static let statsLabelWidthFactor: CGFloat = {
+        return UIDevice.current.userInterfaceIdiom == .pad ? 0.65 : 0.85
     }()
 
-    private static let closeButtonBottomInset: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 60 : 30
+    fileprivate static let closeButtonBottomInset: CGFloat = {
+        return UIDevice.current.userInterfaceIdiom == .pad ? 60 : 30
     }()
 
     init(game: Game) {
@@ -54,28 +54,28 @@ class GameFinished: UIViewController {
         self.rankingTable = RankingTable(rankedGames: topRankedGames)
         super.init(nibName: nil, bundle: nil)
 
-        modalTransitionStyle = .CrossDissolve
+        modalTransitionStyle = .crossDissolve
 
         imageView.image = UIImage(named: "balloon")
-        imageView.contentMode = .ScaleAspectFit
+        imageView.contentMode = .scaleAspectFit
 
-        var titleFont = UIFont.themeFontWithSize(16, weight: .Bold)
+        var titleFont = UIFont.themeFontWithSize(16, weight: .bold)
 
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            titleFont = titleFont.fontWithSize(22)
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            titleFont = titleFont.withSize(22)
         }
 
         titleLabel.font = titleFont
         titleLabel.text = "You've done it!"
-        titleLabel.textColor = UIColor.themeColor(.OffBlack)
+        titleLabel.textColor = UIColor.themeColor(.offBlack)
 
         statsLabel.numberOfLines = 0
-        statsLabel.attributedText = NSMutableAttributedString.themeString(.Paragraph, statsText())
+        statsLabel.attributedText = NSMutableAttributedString.themeString(.paragraph, statsText())
 
         closeButton.addTarget(self,
                               action: #selector(GameFinished.dismiss),
-                              forControlEvents: .TouchUpInside)
-        closeButton.setTitle("Take me back", forState: .Normal)
+                              for: .touchUpInside)
+        closeButton.setTitle("Take me back", for: UIControlState())
 
         view.addSubview(imageView)
         view.addSubview(titleLabel)
@@ -83,7 +83,7 @@ class GameFinished: UIViewController {
         view.addSubview(rankingTable)
         view.addSubview(closeButton)
 
-        view.backgroundColor = UIColor.themeColor(.OffWhite)
+        view.backgroundColor = UIColor.themeColor(.offWhite)
     }
 
     override func viewDidLoad() {
@@ -93,39 +93,39 @@ class GameFinished: UIViewController {
 
     override func updateViewConstraints() {
         if !hasLoadedConstraints {
-            titleLabel.autoAlignAxisToSuperviewAxis(.Vertical)
-            titleLabel.autoAlignAxis(.Horizontal, toSameAxisOfView: view, withOffset: -30)
+            titleLabel.autoAlignAxis(toSuperviewAxis: .vertical)
+            titleLabel.autoAlignAxis(.horizontal, toSameAxisOf: view, withOffset: -30)
 
-            imageView.autoSetDimensionsToSize(GameFinished.imageSize)
-            imageView.autoPinEdge(.Bottom,
-                                  toEdge: .Top,
-                                  ofView: titleLabel,
+            imageView.autoSetDimensions(to: GameFinished.imageSize)
+            imageView.autoPinEdge(.bottom,
+                                  to: .top,
+                                  of: titleLabel,
                                   withOffset: -GameFinished.imageBottomSpacing)
 
-            statsLabel.autoPinEdge(.Top,
-                                   toEdge: .Bottom,
-                                   ofView: titleLabel,
+            statsLabel.autoPinEdge(.top,
+                                   to: .bottom,
+                                   of: titleLabel,
                                    withOffset: GameFinished.titleBottomSpacing)
-            statsLabel.autoMatchDimension(.Width,
-                                          toDimension: .Width,
-                                          ofView: view,
+            statsLabel.autoMatch(.width,
+                                          to: .width,
+                                          of: view,
                                           withMultiplier: GameFinished.statsLabelWidthFactor)
 
-            rankingTable.autoMatchDimension(.Width,
-                                            toDimension: .Width,
-                                            ofView: view,
+            rankingTable.autoMatch(.width,
+                                            to: .width,
+                                            of: view,
                                             withMultiplier: 0.5)
-            rankingTable.autoPinEdge(.Top,
-                                     toEdge: .Bottom,
-                                     ofView: statsLabel,
+            rankingTable.autoPinEdge(.top,
+                                     to: .bottom,
+                                     of: statsLabel,
                                      withOffset: GameFinished.tableTopSpacing)
-            rankingTable.autoSetDimension(.Height, toSize: rankingTable.heightOccupied())
+            rankingTable.autoSetDimension(.height, toSize: rankingTable.heightOccupied())
 
-            closeButton.autoPinEdgeToSuperviewEdge(.Bottom,
+            closeButton.autoPinEdge(toSuperviewEdge: .bottom,
                                                    withInset: GameFinished.closeButtonBottomInset)
 
             // swiftlint:disable:next line_length
-            [titleLabel, imageView, statsLabel, rankingTable, closeButton].autoAlignViewsToAxis(.Vertical)
+            [titleLabel, imageView, statsLabel, rankingTable, closeButton].autoAlignViews(to: .vertical)
 
             hasLoadedConstraints = true
         }
@@ -133,15 +133,12 @@ class GameFinished: UIViewController {
         super.updateViewConstraints()
     }
 
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        UIView.animateWithDuration(2,
+        UIView.animate(withDuration: 2,
                                    delay: 0,
-                                   options: [.CurveEaseInOut,
-                                             .Autoreverse,
-                                             .Repeat,
-                                             .AllowUserInteraction],
+                                   options: [.autoreverse, .repeat, .allowUserInteraction],
                                    animations: {
             var imageFrame = self.imageView.frame
             imageFrame.origin.y -= 35
@@ -149,7 +146,7 @@ class GameFinished: UIViewController {
         }, completion: nil)
     }
 
-    private func statsText() -> String {
+    fileprivate func statsText() -> String {
         var text = ""
 
         if RankingService.singleton.numberOfWinningGames() == 1 {
@@ -169,7 +166,7 @@ class GameFinished: UIViewController {
     }
 
     func dismiss() {
-        dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
 
     required init?(coder aDecoder: NSCoder) {

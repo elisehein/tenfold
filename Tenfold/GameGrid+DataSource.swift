@@ -10,19 +10,19 @@ import Foundation
 import UIKit
 
 extension GameGrid: UICollectionViewDataSource {
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
 
-    func collectionView(collectionView: UICollectionView,
+    func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
         return game.numberCount()
     }
 
-    func collectionView(collectionView: UICollectionView,
-                        cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier,
-                                                                         forIndexPath: indexPath)
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier,
+                                                                         for: indexPath)
 
         if let cell = cell as? GameGridCell {
             cell.value = game.valueAtIndex(indexPath.item)
@@ -45,13 +45,13 @@ extension GameGrid: UICollectionViewDataSource {
 // MARK: DataSource helpers
 
 private extension GameGrid {
-    func cellState(forCellAtIndexPath indexPath: NSIndexPath) -> GameGridCellState {
+    func cellState(forCellAtIndexPath indexPath: IndexPath) -> GameGridCellState {
         if game.isCrossedOut(indexPath.item) {
-            return .CrossedOut
+            return .crossedOut
         } else if selectedIndexPaths.contains(indexPath) {
-            return .PendingPairing
+            return .pendingPairing
         } else {
-            return .Available
+            return .available
         }
     }
 }

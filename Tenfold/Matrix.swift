@@ -10,7 +10,7 @@ import Foundation
 
 class Matrix: NSObject {
 
-    private let itemsPerRow: Int
+    fileprivate let itemsPerRow: Int
     static let singleton = Matrix(itemsPerRow: Game.numbersPerRow)
 
     init (itemsPerRow: Int) {
@@ -25,7 +25,7 @@ class Matrix: NSObject {
     // Back to back refers to numbers that are right next to each
     // other either horizontally (incl. last column of previous row
     // and first column of this one), or vertically.
-    func backToBack(pair: Pair) -> Bool {
+    func backToBack(_ pair: Pair) -> Bool {
         return pair.second - pair.first == 1 || pair.second - pair.first == itemsPerRow
     }
 
@@ -37,12 +37,12 @@ class Matrix: NSObject {
         return index + (itemsPerRow - columnOfItem(atIndex: index)) - 1
     }
 
-    func sameRow(pair: Pair) -> Bool {
+    func sameRow(_ pair: Pair) -> Bool {
         return (pair.second - pair.first < itemsPerRow &&
                 columnOfItem(atIndex: pair.second) > columnOfItem(atIndex: pair.first))
     }
 
-    func sameColumn(pair: Pair) -> Bool {
+    func sameColumn(_ pair: Pair) -> Bool {
         return columnOfItem(atIndex: pair.first) == columnOfItem(atIndex: pair.second)
     }
 
@@ -52,7 +52,7 @@ class Matrix: NSObject {
         return Array(first...last)
     }
 
-    func totalRows(totalItems: Int) -> Int {
+    func totalRows(_ totalItems: Int) -> Int {
         return Int(ceil(Float(totalItems) / Float(itemsPerRow)))
     }
 }

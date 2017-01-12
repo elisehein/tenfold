@@ -13,33 +13,33 @@ import PureLayout
 
 class UpdatesModal: ModalOverlay {
 
-    private let titleLabel = UILabel()
-    private let textLabel = UILabel()
-    private let okButton = Button()
+    fileprivate let titleLabel = UILabel()
+    fileprivate let textLabel = UILabel()
+    fileprivate let okButton = Button()
 
-    private var hasLoadedConstraints = false
+    fileprivate var hasLoadedConstraints = false
 
-    private let ruleGrid = RuleGrid()
-    private static var gridData = JSON.initFromFile("rules")![4]["examples"][0]
+    fileprivate let ruleGrid = RuleGrid()
+    fileprivate static var gridData = JSON.initFromFile("rules")![4]["examples"][0]
 
     init() {
-        super.init(position: .Center)
+        super.init(position: .center)
 
         titleLabel.text = "What's new?"
-        titleLabel.font = UIFont.themeFontWithSize(15, weight: .Bold)
+        titleLabel.font = UIFont.themeFontWithSize(15, weight: .bold)
 
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            titleLabel.font = UIFont.themeFontWithSize(20, weight: .Bold)
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            titleLabel.font = UIFont.themeFontWithSize(20, weight: .bold)
         }
 
-        titleLabel.textColor = UIColor.themeColor(.OffBlack)
-        titleLabel.textAlignment = .Center
+        titleLabel.textColor = UIColor.themeColor(.offBlack)
+        titleLabel.textAlignment = .center
 
         let text = "Thanks for updating Tenfold!\n" +
                    "Ever make an annoying mistake while playing? " +
                    "You can now undo your latest move by swiping right."
         textLabel.numberOfLines = 0
-        textLabel.attributedText = NSMutableAttributedString.themeString(.Paragraph, text)
+        textLabel.attributedText = NSMutableAttributedString.themeString(.paragraph, text)
 
         ruleGrid.animationType = RuleGridAnimationType(rawValue: UpdatesModal.gridData["animationType"].string!)!
         ruleGrid.values = UpdatesModal.gridData["values"].arrayValue.map({ $0.int })
@@ -49,9 +49,9 @@ class UpdatesModal: ModalOverlay {
                 JSONPair.arrayValue.map({ index in index.int! })
             })
 
-        ModalOverlay.configureModalButton(okButton, color: UIColor.themeColor(.SecondaryAccent))
-        okButton.setTitle("Back to the game", forState: .Normal)
-        okButton.addTarget(self, action: #selector(UpdatesModal.didTapOK), forControlEvents: .TouchUpInside)
+        ModalOverlay.configureModalButton(okButton, color: UIColor.themeColor(.secondaryAccent))
+        okButton.setTitle("Back to the game", for: UIControlState())
+        okButton.addTarget(self, action: #selector(UpdatesModal.didTapOK), for: .touchUpInside)
 
         modal.addSubview(titleLabel)
         modal.addSubview(textLabel)
@@ -64,49 +64,49 @@ class UpdatesModal: ModalOverlay {
         view.setNeedsUpdateConstraints()
     }
 
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         ruleGrid.playLoop()
     }
 
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         ruleGrid.invalidateLoop()
     }
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        ruleGrid.initialisePositionWithinFrame(ruleGrid.frame, withInsets: UIEdgeInsetsZero)
+        ruleGrid.initialisePositionWithinFrame(ruleGrid.frame, withInsets: UIEdgeInsets.zero)
     }
 
     override func updateViewConstraints() {
         if !hasLoadedConstraints {
-            titleLabel.autoAlignAxisToSuperviewAxis(.Vertical)
-            titleLabel.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
-            titleLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: ModalOverlay.contentPadding)
+            titleLabel.autoAlignAxis(toSuperviewAxis: .vertical)
+            titleLabel.autoMatch(.width, to: .width, of: modal)
+            titleLabel.autoPinEdge(toSuperviewEdge: .top, withInset: ModalOverlay.contentPadding)
 
-            textLabel.autoPinEdgeToSuperviewEdge(.Left, withInset: 25)
-            textLabel.autoPinEdgeToSuperviewEdge(.Right, withInset: 25)
-            textLabel.autoPinEdge(.Top,
-                                  toEdge: .Bottom,
-                                  ofView: titleLabel,
+            textLabel.autoPinEdge(toSuperviewEdge: .left, withInset: 25)
+            textLabel.autoPinEdge(toSuperviewEdge: .right, withInset: 25)
+            textLabel.autoPinEdge(.top,
+                                  to: .bottom,
+                                  of: titleLabel,
                                   withOffset: ModalOverlay.titleTextSpacing)
 
-            ruleGrid.autoSetDimensionsToSize(gridSize())
-            ruleGrid.autoAlignAxisToSuperviewAxis(.Vertical)
-            ruleGrid.autoPinEdge(.Top,
-                                 toEdge: .Bottom,
-                                 ofView: textLabel,
+            ruleGrid.autoSetDimensions(to: gridSize())
+            ruleGrid.autoAlignAxis(toSuperviewAxis: .vertical)
+            ruleGrid.autoPinEdge(.top,
+                                 to: .bottom,
+                                 of: textLabel,
                                  withOffset: ModalOverlay.contentPadding * 1.5)
-            ruleGrid.autoPinEdge(.Bottom,
-                                 toEdge: .Top,
-                                 ofView: okButton,
+            ruleGrid.autoPinEdge(.bottom,
+                                 to: .top,
+                                 of: okButton,
                                  withOffset: -ModalOverlay.contentPadding * 1.5)
 
-            okButton.autoAlignAxisToSuperviewAxis(.Vertical)
-            okButton.autoPinEdgeToSuperviewEdge(.Bottom)
-            okButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
-            okButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
+            okButton.autoAlignAxis(toSuperviewAxis: .vertical)
+            okButton.autoPinEdge(toSuperviewEdge: .bottom)
+            okButton.autoMatch(.width, to: .width, of: modal)
+            okButton.autoSetDimension(.height, toSize: ModalOverlay.modalButtonHeight)
 
             hasLoadedConstraints = true
         }
@@ -115,11 +115,11 @@ class UpdatesModal: ModalOverlay {
     }
 
     func didTapOK() {
-        dismissViewControllerAnimated(true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
 
-    private func gridSize() -> CGSize {
-        let gridWidth = UIDevice.currentDevice().userInterfaceIdiom == .Pad ?
+    fileprivate func gridSize() -> CGSize {
+        let gridWidth = UIDevice.current.userInterfaceIdiom == .pad ?
                         370 :
                         view.bounds.size.width * 0.8
         return Grid.size(forAvailableWidth: gridWidth, cellCount: ruleGrid.values.count)

@@ -10,32 +10,32 @@ import Foundation
 import UIKit
 
 enum GameGridCellState {
-    case Available
-    case PendingPairing
-    case CrossedOut
+    case available
+    case pendingPairing
+    case crossedOut
 }
 
 class GameGridCell: UICollectionViewCell {
     static let fontSizeFactor: CGFloat = 0.45
     static let animationDuration = 0.2
 
-    private let numberLabel = UILabel()
-    private let endOfRoundMarker = EndOfRoundMarker()
+    fileprivate let numberLabel = UILabel()
+    fileprivate let endOfRoundMarker = EndOfRoundMarker()
 
     // We want two separate color fillers to animate in case the selection happens
     // quite quickly; for example, when the selection animation hasn't finished, but
     // the crossing out animation must already begin
-    private let bottomColorFiller = UIView()
-    private let topColorFiller = UIView()
+    fileprivate let bottomColorFiller = UIView()
+    fileprivate let topColorFiller = UIView()
 
     var useClearBackground = false
-    var lightColor = UIColor.themeColor(.OffWhiteShaded)
-    let darkColor = UIColor.themeColor(.OffBlack)
-    let accentColor = UIColor.themeColor(.Accent)
+    var lightColor = UIColor.themeColor(.offWhiteShaded)
+    let darkColor = UIColor.themeColor(.offBlack)
+    let accentColor = UIColor.themeColor(.accent)
 
-    private var unfillingInProgress = false
+    fileprivate var unfillingInProgress = false
 
-    var state: GameGridCellState = .Available
+    var state: GameGridCellState = .available
 
     var value: Int? {
         didSet {
@@ -45,7 +45,7 @@ class GameGridCell: UICollectionViewCell {
 
     var marksEndOfRound: Bool = false {
         didSet {
-            endOfRoundMarker.hidden = !marksEndOfRound
+            endOfRoundMarker.isHidden = !marksEndOfRound
         }
     }
 
@@ -54,7 +54,7 @@ class GameGridCell: UICollectionViewCell {
             if aboutToBeRevealed {
                 contentView.alpha = 0
             } else if oldValue && !aboutToBeRevealed {
-                UIView.animateWithDuration(0.2, animations: {
+                UIView.animate(withDuration: 0.2, animations: {
                     self.contentView.alpha = 1
                 })
             } else {
@@ -66,8 +66,8 @@ class GameGridCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        numberLabel.textAlignment = .Center
-        numberLabel.backgroundColor = UIColor.clearColor()
+        numberLabel.textAlignment = .center
+        numberLabel.backgroundColor = UIColor.clear
 
         contentView.clipsToBounds = true
 
@@ -79,10 +79,10 @@ class GameGridCell: UICollectionViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        bottomColorFiller.transform = CGAffineTransformMakeScale(0, 0)
-        topColorFiller.transform = CGAffineTransformMakeScale(0, 0)
+        bottomColorFiller.transform = CGAffineTransform(scaleX: 0, y: 0)
+        topColorFiller.transform = CGAffineTransform(scaleX: 0, y: 0)
         marksEndOfRound = false
-        state == .Available
+        state == .available
         value = nil
         aboutToBeRevealed = false
         resetColors()
@@ -94,7 +94,7 @@ class GameGridCell: UICollectionViewCell {
         for colorFiller in [bottomColorFiller, topColorFiller] {
             colorFiller.frame = edgeToEdgeCircleFrame()
             colorFiller.layer.cornerRadius = colorFiller.frame.size.width / 2.0
-            colorFiller.transform = CGAffineTransformMakeScale(0, 0)
+            colorFiller.transform = CGAffineTransform(scaleX: 0, y: 0)
         }
 
         numberLabel.frame = contentView.bounds
@@ -106,14 +106,14 @@ class GameGridCell: UICollectionViewCell {
     }
 
     func reveal() {
-        UIView.animateWithDuration(0.15, delay: 0, options: .AllowUserInteraction, animations: {
+        UIView.animate(withDuration: 0.15, delay: 0, options: .allowUserInteraction, animations: {
             self.contentView.alpha = 1
         }, completion: nil)
     }
 
     func fadeOutContentMomentarily(forSeconds seconds: Double,
-                                   whileInvisible whileInvisibleBlock: (() -> Void)) {
-        UIView.animateWithDuration(0.15, animations: {
+                                   whileInvisible whileInvisibleBlock: @escaping (() -> Void)) {
+        UIView.animate(withDuration: 0.15, animations: {
             self.contentView.backgroundColor = self.cellBackgroundColor()
 
             for subview in self.contentView.subviews {
@@ -122,7 +122,7 @@ class GameGridCell: UICollectionViewCell {
         }, completion: { _ in
             whileInvisibleBlock()
 
-            UIView.animateWithDuration(0.15,
+            UIView.animate(withDuration: 0.15,
                                        delay: seconds,
                                        options: [],
                                        animations: {
@@ -136,26 +136,26 @@ class GameGridCell: UICollectionViewCell {
     }
 
     func flash(withColor color: UIColor) {
-        guard state == .Available else { return }
+        guard state == .available else { return }
 
-        UIView.animateWithDuration(0.3,
+        UIView.animate(withDuration: 0.3,
                                    delay: 0.3,
-                                   options: [.CurveEaseOut, .AllowUserInteraction],
+                                   options: [.curveEaseOut, .allowUserInteraction],
                                    animations: {
             self.contentView.backgroundColor = color
         }, completion: { _ in
-            UIView.animateWithDuration(0.3,
+            UIView.animate(withDuration: 0.3,
                                        delay: 0,
-                                       options: [.CurveEaseIn, .AllowUserInteraction],
+                                       options: [.curveEaseIn, .allowUserInteraction],
                                        animations: {
-                guard self.state == .Available else { return }
+                guard self.state == .available else { return }
                 self.contentView.backgroundColor = self.cellBackgroundColor()
             }, completion: nil)
         })
     }
 
     func crossOut() {
-        state = .CrossedOut
+        state = .crossedOut
 
         fill(usingColor: darkColor, filler: topColorFiller, completion: {
             self.resetColors()
@@ -163,7 +163,7 @@ class GameGridCell: UICollectionViewCell {
     }
 
     func unCrossOut(withDelay delay: Double = 0, animated: Bool = false) {
-        state = .Available
+        state = .available
 
         if animated {
             numberLabel.textColor = darkColor
@@ -176,7 +176,7 @@ class GameGridCell: UICollectionViewCell {
     }
 
     func indicateSelection() {
-        state = .PendingPairing
+        state = .pendingPairing
         fill(usingColor: accentColor, filler: bottomColorFiller)
     }
 
@@ -185,63 +185,63 @@ class GameGridCell: UICollectionViewCell {
     }
 
     func indicateDeselection(withDelay delay: Double = 0) {
-        state = .Available
-        unfill(usingColor: UIColor.themeColor(.Accent), filler: bottomColorFiller, withDelay: delay)
+        state = .available
+        unfill(usingColor: UIColor.themeColor(.accent), filler: bottomColorFiller, withDelay: delay)
     }
 
-    private func fill(usingColor color: UIColor,
+    fileprivate func fill(usingColor color: UIColor,
                       filler: UIView,
                       delay: Double = 0,
                       completion: (() -> Void)? = nil) {
         filler.backgroundColor = color
-        filler.transform = CGAffineTransformMakeScale(0, 0)
+        filler.transform = CGAffineTransform(scaleX: 0, y: 0)
 
-        UIView.animateWithDuration(GameGridCell.animationDuration,
+        UIView.animate(withDuration: GameGridCell.animationDuration,
                                    delay: delay,
-                                   options: [.CurveEaseOut, .BeginFromCurrentState],
+                                   options: [.curveEaseOut, .beginFromCurrentState],
                                    animations: {
-            filler.transform = CGAffineTransformMakeScale(1, 1)
+            filler.transform = CGAffineTransform(scaleX: 1, y: 1)
         }, completion: { (finished: Bool) in
             if finished && !self.unfillingInProgress {
                 self.contentView.backgroundColor = color
-                filler.transform = CGAffineTransformMakeScale(0, 0)
+                filler.transform = CGAffineTransform(scaleX: 0, y: 0)
             }
             completion?()
         })
     }
 
 
-    private func unfill(usingColor color: UIColor,
+    fileprivate func unfill(usingColor color: UIColor,
                         filler: UIView,
                         withDelay delay: Double,
                         completion: (() -> Void)? = nil) {
         filler.backgroundColor = color
-        filler.transform = CGAffineTransformMakeScale(1, 1)
+        filler.transform = CGAffineTransform(scaleX: 1, y: 1)
         contentView.backgroundColor = cellBackgroundColor()
         unfillingInProgress = true
 
         // Zero transforms cannot be animated; see
         // http://stackoverflow.com/a/25966733/2026098
-        UIView.animateWithDuration(GameGridCell.animationDuration,
+        UIView.animate(withDuration: GameGridCell.animationDuration,
                                    delay: delay,
-                                   options: [.CurveEaseIn, .BeginFromCurrentState],
+                                   options: [.curveEaseIn, .beginFromCurrentState],
                                    animations: {
-            filler.transform = CGAffineTransformMakeScale(0.001, 0.001)
+            filler.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
         }, completion: { _ in
             self.unfillingInProgress = false
-            filler.transform = CGAffineTransformMakeScale(0, 0)
+            filler.transform = CGAffineTransform(scaleX: 0, y: 0)
             completion?()
         })
     }
 
     // We need to wait for whichever cell's selection triggered the removal to finish animating
-    func prepareForRemoval(completion completion: (() -> Void)) {
+    func prepareForRemoval(completion: @escaping (() -> Void)) {
         let delayTime = Int64((GameGridCell.animationDuration + 0.1) * Double(NSEC_PER_SEC))
-        let dispatchTime = dispatch_time(DISPATCH_TIME_NOW, delayTime)
-        dispatch_after(dispatchTime, dispatch_get_main_queue()) {
-            UIView.animateWithDuration(0.15,
+        let dispatchTime = DispatchTime.now() + Double(delayTime) / Double(NSEC_PER_SEC)
+        DispatchQueue.main.asyncAfter(deadline: dispatchTime) {
+            UIView.animate(withDuration: 0.15,
                                        delay: 0,
-                                       options: .CurveEaseOut,
+                                       options: .curveEaseOut,
                                        animations: {
                 self.contentView.backgroundColor = self.cellBackgroundColor()
             }, completion: { _ in
@@ -251,30 +251,30 @@ class GameGridCell: UICollectionViewCell {
     }
 
     func resetColors() {
-        bottomColorFiller.backgroundColor = UIColor.clearColor()
-        topColorFiller.backgroundColor = UIColor.clearColor()
+        bottomColorFiller.backgroundColor = UIColor.clear
+        topColorFiller.backgroundColor = UIColor.clear
 
         switch state {
-        case .CrossedOut:
-            endOfRoundMarker.fillColor = lightColor.CGColor
-            numberLabel.textColor = UIColor.clearColor()
+        case .crossedOut:
+            endOfRoundMarker.fillColor = lightColor.cgColor
+            numberLabel.textColor = UIColor.clear
             contentView.backgroundColor = darkColor
-        case .PendingPairing:
-            endOfRoundMarker.fillColor = darkColor.CGColor
+        case .pendingPairing:
+            endOfRoundMarker.fillColor = darkColor.cgColor
             numberLabel.textColor = darkColor
             contentView.backgroundColor = accentColor
         default:
-            endOfRoundMarker.fillColor = darkColor.CGColor
+            endOfRoundMarker.fillColor = darkColor.cgColor
             numberLabel.textColor = darkColor
             contentView.backgroundColor = cellBackgroundColor()
         }
     }
 
-    private func cellBackgroundColor() -> UIColor {
-        return useClearBackground ? UIColor.clearColor() : lightColor
+    fileprivate func cellBackgroundColor() -> UIColor {
+        return useClearBackground ? UIColor.clear : lightColor
     }
 
-    private func edgeToEdgeCircleFrame() -> CGRect {
+    fileprivate func edgeToEdgeCircleFrame() -> CGRect {
         let diagonal = ceil(contentView.bounds.size.width * sqrt(2))
         return CGRect(x: -(diagonal - contentView.bounds.size.width) / 2.0,
                       y: -(diagonal - contentView.bounds.size.height) / 2.0,

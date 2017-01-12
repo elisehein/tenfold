@@ -13,7 +13,7 @@ class GameplayMessagePill: Pill {
     var newlyUnrepresentedNumber: Int? {
         didSet {
             if let number = newlyUnrepresentedNumber {
-                let phrases = CopyService.phrasebook(.LastNumberInstance).arrayValue
+                let phrases = CopyService.phrasebook(.lastNumberInstance).arrayValue
                 let phrase = phrases.randomElement().string
                 text = String(format: phrase!, number)
             }
@@ -21,7 +21,7 @@ class GameplayMessagePill: Pill {
     }
 
     init() {
-        super.init(type: .Text)
+        super.init(type: .text)
     }
 
     required init?(coder aDecoder: NSCoder) {

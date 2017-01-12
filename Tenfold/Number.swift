@@ -13,9 +13,9 @@ class Number: NSObject, NSCopying, NSCoding {
     var crossedOut: Bool
     var marksEndOfRound: Bool
 
-    private static let valueCoderKey = "gameNumberValueCoderKey"
-    private static let crossedOutCoderKey = "gameNumberCrossedOutCoderKey"
-    private static let marksEndOfRoundCoderKey = "gameNumberMarksEndOfRoundCoderKey"
+    fileprivate static let valueCoderKey = "gameNumberValueCoderKey"
+    fileprivate static let crossedOutCoderKey = "gameNumberCrossedOutCoderKey"
+    fileprivate static let marksEndOfRoundCoderKey = "gameNumberMarksEndOfRoundCoderKey"
 
     init(value: Int?, crossedOut: Bool, marksEndOfRound: Bool) {
         self.value = value
@@ -25,19 +25,19 @@ class Number: NSObject, NSCopying, NSCoding {
     }
 
     required init(coder aDecoder: NSCoder) {
-        value = Int(aDecoder.decodeIntForKey(Number.valueCoderKey))
-        crossedOut = aDecoder.decodeBoolForKey(Number.crossedOutCoderKey)
-        marksEndOfRound = aDecoder.decodeBoolForKey(Number.marksEndOfRoundCoderKey)
+        value = Int(aDecoder.decodeCInt(forKey: Number.valueCoderKey))
+        crossedOut = aDecoder.decodeBool(forKey: Number.crossedOutCoderKey)
+        marksEndOfRound = aDecoder.decodeBool(forKey: Number.marksEndOfRoundCoderKey)
     }
 
-    func copyWithZone(zone: NSZone) -> AnyObject {
+    func copy(with zone: NSZone?) -> Any {
         let copy = Number(value: value, crossedOut: crossedOut, marksEndOfRound: marksEndOfRound)
         return copy
     }
 
-    func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeInt(Int32(value!), forKey: Number.valueCoderKey)
-        aCoder.encodeBool(crossedOut, forKey: Number.crossedOutCoderKey)
-        aCoder.encodeBool(marksEndOfRound, forKey: Number.marksEndOfRoundCoderKey)
+    func encode(with aCoder: NSCoder) {
+        aCoder.encodeCInt(Int32(value!), forKey: Number.valueCoderKey)
+        aCoder.encode(crossedOut, forKey: Number.crossedOutCoderKey)
+        aCoder.encode(marksEndOfRound, forKey: Number.marksEndOfRoundCoderKey)
     }
 }

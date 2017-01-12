@@ -18,7 +18,7 @@ class NextRoundPill: Pill {
     }
 
     init() {
-        super.init(type: .Text)
+        super.init(type: .text)
     }
 
     override func constructAttributedString(withText text: String) -> NSMutableAttributedString {
@@ -27,7 +27,7 @@ class NextRoundPill: Pill {
         let grayedOut = "TO GO"
         if let index = text.indexOf(grayedOut) {
             let attributes = [
-                NSForegroundColorAttributeName: UIColor.whiteColor().colorWithAlphaComponent(0.55),
+                NSForegroundColorAttributeName: UIColor.white.withAlphaComponent(0.55),
                 NSFontAttributeName: UIFont.themeFontWithSize(Pill.detailFontSize)
             ]
             attrString.addAttributes(attributes,

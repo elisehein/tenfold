@@ -11,98 +11,98 @@ import UIKit
 
 class Onboarding: Play {
 
-    var flashTimer: NSTimer?
+    var flashTimer: Timer?
     var indecesToFlash: [Int] = []
 
-    var onWillDismissWithGame: ((game: Game) -> Void)?
+    var onWillDismissWithGame: ((_ game: Game) -> Void)?
 
     init() {
         super.init(shouldShowUpdatesModal: false, firstLaunch: false, isOnboarding: true)
 
-        modalTransitionStyle = .CrossDissolve
+        modalTransitionStyle = .crossDissolve
 
         menu.onboardingSteps.onDismiss = handleDismissal
         menu.onboardingSteps.onBeginTransitionToStep = handleBeginTransitionToStep
         menu.onboardingSteps.onEndTransitionToStep = handleEndTransitionToStep
 
-        gameGrid.userInteractionEnabled = false
-        gameGrid.scrollEnabled = false
+        gameGrid.isUserInteractionEnabled = false
+        gameGrid.isScrollEnabled = false
     }
 
     func handleDismissal() {
-        dismissViewControllerAnimated(menu.onboardingSteps.currentStep == .Welcome, completion: nil)
+        dismiss(animated: menu.onboardingSteps.currentStep == .welcome, completion: nil)
     }
 
-    private func handleBeginTransitionToStep(onboardingStep: OnboardingStep) {
+    fileprivate func handleBeginTransitionToStep(_ onboardingStep: OnboardingStep) {
         switch onboardingStep {
-        case .LastTips:
-            gameGrid.userInteractionEnabled = false
-            gameGrid.scrollEnabled = false
-            onWillDismissWithGame?(game: game)
+        case .lastTips:
+            gameGrid.isUserInteractionEnabled = false
+            gameGrid.isScrollEnabled = false
+            onWillDismissWithGame?(game)
         default:
             return
         }
     }
-    private func handleEndTransitionToStep(onboardingStep: OnboardingStep) {
+    fileprivate func handleEndTransitionToStep(_ onboardingStep: OnboardingStep) {
         switch onboardingStep {
-        case .AimOfTheGame:
+        case .aimOfTheGame:
             // swiftlint:disable:next line_length
-            NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(Onboarding.flashGrid), userInfo: nil, repeats: false)
+            Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(Onboarding.flashGrid), userInfo: nil, repeats: false)
 
             // swiftlint:disable:next line_length
-            NSTimer.scheduledTimerWithTimeInterval(4.5, target: self, selector: #selector(Onboarding.transitionToNextStep), userInfo: nil, repeats: false)
-        case .CrossOutIdentical:
+            Timer.scheduledTimer(timeInterval: 4.5, target: self, selector: #selector(Onboarding.transitionToNextStep), userInfo: nil, repeats: false)
+        case .crossOutIdentical:
             hintAtPairing([10, 19])
-        case .CrossOutSummandsOfTen:
+        case .crossOutSummandsOfTen:
             hintAtPairing([8, 17])
-        case .PullUp:
+        case .pullUp:
             gameGrid.automaticallySnapToGameplayPosition = true
             gameGrid.indecesPermittedForSelection = []
-            gameGrid.userInteractionEnabled = true
-            gameGrid.scrollEnabled = true
-        case .LastTips:
+            gameGrid.isUserInteractionEnabled = true
+            gameGrid.isScrollEnabled = true
+        case .lastTips:
             // swiftlint:disable:next line_length
-            NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: #selector(Onboarding.transitionToNextStep), userInfo: nil, repeats: false)
-        case .Empty:
+            Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(Onboarding.transitionToNextStep), userInfo: nil, repeats: false)
+        case .empty:
             handleDismissal()
         default:
             return
         }
     }
 
-    private func hintAtPairing(pairIndeces: [Int]) {
+    fileprivate func hintAtPairing(_ pairIndeces: [Int]) {
         gameGrid.indecesPermittedForSelection = pairIndeces
-        gameGrid.userInteractionEnabled = true
-        gameGrid.scrollEnabled = false
+        gameGrid.isUserInteractionEnabled = true
+        gameGrid.isScrollEnabled = false
         indecesToFlash = pairIndeces
 
         flashPairing()
         // swiftlint:disable:next line_length
-        flashTimer = NSTimer.scheduledTimerWithTimeInterval(3, target: self, selector: #selector(Onboarding.flashPairing), userInfo: nil, repeats: true)
+        flashTimer = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(Onboarding.flashPairing), userInfo: nil, repeats: true)
     }
 
     func flashPairing() {
         gameGrid.flashNumbers(atIndeces: indecesToFlash,
-                              withColor: UIColor.themeColor(.Accent))
+                              withColor: UIColor.themeColor(.accent))
     }
 
     func flashGrid() {
         gameGrid.flashNumbers(atIndeces: Array(0..<27),
-                              withColor: UIColor.themeColor(.OffWhiteShaded))
+                              withColor: UIColor.themeColor(.offWhiteShaded))
     }
 
     func transitionToNextStep() {
         menu.onboardingSteps.transitionToNextStep()
     }
 
-    override func handleSuccessfulPairing(pair: Pair) {
+    override func handleSuccessfulPairing(_ pair: Pair) {
         flashTimer?.invalidate()
         super.handleSuccessfulPairing(pair)
 
-        if menu.onboardingSteps.currentStep == .CrossOutIdentical &&
+        if menu.onboardingSteps.currentStep == .crossOutIdentical &&
            game.numbersCrossedOut() <= 2 {
             hintAtPairing([9, 11])
-        } else if menu.onboardingSteps.currentStep == .CrossOutSummandsOfTen &&
+        } else if menu.onboardingSteps.currentStep == .crossOutSummandsOfTen &&
                   game.numbersCrossedOut() <= 6 {
            hintAtPairing([25, 26])
         } else {
@@ -110,7 +110,7 @@ class Onboarding: Play {
         }
     }
 
-    override func detectPan(recognizer: UIPanGestureRecognizer) {
+    override func detectPan(_ recognizer: UIPanGestureRecognizer) {
         // Do nothing
     }
 

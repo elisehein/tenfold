@@ -8,24 +8,37 @@
 
 import Foundation
 import UIKit
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
 
 enum SlidingStrikethroughButtonOption: Int {
-    case Left
-    case Right
+    case left
+    case right
 
     mutating func toggle() {
-        self = self == .Left ? .Right : .Left
+        self = self == .left ? .right : .left
     }
 }
 
 class SlidingStrikethroughButton: Button {
 
-    private static let gapSize: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 50 : 40
+    fileprivate static let gapSize: CGFloat = {
+        return UIDevice.current.userInterfaceIdiom == .pad ? 50 : 40
     }()
 
-    private let lineLayer = CAShapeLayer()
-    var struckthroughOption: SlidingStrikethroughButtonOption = .Left
+    fileprivate let lineLayer = CAShapeLayer()
+    var struckthroughOption: SlidingStrikethroughButtonOption = .left
 
     var options: [String] = [] {
         didSet {
@@ -35,7 +48,7 @@ class SlidingStrikethroughButton: Button {
 
     init() {
         super.init(frame: CGRect.zero)
-        lineLayer.strokeColor = UIColor.themeColor(.OffBlack).CGColor
+        lineLayer.strokeColor = UIColor.themeColor(.offBlack).cgColor
         lineLayer.lineWidth = 1
         layer.addSublayer(lineLayer)
     }
@@ -49,12 +62,12 @@ class SlidingStrikethroughButton: Button {
         animation.delegate = self
         animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
         animation.fillMode = kCAFillModeBoth
-        animation.removedOnCompletion = false
-        lineLayer.addAnimation(animation, forKey: "startAnimation")
+        animation.isRemovedOnCompletion = false
+        lineLayer.add(animation, forKey: "startAnimation")
     }
 
-    override func animationDidStop(anim: CAAnimation, finished flag: Bool) {
-        guard anim == lineLayer.animationForKey("startAnimation") else { return }
+    override func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+        guard anim == lineLayer.animation(forKey: "startAnimation") else { return }
         lineLayer.removeAllAnimations()
 
         struckthroughOption.toggle()
@@ -67,10 +80,10 @@ class SlidingStrikethroughButton: Button {
         animation.duration = 0.2
         animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
         animation.fillMode = kCAFillModeBoth
-        lineLayer.addAnimation(animation, forKey: "endAnimation")
+        lineLayer.add(animation, forKey: "endAnimation")
     }
 
-    private func configure() {
+    fileprivate func configure() {
         let titleString = NSMutableAttributedString()
 
         let gap = NSTextAttachment()
@@ -79,45 +92,45 @@ class SlidingStrikethroughButton: Button {
 
         for option in options {
             let attrString = constructAttributedString(withText: option,
-                                                       color: UIColor.themeColor(.OffBlack))
+                                                       color: UIColor.themeColor(.offBlack))
 
-            if options.indexOf(option) == struckthroughOption.rawValue {
+            if options.index(of: option) == struckthroughOption.rawValue {
                 attrString.addAttributes([NSStrikethroughStyleAttributeName: 1],
                                          range: NSRange(location: 0, length: option.characters.count))
             }
 
-            titleString.appendAttributedString(attrString)
+            titleString.append(attrString)
 
-            if options.indexOf(option) < options.count - 1 {
-                titleString.appendAttributedString(gapString)
+            if options.index(of: option) < options.count - 1 {
+                titleString.append(gapString)
             }
         }
 
-        setAttributedTitle(titleString, forState: .Normal)
+        setAttributedTitle(titleString, for: UIControlState())
     }
 
-    private func startingPathWhenSlidingFrom(option: SlidingStrikethroughButtonOption) -> CGPath {
-        let textWidth = attributedTitleForState(.Normal)?.size().width
+    fileprivate func startingPathWhenSlidingFrom(_ option: SlidingStrikethroughButtonOption) -> CGPath {
+        let textWidth = attributedTitle(for: UIControlState())?.size().width
         let textStartX = (bounds.size.width - textWidth!) / 2
         let textEndX = textStartX + textWidth!
-        let point = CGPoint(x: option == .Left ? textStartX : textEndX, y: linePathY())
+        let point = CGPoint(x: option == .left ? textStartX : textEndX, y: linePathY())
         let path = UIBezierPath()
-        path.moveToPoint(point)
-        path.addLineToPoint(point)
-        return path.CGPath
+        path.move(to: point)
+        path.addLine(to: point)
+        return path.cgPath
     }
 
-    private func fullWidthLinePath() -> CGPath {
-        let textWidth = attributedTitleForState(.Normal)?.size().width
+    fileprivate func fullWidthLinePath() -> CGPath {
+        let textWidth = attributedTitle(for: UIControlState())?.size().width
         let textStartX = (bounds.size.width - textWidth!) / 2
         let textEndX = textStartX + textWidth!
         let path = UIBezierPath()
-        path.moveToPoint(CGPoint(x: textStartX, y: linePathY()))
-        path.addLineToPoint(CGPoint(x: textEndX, y: linePathY()))
-        return path.CGPath
+        path.move(to: CGPoint(x: textStartX, y: linePathY()))
+        path.addLine(to: CGPoint(x: textEndX, y: linePathY()))
+        return path.cgPath
     }
 
-    private func linePathY() -> CGFloat {
+    fileprivate func linePathY() -> CGFloat {
         return bounds.size.height / 2 + 2
     }
 

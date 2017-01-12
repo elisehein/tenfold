@@ -20,7 +20,7 @@ extension GameGrid {
 
         if animated {
             hideCurrentGame({
-                self.transform = CGAffineTransformIdentity
+                self.transform = CGAffineTransform.identity
                 self.loadNewGame(newGame, enforceStartingPosition: enforceStartingPosition)
                 self.showCurrentGame(completion)
             })
@@ -30,28 +30,27 @@ extension GameGrid {
         }
     }
 
-    private func loadNewGame(newGame: Game, enforceStartingPosition: Bool) {
+    fileprivate func loadNewGame(_ newGame: Game, enforceStartingPosition: Bool) {
         self.game = newGame
         self.reloadData()
         self.adjustTopInset(enforceStartingPosition: enforceStartingPosition)
     }
 
-    private func hideCurrentGame(completion: (() -> Void)) {
-        UIView.animateWithDuration(0.2,
+    fileprivate func hideCurrentGame(_ completion: @escaping (() -> Void)) {
+        UIView.animate(withDuration: 0.2,
                                    delay: 0,
-                                   options: .CurveEaseIn,
+                                   options: .curveEaseIn,
                                    animations: {
             self.alpha = 0
-            self.transform = CGAffineTransformTranslate(CGAffineTransformIdentity,
-                                                        0,
-                                                        self.initialGameHeight() * 0.3)
+            self.transform = CGAffineTransform.identity.translatedBy(x: 0,
+                                                        y: self.initialGameHeight() * 0.3)
         }, completion: { _ in
             completion()
         })
     }
 
-    private func showCurrentGame(completion: (() -> Void)?) {
-        UIView.animateWithDuration(0.15, delay: 0.2, options: .CurveEaseIn, animations: {
+    fileprivate func showCurrentGame(_ completion: (() -> Void)?) {
+        UIView.animate(withDuration: 0.15, delay: 0.2, options: .curveEaseIn, animations: {
             self.alpha = 1
         }, completion: { _ in
             completion?()
@@ -63,29 +62,29 @@ extension GameGrid {
 extension GameGrid {
 
     func loadNextRound(atIndeces indeces: [Int], completion: ((Bool) -> Void)?) {
-        var indexPaths: [NSIndexPath] = []
+        var indexPaths: [IndexPath] = []
 
         for index in indeces {
-           indexPaths.append(NSIndexPath(forItem: index, inSection: 0))
+           indexPaths.append(IndexPath(item: index, section: 0))
         }
 
-        insertItemsAtIndexPaths(indexPaths)
+        insertItems(at: indexPaths)
         performBatchUpdates(nil, completion: { finished in
             self.adjustTopInset()
             // In case our end of round marker got lost with row removals, ensure
             // it's there just before adding the next round
-            self.reloadItemsAtIndexPaths([NSIndexPath(forItem: indeces[0] - 1, inSection: 0)])
+            self.reloadItems(at: [IndexPath(item: indeces[0] - 1, section: 0)])
             completion?(finished)
         })
     }
 
-    func crossOut(pair: Pair) {
+    func crossOut(_ pair: Pair) {
         performActionOnCells(withIndeces: pair.asArray(), { cell in
             cell.crossOut()
         })
     }
 
-    func unCrossOut(pair: Pair, withDelay delay: Double) {
+    func unCrossOut(_ pair: Pair, withDelay delay: Double) {
         performActionOnCells(withIndeces: pair.asArray(), { cell in
             cell.unCrossOut(withDelay: delay, animated: true)
         })
@@ -93,7 +92,7 @@ extension GameGrid {
 
     func dismissSelection() {
         for indexPath in selectedIndexPaths {
-            if let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell {
+            if let cell = cellForItem(at: indexPath as IndexPath) as? GameGridCell {
                 if indexPath == selectedIndexPaths.last {
                     cell.indicateSelection()
                 }
@@ -118,14 +117,14 @@ extension GameGrid {
         guard indeces.count > 0 else { return }
         rowRemovalInProgress = true
 
-        let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
+        let indexPaths = indeces.map({ IndexPath(item: $0, section: 0) })
 
         adjustTopInset()
         adjustTopOffsetInAnticipationOfCellCountChange(indeces)
 
         prepareForRemoval(indexPaths, completion: {
             if self.rowRemovalInProgress {
-                self.deleteItemsAtIndexPaths(indexPaths)
+                self.deleteItems(at: indexPaths)
 
                 if self.contentInset.top > self.spaceForScore {
                     self.setContentOffset(CGPoint(x: 0, y: -self.contentInset.top), animated: true)
@@ -137,15 +136,15 @@ extension GameGrid {
         })
     }
 
-    func addRows(atIndeces indeces: [Int], completion: (() -> Void)) {
+    func addRows(atIndeces indeces: [Int], completion: @escaping (() -> Void)) {
         guard indeces.count > 0 else { return }
         rowInsertionInProgressWithIndeces = indeces
 
-        let indexPaths = indeces.map({ NSIndexPath(forItem: $0, inSection: 0) })
+        let indexPaths = indeces.map({ IndexPath(item: $0, section: 0) })
         adjustTopOffsetInAnticipationOfCellCountChange(indeces)
 
         performBatchUpdates({
-            self.insertItemsAtIndexPaths(indexPaths)
+            self.insertItems(at: indexPaths)
         }, completion: { finished in
             self.adjustTopInset()
             self.revealCellsAtIndeces(indeces)
@@ -153,9 +152,9 @@ extension GameGrid {
         })
     }
 
-    private func prepareForRemoval(indexPaths: [NSIndexPath], completion: (() -> Void)) {
+    fileprivate func prepareForRemoval(_ indexPaths: [IndexPath], completion: (() -> Void)) {
         for indexPath in indexPaths {
-            if let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell {
+            if let cell = cellForItem(at: indexPath) as? GameGridCell {
                 cell.prepareForRemoval(completion: completion)
             } else {
                 completion()
@@ -163,7 +162,7 @@ extension GameGrid {
         }
     }
 
-    private func revealCellsAtIndeces(indeces: [Int]) {
+    fileprivate func revealCellsAtIndeces(_ indeces: [Int]) {
         rowInsertionInProgressWithIndeces = nil
 
         performActionOnCells(withIndeces: indeces, { cell in
@@ -171,7 +170,7 @@ extension GameGrid {
         })
     }
 
-    private func adjustTopOffsetInAnticipationOfCellCountChange(indeces: [Int]) {
+    fileprivate func adjustTopOffsetInAnticipationOfCellCountChange(_ indeces: [Int]) {
         // For some reason something funky happens when we're adding stuff
         // to the very end of the game... in this case, adjusting top offset
         // just makes it behave oddly

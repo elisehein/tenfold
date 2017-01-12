@@ -44,13 +44,13 @@ import UIKit
 class NextRoundGrid: Grid {
 
     // We should store more or as many scale series numbers as there are rows
-    private static let totalRows = 8
+    fileprivate static let totalRows = 8
 
-    private let reuseIdentifier = "NextRoundCell"
+    fileprivate let reuseIdentifier = "NextRoundCell"
 
     var values: [Int?]
-    private let cellsPerRow: Int
-    private var startIndex: Int
+    fileprivate let cellsPerRow: Int
+    fileprivate var startIndex: Int
 
     var proportionVisible: CGFloat = 0 {
         didSet {
@@ -67,9 +67,9 @@ class NextRoundGrid: Grid {
         }
     }
 
-    private var revealValues: Bool = false {
+    fileprivate var revealValues: Bool = false {
         didSet {
-            for visibleCell in visibleCells() {
+            for visibleCell in visibleCells {
                 if let visibleCell = visibleCell as? NextRoundCell {
                     if revealValues {
                         visibleCell.revealValue()
@@ -88,21 +88,21 @@ class NextRoundGrid: Grid {
         self.startIndex = startIndex
 
         super.init(frame: frame)
-        registerClass(NextRoundCell.self, forCellWithReuseIdentifier: self.reuseIdentifier)
+        register(NextRoundCell.self, forCellWithReuseIdentifier: self.reuseIdentifier)
 
-        backgroundColor = UIColor.clearColor()
+        backgroundColor = UIColor.clear
         dataSource = self
         delegate = self
     }
 
-    func update(startIndex startIndex: Int, values: [Int?]) {
+    func update(startIndex: Int, values: [Int?]) {
         self.startIndex = startIndex
         self.values = values
         revealValues = false
         reloadData()
     }
 
-    func hide(animated animated: Bool) {
+    func hide(animated: Bool) {
         if animated {
             animateAlpha(0)
         } else {
@@ -110,7 +110,7 @@ class NextRoundGrid: Grid {
         }
     }
 
-    func show(animated animated: Bool) {
+    func show(animated: Bool) {
         if animated {
             animateAlpha(1)
         } else {
@@ -118,10 +118,10 @@ class NextRoundGrid: Grid {
         }
     }
 
-    private func animateAlpha(value: CGFloat) {
+    fileprivate func animateAlpha(_ value: CGFloat) {
         guard alpha != value else { return }
 
-        UIView.animateWithDuration(0.15, animations: {
+        UIView.animate(withDuration: 0.15, animations: {
             self.alpha = value
         })
     }
@@ -132,19 +132,19 @@ class NextRoundGrid: Grid {
 }
 
 extension NextRoundGrid: UICollectionViewDataSource {
-    func numberOfSectionsInCollectionView (collectionView: UICollectionView) -> Int {
+    func numberOfSections (in collectionView: UICollectionView) -> Int {
         return 1
     }
 
-    func collectionView(collectionView: UICollectionView,
+    func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
         return max(NextRoundGrid.totalRows * Game.numbersPerRow, values.count)
     }
 
-    func collectionView(collectionView: UICollectionView,
-                        cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier,
-                                                                         forIndexPath: indexPath)
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier,
+                                                                         for: indexPath)
         if let cell = cell as? NextRoundCell {
             cell.isSpacer = indexPath.item < startIndex
             cell.valueIsHidden = !revealValues
@@ -161,9 +161,9 @@ extension NextRoundGrid: UICollectionViewDataSource {
 }
 
 extension NextRoundGrid: UICollectionViewDelegateFlowLayout {
-    func collectionView(collectionView: UICollectionView,
+    func collectionView(_ collectionView: UICollectionView,
                         layout: UICollectionViewLayout,
-                        sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
         return Grid.cellSize(forAvailableWidth: bounds.size.width)
     }
 }

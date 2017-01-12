@@ -7,10 +7,34 @@
 //
 
 import Foundation
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 
 extension Game {
-    func crossOut(pair: Pair) {
-        startTime = NSDate()
+    func crossOut(_ pair: Pair) {
+        startTime = Date()
         latestMove = GameMove(crossedOutPair: pair.asArray())
 
         let crossOut: ((Number) -> Void) = { number in
@@ -67,16 +91,16 @@ extension Game {
         return surplusIndeces
     }
 
-    private func removeRow(containing index: Int) -> [Int] {
+    fileprivate func removeRow(containing index: Int) -> [Int] {
         let surplusIndeces = surplusIndecesOnRow(containingIndex: index)
         removeRow(containing: surplusIndeces)
         return surplusIndeces
     }
 
-    private func removeRow(containing indeces: [Int]) {
+    fileprivate func removeRow(containing indeces: [Int]) {
         guard latestMove != nil else { return }
         guard indeces.count > 0 else { return }
-        let numbersToRemove = numbers.filter({ indeces.contains(numbers.indexOf($0)!) })
+        let numbersToRemove = numbers.filter({ indeces.contains(numbers.index(of: $0)!) })
 
         latestMove!.rowsRemoved.append(numbersToRemove)
         latestMove!.placeholdersForRowsRemoved.append(indeces[0])
@@ -91,11 +115,11 @@ extension Game {
 
         // For the placeholders to be correct, we need to bring back the rows in
         // reverse order to what they were removed in
-        for rowIndex in (0..<latestMove!.rowsRemoved.count).reverse() {
+        for rowIndex in (0..<latestMove!.rowsRemoved.count).reversed() {
             let placeholder = latestMove!.placeholdersForRowsRemoved[rowIndex]
             let removedRow = latestMove!.rowsRemoved[rowIndex]
             indecesAdded += Array(placeholder..<placeholder + removedRow.count)
-            numbers.insertContentsOf(removedRow, at: placeholder)
+            numbers.insert(contentsOf: removedRow, at: placeholder)
         }
 
         latestMove!.rowsRemoved.removeAll()
@@ -125,7 +149,7 @@ extension Game {
 // MARK: Actions helpers
 
 private extension Game {
-    func incrementValueCount(value: Int) {
+    func incrementValueCount(_ value: Int) {
         if valueCounts.keys.contains(value) {
             valueCounts[value]! += 1
         } else {

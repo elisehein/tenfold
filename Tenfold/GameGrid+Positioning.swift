@@ -15,7 +15,7 @@ extension GameGrid {
     // it should still account for three game rows even if the actual game is only 1 or two
     // This is why we don't simply call topInset() – top inset may be different than empty space
     // visible at starting position
-    func emptySpaceVisible(atStartingPosition atStartingPosition: Bool = false) -> CGFloat {
+    func emptySpaceVisible(atStartingPosition: Bool = false) -> CGFloat {
         return atStartingPosition ?
                frame.size.height - initialGameHeight() :
                -contentOffset.y
@@ -30,7 +30,7 @@ extension GameGrid {
         setContentOffset(CGPoint(x: 0, y: -spaceForScore), animated: true)
     }
 
-    func adjustTopInset(enforceStartingPosition enforceStartingPosition: Bool = false) {
+    func adjustTopInset(enforceStartingPosition: Bool = false) {
         contentInset.top = topInset(atStartingPosition: enforceStartingPosition)
         gridAtStartingPosition = enforceStartingPosition
         toggleBounce(contentInset.top > spaceForScore)
@@ -68,7 +68,7 @@ extension GameGrid {
         // This specific combination of setting an inset and offset is the only one
         // that results in an animation that STOPS when it reaches the top of the view
         let nextTopInset = self.topInset()
-        UIView.animateWithDuration(0.3, animations: {
+        UIView.animate(withDuration: 0.3, animations: {
             self.contentInset.top = nextTopInset
             self.setContentOffset(CGPoint(x: 0, y: -nextTopInset), animated: false)
         }, completion: { _ in
@@ -89,7 +89,7 @@ private extension GameGrid {
         return heightForGame(withTotalRows: game.totalRows())
     }
 
-    func topInset(atStartingPosition atStartingPosition: Bool = false) -> CGFloat {
+    func topInset(atStartingPosition: Bool = false) -> CGFloat {
         if atStartingPosition {
             return frame.size.height - min(initialGameHeight(), currentGameHeight())
         } else {

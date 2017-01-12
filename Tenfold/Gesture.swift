@@ -10,8 +10,8 @@ import Foundation
 import UIKit
 
 enum GestureType {
-    case SwipeUpAndHold
-    case SwipeRight
+    case swipeUpAndHold
+    case swipeRight
 }
 
 // Defaults for .SwipeRight
@@ -30,8 +30,8 @@ private struct GestureConfiguration {
 class Gesture: CAShapeLayer {
 
     static let fingerDiameter: CGFloat = 16
-    private var completionBlock: (() -> Void)?
-    private var config: GestureConfiguration
+    fileprivate var completionBlock: (() -> Void)?
+    fileprivate var config: GestureConfiguration
 
     var type: GestureType {
         didSet {
@@ -39,8 +39,8 @@ class Gesture: CAShapeLayer {
         }
     }
 
-    override init(layer: AnyObject) {
-        self.type = .SwipeRight
+    override init(layer: Any) {
+        self.type = .swipeRight
         self.config = Gesture.configurationForType(type)
         super.init(layer: layer)
     }
@@ -49,15 +49,15 @@ class Gesture: CAShapeLayer {
         self.type = type
         self.config = Gesture.configurationForType(type)
         super.init()
-        fillColor = UIColor.whiteColor().CGColor
+        fillColor = UIColor.white.cgColor
         opacity = 0
     }
 
-    private class func configurationForType(type: GestureType) -> GestureConfiguration {
+    fileprivate class func configurationForType(_ type: GestureType) -> GestureConfiguration {
         switch type {
-        case .SwipeRight:
+        case .swipeRight:
             return GestureConfiguration()
-        case .SwipeUpAndHold:
+        case .swipeUpAndHold:
             return GestureConfiguration(totalWidth: 116,
                                         swooshStartDuration: 0.5,
                                         swooshEndDuration: 0,
@@ -83,28 +83,28 @@ class Gesture: CAShapeLayer {
         completionBlock = completion
 
         switch type {
-        case .SwipeUpAndHold:
+        case .swipeUpAndHold:
             faceUp()
             beginSwoosh(withDelay: delay)
-        case .SwipeRight:
+        case .swipeRight:
             beginSwoosh(withDelay: delay)
         }
     }
 
-    private func faceUp() {
+    fileprivate func faceUp() {
         anchorPoint = CGPoint(x: 0, y: 0)
         transform = CATransform3DRotate(CATransform3DIdentity, CGFloat(-M_PI_2), 0.0, 0.0, 1.0)
     }
 
-    private func beginSwoosh(withDelay delay: Double) {
+    fileprivate func beginSwoosh(withDelay delay: Double) {
         let opacityAnimation = CABasicAnimation(keyPath: "opacity")
         opacityAnimation.beginTime = CACurrentMediaTime() + delay
         opacityAnimation.duration = config.fadeInDuration
         opacityAnimation.fromValue = 0
         opacityAnimation.toValue = 1
         opacityAnimation.fillMode = kCAFillModeForwards
-        opacityAnimation.removedOnCompletion = false
-        addAnimation(opacityAnimation, forKey: nil)
+        opacityAnimation.isRemovedOnCompletion = false
+        add(opacityAnimation, forKey: nil)
 
         let animation = CABasicAnimation(keyPath: "path")
         animation.beginTime = CACurrentMediaTime() + delay
@@ -113,12 +113,12 @@ class Gesture: CAShapeLayer {
         animation.toValue = pathWhileSwooshing()
         animation.timingFunction = CAMediaTimingFunction(name: config.swooshStartTimingFunction)
         animation.fillMode = kCAFillModeForwards
-        animation.removedOnCompletion = false
+        animation.isRemovedOnCompletion = false
         animation.delegate = self
-        addAnimation(animation, forKey: "swooshStart")
+        add(animation, forKey: "swooshStart")
     }
 
-    private func endSwoosh() {
+    fileprivate func endSwoosh() {
         let opacityAnimation = CABasicAnimation(keyPath: "opacity")
         opacityAnimation.duration = config.fadeOutDuration
         opacityAnimation.beginTime = CACurrentMediaTime() +
@@ -128,8 +128,8 @@ class Gesture: CAShapeLayer {
         opacityAnimation.fromValue = 1
         opacityAnimation.toValue = 0
         opacityAnimation.fillMode = kCAFillModeForwards
-        opacityAnimation.removedOnCompletion = false
-        addAnimation(opacityAnimation, forKey: nil)
+        opacityAnimation.isRemovedOnCompletion = false
+        add(opacityAnimation, forKey: nil)
 
         let animation = CABasicAnimation(keyPath: "path")
         animation.duration = config.swooshEndDuration
@@ -137,56 +137,56 @@ class Gesture: CAShapeLayer {
         animation.toValue = circlePath(atX: config.totalWidth - Gesture.fingerDiameter)
         animation.timingFunction = CAMediaTimingFunction(name: config.swooshEndTimingFunction)
         animation.fillMode = kCAFillModeForwards
-        animation.removedOnCompletion = false
+        animation.isRemovedOnCompletion = false
         animation.delegate = self
-        addAnimation(animation, forKey: "swooshEnd")
+        add(animation, forKey: "swooshEnd")
     }
 
-    private func pathWhileSwooshing() -> CGPath {
+    fileprivate func pathWhileSwooshing() -> CGPath {
         let furthestX = config.swooshMidPoint - (Gesture.fingerDiameter / 2)
 
         let bezierPath = UIBezierPath()
-        bezierPath.moveToPoint(CGPoint(x: 0, y: 8))
+        bezierPath.move(to: CGPoint(x: 0, y: 8))
 
-        bezierPath.addCurveToPoint(CGPoint(x: furthestX - 4, y: 0),
+        bezierPath.addCurve(to: CGPoint(x: furthestX - 4, y: 0),
                                    controlPoint1: CGPoint(x: 0, y: 3.58),
                                    controlPoint2: CGPoint(x: furthestX - 8.42, y: 0))
-        bezierPath.addCurveToPoint(CGPoint(x: furthestX, y: 8),
+        bezierPath.addCurve(to: CGPoint(x: furthestX, y: 8),
                                    controlPoint1: CGPoint(x: furthestX + 0.42, y: 0),
                                    controlPoint2: CGPoint(x: furthestX, y: 3.58))
-        bezierPath.addCurveToPoint(CGPoint(x: furthestX - 4, y: 16),
+        bezierPath.addCurve(to: CGPoint(x: furthestX - 4, y: 16),
                                    controlPoint1: CGPoint(x: furthestX, y: 12.42),
                                    controlPoint2: CGPoint(x: furthestX + 0.42, y: 16))
-        bezierPath.addCurveToPoint(CGPoint(x: 0, y: 8),
+        bezierPath.addCurve(to: CGPoint(x: 0, y: 8),
                                    controlPoint1: CGPoint(x: furthestX - 8.42, y: 16),
                                    controlPoint2: CGPoint(x: 0, y: 12.42))
 
-        return bezierPath.CGPath
+        return bezierPath.cgPath
     }
 
     // swiftlint:disable:next variable_name
-    private func circlePath(atX x: CGFloat = 0) -> CGPath {
+    fileprivate func circlePath(atX x: CGFloat = 0) -> CGPath {
         let bezierPath = UIBezierPath()
-        bezierPath.moveToPoint(CGPoint(x: x, y: 8))
+        bezierPath.move(to: CGPoint(x: x, y: 8))
 
-        bezierPath.addCurveToPoint(CGPoint(x: x + 8, y: 0),
+        bezierPath.addCurve(to: CGPoint(x: x + 8, y: 0),
                                    controlPoint1: CGPoint(x: x, y: 3.58),
                                    controlPoint2: CGPoint(x: x + 3.58, y: 0))
-        bezierPath.addCurveToPoint(CGPoint(x: x + 16, y: 8),
+        bezierPath.addCurve(to: CGPoint(x: x + 16, y: 8),
                                    controlPoint1: CGPoint(x: x + 12.42, y: 0),
                                    controlPoint2: CGPoint(x: x + 16, y: 3.58))
-        bezierPath.addCurveToPoint(CGPoint(x: x + 8, y: 16),
+        bezierPath.addCurve(to: CGPoint(x: x + 8, y: 16),
                                    controlPoint1: CGPoint(x: x + 16, y: 12.42),
                                    controlPoint2: CGPoint(x: x + 12.42, y: 16))
-        bezierPath.addCurveToPoint(CGPoint(x: x, y: 8),
+        bezierPath.addCurve(to: CGPoint(x: x, y: 8),
                                    controlPoint1: CGPoint(x: x + 3.58, y: 16),
                                    controlPoint2: CGPoint(x: x, y: 12.42))
 
-        return bezierPath.CGPath
+        return bezierPath.cgPath
     }
 
-    override func animationDidStop(anim: CAAnimation, finished flag: Bool) {
-        if anim == animationForKey("swooshStart") {
+    override func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+        if anim == animation(forKey: "swooshStart") {
             endSwoosh()
         } else {
             completionBlock?()

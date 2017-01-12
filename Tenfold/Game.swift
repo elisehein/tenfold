@@ -15,12 +15,12 @@ class Game: NSObject, NSCoding {
 
     // Take care not to rename the actual literals, as they are used as storage keys on
     // devices that already have the game installed
-    private static let numbersCoderKey = "gameNumbersCoderKey"
-    private static let historicNumberCountCoderKey = "gameHistoricNumberCountCoderKey"
-    private static let latestMoveCoderKey = "gameLatestMoveCoderKey"
-    private static let currentRoundCoderKey = "gameCurrentRoundCoderKey"
-    private static let valueCountsCoderKey = "gameValueCountsCoderKey"
-    private static let startTimeCoderKey = "gameStartTimeCoderKey"
+    fileprivate static let numbersCoderKey = "gameNumbersCoderKey"
+    fileprivate static let historicNumberCountCoderKey = "gameHistoricNumberCountCoderKey"
+    fileprivate static let latestMoveCoderKey = "gameLatestMoveCoderKey"
+    fileprivate static let currentRoundCoderKey = "gameCurrentRoundCoderKey"
+    fileprivate static let valueCountsCoderKey = "gameValueCountsCoderKey"
+    fileprivate static let startTimeCoderKey = "gameStartTimeCoderKey"
 
     static let defaultInitialNumberValues = [1, 2, 3, 4, 5, 6, 7, 8, 9,
                                              1, 1, 1, 2, 1, 3, 1, 4, 1,
@@ -32,7 +32,7 @@ class Game: NSObject, NSCoding {
 
     var historicNumberCount: Int = 0
     var currentRound: Int = 1
-    var startTime: NSDate? = nil
+    var startTime: Date? = nil
 
     override init() {
         numbers = Game.initialNumbers()
@@ -41,7 +41,7 @@ class Game: NSObject, NSCoding {
         super.init()
     }
 
-    private class func initialNumbers() -> [Number] {
+    fileprivate class func initialNumbers() -> [Number] {
         let initialNumbers: [Number] = initialNumberValues().map({ value in
             return Number(value: value, crossedOut: false, marksEndOfRound: false)
         })
@@ -50,7 +50,7 @@ class Game: NSObject, NSCoding {
         return initialNumbers
     }
 
-    private class func initialNumberValues() -> [Int] {
+    fileprivate class func initialNumberValues() -> [Int] {
         var numberValues = [Int]()
 
         if StorageService.currentFlag(forSetting: .RandomInitialNumbers) {
@@ -64,7 +64,7 @@ class Game: NSObject, NSCoding {
         return numberValues
     }
 
-    private class func valueCounts(inNumbers givenNumbers: Array<Number>) -> [Int: Int] {
+    fileprivate class func valueCounts(inNumbers givenNumbers: Array<Number>) -> [Int: Int] {
         var counts = [Int: Int]()
         for number in givenNumbers {
             if counts[number.value!] == nil {
@@ -79,7 +79,7 @@ class Game: NSObject, NSCoding {
     class func removeSurplusRows(from givenNumbers: [Number]) -> [Number] {
         var filtered: [Number] = []
 
-        for firstIndexOnRow in 0.stride(to: givenNumbers.count, by: Game.numbersPerRow) {
+        for firstIndexOnRow in stride(from: 0, to: givenNumbers.count, by: Game.numbersPerRow) {
             let lastIndexOnRow = min(firstIndexOnRow + Game.numbersPerRow, givenNumbers.count) - 1
             let row = givenNumbers[firstIndexOnRow...lastIndexOnRow]
 
@@ -92,34 +92,34 @@ class Game: NSObject, NSCoding {
     }
 
     required init(coder aDecoder: NSCoder) {
-        if let storedNumbers = aDecoder.decodeObjectForKey(Game.numbersCoderKey) as? [Number] {
+        if let storedNumbers = aDecoder.decodeObject(forKey: Game.numbersCoderKey) as? [Number] {
             self.numbers = Game.removeSurplusRows(from: storedNumbers)
         }
 
-        if let latestMove = aDecoder.decodeObjectForKey(Game.latestMoveCoderKey) as? GameMove {
+        if let latestMove = aDecoder.decodeObject(forKey: Game.latestMoveCoderKey) as? GameMove {
             self.latestMove = latestMove
         }
 
-        self.historicNumberCount = (aDecoder.decodeObjectForKey(Game.historicNumberCountCoderKey) as? Int)!
-        self.currentRound = (aDecoder.decodeObjectForKey(Game.currentRoundCoderKey) as? Int)!
-        self.valueCounts = (aDecoder.decodeObjectForKey(Game.valueCountsCoderKey) as? [Int: Int])!
-        self.startTime = (aDecoder.decodeObjectForKey(Game.startTimeCoderKey) as? NSDate?)!
+        self.historicNumberCount = (aDecoder.decodeObject(forKey: Game.historicNumberCountCoderKey) as? Int)!
+        self.currentRound = (aDecoder.decodeObject(forKey: Game.currentRoundCoderKey) as? Int)!
+        self.valueCounts = (aDecoder.decodeObject(forKey: Game.valueCountsCoderKey) as? [Int: Int])!
+        self.startTime = (aDecoder.decodeObject(forKey: Game.startTimeCoderKey) as? Date?)!
     }
 
     func pruneValueCounts() {
         let unrepresentedValueCounts = valueCounts.filter({ $1 == 0 })
 
         for (value, _) in unrepresentedValueCounts {
-            valueCounts.removeValueForKey(value)
+            valueCounts.removeValue(forKey: value)
         }
     }
 
-    func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(numbers, forKey: Game.numbersCoderKey)
-        aCoder.encodeObject(historicNumberCount, forKey: Game.historicNumberCountCoderKey)
-        aCoder.encodeObject(currentRound, forKey: Game.currentRoundCoderKey)
-        aCoder.encodeObject(startTime, forKey: Game.startTimeCoderKey)
-        aCoder.encodeObject(valueCounts, forKey: Game.valueCountsCoderKey)
-        aCoder.encodeObject(latestMove, forKey: Game.latestMoveCoderKey)
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(numbers, forKey: Game.numbersCoderKey)
+        aCoder.encode(historicNumberCount, forKey: Game.historicNumberCountCoderKey)
+        aCoder.encode(currentRound, forKey: Game.currentRoundCoderKey)
+        aCoder.encode(startTime, forKey: Game.startTimeCoderKey)
+        aCoder.encode(valueCounts, forKey: Game.valueCountsCoderKey)
+        aCoder.encode(latestMove, forKey: Game.latestMoveCoderKey)
     }
 }

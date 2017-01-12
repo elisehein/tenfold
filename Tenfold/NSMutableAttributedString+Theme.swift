@@ -10,56 +10,56 @@ import Foundation
 import UIKit
 
 enum TextStyle {
-    case Title
-    case Paragraph
-    case Pill
-    case Tip
-    case OptionTitle
-    case OptionDetail
+    case title
+    case paragraph
+    case pill
+    case tip
+    case optionTitle
+    case optionDetail
 }
 
 struct TextStyleProperties {
-    private static let isIPad: Bool = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad
+    fileprivate static let isIPad: Bool = {
+        return UIDevice.current.userInterfaceIdiom == .pad
     }()
 
     static let fontSize: [TextStyle: CGFloat] = {
         return [
-            .Title:        isIPad ? 22 : 16,
-            .Paragraph:    isIPad ? 18 : 14,
-            .Pill:         isIPad ? 16 : 13,
-            .Tip:          isIPad ? 14 : 13,
-            .OptionTitle:  isIPad ? 14 : 13,
-            .OptionDetail: isIPad ? 14 : 12
+            .title:        isIPad ? 22 : 16,
+            .paragraph:    isIPad ? 18 : 14,
+            .pill:         isIPad ? 16 : 13,
+            .tip:          isIPad ? 14 : 13,
+            .optionTitle:  isIPad ? 14 : 13,
+            .optionDetail: isIPad ? 14 : 12
         ]
     }()
 
-    private static let fontWeight: [TextStyle: FontWeight] = {
+    fileprivate static let fontWeight: [TextStyle: FontWeight] = {
         return [
-            .Title:        .Bold,
-            .Paragraph:    .Regular,
-            .Pill:         .Regular,
-            .Tip:          .Italic,
-            .OptionTitle:  .Bold,
-            .OptionDetail: .Regular
+            .title:        .bold,
+            .paragraph:    .regular,
+            .pill:         .regular,
+            .tip:          .italic,
+            .optionTitle:  .bold,
+            .optionDetail: .regular
         ]
     }()
 
-    private static let lineSpacing: [TextStyle: CGFloat] = {
+    fileprivate static let lineSpacing: [TextStyle: CGFloat] = {
         return [
-            .Title:        7,
-            .Paragraph:    isIPad ? 7 : 4,
-            .Pill:         0,
-            .Tip:          isIPad ? 5 : 4,
-            .OptionTitle:  isIPad ? 7 : 4,
-            .OptionDetail: isIPad ? 7 : 4
+            .title:        7,
+            .paragraph:    isIPad ? 7 : 4,
+            .pill:         0,
+            .tip:          isIPad ? 5 : 4,
+            .optionTitle:  isIPad ? 7 : 4,
+            .optionDetail: isIPad ? 7 : 4
         ]
     }()
 }
 
 extension NSMutableAttributedString {
 
-    class func themeString(textStyle: TextStyle, _ string: String) -> NSMutableAttributedString {
+    class func themeString(_ textStyle: TextStyle, _ string: String) -> NSMutableAttributedString {
         return NSMutableAttributedString(string: string, attributes: attributes(forTextStyle: textStyle))
     }
 
@@ -67,9 +67,9 @@ extension NSMutableAttributedString {
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = TextStyleProperties.lineSpacing[textStyle]!
-        paragraphStyle.alignment = textStyle == .OptionTitle || textStyle == .OptionDetail ?
-                                   .Left :
-                                   .Center
+        paragraphStyle.alignment = textStyle == .optionTitle || textStyle == .optionDetail ?
+                                   .left :
+                                   .center
 
         let font = UIFont.themeFontWithSize(TextStyleProperties.fontSize[textStyle]!,
                                             weight: TextStyleProperties.fontWeight[textStyle]!)
@@ -80,7 +80,7 @@ extension NSMutableAttributedString {
             NSForegroundColorAttributeName: UIColor.themeColor(forTextStyle: textStyle)
         ]
 
-        if textStyle == .Pill {
+        if textStyle == .pill {
             attributes[NSKernAttributeName] = 1.2
         }
 

@@ -11,39 +11,39 @@ import PureLayout
 import UIKit
 
 enum MenuState {
-    case Default
-    case Onboarding
+    case `default`
+    case onboarding
 }
 
 class Menu: UIView {
 
     static let buttonHeight: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 80 : 40
+        return UIDevice.current.userInterfaceIdiom == .pad ? 80 : 40
     }()
 
-    private static let logoWidth: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 180 : 120
+    fileprivate static let logoWidth: CGFloat = {
+        return UIDevice.current.userInterfaceIdiom == .pad ? 180 : 120
     }()
 
-    private static let centerPointOffset: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? -20 : 0
+    fileprivate static let centerPointOffset: CGFloat = {
+        return UIDevice.current.userInterfaceIdiom == .pad ? -20 : 0
     }()
 
-    private static let logoHeightFactor: CGFloat = 0.75
+    fileprivate static let logoHeightFactor: CGFloat = 0.75
 
-    private let logoContainer = UIView()
-    private let logo = UIImageView()
-    private let newGameButton = Button()
-    private let instructionsButton = Button()
-    private let optionsButton = Button()
-    private let showMenuTip = Pill(type: .Text)
+    fileprivate let logoContainer = UIView()
+    fileprivate let logo = UIImageView()
+    fileprivate let newGameButton = Button()
+    fileprivate let instructionsButton = Button()
+    fileprivate let optionsButton = Button()
+    fileprivate let showMenuTip = Pill(type: .text)
     let onboardingSteps = OnboardingSteps()
 
-    private var hasLoadedConstraints = false
-    private let state: MenuState
-    private var firstLaunch: Bool
+    fileprivate var hasLoadedConstraints = false
+    fileprivate let state: MenuState
+    fileprivate var firstLaunch: Bool
 
-    private var newFeatureLabel = UILabel()
+    fileprivate var newFeatureLabel = UILabel()
 
     var anchorFrame: CGRect = CGRect.zero {
         didSet {
@@ -51,7 +51,7 @@ class Menu: UIView {
         }
     }
 
-    var emptySpaceAvailable: ((atDefaultPosition: Bool) -> CGFloat)?
+    var emptySpaceAvailable: ((_ atDefaultPosition: Bool) -> CGFloat)?
     var onTapNewGame: (() -> Void)?
     var onTapInstructions: (() -> Void)?
     var onTapOptions: (() -> Void)?
@@ -69,30 +69,30 @@ class Menu: UIView {
         }
 
         logo.image = UIImage(named: "tenfold-logo")
-        logo.contentMode = .ScaleAspectFit
+        logo.contentMode = .scaleAspectFit
 
-        if state == .Onboarding {
+        if state == .onboarding {
             addSubview(onboardingSteps)
         } else {
             configureNewFeatureLabel()
 
-            newGameButton.hidden = true
-            newGameButton.setTitle("Start over", forState: .Normal)
+            newGameButton.isHidden = true
+            newGameButton.setTitle("Start over", for: UIControlState())
             newGameButton.addTarget(self,
                                     action: #selector(Menu.didTapNewGame),
-                                    forControlEvents: .TouchUpInside)
+                                    for: .touchUpInside)
 
-            instructionsButton.hidden = true
-            instructionsButton.setTitle("How to play", forState: .Normal)
+            instructionsButton.isHidden = true
+            instructionsButton.setTitle("How to play", for: UIControlState())
             instructionsButton.addTarget(self,
                                          action: #selector(Menu.didTapInstructions),
-                                         forControlEvents: .TouchUpInside)
+                                         for: .touchUpInside)
 
-            optionsButton.hidden = true
-            optionsButton.setTitle("Options", forState: .Normal)
+            optionsButton.isHidden = true
+            optionsButton.setTitle("Options", for: UIControlState())
             optionsButton.addTarget(self,
                                   action: #selector(Menu.didTapOptions),
-                                  forControlEvents: .TouchUpInside)
+                                  for: .touchUpInside)
 
             addSubview(newGameButton)
             addSubview(instructionsButton)
@@ -112,31 +112,31 @@ class Menu: UIView {
             return
         }
 
-        var attrs = NSMutableAttributedString.attributes(forTextStyle: .Pill)
-        attrs[NSForegroundColorAttributeName] = UIColor.themeColor(.Tan)
+        var attrs = NSMutableAttributedString.attributes(forTextStyle: .pill)
+        attrs[NSForegroundColorAttributeName] = UIColor.themeColor(.tan)
         attrs[NSFontAttributeName] = UIFont.themeFontWithSize(12)
         newFeatureLabel.attributedText = NSAttributedString(string: "👈🏻 New!", attributes: attrs)
 
-        UIView.animateWithDuration(1, delay: 0, options: [.Autoreverse, .Repeat, .CurveEaseInOut], animations: {
-            self.newFeatureLabel.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 10, 0)
+        UIView.animate(withDuration: 1, delay: 0, options: [.autoreverse, .repeat], animations: {
+            self.newFeatureLabel.transform = CGAffineTransform.identity.translatedBy(x: 10, y: 0)
         }, completion: nil)
     }
 
     override func updateConstraints() {
         if !hasLoadedConstraints {
-            if state == .Onboarding {
+            if state == .onboarding {
                 loadOnboardingStateConstraints()
             } else {
                 loadDefaultStateConstraints()
             }
 
-            logoContainer.autoPinEdgeToSuperviewEdge(.Top)
-            logoContainer.autoMatchDimension(.Width, toDimension: .Width, ofView: self)
-            logoContainer.autoAlignAxisToSuperviewAxis(.Vertical)
+            logoContainer.autoPinEdge(toSuperviewEdge: .top)
+            logoContainer.autoMatch(.width, to: .width, of: self)
+            logoContainer.autoAlignAxis(toSuperviewAxis: .vertical)
 
             logo.autoCenterInSuperview()
-            logo.autoSetDimension(.Width, toSize: Menu.logoWidth)
-            logo.autoSetDimension(.Height, toSize: Menu.logoWidth * Menu.logoHeightFactor)
+            logo.autoSetDimension(.width, toSize: Menu.logoWidth)
+            logo.autoSetDimension(.height, toSize: Menu.logoWidth * Menu.logoHeightFactor)
 
             hasLoadedConstraints = true
         }
@@ -144,37 +144,37 @@ class Menu: UIView {
         super.updateConstraints()
     }
 
-    private func loadOnboardingStateConstraints() {
-        logoContainer.autoPinEdge(.Bottom, toEdge: .Top, ofView: onboardingSteps)
+    fileprivate func loadOnboardingStateConstraints() {
+        logoContainer.autoPinEdge(.bottom, to: .top, of: onboardingSteps)
 
-        onboardingSteps.autoAlignAxisToSuperviewAxis(.Vertical)
-        onboardingSteps.autoConstrainAttribute(.Top,
-                                               toAttribute: .Horizontal,
-                                               ofView: self,
+        onboardingSteps.autoAlignAxis(toSuperviewAxis: .vertical)
+        onboardingSteps.autoConstrainAttribute(.top,
+                                               to: .horizontal,
+                                               of: self,
                                                withOffset: Menu.centerPointOffset)
-        onboardingSteps.autoMatchDimension(.Width, toDimension: .Width, ofView: self)
-        onboardingSteps.autoPinEdgeToSuperviewEdge(.Bottom)
+        onboardingSteps.autoMatch(.width, to: .width, of: self)
+        onboardingSteps.autoPinEdge(toSuperviewEdge: .bottom)
     }
 
-    private func loadDefaultStateConstraints() {
-        logoContainer.autoPinEdge(.Bottom, toEdge: .Top, ofView: newGameButton)
+    fileprivate func loadDefaultStateConstraints() {
+        logoContainer.autoPinEdge(.bottom, to: .top, of: newGameButton)
 
         for button in [newGameButton, instructionsButton, optionsButton] {
-            button.autoSetDimension(.Height, toSize: Menu.buttonHeight)
+            button.autoSetDimension(.height, toSize: Menu.buttonHeight)
         }
 
-        newGameButton.autoConstrainAttribute(.Top,
-                                             toAttribute: .Horizontal,
-                                             ofView: self,
+        newGameButton.autoConstrainAttribute(.top,
+                                             to: .horizontal,
+                                             of: self,
                                              withOffset: Menu.centerPointOffset)
-        instructionsButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: newGameButton)
-        optionsButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: instructionsButton)
+        instructionsButton.autoPinEdge(.top, to: .bottom, of: newGameButton)
+        optionsButton.autoPinEdge(.top, to: .bottom, of: instructionsButton)
 
-        [logo, newGameButton, instructionsButton, optionsButton].autoAlignViewsToAxis(.Vertical)
+        [logo, newGameButton, instructionsButton, optionsButton].autoAlignViews(to: .vertical)
 
-        let newFeatureOffset: CGFloat = UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 90 : 70
-        newFeatureLabel.autoAlignAxis(.Horizontal, toSameAxisOfView: optionsButton)
-        newFeatureLabel.autoAlignAxis(.Vertical, toSameAxisOfView: optionsButton, withOffset: newFeatureOffset)
+        let newFeatureOffset: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 90 : 70
+        newFeatureLabel.autoAlignAxis(.horizontal, toSameAxisOf: optionsButton)
+        newFeatureLabel.autoAlignAxis(.vertical, toSameAxisOf: optionsButton, withOffset: newFeatureOffset)
     }
 
     func didTapNewGame() {
@@ -187,57 +187,57 @@ class Menu: UIView {
 
     func didTapOptions() {
         StorageService.markFeatureAnnouncementSeen(.Options)
-        newFeatureLabel.hidden = true
+        newFeatureLabel.isHidden = true
         onTapOptions!()
     }
 
     func showDefaultView() {
         for button in [newGameButton, instructionsButton, optionsButton] {
             button.alpha = 0
-            button.hidden = false
+            button.isHidden = false
 
-            UIView.animateWithDuration(0.2, animations: {
+            UIView.animate(withDuration: 0.2, animations: {
                 button.alpha = 1
             })
         }
     }
 
     func hideTipsIfNeeded() {
-        showMenuTip.hidden = true
+        showMenuTip.isHidden = true
     }
 
-    private func showTipsIfNeeded() {
+    fileprivate func showTipsIfNeeded() {
         if firstLaunch {
-            UIApplication.sharedApplication().delegate?.window??.addSubview(showMenuTip)
+            UIApplication.shared.delegate?.window??.addSubview(showMenuTip)
             let windowFrame = showMenuTip.superview?.bounds
-            showMenuTip.anchorEdge = .Top
+            showMenuTip.anchorEdge = .top
             showMenuTip.toggle(inFrame: windowFrame!, showing: false)
             showMenuTip.popup(forSeconds: 4, inFrame: windowFrame!)
             firstLaunch = false
         }
     }
 
-    func hideIfNeeded(animated animated: Bool = true) {
-        guard !hidden else { return }
+    func hideIfNeeded(animated: Bool = true) {
+        guard !isHidden else { return }
         animationInProgress = true
 
         let lockedFrame = frame
-        UIView.animateWithDuration(animated ? 0.25 : 0,
+        UIView.animate(withDuration: animated ? 0.25 : 0,
                                    delay: 0,
-                                   options: .CurveEaseIn,
+                                   options: .curveEaseIn,
                                    animations: {
             self.frame = self.offScreenFrame(givenFrame: lockedFrame)
             self.alpha = 0
         }, completion: { _ in
-            self.hidden = true
+            self.isHidden = true
             self.animationInProgress = false
             self.showTipsIfNeeded()
         })
     }
 
-    func showIfNeeded(atDefaultPosition atDefaultPosition: Bool) {
-        guard hidden else { return }
-        hidden = false
+    func showIfNeeded(atDefaultPosition: Bool) {
+        guard isHidden else { return }
+        isHidden = false
         let endPosition = visibleFrame(atDefaultPosition: atDefaultPosition)
         animatePosition(withEndPosition: endPosition)
     }
@@ -245,7 +245,7 @@ class Menu: UIView {
     func nudgeToDefaultPositionIfNeeded() {
         let defaultFrame = visibleFrame(atDefaultPosition: true)
 
-        if !hidden && !CGRectEqualToRect(frame, defaultFrame) {
+        if !isHidden && !frame.equalTo(defaultFrame) {
             animatePosition(withEndPosition: defaultFrame)
         }
     }
@@ -253,9 +253,9 @@ class Menu: UIView {
     func animatePosition(withEndPosition endPosition: CGRect) {
         animationInProgress = true
 
-        UIView.animateWithDuration(0.3,
+        UIView.animate(withDuration: 0.3,
                                    delay: 0,
-                                   options: .CurveEaseOut,
+                                   options: .curveEaseOut,
                                    animations: {
             self.frame = endPosition
             self.alpha = 1
@@ -271,40 +271,40 @@ class Menu: UIView {
     }
 
     func position() {
-        guard !animationInProgress && !hidden else { return }
+        guard !animationInProgress && !isHidden else { return }
         frame = visibleFrame()
     }
 
-    private func visibleFrame(atDefaultPosition atDefaultPosition: Bool = false) -> CGRect {
+    fileprivate func visibleFrame(atDefaultPosition: Bool = false) -> CGRect {
         var menuFrame = anchorFrame
-        let maxHeight = emptySpaceAvailable!(atDefaultPosition: true)
+        let maxHeight = emptySpaceAvailable!(true)
 
         if atDefaultPosition {
             menuFrame.size.height = maxHeight
         } else {
-            let availableHeight = emptySpaceAvailable!(atDefaultPosition: false)
+            let availableHeight = emptySpaceAvailable!(false)
             menuFrame.size.height = min(maxHeight, availableHeight)
         }
 
         return menuFrame
     }
 
-    private func offScreenFrame(givenFrame rect: CGRect) -> CGRect {
+    fileprivate func offScreenFrame(givenFrame rect: CGRect) -> CGRect {
         var offScreenRect = rect
         offScreenRect.origin.y = -rect.size.height
         return offScreenRect
     }
 
-    override func hitTest(point: CGPoint, withEvent event: UIEvent?) -> UIView? {
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         let hitCapturingViews = [newGameButton,
                                  instructionsButton,
                                  optionsButton,
                                  onboardingSteps.buttonsContainer]
 
         for view in hitCapturingViews {
-            let absoluteFrame = convertRect(view.frame, fromView: view.superview)
-            if CGRectContainsPoint(absoluteFrame, point) {
-                return super.hitTest(point, withEvent: event)
+            let absoluteFrame = convert(view.frame, from: view.superview)
+            if absoluteFrame.contains(point) {
+                return super.hitTest(point, with: event)
             }
         }
 

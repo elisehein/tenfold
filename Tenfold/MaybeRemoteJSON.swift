@@ -17,9 +17,9 @@ class MaybeRemoteJSON {
     init(fromUrl urlString: String, withBackupFile fileName: String) {
         data = JSON.initFromFile(fileName)
 
-        let URL = NSURL(string: urlString)!
-        let URLRequest = NSMutableURLRequest(URL: URL)
-        URLRequest.cachePolicy = .ReloadIgnoringCacheData
+        let URL = Foundation.URL(string: urlString)!
+        let URLRequest = NSMutableURLRequest(url: URL)
+        URLRequest.cachePolicy = .reloadIgnoringCacheData
 
         Alamofire.request(URLRequest).response { request, response, remoteData, error in
                 guard error == nil else { return }

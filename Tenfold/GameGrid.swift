@@ -27,15 +27,15 @@ class GameGrid: Grid {
     var spaceForScore: CGFloat = 0
 
     var onScroll: (() -> Void)?
-    var onPullingDown: ((withFraction: CGFloat) -> Void)?
-    var onPullingUpFromStartingPosition: ((withFraction: CGFloat) -> Void)?
+    var onPullingDown: ((_ withFraction: CGFloat) -> Void)?
+    var onPullingUpFromStartingPosition: ((_ withFraction: CGFloat) -> Void)?
     var onPullUpThresholdExceeded: (() -> Void)?
     var onWillSnapToGameplayPosition: (() -> Void)?
     var onDidSnapToGameplayPosition: (() -> Void)?
     var onWillSnapToStartingPosition: (() -> Void)?
     var onPairingAttempt: ((Pair) -> Void)?
 
-    static let scaleFactor = UIScreen.mainScreen().scale
+    static let scaleFactor = UIScreen.main.scale
     static let prematureBounceReductionFactor: CGFloat = 0.2
 
     var prevPrematureBounceOffset: CGFloat = 0
@@ -45,7 +45,7 @@ class GameGrid: Grid {
     // cannot deselect items that are not currently visible (which can often be required for us,
     // say when pairing two items so far from each other that they cannot be seen on screen
     // at the same time), it's easier to keep track of selection ourselves, rather than natively
-    var selectedIndexPaths: [NSIndexPath] = []
+    var selectedIndexPaths: [IndexPath] = []
     var indecesPermittedForSelection: [Int]? = nil
 
     // When you scroll while row insertion or removal is in progress, cellForItemWithIndexPath will
@@ -53,13 +53,13 @@ class GameGrid: Grid {
     // capture cases where selections happen too fast.
     var rowRemovalInProgress = false {
         didSet {
-            userInteractionEnabled = !rowRemovalInProgress
+            isUserInteractionEnabled = !rowRemovalInProgress
         }
     }
 
     var rowInsertionInProgressWithIndeces: [Int]? = nil {
         didSet {
-            userInteractionEnabled = rowInsertionInProgressWithIndeces == nil
+            isUserInteractionEnabled = rowInsertionInProgressWithIndeces == nil
         }
     }
 
@@ -68,8 +68,8 @@ class GameGrid: Grid {
 
         super.init(frame: CGRect.zero)
 
-        registerClass(GameGridCell.self, forCellWithReuseIdentifier: self.reuseIdentifier)
-        backgroundColor = UIColor.clearColor()
+        register(GameGridCell.self, forCellWithReuseIdentifier: self.reuseIdentifier)
+        backgroundColor = UIColor.clear
         dataSource = self
         delegate = self
         showsHorizontalScrollIndicator = false
@@ -77,7 +77,7 @@ class GameGrid: Grid {
         alwaysBounceVertical = true
     }
 
-    override func initialisePositionWithinFrame(givenFrame: CGRect, withInsets insets: UIEdgeInsets) {
+    override func initialisePositionWithinFrame(_ givenFrame: CGRect, withInsets insets: UIEdgeInsets) {
         super.initialisePositionWithinFrame(givenFrame, withInsets: insets)
 
         // Whatever the game state, we initially start with 3 rows showing
@@ -85,7 +85,7 @@ class GameGrid: Grid {
         adjustTopInset(enforceStartingPosition: true)
     }
 
-    func toggleBounce(shouldBounce: Bool) {
+    func toggleBounce(_ shouldBounce: Bool) {
         guard !snappingInProgress else { return }
 
         // We should *never* disable bounce if there is more space above the grid than is needed for the score

@@ -10,19 +10,19 @@ import Foundation
 import UIKit
 
 enum ScorePillType {
-    case Floating
-    case Static
+    case floating
+    case `static`
 }
 
 class ScorePill: Pill {
 
-    private let logo = UIImageView(image: UIImage(named: "tenfold-logo-small"))
-    private let roundLabel = UILabel()
-    private let numbersLabel = UILabel()
-    private static let countLabelTransformFactor: CGFloat = 1.35
+    fileprivate let logo = UIImageView(image: UIImage(named: "tenfold-logo-small"))
+    fileprivate let roundLabel = UILabel()
+    fileprivate let numbersLabel = UILabel()
+    fileprivate static let countLabelTransformFactor: CGFloat = 1.35
 
     var onTap: (() -> Void)? = nil
-    var type: ScorePillType = .Static
+    var type: ScorePillType = .static
 
     var numbers: Int = 0 {
         didSet {
@@ -47,14 +47,14 @@ class ScorePill: Pill {
 
     init(type: ScorePillType) {
         self.type = type
-        super.init(type: .Text)
+        super.init(type: .text)
 
-        anchorEdge = .Top
+        anchorEdge = .top
 
         text = "ROUND TO GO"
         configureBackground()
 
-        logo.contentMode = .ScaleAspectFit
+        logo.contentMode = .scaleAspectFit
         logo.frame = CGRect.zero
         logo.clipsToBounds = true
 
@@ -76,14 +76,14 @@ class ScorePill: Pill {
 
         guard isShowing else { return }
 
-        if type == .Floating {
+        if type == .floating {
             var labelFrame = label.frame
             labelFrame.origin.y -= Pill.margin
             labelFrame.size.height += 10
             label.frame = labelFrame
 
             label.layer.cornerRadius = 0
-            shadowLayer.layer.shadowPath = UIBezierPath(rect: label.frame).CGPath
+            shadowLayer.layer.shadowPath = UIBezierPath(rect: label.frame).cgPath
         }
 
         let logoSize: CGFloat = 18
@@ -116,10 +116,10 @@ class ScorePill: Pill {
         gap.bounds = CGRect(x: 0, y: 0, width: 170, height: 0)
         let gapString = NSAttributedString(attachment: gap)
 
-        attrString.replaceCharactersInRange(NSRange(location: 5, length: 1), withAttributedString: gapString)
+        attrString.replaceCharacters(in: NSRange(location: 5, length: 1), with: gapString)
 
         let attrs = [NSFontAttributeName: UIFont.themeFontWithSize(Pill.detailFontSize),
-                     NSForegroundColorAttributeName: UIColor.themeColor(.Tan)]
+                     NSForegroundColorAttributeName: UIColor.themeColor(.tan)]
         attrString.addAttributes(attrs, range: NSRange(location: 0, length: text.characters.count))
         return attrString
     }
@@ -129,24 +129,24 @@ class ScorePill: Pill {
         return superview!.bounds.size.width
     }
 
-    private func configureBackground() {
-        if type == .Static {
-            label.backgroundColor = UIColor.clearColor()
+    fileprivate func configureBackground() {
+        if type == .static {
+            label.backgroundColor = UIColor.clear
         } else {
             // This colour is midway between OffWhite and OffWhiteShaded (for less contrast)
-            label.backgroundColor = UIColor(hex: "#F4EBD8").colorWithAlphaComponent(0.95)
+            label.backgroundColor = UIColor(hex: "#F4EBD8").withAlphaComponent(0.95)
         }
-        shadowLayer.hidden = type == .Static
+        shadowLayer.isHidden = type == .static
     }
 
-    private func constructAttributedStringForCount(count: Int) -> NSMutableAttributedString {
+    fileprivate func constructAttributedStringForCount(_ count: Int) -> NSMutableAttributedString {
         let attrString = super.constructAttributedString(withText: "\(count)")
 
         // Start from a scaled down font size so the pulse doesn't look blurry
-        let originalPillFontSize = TextStyleProperties.fontSize[.Pill]!
+        let originalPillFontSize = TextStyleProperties.fontSize[.pill]!
 
         let attrs = [
-            NSForegroundColorAttributeName: UIColor.themeColorDarker(.Tan),
+            NSForegroundColorAttributeName: UIColor.themeColorDarker(.tan),
             NSFontAttributeName: UIFont.themeFontWithSize(originalPillFontSize *
                                                           ScorePill.countLabelTransformFactor)
         ]
@@ -155,14 +155,14 @@ class ScorePill: Pill {
         return attrString
     }
 
-    private func pulse(aLabel: UILabel) {
-        UIView.animateWithDuration(GameGridCell.animationDuration,
+    fileprivate func pulse(_ aLabel: UILabel) {
+        UIView.animate(withDuration: GameGridCell.animationDuration,
                                    delay: 0,
-                                   options: .CurveEaseOut,
+                                   options: .curveEaseOut,
                                    animations: {
-            aLabel.transform = CGAffineTransformIdentity
+            aLabel.transform = CGAffineTransform.identity
         }, completion: { _ in
-            UIView.animateWithDuration(0.15, animations: {
+            UIView.animate(withDuration: 0.15, animations: {
                 aLabel.transform = self.countLabelTransform()
             }, completion: { _ in
                 aLabel.transform = self.countLabelTransform()
@@ -170,9 +170,9 @@ class ScorePill: Pill {
         })
     }
 
-    private func countLabelTransform() -> CGAffineTransform {
+    fileprivate func countLabelTransform() -> CGAffineTransform {
         let defaultScale = 1 / ScorePill.countLabelTransformFactor
-        return CGAffineTransformScale(CGAffineTransformIdentity, defaultScale, defaultScale)
+        return CGAffineTransform.identity.scaledBy(x: defaultScale, y: defaultScale)
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -16,7 +16,7 @@ class PageDownIndicator: UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        iconView.contentMode = .Center
+        iconView.contentMode = .center
         addSubview(iconView)
     }
 

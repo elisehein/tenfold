@@ -48,7 +48,7 @@ extension UIScrollView {
         return pullUpDistanceExceeds(0)
     }
 
-    func pullUpDistanceExceeds(threshold: CGFloat) -> Bool {
+    func pullUpDistanceExceeds(_ threshold: CGFloat) -> Bool {
         return distancePulledUp() > threshold
     }
 
@@ -60,7 +60,7 @@ extension UIScrollView {
         return pullDownDistanceExceeds(0)
     }
 
-    func pullDownDistanceExceeds(threshold: CGFloat) -> Bool {
+    func pullDownDistanceExceeds(_ threshold: CGFloat) -> Bool {
         return distancePulledDown() > threshold
     }
 
@@ -88,7 +88,7 @@ extension UIScrollView {
     //                       |       | x      |      |
     //                        ----------------
     //
-    private func contentDistanceFromBottomEdge() -> CGFloat {
+    fileprivate func contentDistanceFromBottomEdge() -> CGFloat {
         let totalContentHeight = contentSize.height + contentInset.top
         let totalAvailableHeight = frame.size.height
         return totalAvailableHeight - (totalContentHeight - contentDistanceFromTopEdge())

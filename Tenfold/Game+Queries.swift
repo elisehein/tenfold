@@ -65,7 +65,7 @@ extension Game {
         return Matrix.singleton.columnOfItem(atIndex: numberCount() - 1)
     }
 
-    func indecesOverlapTailIndeces(indeces: [Int]) -> Bool {
+    func indecesOverlapTailIndeces(_ indeces: [Int]) -> Bool {
         let tailIndeces = Array(numbers.count - indeces.count..<numbers.count)
         return Set(tailIndeces).union(Set(indeces)).count == tailIndeces.count
     }
@@ -74,28 +74,28 @@ extension Game {
         return Matrix.singleton.indecesOnRow(containingIndex: index, lastGameIndex: numberCount() - 1)
     }
 
-    func valueAtIndex(index: Int) -> Int? {
+    func valueAtIndex(_ index: Int) -> Int? {
         return numbers[index].value
     }
 
-    func marksEndOfRound(index: Int) -> Bool {
+    func marksEndOfRound(_ index: Int) -> Bool {
         return numbers[index].marksEndOfRound
     }
 
-    func isCrossedOut(index: Int) -> Bool {
+    func isCrossedOut(_ index: Int) -> Bool {
         return numbers[index].crossedOut
     }
 
-    func allCrossedOut(indeces: [Int]) -> Bool {
+    func allCrossedOut(_ indeces: [Int]) -> Bool {
         return indeces.filter({ numbers[$0].crossedOut }).count == indeces.count
     }
 
-    func allCrossedOutBetween(pair: Pair, withIncrement increment: Int = 1) -> Bool {
+    func allCrossedOutBetween(_ pair: Pair, withIncrement increment: Int = 1) -> Bool {
         if pair.first + increment >= pair.second {
             return false
         }
 
-        for i in (pair.first + increment).stride(to: pair.second, by: increment) {
+        for i in stride(from: (pair.first + increment), to: pair.second, by: increment) {
             if numberCount() > i && !isCrossedOut(i) {
                 return false
             }
@@ -114,7 +114,7 @@ extension Game {
         }
     }
 
-    private func remainingNumbers() -> [Number] {
+    fileprivate func remainingNumbers() -> [Number] {
         return numbers.filter({ !$0.crossedOut })
     }
 }
