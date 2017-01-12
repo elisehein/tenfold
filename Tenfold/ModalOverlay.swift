@@ -10,57 +10,57 @@ import Foundation
 import UIKit
 
 enum ModalPosition {
-    case Center
-    case Bottom
+    case center
+    case bottom
 }
 
 class ModalOverlay: UIViewController {
 
     static let horizontalInset: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 80 : 30
+        return UIDevice.current.userInterfaceIdiom == .pad ? 80 : 30
     }()
 
     static let contentPadding: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 70 : 40
+        return UIDevice.current.userInterfaceIdiom == .pad ? 70 : 40
     }()
 
     static let titleTextSpacing: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 25 : 15
+        return UIDevice.current.userInterfaceIdiom == .pad ? 25 : 15
     }()
 
-    let modal = UIView()
+    let modalBox = UIView()
     let position: ModalPosition
 
     static let modalButtonHeight: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 80 : 60
+        return UIDevice.current.userInterfaceIdiom == .pad ? 80 : 60
     }()
 
     init(position: ModalPosition) {
         self.position = position
         super.init(nibName: nil, bundle: nil)
 
-        modalTransitionStyle = .CrossDissolve
-        modalPresentationStyle = .OverCurrentContext
+        modalTransitionStyle = .crossDissolve
+        modalPresentationStyle = .overCurrentContext
 
-        view.backgroundColor = UIColor.themeColor(.OffBlack).colorWithAlphaComponent(0.65)
+        view.backgroundColor = UIColor.themeColor(.offBlack).withAlphaComponent(0.65)
 
-        modal.backgroundColor = UIColor.themeColor(.OffWhite)
-        modal.layer.shadowColor = UIColor.themeColor(.OffBlack).CGColor
-        modal.layer.shadowOffset = CGSize(width: 2, height: 2)
-        modal.layer.shadowRadius = 2
-        modal.layer.shadowOpacity = 0.5
+        modalBox.backgroundColor = UIColor.themeColor(.offWhite)
+        modalBox.layer.shadowColor = UIColor.themeColor(.offBlack).cgColor
+        modalBox.layer.shadowOffset = CGSize(width: 2, height: 2)
+        modalBox.layer.shadowRadius = 2
+        modalBox.layer.shadowOpacity = 0.5
 
-        view.addSubview(modal)
+        view.addSubview(modalBox)
     }
 
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        super.touchesEnded(touches, withEvent: event)
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
 
         if touches.count == 1 {
             let touch = touches.first
-            if let point = touch?.locationInView(view) {
-                if !CGRectContainsPoint(modal.frame, point) {
-                    dismissViewControllerAnimated(true, completion: nil)
+            if let point = touch?.location(in: view) {
+                if !modalBox.frame.contains(point) {
+                    dismiss(animated: true, completion: nil)
                 }
             }
         }
@@ -68,40 +68,40 @@ class ModalOverlay: UIViewController {
 
     override func updateViewConstraints() {
         switch position {
-        case .Center:
-            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-                modal.autoSetDimension(.Width, toSize: 460)
+        case .center:
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                modalBox.autoSetDimension(.width, toSize: 460)
             } else {
-                modal.autoPinEdgeToSuperviewEdge(.Left, withInset: 8)
-                modal.autoPinEdgeToSuperviewEdge(.Right, withInset: 8)
+                modalBox.autoPinEdge(toSuperviewEdge: .left, withInset: 8)
+                modalBox.autoPinEdge(toSuperviewEdge: .right, withInset: 8)
             }
 
-            modal.autoCenterInSuperview()
+            modalBox.autoCenterInSuperview()
 
-        case .Bottom:
-            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-                modal.autoSetDimension(.Width, toSize: 460)
-                modal.autoCenterInSuperview()
+        case .bottom:
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                modalBox.autoSetDimension(.width, toSize: 460)
+                modalBox.autoCenterInSuperview()
             } else {
-                modal.autoPinEdgeToSuperviewEdge(.Left, withInset: 8)
-                modal.autoPinEdgeToSuperviewEdge(.Bottom, withInset: 8)
-                modal.autoPinEdgeToSuperviewEdge(.Right, withInset: 8)
+                modalBox.autoPinEdge(toSuperviewEdge: .left, withInset: 8)
+                modalBox.autoPinEdge(toSuperviewEdge: .bottom, withInset: 8)
+                modalBox.autoPinEdge(toSuperviewEdge: .right, withInset: 8)
             }
         }
 
         super.updateViewConstraints()
     }
 
-    class func configureModalButton(button: UIButton, color: UIColor, shouldHighlight: Bool = true) {
-        button.setBackgroundImage(UIImage.imageWithColor(color), forState: .Normal)
+    class func configureModalButton(_ button: UIButton, color: UIColor, shouldHighlight: Bool = true) {
+        button.setBackgroundImage(UIImage.imageWithColor(color), for: UIControlState())
 
         if shouldHighlight {
-            button.setBackgroundImage(UIImage.imageWithColor(color.darken()), forState: .Highlighted)
+            button.setBackgroundImage(UIImage.imageWithColor(color.darken()), for: .highlighted)
         } else {
-            button.setBackgroundImage(UIImage.imageWithColor(color), forState: .Highlighted)
+            button.setBackgroundImage(UIImage.imageWithColor(color), for: .highlighted)
         }
 
-        button.layer.borderColor = UIColor.themeColor(.OffWhite).CGColor
+        button.layer.borderColor = UIColor.themeColor(.offWhite).cgColor
         button.layer.borderWidth = 2.0
     }
 

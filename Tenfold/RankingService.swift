@@ -24,8 +24,8 @@ class RankingService {
         orderedGameSnapshots = StorageService.restoreOrderedGameSnapshots()
     }
 
-    class func order(gameSnapshots: [GameSnapshot]) -> [GameSnapshot] {
-        return gameSnapshots.sort({ pairOfStats in
+    class func order(_ gameSnapshots: [GameSnapshot]) -> [GameSnapshot] {
+        return gameSnapshots.sorted(by: { pairOfStats in
             pairOfStats.0.historicNumberCount < pairOfStats.1.historicNumberCount
         })
     }
@@ -34,12 +34,12 @@ class RankingService {
         return orderedGameSnapshots.filter({ $0.numbersRemaining == 0 }).count
     }
 
-    func gameIsLongerThanCurrentLongest(game: Game) -> Bool {
+    func gameIsLongerThanCurrentLongest(_ game: Game) -> Bool {
         guard orderedGameSnapshots.count > 0 else {
             return false
         }
 
-        return orderedGameSnapshots.last?.historicNumberCount < game.historicNumberCount
+        return (orderedGameSnapshots.last?.historicNumberCount)! < game.historicNumberCount
     }
 
     func latestGameIsLongest() -> Bool {
@@ -100,16 +100,16 @@ class RankingService {
             return nil
         }
 
-        let endTimes: [NSDate] = orderedSnapshots.map({ $0.endTime })
-        let sortedEndTimes = endTimes.sort({ pairOfDates in
-            pairOfDates.0.compare(pairOfDates.1) == .OrderedAscending
+        let endTimes: [Date] = orderedSnapshots.map({ ($0.endTime as Date) })
+        let sortedEndTimes = endTimes.sorted(by: { pairOfDates in
+            pairOfDates.0.compare(pairOfDates.1) == .orderedAscending
         })
 
-        return endTimes.indexOf(sortedEndTimes.last!)!
+        return endTimes.index(of: sortedEndTimes.last!)!
     }
 
     // swiftlint:disable:next line_length
-    private func orderedWinningGameSnapshots() -> [GameSnapshot] {
+    fileprivate func orderedWinningGameSnapshots() -> [GameSnapshot] {
         return orderedGameSnapshots.filter({ $0.numbersRemaining == 0 })
     }
 }

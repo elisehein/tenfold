@@ -18,42 +18,42 @@ enum RuleGridAnimationType: String {
 
 class RuleGrid: Grid {
 
-    private static let pairingLoopDuration: Double = 2.2
-    private static let pairingLoopReloadDuration: Double = 2
+    fileprivate static let pairingLoopDuration: Double = 2.2
+    fileprivate static let pairingLoopReloadDuration: Double = 2
 
-    private var timers: [NSTimer] = []
-    private let reuseIdentifier = "GameGridCell"
-    private var firstPairingDone: Bool = false
+    fileprivate var timers: [Timer] = []
+    fileprivate let reuseIdentifier = "GameGridCell"
+    fileprivate var firstPairingDone: Bool = false
 
     var values: [Int?] = []
 
     var crossedOutIndeces: [Int] = []
     var pairs: [[Int]] = []
-    var gesture = Gesture(type: .SwipeRight)
+    var gesture = Gesture(type: .swipeRight)
 
     var animationType: RuleGridAnimationType = .Pairings {
         didSet {
             guard animationType != .Pairings else { return }
 
             if animationType == .PairingsWithUndo {
-                gesture.type = .SwipeRight
+                gesture.type = .swipeRight
             } else if animationType == .PullUp {
-                gesture.type = .SwipeUpAndHold
+                gesture.type = .swipeUpAndHold
             }
 
-            gesture.hidden = animationType == .Pairings
+            gesture.isHidden = animationType == .Pairings
         }
     }
 
     init() {
         super.init(frame: CGRect.zero)
 
-        registerClass(GameGridCell.self, forCellWithReuseIdentifier: self.reuseIdentifier)
+        register(GameGridCell.self, forCellWithReuseIdentifier: self.reuseIdentifier)
 
-        backgroundColor = UIColor.clearColor()
+        backgroundColor = UIColor.clear
         delegate = self
         dataSource = self
-        userInteractionEnabled = false
+        isUserInteractionEnabled = false
         clipsToBounds = true
         layer.addSublayer(gesture)
     }
@@ -81,7 +81,7 @@ class RuleGrid: Grid {
             performPairings()
 
             // swiftlint:disable:next line_length
-            after(seconds: Double(pairs.count) * RuleGrid.pairingLoopDuration + RuleGrid.pairingLoopReloadDuration,
+            _ = after(seconds: Double(pairs.count) * RuleGrid.pairingLoopDuration + RuleGrid.pairingLoopReloadDuration,
                   performSelector: #selector(RuleGrid.performPairings),
                   repeats: true)
         } else {
@@ -89,11 +89,11 @@ class RuleGrid: Grid {
 
             // We are delaying the first pull up because for some reason the initial offset will
             // be corrupt if we position the grid and immediately pull up.
-            after(seconds: 0.1,
-                  performSelector: #selector(RuleGrid.pullUp))
-            after(seconds: 6,
-                  performSelector: #selector(RuleGrid.pullUp),
-                  repeats: true)
+            _ = after(seconds: 0.1,
+                      performSelector: #selector(RuleGrid.pullUp))
+            _ = after(seconds: 6,
+                      performSelector: #selector(RuleGrid.pullUp),
+                      repeats: true)
         }
     }
 
@@ -108,30 +108,30 @@ class RuleGrid: Grid {
     func pullUp() {
         gesture.perform(withDelay: 1, completion: {
             self.performActionOnCells(withIndeces: Array(36..<self.values.count), { cell in
-                UIView.animateWithDuration(0.15, delay: 0.4, options: [], animations: {
-                    cell.contentView.backgroundColor = UIColor.themeColor(.OffWhiteShaded)
+                UIView.animate(withDuration: 0.15, delay: 0.4, options: [], animations: {
+                    cell.contentView.backgroundColor = UIColor.themeColor(.offWhiteShaded)
                 }, completion: nil)
             })
         })
 
-        UIView.animateWithDuration(0.5, delay: 1, options: .CurveEaseOut, animations: {
+        UIView.animate(withDuration: 0.5, delay: 1, options: .curveEaseOut, animations: {
             self.contentOffset = CGPoint(x: 0, y: -Grid.cellSpacing)
         }, completion: nil)
 
-        after(seconds: 5, performSelector: #selector(RuleGrid.releasePullUp))
+        _ = after(seconds: 5, performSelector: #selector(RuleGrid.releasePullUp))
     }
 
     func releasePullUp() {
         setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: true)
     }
 
-    private func positionGridForPullUp() {
+    fileprivate func positionGridForPullUp() {
         let cellHeight = Grid.cellSize(forAvailableWidth: bounds.size.width).height
         contentInset.top = 2 * cellHeight + CGFloat(Grid.cellSpacing)
         setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: false)
     }
 
-    private func positionGridForPairing() {
+    fileprivate func positionGridForPairing() {
         contentInset.top = 0
         setContentOffset(CGPoint.zero, animated: false)
     }
@@ -161,22 +161,22 @@ class RuleGrid: Grid {
 
             // Every other pairing should be an undo
             let userInfo: [String: AnyObject] = [
-                "index": pair[0],
-                "otherIndex": pair[1],
-                "reverse": alternatelyUndoingPairing
+                "index": pair[0] as AnyObject,
+                "otherIndex": pair[1] as AnyObject,
+                "reverse": alternatelyUndoingPairing as AnyObject
             ]
 
             let selector = alternatelyUndoingPairing ?
                            #selector(RuleGrid.undoPairing(_:)) :
                            #selector(RuleGrid.selectAndCrossOutPair(_:))
 
-            after(seconds: delay, performSelector: selector, withUserInfo: userInfo)
+            _ = after(seconds: delay, performSelector: selector, withUserInfo: userInfo)
             delay += RuleGrid.pairingLoopDuration
         }
     }
 
-    private func prepareToStartOver(completion completion: (() -> Void)) {
-        var dirtyCells = Array(Set(pairs.flatten()))
+    fileprivate func prepareToStartOver(completion: @escaping (() -> Void)) {
+        var dirtyCells = Array(Set(pairs.joined()))
         dirtyCells += crossedOutIndeces
 
         performActionOnCells(withIndeces: dirtyCells, { cell in
@@ -184,16 +184,16 @@ class RuleGrid: Grid {
         })
     }
 
-    func selectAndCrossOutPair(timer: NSTimer) {
+    func selectAndCrossOutPair(_ timer: Timer) {
         if let userInfo = timer.userInfo! as? [String: AnyObject] {
             selectCell((userInfo["index"]! as? Int)!)
-            after(seconds: 0.7,
-                  performSelector: #selector(RuleGrid.crossOutPairWithUserInfo(_:)),
-                  withUserInfo: userInfo)
+            _ = after(seconds: 0.7,
+                      performSelector: #selector(RuleGrid.crossOutPairWithUserInfo(_:)),
+                      withUserInfo: userInfo)
         }
     }
 
-    func undoPairing(timer: NSTimer) {
+    func undoPairing(_ timer: Timer) {
         if let userInfo = timer.userInfo! as? [String: AnyObject] {
             gesture.perform(completion: {
                 self.crossOutPair((userInfo["index"]! as? Int)!,
@@ -204,7 +204,7 @@ class RuleGrid: Grid {
         }
     }
 
-    func crossOutPairWithUserInfo(timer: NSTimer) {
+    func crossOutPairWithUserInfo(_ timer: Timer) {
         if let userInfo = timer.userInfo! as? [String: AnyObject] {
             crossOutPair((userInfo["index"]! as? Int)!,
                          (userInfo["otherIndex"]! as? Int)!,
@@ -213,11 +213,11 @@ class RuleGrid: Grid {
         }
     }
 
-    func after(seconds seconds: Double,
+    func after(seconds: Double,
                performSelector selector: Selector,
                withUserInfo userInfo: [String: AnyObject]? = nil,
-               repeats: Bool = false) -> NSTimer {
-        let timer = NSTimer.scheduledTimerWithTimeInterval(seconds,
+               repeats: Bool = false) -> Timer {
+        let timer = Timer.scheduledTimer(timeInterval: seconds,
                                                            target: self,
                                                            selector: selector,
                                                            userInfo: userInfo,
@@ -225,26 +225,26 @@ class RuleGrid: Grid {
 
         // This ensures timers are fired while scrolling
         // http://stackoverflow.com/a/2742275/2026098
-        NSRunLoop.mainRunLoop().addTimer(timer, forMode: NSRunLoopCommonModes)
+        RunLoop.main.add(timer, forMode: RunLoopMode.commonModes)
 
         timers.append(timer)
         return timer
     }
 
-    private func selectCell(index: Int) {
-       let indexPath = NSIndexPath(forItem: index, inSection: 0)
+    fileprivate func selectCell(_ index: Int) {
+       let indexPath = IndexPath(item: index, section: 0)
 
-        if let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell {
+        if let cell = cellForItem(at: indexPath) as? GameGridCell {
             cell.indicateSelection()
         }
     }
 
-    private func crossOutPair(index: Int, _ otherIndex: Int, reverse: Bool = false, animated: Bool = false) {
-        let indexPath = NSIndexPath(forItem: index, inSection: 0)
-        let otherIndexPath = NSIndexPath(forItem: otherIndex, inSection: 0)
+    fileprivate func crossOutPair(_ index: Int, _ otherIndex: Int, reverse: Bool = false, animated: Bool = false) {
+        let indexPath = IndexPath(item: index, section: 0)
+        let otherIndexPath = IndexPath(item: otherIndex, section: 0)
 
         for indexPath in [indexPath, otherIndexPath] {
-            if let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell {
+            if let cell = cellForItem(at: indexPath) as? GameGridCell {
                 if reverse {
                     cell.unCrossOut(animated: animated)
                 } else {
@@ -256,7 +256,7 @@ class RuleGrid: Grid {
 
     func prepareForReuse() {
         firstPairingDone = false
-        gesture.hidden = animationType == .Pairings
+        gesture.isHidden = animationType == .Pairings
         reloadData()
     }
 
@@ -266,31 +266,31 @@ class RuleGrid: Grid {
 }
 
 extension RuleGrid: UICollectionViewDataSource {
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
 
-    func collectionView(collectionView: UICollectionView,
+    func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
         return values.count
     }
 
-    func collectionView(collectionView: UICollectionView,
-                        cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier,
-                                                                         forIndexPath: indexPath)
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier,
+                                                                         for: indexPath)
 
         if let cell = cell as? GameGridCell {
             cell.value = values[indexPath.item]
-            cell.state = crossedOutIndeces.contains(indexPath.item) ? .CrossedOut : .Available
+            cell.state = crossedOutIndeces.contains(indexPath.item) ? .crossedOut : .available
             cell.marksEndOfRound = false
-            cell.lightColor = UIColor.themeColor(.OffWhiteShaded)
+            cell.lightColor = UIColor.themeColor(.offWhiteShaded)
 
             if animationType == .PullUp {
                 if indexPath.item == 35 {
                    cell.marksEndOfRound = true
                 } else if indexPath.item > 35 {
-                   cell.lightColor = UIColor.themeColor(.SecondaryAccent)
+                   cell.lightColor = UIColor.themeColor(.secondaryAccent)
                 }
             }
 
@@ -303,9 +303,9 @@ extension RuleGrid: UICollectionViewDataSource {
 }
 
 extension RuleGrid: UICollectionViewDelegateFlowLayout {
-    func collectionView(collectionView: UICollectionView,
+    func collectionView(_ collectionView: UICollectionView,
                         layout: UICollectionViewLayout,
-                        sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
         return Grid.cellSize(forAvailableWidth: bounds.size.width)
     }
 }

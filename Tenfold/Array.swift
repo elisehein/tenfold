@@ -8,22 +8,16 @@
 
 import Foundation
 
-extension Array {
-    var last: Element {
-        return self[max(0, self.endIndex - 1)]
-    }
-}
-
 // swiftlint:disable:next line_length
 // http://supereasyapps.com/blog/2015/9/22/how-to-remove-an-array-of-objects-from-a-swift-2-array-removeobjectsinarray
 extension Array where Element: Equatable {
-    mutating func removeObject(object: Element) {
-        if let index = self.indexOf(object) {
-            self.removeAtIndex(index)
+    mutating func removeObject(_ object: Element) {
+        if let index = self.index(of: object) {
+            self.remove(at: index)
         }
     }
 
-    mutating func removeObjects(array: [Element]) {
+    mutating func removeObjects(_ array: [Element]) {
         for object in array {
             self.removeObject(object)
         }

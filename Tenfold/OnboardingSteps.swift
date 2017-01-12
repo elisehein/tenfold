@@ -11,54 +11,54 @@ import UIKit
 import SwiftyJSON
 
 enum OnboardingStep: Int {
-    case Welcome = 0
-    case AimOfTheGame = 1
-    case CrossOutIdentical = 2
-    case CrossOutSummandsOfTen = 3
-    case PullUp = 4
-    case LastTips = 5
-    case Empty = 6
+    case welcome = 0
+    case aimOfTheGame = 1
+    case crossOutIdentical = 2
+    case crossOutSummandsOfTen = 3
+    case pullUp = 4
+    case lastTips = 5
+    case empty = 6
 }
 
 class OnboardingSteps: UIView {
 
-    private static let steps = JSON.initFromFile("onboardingSteps")!
+    fileprivate static let steps = JSON.initFromFile("onboardingSteps")!
 
-    private static let topLabelAnimationDelay: Double = 0.5
-    private static let bottomLabelAnimationDelay: Double = 0.6
-    private static let animationDuration: Double = 0.8
+    fileprivate static let topLabelAnimationDelay: Double = 0.5
+    fileprivate static let bottomLabelAnimationDelay: Double = 0.6
+    fileprivate static let animationDuration: Double = 0.8
 
-    private let topLabel = UILabel()
-    private let bottomLabel = UILabel()
-    private let downArrow = UIImageView(image: UIImage(named: "chevron-down"))
+    fileprivate let topLabel = UILabel()
+    fileprivate let bottomLabel = UILabel()
+    fileprivate let downArrow = UIImageView(image: UIImage(named: "chevron-down"))
 
     let buttonsContainer = UIView()
-    private let okButton = Button()
-    private let dismissButton = Button()
+    fileprivate let okButton = Button()
+    fileprivate let dismissButton = Button()
 
-    private let labelBaseAttributes: [String: AnyObject] = {
-        let isIPad = UIDevice.currentDevice().userInterfaceIdiom == .Pad
+    fileprivate let labelBaseAttributes: [String: AnyObject] = {
+        let isIPad = UIDevice.current.userInterfaceIdiom == .pad
 
         var paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .Center
+        paragraphStyle.alignment = .center
         paragraphStyle.lineSpacing = isIPad ? 7 : 4
 
         let attributes = [
-            NSForegroundColorAttributeName: UIColor.themeColor(.OffBlack),
+            NSForegroundColorAttributeName: UIColor.themeColor(.offBlack),
             NSParagraphStyleAttributeName: paragraphStyle,
             NSFontAttributeName: UIFont.themeFontWithSize(isIPad ? 18 : 14)
-        ]
+        ] as [String : AnyObject]
 
         return attributes
     }()
 
-    private var hasLoadedConstraints = false
+    fileprivate var hasLoadedConstraints = false
 
     var currentStep: OnboardingStep?
 
     var onDismiss: (() -> Void)?
-    var onBeginTransitionToStep: ((onboardingStep: OnboardingStep) -> Void)?
-    var onEndTransitionToStep: ((onboardingStep: OnboardingStep) -> Void)?
+    var onBeginTransitionToStep: ((_ onboardingStep: OnboardingStep) -> Void)?
+    var onEndTransitionToStep: ((_ onboardingStep: OnboardingStep) -> Void)?
 
     init() {
         super.init(frame: CGRect.zero)
@@ -71,42 +71,42 @@ class OnboardingSteps: UIView {
         addSubview(topLabel)
         addSubview(bottomLabel)
 
-        buttonsContainer.hidden = true
+        buttonsContainer.isHidden = true
 
-        okButton.setTitle("Yes", forState: .Normal)
+        okButton.setTitle("Yes", for: UIControlState())
         okButton.addTarget(self,
                            action: #selector(OnboardingSteps.transitionToNextStep),
-                           forControlEvents: .TouchUpInside)
+                           for: .touchUpInside)
 
-        dismissButton.setTitle("No", forState: .Normal)
+        dismissButton.setTitle("No", for: UIControlState())
         dismissButton.addTarget(self,
                            action: #selector(OnboardingSteps.didDismissOnboarding),
-                           forControlEvents: .TouchUpInside)
+                           for: .touchUpInside)
 
         addSubview(buttonsContainer)
         buttonsContainer.addSubview(okButton)
         buttonsContainer.addSubview(dismissButton)
 
-        downArrow.contentMode = .Center
-        downArrow.hidden = true
+        downArrow.contentMode = .center
+        downArrow.isHidden = true
         addSubview(downArrow)
 
         setNeedsUpdateConstraints()
     }
 
     func begin() {
-        transitionToStep(.Welcome)
+        transitionToStep(.welcome)
     }
 
-    func transitionToStep(onboardingStep: OnboardingStep) {
+    func transitionToStep(_ onboardingStep: OnboardingStep) {
         currentStep = onboardingStep
-        onBeginTransitionToStep?(onboardingStep: onboardingStep)
+        onBeginTransitionToStep?(onboardingStep)
 
         let firstStep = OnboardingSteps.steps[onboardingStep.rawValue][0].string!
         topLabel.attributedText = NSAttributedString(string: firstStep,
                                                      attributes: labelBaseAttributes)
 
-        UIView.animateWithDuration(OnboardingSteps.animationDuration,
+        UIView.animate(withDuration: OnboardingSteps.animationDuration,
                                    delay: topLabelAppearanceDelay(forStep: onboardingStep),
                                    options: [],
                                    animations: {
@@ -115,31 +115,31 @@ class OnboardingSteps: UIView {
             if OnboardingSteps.steps[onboardingStep.rawValue].count > 1 {
                 self.showBottomLabel(forOnboardingStep: onboardingStep)
             } else {
-                self.onEndTransitionToStep?(onboardingStep: onboardingStep)
+                self.onEndTransitionToStep?(onboardingStep)
             }
         })
 
-        if onboardingStep == .Welcome {
+        if onboardingStep == .welcome {
             displayButtons()
         }
     }
 
-    private func showBottomLabel(forOnboardingStep onboardingStep: OnboardingStep) {
+    fileprivate func showBottomLabel(forOnboardingStep onboardingStep: OnboardingStep) {
         let secondStep = OnboardingSteps.steps[onboardingStep.rawValue][1].string!
         bottomLabel.attributedText = NSAttributedString(string: secondStep,
                                                         attributes: labelBaseAttributes)
-        UIView.animateWithDuration(OnboardingSteps.animationDuration,
+        UIView.animate(withDuration: OnboardingSteps.animationDuration,
                                    delay: bottomLabelAppearanceDelay(forStep: onboardingStep),
                                    options: [],
                                    animations: {
             self.bottomLabel.alpha = 1
         }, completion: { _ in
-            self.onEndTransitionToStep?(onboardingStep: onboardingStep)
+            self.onEndTransitionToStep?(onboardingStep)
         })
     }
 
     func transitionToNextStep() {
-        UIView.animateWithDuration(0.3, animations: {
+        UIView.animate(withDuration: 0.3, animations: {
             self.topLabel.alpha = 0
             self.bottomLabel.alpha = 0
             self.removeStepExtras(self.currentStep!)
@@ -149,40 +149,40 @@ class OnboardingSteps: UIView {
         })
     }
 
-    private func topLabelAppearanceDelay(forStep onboardingStep: OnboardingStep) -> Double {
+    fileprivate func topLabelAppearanceDelay(forStep onboardingStep: OnboardingStep) -> Double {
         switch onboardingStep {
-        case .PullUp:
+        case .pullUp:
             return 1
         default:
             return OnboardingSteps.topLabelAnimationDelay
         }
     }
 
-    private func bottomLabelAppearanceDelay(forStep onboardingStep: OnboardingStep) -> Double {
+    fileprivate func bottomLabelAppearanceDelay(forStep onboardingStep: OnboardingStep) -> Double {
         switch onboardingStep {
-        case .CrossOutIdentical:
+        case .crossOutIdentical:
             return 2
         default:
             return OnboardingSteps.bottomLabelAnimationDelay
         }
     }
 
-    private func removeStepExtras(onboardingStep: OnboardingStep) {
+    fileprivate func removeStepExtras(_ onboardingStep: OnboardingStep) {
         switch onboardingStep {
-        case .Welcome:
+        case .welcome:
             removeButtons()
         default:
             return
         }
     }
 
-    private func displayButtons() {
+    fileprivate func displayButtons() {
         buttonsContainer.alpha = 0
-        buttonsContainer.hidden = false
+        buttonsContainer.isHidden = false
 
         // swiftlint:disable:next line_length
         let delay = OnboardingSteps.topLabelAnimationDelay + OnboardingSteps.animationDuration + OnboardingSteps.bottomLabelAnimationDelay
-        UIView.animateWithDuration(OnboardingSteps.animationDuration,
+        UIView.animate(withDuration: OnboardingSteps.animationDuration,
                                    delay: delay,
                                    options: [],
                                    animations: {
@@ -190,8 +190,8 @@ class OnboardingSteps: UIView {
         }, completion: nil)
     }
 
-    private func removeButtons() {
-        UIView.animateWithDuration(0.3, animations: {
+    fileprivate func removeButtons() {
+        UIView.animate(withDuration: 0.3, animations: {
             self.buttonsContainer.alpha = 0
         }, completion: { _ in
             self.buttonsContainer.removeFromSuperview()
@@ -205,32 +205,32 @@ class OnboardingSteps: UIView {
     override func updateConstraints() {
         if !hasLoadedConstraints {
 
-            topLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: 30)
-            bottomLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: topLabel, withOffset: 15)
+            topLabel.autoPinEdge(toSuperviewEdge: .top, withInset: 30)
+            bottomLabel.autoPinEdge(.top, to: .bottom, of: topLabel, withOffset: 15)
 
             for label in [topLabel, bottomLabel] {
-                label.autoAlignAxisToSuperviewAxis(.Vertical)
-                label.autoMatchDimension(.Width,
-                                         toDimension: .Width,
-                                         ofView: self,
+                label.autoAlignAxis(toSuperviewAxis: .vertical)
+                label.autoMatch(.width,
+                                         to: .width,
+                                         of: self,
                                          withMultiplier: 0.85)
             }
 
-            buttonsContainer.autoPinEdge(.Top, toEdge: .Bottom, ofView: bottomLabel, withOffset: 30)
-            buttonsContainer.autoAlignAxisToSuperviewAxis(.Vertical)
-            buttonsContainer.autoSetDimension(.Height, toSize: Menu.buttonHeight)
-            buttonsContainer.autoMatchDimension(.Width,
-                                                toDimension: .Width,
-                                                ofView: self,
+            buttonsContainer.autoPinEdge(.top, to: .bottom, of: bottomLabel, withOffset: 30)
+            buttonsContainer.autoAlignAxis(toSuperviewAxis: .vertical)
+            buttonsContainer.autoSetDimension(.height, toSize: Menu.buttonHeight)
+            buttonsContainer.autoMatch(.width,
+                                                to: .width,
+                                                of: self,
                                                 withMultiplier: 0.6)
 
-            okButton.autoPinEdgesToSuperviewMarginsExcludingEdge(.Right)
-            dismissButton.autoPinEdgesToSuperviewMarginsExcludingEdge(.Left)
+            okButton.autoPinEdges(toSuperviewMarginsExcludingEdge: .right)
+            dismissButton.autoPinEdges(toSuperviewMarginsExcludingEdge: .left)
 
             for button in [okButton, dismissButton] {
-                button.autoMatchDimension(.Width,
-                                          toDimension: .Width,
-                                          ofView: buttonsContainer, withMultiplier: 0.5)
+                button.autoMatch(.width,
+                                          to: .width,
+                                          of: buttonsContainer, withMultiplier: 0.5)
             }
 
             hasLoadedConstraints = true

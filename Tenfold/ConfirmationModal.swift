@@ -13,12 +13,12 @@ import PureLayout
 
 class ConfirmationModal: ModalOverlay {
 
-    private let game: Game
+    fileprivate let game: Game
 
-    private let titleLabel = UILabel()
-    private let textLabel = UILabel()
-    private let yesButton = Button()
-    private let cancelButton = Button()
+    fileprivate let titleLabel = UILabel()
+    fileprivate let textLabel = UILabel()
+    fileprivate let yesButton = Button()
+    fileprivate let cancelButton = Button()
 
     var onTapYes: (() -> Void)?
 
@@ -26,31 +26,31 @@ class ConfirmationModal: ModalOverlay {
 
     init(game: Game) {
         self.game = game
-        super.init(position: .Bottom)
+        super.init(position: .bottom)
 
-        titleLabel.attributedText = NSMutableAttributedString.themeString(.Title, "Are you sure?")
-        titleLabel.textColor = UIColor.themeColor(.OffBlack)
-        titleLabel.textAlignment = .Center
+        titleLabel.attributedText = NSMutableAttributedString.themeString(.title, "Are you sure?")
+        titleLabel.textColor = UIColor.themeColor(.offBlack)
+        titleLabel.textAlignment = .center
 
         setText()
         textLabel.numberOfLines = 0
 
-        ModalOverlay.configureModalButton(yesButton, color: UIColor.themeColor(.OffWhiteShaded))
-        yesButton.setTitle("Start over", forState: .Normal)
+        ModalOverlay.configureModalButton(yesButton, color: UIColor.themeColor(.offWhiteShaded))
+        yesButton.setTitle("Start over", for: UIControlState())
         yesButton.addTarget(self,
                             action: #selector(ConfirmationModal.didTapYes),
-                            forControlEvents: .TouchUpInside)
+                            for: .touchUpInside)
 
-        ModalOverlay.configureModalButton(cancelButton, color: UIColor.themeColor(.SecondaryAccent))
-        cancelButton.setTitle("Keep going", forState: .Normal)
+        ModalOverlay.configureModalButton(cancelButton, color: UIColor.themeColor(.secondaryAccent))
+        cancelButton.setTitle("Keep going", for: UIControlState())
         cancelButton.addTarget(self,
                                action: #selector(ConfirmationModal.didTapCancel),
-                               forControlEvents: .TouchUpInside)
+                               for: .touchUpInside)
 
-        modal.addSubview(titleLabel)
-        modal.addSubview(textLabel)
-        modal.addSubview(yesButton)
-        modal.addSubview(cancelButton)
+        modalBox.addSubview(titleLabel)
+        modalBox.addSubview(textLabel)
+        modalBox.addSubview(yesButton)
+        modalBox.addSubview(cancelButton)
     }
 
     override func viewDidLoad() {
@@ -60,30 +60,24 @@ class ConfirmationModal: ModalOverlay {
 
     override func updateViewConstraints() {
         if !hasLoadedConstraints {
-            titleLabel.autoAlignAxisToSuperviewAxis(.Vertical)
-            titleLabel.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
-            titleLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: ModalOverlay.contentPadding)
+            titleLabel.autoAlignAxis(toSuperviewAxis: .vertical)
+            titleLabel.autoMatch(.width, to: .width, of: modalBox)
+            titleLabel.autoPinEdge(toSuperviewEdge: .top, withInset: ModalOverlay.contentPadding)
 
-            textLabel.autoPinEdgeToSuperviewEdge(.Left, withInset: ModalOverlay.horizontalInset)
-            textLabel.autoPinEdgeToSuperviewEdge(.Right, withInset: ModalOverlay.horizontalInset)
-            textLabel.autoPinEdge(.Top,
-                                  toEdge: .Bottom,
-                                  ofView: titleLabel,
-                                  withOffset: ModalOverlay.titleTextSpacing)
-            textLabel.autoPinEdge(.Bottom,
-                                  toEdge: .Top,
-                                  ofView: yesButton,
-                                  withOffset: -ModalOverlay.contentPadding)
+            textLabel.autoPinEdge(toSuperviewEdge: .left, withInset: ModalOverlay.horizontalInset)
+            textLabel.autoPinEdge(toSuperviewEdge: .right, withInset: ModalOverlay.horizontalInset)
+            textLabel.autoPinEdge(.top, to: .bottom, of: titleLabel, withOffset: ModalOverlay.titleTextSpacing)
+            textLabel.autoPinEdge(.bottom, to: .top, of: yesButton, withOffset: -ModalOverlay.contentPadding)
 
-            yesButton.autoAlignAxisToSuperviewAxis(.Vertical)
-            yesButton.autoPinEdge(.Bottom, toEdge: .Top, ofView: cancelButton, withOffset: 2)
-            yesButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
-            yesButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
+            yesButton.autoAlignAxis(toSuperviewAxis: .vertical)
+            yesButton.autoPinEdge(.bottom, to: .top, of: cancelButton, withOffset: 2)
+            yesButton.autoMatch(.width, to: .width, of: modalBox)
+            yesButton.autoSetDimension(.height, toSize: ModalOverlay.modalButtonHeight)
 
-            cancelButton.autoAlignAxisToSuperviewAxis(.Vertical)
-            cancelButton.autoPinEdgeToSuperviewEdge(.Bottom)
-            cancelButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
-            cancelButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
+            cancelButton.autoAlignAxis(toSuperviewAxis: .vertical)
+            cancelButton.autoPinEdge(toSuperviewEdge: .bottom)
+            cancelButton.autoMatch(.width, to: .width, of: modalBox)
+            cancelButton.autoSetDimension(.height, toSize: ModalOverlay.modalButtonHeight)
 
             hasLoadedConstraints = true
         }
@@ -91,7 +85,7 @@ class ConfirmationModal: ModalOverlay {
         super.updateViewConstraints()
     }
 
-    private func setText() {
+    fileprivate func setText() {
         let numbersRemaining = game.numbersRemaining()
         let historicNumbersCrossedOut = game.historicNumbersCrossedOut()
         let uniqueValues = game.numberOfUniqueValues()
@@ -114,21 +108,21 @@ class ConfirmationModal: ModalOverlay {
                    randomMotivationalQuote()
         }
 
-        textLabel.attributedText = NSMutableAttributedString.themeString(.Paragraph, text)
+        textLabel.attributedText = NSMutableAttributedString.themeString(.paragraph, text)
     }
 
     func didTapYes() {
-        dismissViewControllerAnimated(true, completion: { _ in
+        dismiss(animated: true, completion: { _ in
             self.onTapYes!()
         })
     }
 
     func didTapCancel() {
-        dismissViewControllerAnimated(true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
 
-    private func randomMotivationalQuote() -> String {
-        return CopyService.phrasebook(.Motivational).arrayValue.randomElement().string!
+    fileprivate func randomMotivationalQuote() -> String {
+        return CopyService.phrasebook(.motivational).arrayValue.randomElement().string!
     }
 
     required init?(coder aDecoder: NSCoder) {

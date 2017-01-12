@@ -14,19 +14,24 @@ class MaybeRemoteJSON {
 
     var data: JSON?
 
+    // This has to be retained, otherwise it's gone by the time
+    // the callback executes, resulting in a cancelled request.
+    var sessionManager: SessionManager?
+
     init(fromUrl urlString: String, withBackupFile fileName: String) {
         data = JSON.initFromFile(fileName)
 
-        let URL = NSURL(string: urlString)!
-        let URLRequest = NSMutableURLRequest(URL: URL)
-        URLRequest.cachePolicy = .ReloadIgnoringCacheData
+        let configuration = URLSessionConfiguration.default
+        configuration.urlCache = nil
+        sessionManager = Alamofire.SessionManager(configuration: configuration)
 
-        Alamofire.request(URLRequest).response { request, response, remoteData, error in
-                guard error == nil else { return }
-                guard remoteData != nil else { return }
-                guard response?.statusCode == 200 else { return }
+        sessionManager!.request(urlString).responseJSON { response in
+            guard response.result.value != nil else { return }
+            guard response.response?.statusCode == 200 else { return }
 
-                self.data = JSON(data: remoteData!)
+            if let responseData = response.result.value {
+                self.data = JSON(responseData)
+            }
         }
     }
 }

@@ -12,35 +12,35 @@ import UIKit
 import PureLayout
 
 enum PillType {
-    case Text
-    case Icon
+    case text
+    case icon
 }
 
 class Pill: UIView {
 
     static let detailFontSize: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 14 : 11
+        return UIDevice.current.userInterfaceIdiom == .pad ? 14 : 11
 
     }()
 
-    private static let iconSize: CGFloat = 70
-    private static let pulseDuration = GameGridCell.animationDuration
+    fileprivate static let iconSize: CGFloat = 70
+    fileprivate static let pulseDuration = GameGridCell.animationDuration
 
     static let margin: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 25 : 15
+        return UIDevice.current.userInterfaceIdiom == .pad ? 25 : 15
     }()
 
     static let labelHeight: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 50 : 38
+        return UIDevice.current.userInterfaceIdiom == .pad ? 50 : 38
     }()
 
     static let labelWidthAddition: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 50 : 30
+        return UIDevice.current.userInterfaceIdiom == .pad ? 50 : 30
     }()
 
     let label = UILabel()
     let shadowLayer = UIView()
-    private let iconView = UIImageView()
+    fileprivate let iconView = UIImageView()
 
     var iconName: String? {
         didSet {
@@ -56,19 +56,19 @@ class Pill: UIView {
     }
 
     var isShowing = false
-    private var dismissalInProgress = false
-    private var popupInProgress = false
-    private var popupCompletion: (() -> Void)?
-    private var type: PillType
+    fileprivate var dismissalInProgress = false
+    fileprivate var popupInProgress = false
+    fileprivate var popupCompletion: (() -> Void)?
+    fileprivate var type: PillType
 
-    var anchorEdge: ALEdge = .Bottom
+    var anchorEdge: ALEdge = .bottom
 
     init(type: PillType) {
         self.type = type
         super.init(frame: CGRect.zero)
 
-        shadowLayer.backgroundColor = UIColor.clearColor()
-        shadowLayer.layer.shadowColor = UIColor.blackColor().CGColor
+        shadowLayer.backgroundColor = UIColor.clear
+        shadowLayer.layer.shadowColor = UIColor.black.cgColor
         shadowLayer.layer.shadowOffset = CGSize(width: 1, height: 1)
         shadowLayer.layer.shadowOpacity = 0.5
         shadowLayer.layer.shadowRadius = 2
@@ -77,13 +77,13 @@ class Pill: UIView {
 
         addSubview(shadowLayer)
 
-        if type == .Text {
-            label.backgroundColor = UIColor.themeColor(.OffBlack).colorWithAlphaComponent(0.92)
+        if type == .text {
+            label.backgroundColor = UIColor.themeColor(.offBlack).withAlphaComponent(0.92)
             label.layer.masksToBounds = true
             addSubview(label)
         } else {
-            iconView.backgroundColor = UIColor.themeColor(.OffBlack).colorWithAlphaComponent(0.8)
-            iconView.contentMode = .Center
+            iconView.backgroundColor = UIColor.themeColor(.offBlack).withAlphaComponent(0.8)
+            iconView.contentMode = .center
             iconView.layer.masksToBounds = true
             addSubview(iconView)
         }
@@ -92,23 +92,23 @@ class Pill: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        if type == .Text {
+        if type == .text {
             label.frame = bounds
             label.layer.cornerRadius = label.frame.size.height / 2
             shadowLayer.layer.shadowPath = UIBezierPath(roundedRect: label.frame,
-                                                        cornerRadius: label.layer.cornerRadius).CGPath
+                                                        cornerRadius: label.layer.cornerRadius).cgPath
         } else {
             iconView.frame = bounds
             iconView.layer.cornerRadius = iconView.frame.size.height / 2
             shadowLayer.layer.shadowPath = UIBezierPath(roundedRect: iconView.frame,
-                                                        cornerRadius: iconView.layer.cornerRadius).CGPath
+                                                        cornerRadius: iconView.layer.cornerRadius).cgPath
         }
 
         shadowLayer.frame = bounds
     }
 
     func constructAttributedString(withText text: String) -> NSMutableAttributedString {
-        return NSMutableAttributedString.themeString(.Pill, text)
+        return NSMutableAttributedString.themeString(.pill, text)
     }
 
     func popup(forSeconds seconds: Double,
@@ -123,9 +123,8 @@ class Pill: UIView {
                showing: true,
                animated: true)
 
-        let triggerTime = dispatch_time(DISPATCH_TIME_NOW, Int64(seconds * Double(NSEC_PER_SEC)))
-        dispatch_after(triggerTime,
-                       dispatch_get_main_queue(), { () -> Void in
+        let triggerTime = DispatchTime.now() + Double(Int64(seconds * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
+        DispatchQueue.main.asyncAfter(deadline: triggerTime, execute: { () -> Void in
                         self.toggle(inFrame: parentFrame,
                             showing: false,
                             animated: true,
@@ -143,18 +142,18 @@ class Pill: UIView {
                        width: Pill.iconSize,
                        height: Pill.iconSize)
         center = CGPoint(x: parentFrame.width / 2, y: parentFrame.height / 2)
-        transform = CGAffineTransformMakeScale(0.001, 0.001)
+        transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
 
-        UIView.animateWithDuration(0.6,
+        UIView.animate(withDuration: 0.6,
                                    delay: 0,
                                    usingSpringWithDamping: 0.6,
                                    initialSpringVelocity: 0.3,
-                                   options: [.CurveEaseIn],
+                                   options: [.curveEaseIn],
                                    animations: {
             self.alpha = 1
-            self.transform = CGAffineTransformMakeScale(1, 1)
+            self.transform = CGAffineTransform(scaleX: 1, y: 1)
         }, completion: { _ in
-            UIView.animateWithDuration(0.4, delay: 0.2, options: [], animations: {
+            UIView.animate(withDuration: 0.4, delay: 0.2, options: [], animations: {
                 self.alpha = 0
             }, completion: nil)
         })
@@ -178,11 +177,11 @@ class Pill: UIView {
         // Ensure we begin the transition from the correct position
         frame = frameInside(frame: parentFrame, showing: !showing)
 
-        UIView.animateWithDuration(animated ? 0.6 : 0,
+        UIView.animate(withDuration: animated ? 0.6 : 0,
                                    delay: 0,
                                    usingSpringWithDamping: 0.7,
                                    initialSpringVelocity: 0.3,
-                                   options: [.CurveEaseIn, .BeginFromCurrentState],
+                                   options: [.curveEaseIn, .beginFromCurrentState],
                                    animations: {
             self.alpha = showing ? 1 : 0
             self.frame = self.frameInside(frame: parentFrame, showing: showing)
@@ -191,12 +190,12 @@ class Pill: UIView {
         })
     }
 
-    func dismiss(inFrame parentFrame: CGRect, completion: (() -> Void)) {
+    func dismiss(inFrame parentFrame: CGRect, completion: @escaping (() -> Void)) {
         dismissalInProgress = true
 
-        UIView.animateWithDuration(1,
+        UIView.animate(withDuration: 1,
                                    delay: 0,
-                                   options: .CurveEaseOut,
+                                   options: .curveEaseOut,
                                    animations: {
                                     self.alpha = 0
                                     var dismissedFrame = self.frame
@@ -209,32 +208,32 @@ class Pill: UIView {
         })
     }
 
-    private func frameInside(frame parentFrame: CGRect, showing: Bool) -> CGRect {
-        let width = type == .Icon ? Pill.iconSize : textLabelWidth()
-        let height = type == .Icon ? Pill.iconSize : Pill.labelHeight
+    fileprivate func frameInside(frame parentFrame: CGRect, showing: Bool) -> CGRect {
+        let width = type == .icon ? Pill.iconSize : textLabelWidth()
+        let height = type == .icon ? Pill.iconSize : Pill.labelHeight
 
         var y: CGFloat = 0
         var x: CGFloat = 0
 
         if showing {
-            if anchorEdge == .Bottom {
+            if anchorEdge == .bottom {
                 y = parentFrame.height - height - Pill.margin
                 x = (parentFrame.width - width) / 2
-            } else if anchorEdge == .Top {
+            } else if anchorEdge == .top {
                 y = Pill.margin
                 x = (parentFrame.width - width) / 2
-            } else if anchorEdge == .Left {
+            } else if anchorEdge == .left {
                 y = (parentFrame.height - height) / 2
                 x = Pill.margin
             }
         } else {
-            if anchorEdge == .Bottom {
+            if anchorEdge == .bottom {
                 y = parentFrame.height + 10
                 x = (parentFrame.width - width) / 2
-            } else if anchorEdge == .Top {
+            } else if anchorEdge == .top {
                 y = -(height + 10)
                 x = (parentFrame.width - width) / 2
-            } else if anchorEdge == .Left {
+            } else if anchorEdge == .left {
                 y = (parentFrame.height - height) / 2
                 x = -(width + 10)
             }
@@ -244,10 +243,10 @@ class Pill: UIView {
     }
 
     func textLabelWidth() -> CGFloat {
-        return label.intrinsicContentSize().width + Pill.labelWidthAddition
+        return label.intrinsicContentSize.width + Pill.labelWidthAddition
     }
 
-    private func triggerPendingPopupCompletion() {
+    fileprivate func triggerPendingPopupCompletion() {
         popupInProgress = false
         popupCompletion?()
         popupCompletion = nil

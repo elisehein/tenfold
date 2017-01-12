@@ -10,23 +10,23 @@ import Foundation
 import UIKit
 
 enum FontWeight {
-    case Regular
-    case Bold
-    case Italic
+    case regular
+    case bold
+    case italic
 }
 
 extension UIFont {
-    class func themeFontWithSize(fontSize: CGFloat) -> UIFont {
-        return themeFontWithSize(fontSize, weight: .Regular)
+    class func themeFontWithSize(_ fontSize: CGFloat) -> UIFont {
+        return themeFontWithSize(fontSize, weight: .regular)
     }
 
-    class func themeFontWithSize(fontSize: CGFloat, weight: FontWeight) -> UIFont {
+    class func themeFontWithSize(_ fontSize: CGFloat, weight: FontWeight) -> UIFont {
         switch weight {
-        case .Regular:
+        case .regular:
             return UIFont(name: "SourceSansPro-Regular", size: fontSize)!
-        case .Bold:
+        case .bold:
             return UIFont(name: "SourceSansPro-Semibold", size: fontSize)!
-        case .Italic:
+        case .italic:
             return UIFont(name: "SourceSansPro-It", size: fontSize)!
         }
 

@@ -11,12 +11,12 @@ import SwiftyJSON
 import Alamofire
 
 extension JSON {
-    static func initFromFile(fileName: String) -> JSON? {
+    static func initFromFile(_ fileName: String) -> JSON? {
         var data: JSON?
 
-        if let path = NSBundle.mainBundle().pathForResource(fileName, ofType: "json") {
+        if let path = Bundle.main.path(forResource: fileName, ofType: "json") {
             do {
-                let jsonData = try NSData(contentsOfFile: path, options: .DataReadingMappedIfSafe)
+                let jsonData = try Data(contentsOf: Foundation.URL(fileURLWithPath: path), options: .mappedIfSafe)
                 data = JSON(data: jsonData)
             } catch {
                 print("Error retrieving JSON data")

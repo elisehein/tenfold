@@ -11,9 +11,9 @@ import AVFoundation
 import AudioToolbox
 
 enum Sound {
-    case CrossOut
-    case CrossOutRow
-    case NextRound
+    case crossOut
+    case crossOutRow
+    case nextRound
 }
 
 class SoundService {
@@ -29,12 +29,12 @@ class SoundService {
             print(error)
         }
 
-        players[.CrossOut] = SoundService.player(.CrossOut)
-        players[.CrossOutRow] = SoundService.player(.CrossOutRow)
-        players[.NextRound] = SoundService.player(.NextRound)
+        players[.crossOut] = SoundService.player(.crossOut)
+        players[.crossOutRow] = SoundService.player(.crossOutRow)
+        players[.nextRound] = SoundService.player(.nextRound)
     }
 
-    class func player(sound: Sound) -> AVAudioPlayer? {
+    class func player(_ sound: Sound) -> AVAudioPlayer? {
         let sound = NSDataAsset(name: SoundService.assetName(sound))
         var player: AVAudioPlayer? = nil
 
@@ -50,28 +50,28 @@ class SoundService {
         return player
     }
 
-    class func assetName(sound: Sound) -> String {
+    class func assetName(_ sound: Sound) -> String {
         switch sound {
-        case .CrossOut:
+        case .crossOut:
             return "crossOut"
-        case .CrossOutRow:
+        case .crossOutRow:
             return "crossOutRow"
-        case .NextRound:
+        case .nextRound:
             return "nextRound"
         }
     }
 
-    func playIfAllowed(sound: Sound) {
+    func playIfAllowed(_ sound: Sound) {
         if StorageService.currentFlag(forSetting: .SoundOn) {
             (players[sound]!)!.play()
         }
     }
 
-    func vibrateIfAllowed(sound: Sound) {
+    func vibrateIfAllowed(_ sound: Sound) {
         guard forceTouchVibrationsAvailable() else { return }
 
         if StorageService.currentFlag(forSetting: .VibrationOn) {
-            if sound == .CrossOut {
+            if sound == .crossOut {
                 AudioServicesPlaySystemSound(1519)
             } else {
                 AudioServicesPlaySystemSound(1521)
@@ -81,7 +81,7 @@ class SoundService {
 
     func forceTouchVibrationsAvailable() -> Bool {
         // swiftlint:disable line_length
-        return UIDevice.currentDevice().userInterfaceIdiom != .Pad &&
-               UIApplication.sharedApplication().keyWindow?.rootViewController?.traitCollection.forceTouchCapability == .Available
+        return UIDevice.current.userInterfaceIdiom != .pad &&
+               UIApplication.shared.keyWindow?.rootViewController?.traitCollection.forceTouchCapability == .available
     }
 }

@@ -10,24 +10,24 @@ import Foundation
 import SwiftyJSON
 
 enum Phrasebook {
-    case Motivational
-    case LastNumberInstance
-    case AppInfo
+    case motivational
+    case lastNumberInstance
+    case appInfo
 }
 
 class CopyService {
     static var singleton: CopyService? = nil
 
     let phrasebooks: [Phrasebook: MaybeRemoteJSON] = [
-        .Motivational: CopyService.makePhrasebook(fromRemoteFileName: "motivational-phrases",
+        .motivational: CopyService.makePhrasebook(fromRemoteFileName: "motivational-phrases",
                                                   withBackupFileName: "motivationalPhrases"),
-        .LastNumberInstance: CopyService.makePhrasebook(fromRemoteFileName: "last-number-instance",
+        .lastNumberInstance: CopyService.makePhrasebook(fromRemoteFileName: "last-number-instance",
                                                         withBackupFileName: "lastNumberInstance"),
-        .AppInfo: CopyService.makePhrasebook(fromRemoteFileName: "app-info",
+        .appInfo: CopyService.makePhrasebook(fromRemoteFileName: "app-info",
                                              withBackupFileName: "appInfo")
     ]
 
-    class func url(jsonFileName: String) -> String {
+    class func url(_ jsonFileName: String) -> String {
         return "http://tenfoldapp.com/api/\(jsonFileName).json"
     }
 
@@ -37,7 +37,7 @@ class CopyService {
                                withBackupFile: backupFileName)
     }
 
-    class func phrasebook(phrasebook: Phrasebook) -> JSON {
+    class func phrasebook(_ phrasebook: Phrasebook) -> JSON {
         return (singleton?.phrasebooks[phrasebook]!.data!)!
     }
 }

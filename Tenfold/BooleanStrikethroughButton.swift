@@ -11,13 +11,13 @@ import UIKit
 
 class BooleanStrikethroughButton: Button {
 
-    private let lineLayer = CAShapeLayer()
+    fileprivate let lineLayer = CAShapeLayer()
 
     var struckthrough: Bool = false
 
     init() {
         super.init(frame: CGRect.zero)
-        lineLayer.strokeColor = UIColor.themeColor(.OffBlack).CGColor
+        lineLayer.strokeColor = UIColor.themeColor(.offBlack).cgColor
         lineLayer.lineWidth = 1
         layer.addSublayer(lineLayer)
     }
@@ -41,11 +41,11 @@ class BooleanStrikethroughButton: Button {
         }
 
         animation.fillMode = kCAFillModeBoth
-        animation.removedOnCompletion = false
-        lineLayer.addAnimation(animation, forKey: "startAnimation")
+        animation.isRemovedOnCompletion = false
+        lineLayer.add(animation, forKey: "startAnimation")
     }
 
-    private func startingPath() -> CGPath {
+    fileprivate func startingPath() -> CGPath {
         if struckthrough {
             return midPointPath()
         } else {
@@ -53,7 +53,7 @@ class BooleanStrikethroughButton: Button {
         }
     }
 
-    private func endPath() -> CGPath {
+    fileprivate func endPath() -> CGPath {
         if struckthrough {
             return fullWidthLinePath()
         } else {
@@ -61,26 +61,26 @@ class BooleanStrikethroughButton: Button {
         }
     }
 
-    private func midPointPath() -> CGPath {
+    fileprivate func midPointPath() -> CGPath {
         let y = bounds.size.height / 2 + 2
         let path = UIBezierPath()
         let point = CGPoint(x: bounds.size.width / 2, y: y)
-        path.moveToPoint(point)
-        path.addLineToPoint(point)
-        return path.CGPath
+        path.move(to: point)
+        path.addLine(to: point)
+        return path.cgPath
     }
 
-    private func fullWidthLinePath() -> CGPath {
-        if let textWidth = attributedTitleForState(.Normal)?.size().width {
+    fileprivate func fullWidthLinePath() -> CGPath {
+        if let textWidth = attributedTitle(for: UIControlState())?.size().width {
             let startX = (bounds.size.width - textWidth) / 2
             let endX = startX + textWidth
             let y = bounds.size.height / 2 + 2
             let path = UIBezierPath()
-            path.moveToPoint(CGPoint(x: startX, y: y))
-            path.addLineToPoint(CGPoint(x: endX, y: y))
-            return path.CGPath
+            path.move(to: CGPoint(x: startX, y: y))
+            path.addLine(to: CGPoint(x: endX, y: y))
+            return path.cgPath
         } else {
-            return UIBezierPath().CGPath
+            return UIBezierPath().cgPath
         }
     }
 
