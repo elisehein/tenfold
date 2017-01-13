@@ -13,14 +13,14 @@ import PureLayout
 
 class UpdatesModal: ModalOverlay {
 
-    fileprivate let titleLabel = UILabel()
-    fileprivate let textLabel = UILabel()
-    fileprivate let okButton = Button()
+    private let titleLabel = UILabel()
+    private let textLabel = UILabel()
+    private let okButton = Button()
 
-    fileprivate var hasLoadedConstraints = false
+    private var hasLoadedConstraints = false
 
-    fileprivate let ruleGrid = RuleGrid()
-    fileprivate static var gridData = JSON.initFromFile("rules")![4]["examples"][0]
+    private let ruleGrid = RuleGrid()
+    private static var gridData = JSON.initFromFile("rules")![4]["examples"][0]
 
     init() {
         super.init(position: .center)
@@ -109,7 +109,7 @@ class UpdatesModal: ModalOverlay {
         dismiss(animated: true, completion: nil)
     }
 
-    fileprivate func gridSize() -> CGSize {
+    private func gridSize() -> CGSize {
         let gridWidth = UIDevice.current.userInterfaceIdiom == .pad ?
                         370 :
                         view.bounds.size.width * 0.8
