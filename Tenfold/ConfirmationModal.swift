@@ -13,12 +13,12 @@ import PureLayout
 
 class ConfirmationModal: ModalOverlay {
 
-    fileprivate let game: Game
+    private let game: Game
 
-    fileprivate let titleLabel = UILabel()
-    fileprivate let textLabel = UILabel()
-    fileprivate let yesButton = Button()
-    fileprivate let cancelButton = Button()
+    private let titleLabel = UILabel()
+    private let textLabel = UILabel()
+    private let yesButton = Button()
+    private let cancelButton = Button()
 
     var onTapYes: (() -> Void)?
 
@@ -85,7 +85,7 @@ class ConfirmationModal: ModalOverlay {
         super.updateViewConstraints()
     }
 
-    fileprivate func setText() {
+    private func setText() {
         let numbersRemaining = game.numbersRemaining()
         let historicNumbersCrossedOut = game.historicNumbersCrossedOut()
         let uniqueValues = game.numberOfUniqueValues()
@@ -121,7 +121,7 @@ class ConfirmationModal: ModalOverlay {
         dismiss(animated: true, completion: nil)
     }
 
-    fileprivate func randomMotivationalQuote() -> String {
+    private func randomMotivationalQuote() -> String {
         return CopyService.phrasebook(.motivational).arrayValue.randomElement().string!
     }
 

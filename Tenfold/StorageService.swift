@@ -22,6 +22,7 @@ enum StorageKey: String {
     enum FeatureAnnouncement: String {
        case Undo = "tenfoldUndoFeatureAnnouncementStorageKey"
        case Options = "tenfoldOptionsFeatureAnnouncementStorageKey"
+       case NextRoundDisallowed = "tenfoldNextRoundDisallowedFeatureAnnouncementStorageKey"
     }
 }
 
@@ -34,7 +35,8 @@ class StorageService {
             StorageKey.SettingsFlag.VibrationOn.rawValue: true,
             StorageKey.SettingsFlag.RandomInitialNumbers.rawValue: false,
             StorageKey.FeatureAnnouncement.Undo.rawValue: false,
-            StorageKey.FeatureAnnouncement.Options.rawValue: false
+            StorageKey.FeatureAnnouncement.Options.rawValue: false,
+            StorageKey.FeatureAnnouncement.NextRoundDisallowed.rawValue: false
         ])
     }
 

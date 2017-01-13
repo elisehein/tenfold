@@ -12,15 +12,15 @@ import PureLayout
 
 class OptionsModal: ModalOverlay {
 
-    fileprivate let soundLabel = UILabel()
-    fileprivate let soundButton = BooleanStrikethroughButton()
-    fileprivate let vibrationButton = BooleanStrikethroughButton()
+    private let soundLabel = UILabel()
+    private let soundButton = BooleanStrikethroughButton()
+    private let vibrationButton = BooleanStrikethroughButton()
 
-    fileprivate let initialNumbersLabel = UILabel()
-    fileprivate let initialNumbersButton = SlidingStrikethroughButton()
-    fileprivate let initialNumbersDetail = UILabel()
+    private let initialNumbersLabel = UILabel()
+    private let initialNumbersButton = SlidingStrikethroughButton()
+    private let initialNumbersDetail = UILabel()
 
-    fileprivate let doneButton = Button()
+    private let doneButton = Button()
 
     var hasLoadedConstraints = false
 

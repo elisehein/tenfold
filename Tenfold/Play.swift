@@ -432,7 +432,14 @@ class Play: UIViewController {
     }
 
     func handlePullUpThresholdExceeded() {
-        guard nextRoundAllowed() else { return }
+        guard nextRoundAllowed() else {
+            _ = Timer.scheduledTimer(timeInterval: 1.5,
+                                     target: self,
+                                     selector: #selector(self.presentExplanationModalIfNeeded),
+                                     userInfo: nil,
+                                     repeats: false)
+            return
+        }
 
         nextRoundGrid?.hide(animated: false)
         nextRoundPill.dismiss(inFrame: view.bounds, completion: {
@@ -444,6 +451,15 @@ class Play: UIViewController {
             menu.hideIfNeeded()
             staticScorePill.toggle(inFrame: view.bounds, showing: true, animated: true)
         }
+    }
+
+    func presentExplanationModalIfNeeded() {
+        guard !StorageService.hasSeenFeatureAnnouncement(.NextRoundDisallowed) else { return }
+
+        let modal = NextRoundDisallowedModal(potentialPairs: game.potentialPairs().count)
+        modal.onTapHelp = showInstructions
+        present(modal, animated: true, completion: nil)
+        StorageService.markFeatureAnnouncementSeen(.NextRoundDisallowed)
     }
 
     private func handleScroll() {

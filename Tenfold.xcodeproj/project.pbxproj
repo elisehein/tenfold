@@ -27,6 +27,7 @@
 		0C41C1AA1D7C48A000E0AAF8 /* appInfo.json in Resources */ = {isa = PBXBuildFile; fileRef = 0C41C1A91D7C48A000E0AAF8 /* appInfo.json */; };
 		0C4F12611D65C58000AAEB54 /* RuleHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4F12601D65C58000AAEB54 /* RuleHeader.swift */; };
 		0C5998C01D8C3AED00D73EF6 /* Gesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5998BF1D8C3AED00D73EF6 /* Gesture.swift */; };
+		0C601A401E29123A003E8C5D /* NextRoundDisallowedModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C601A3F1E29123A003E8C5D /* NextRoundDisallowedModal.swift */; };
 		0C68BE7E1D3A4B3A00A6ACDC /* Rules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C68BE7D1D3A4B3A00A6ACDC /* Rules.swift */; };
 		0C69CE4B1C6DCABA002E0D29 /* Number.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C69CE4A1C6DCABA002E0D29 /* Number.swift */; };
 		0C69CE4E1C6DCDE9002E0D29 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C69CE4D1C6DCDE9002E0D29 /* Array.swift */; };
@@ -103,6 +104,7 @@
 		0C41C1A91D7C48A000E0AAF8 /* appInfo.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = appInfo.json; sourceTree = "<group>"; };
 		0C4F12601D65C58000AAEB54 /* RuleHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RuleHeader.swift; sourceTree = "<group>"; };
 		0C5998BF1D8C3AED00D73EF6 /* Gesture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gesture.swift; sourceTree = "<group>"; };
+		0C601A3F1E29123A003E8C5D /* NextRoundDisallowedModal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextRoundDisallowedModal.swift; sourceTree = "<group>"; };
 		0C68BE7D1D3A4B3A00A6ACDC /* Rules.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Rules.swift; sourceTree = "<group>"; };
 		0C69CE4A1C6DCABA002E0D29 /* Number.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Number.swift; sourceTree = "<group>"; };
 		0C69CE4D1C6DCDE9002E0D29 /* Array.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
@@ -179,6 +181,7 @@
 			children = (
 				0C8E73041D7AF3FF00DFE757 /* AppInfoModal.swift */,
 				0C70C4041D71B95500A9E8B8 /* ConfirmationModal.swift */,
+				0C601A3F1E29123A003E8C5D /* NextRoundDisallowedModal.swift */,
 				0C1C36CD1DA66BA70032A56D /* OptionsModal.swift */,
 				0CE5BD121D8DB81F0007F405 /* UpdatesModal.swift */,
 			);
@@ -530,6 +533,7 @@
 				0CC94F711D7588AF00FAF4B2 /* RankingTable.swift in Sources */,
 				0C34638F1C6F89B30086D3CC /* GameGridCell.swift in Sources */,
 				0CC94F6D1D74B68800FAF4B2 /* GameGrid+ScrollViewDelegate.swift in Sources */,
+				0C601A401E29123A003E8C5D /* NextRoundDisallowedModal.swift in Sources */,
 				0CADBDF61D6D92850090C13F /* GameFinished.swift in Sources */,
 				0C41C1A61D7C130800E0AAF8 /* MaybeRemoteJSON.swift in Sources */,
 				0C1E317D1D86AE6E00ABA583 /* EndOfRoundMarker.swift in Sources */,

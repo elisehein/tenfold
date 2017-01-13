@@ -13,11 +13,11 @@ import SwiftyJSON
 
 class AppInfoModal: ModalOverlay {
 
-    fileprivate static let modalInset: CGFloat = {
+    private static let modalInset: CGFloat = {
         return UIDevice.current.userInterfaceIdiom == .pad ? 80 : 50
     }()
 
-    fileprivate static let paragraphSpacing: CGFloat = {
+    private static let paragraphSpacing: CGFloat = {
         return UIDevice.current.userInterfaceIdiom == .pad ? 45 : 30
     }()
 
@@ -142,7 +142,7 @@ class AppInfoModal: ModalOverlay {
         super.updateViewConstraints()
     }
 
-    fileprivate func labelAttributes(withBoldText boldText: Bool) -> [String: AnyObject] {
+    private func labelAttributes(withBoldText boldText: Bool) -> [String: AnyObject] {
         let isIPad = UIDevice.current.userInterfaceIdiom == .pad
 
         let paragraphStyle = NSMutableParagraphStyle()
