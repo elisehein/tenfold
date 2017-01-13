@@ -107,6 +107,7 @@ class RuleGrid: Grid {
 
     func pullUp() {
         gesture.perform(withDelay: 1, completion: {
+            guard self.animationType == .PullUp else { return }
             self.performActionOnCells(withIndeces: Array(36..<self.values.count), { cell in
                 UIView.animate(withDuration: 0.15, delay: 0.4, options: [], animations: {
                     cell.contentView.backgroundColor = UIColor.themeColor(.offWhiteShaded)
