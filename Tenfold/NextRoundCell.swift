@@ -10,9 +10,9 @@ import Foundation
 import UIKit
 
 class NextRoundCell: UICollectionViewCell {
-    private static let fontSizeFactor: CGFloat = 0.4
+    fileprivate static let fontSizeFactor: CGFloat = 0.4
 
-    private let numberLabel = UILabel()
+    fileprivate let numberLabel = UILabel()
 
     // Ensure valueIsHidden is set before value
     var valueIsHidden: Bool = true
@@ -30,16 +30,16 @@ class NextRoundCell: UICollectionViewCell {
     var isSpacer: Bool = true {
         didSet {
             contentView.backgroundColor = isSpacer ?
-                                          UIColor.clearColor() :
-                                          UIColor.themeColor(.SecondaryAccent)
+                                          UIColor.clear :
+                                          UIColor.themeColor(.secondaryAccent)
         }
     }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        numberLabel.textAlignment = .Center
-        numberLabel.textColor = UIColor.themeColorDarker(.SecondaryAccent)
+        numberLabel.textAlignment = .center
+        numberLabel.textColor = UIColor.themeColorDarker(.secondaryAccent)
         numberLabel.frame = contentView.frame
 
         // Set the font size to what I want it to be when it's at its largest,
@@ -76,9 +76,9 @@ class NextRoundCell: UICollectionViewCell {
 
         valueIsHidden = true
 
-        UIView.animateWithDuration(0.3,
+        UIView.animate(withDuration: 0.3,
                                    delay: 0,
-                                   options: .CurveEaseInOut,
+                                   options: UIViewAnimationOptions(),
                                    animations: {
             self.numberLabel.alpha = CGFloat(0)
         }, completion: nil)

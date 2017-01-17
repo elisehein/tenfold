@@ -12,7 +12,7 @@ import UIKit
 class Grid: UICollectionView {
     static let cellSpacing: Int = 1
 
-    private let layout: UICollectionViewFlowLayout = {
+    fileprivate let layout: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
         l.minimumInteritemSpacing = CGFloat(Grid.cellSpacing)
         l.minimumLineSpacing = CGFloat(Grid.cellSpacing)
@@ -23,7 +23,7 @@ class Grid: UICollectionView {
         super.init(frame: frame, collectionViewLayout: layout)
     }
 
-    func initialisePositionWithinFrame(givenFrame: CGRect, withInsets insets: UIEdgeInsets) {
+    func initialisePositionWithinFrame(_ givenFrame: CGRect, withInsets insets: UIEdgeInsets) {
         let availableSize = CGSize(width: givenFrame.width - insets.left - insets.right,
                                    height: givenFrame.height - insets.top - insets.bottom)
         let size = sizeSnappedToPixel(inAvailableSize: availableSize)
@@ -35,11 +35,11 @@ class Grid: UICollectionView {
                        size: size)
     }
 
-    private func sizeSnappedToPixel(inAvailableSize availableSize: CGSize) -> CGSize {
+    fileprivate func sizeSnappedToPixel(inAvailableSize availableSize: CGSize) -> CGSize {
         // We want to get a width that is exactly divisible by the number of items per row,
         // taking into account also spacing, so that we don't get any unequal spacing or cell widths
         let widthForNumbers = availableSize.width - CGFloat(Grid.widthForSpacing())
-        let widthRemainder = widthForNumbers % CGFloat(Game.numbersPerRow)
+        let widthRemainder = widthForNumbers.truncatingRemainder(dividingBy: CGFloat(Game.numbersPerRow))
         let integerWidth = availableSize.width - widthRemainder
 
         // Because the Grid is vertically scrolling, subpixel rendering is not an issue when it
@@ -58,9 +58,9 @@ class Grid: UICollectionView {
     func performActionOnCells(withIndeces indeces: [Int],
                                        _ action: ((GameGridCell) -> Void)) {
         for index in indeces {
-            let indexPath = NSIndexPath(forItem: index, inSection: 0)
+            let indexPath = IndexPath(item: index, section: 0)
 
-            if let cell = cellForItemAtIndexPath(indexPath) as? GameGridCell {
+            if let cell = cellForItem(at: indexPath) as? GameGridCell {
                 action(cell)
             }
         }

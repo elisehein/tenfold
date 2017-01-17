@@ -11,11 +11,11 @@ import UIKit
 
 class RankingTable: UIView {
 
-    private static let rowHeight: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 45 : 25
+    fileprivate static let rowHeight: CGFloat = {
+        return UIDevice.current.userInterfaceIdiom == .pad ? 45 : 25
     }()
 
-    private let rankedGames: [RankedGame]
+    fileprivate let rankedGames: [RankedGame]
 
     init(rankedGames: [RankedGame]) {
         self.rankedGames = rankedGames
@@ -66,7 +66,7 @@ class RankingTable: UIView {
         return CGFloat(subviews.count) * RankingTable.rowHeight
     }
 
-    private func tableHeaderView() -> UIView {
+    fileprivate func tableHeaderView() -> UIView {
         let headerView = UIView()
 
         let numbersLabel = UILabel()
@@ -76,10 +76,10 @@ class RankingTable: UIView {
         roundsLabel.text = "Rounds"
 
         for label in [numbersLabel, roundsLabel] {
-            let fontSize: CGFloat = UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 16 : 12
+            let fontSize: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 16 : 12
             label.font = UIFont.themeFontWithSize(fontSize)
-            label.textAlignment = .Left
-            label.textColor = UIColor.themeColor(.OffBlack).colorWithAlphaComponent(0.8)
+            label.textAlignment = .left
+            label.textColor = UIColor.themeColor(.offBlack).withAlphaComponent(0.8)
         }
 
         headerView.addSubview(UIView()) // Spacer
@@ -89,7 +89,7 @@ class RankingTable: UIView {
         return headerView
     }
 
-    private func tableRows() -> [UIView] {
+    fileprivate func tableRows() -> [UIView] {
         var rows = [UIView]()
 
         for rankedGame in rankedGames {
@@ -99,7 +99,7 @@ class RankingTable: UIView {
        return rows
     }
 
-    private func tableRow(rankedGame: RankedGame) -> UIView {
+    fileprivate func tableRow(_ rankedGame: RankedGame) -> UIView {
         let rowView = UIView()
 
         let rankLabel = UILabel()
@@ -112,17 +112,17 @@ class RankingTable: UIView {
         roundsLabel.text = String(rankedGame.gameSnapshot.totalRounds)
 
         for label in [rankLabel, numbersLabel, roundsLabel] {
-            label.textColor = UIColor.themeColor(.OffBlack).colorWithAlphaComponent(0.8)
-            let fontSize: CGFloat = UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 18 : 14
+            label.textColor = UIColor.themeColor(.offBlack).withAlphaComponent(0.8)
+            let fontSize: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 18 : 14
             label.font = UIFont.themeFontWithSize(fontSize,
                                                   weight: rankedGame.isLatestGame ?
-                                                          .Bold :
-                                                          .Regular)
-            label.textAlignment = .Left
+                                                          .bold :
+                                                          .regular)
+            label.textAlignment = .left
         }
 
         if rankedGame.isLatestGame {
-            rowView.backgroundColor = UIColor.themeColor(.OffWhiteShaded)
+            rowView.backgroundColor = UIColor.themeColor(.offWhiteShaded)
         }
 
         rowView.addSubview(rankLabel)

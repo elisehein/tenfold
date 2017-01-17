@@ -10,37 +10,37 @@ import Foundation
 import UIKit
 
 enum ThemeColor {
-    case OffWhite
-    case OffWhiteShaded
-    case OffBlack
-    case Tan
-    case Accent
-    case SecondaryAccent
+    case offWhite
+    case offWhiteShaded
+    case offBlack
+    case tan
+    case accent
+    case secondaryAccent
 }
 
 extension UIColor {
-    class func themeColor(themeColor: ThemeColor) -> UIColor {
+    class func themeColor(_ themeColor: ThemeColor) -> UIColor {
         switch themeColor {
-        case .OffWhite:
+        case .offWhite:
             return UIColor(hex: "#FAF5EA") // Old lace
-        case .OffWhiteShaded:
+        case .offWhiteShaded:
             return UIColor(hex: "#F0E4C3") // Dutch white
-        case .OffBlack:
+        case .offBlack:
             return UIColor(hex: "#02293D") // Maastricht blue
-        case .Tan:
+        case .tan:
             return UIColor(hex: "#94855D") // Gold fusion
-        case .Accent:
+        case .accent:
             return UIColor(hex: "#F38D68") // Atomic tangerine
-        case .SecondaryAccent:
+        case .secondaryAccent:
             return UIColor(hex: "#BAD4AA") // Light moss green
         }
     }
 
-    class func themeColorDarker(themeColor: ThemeColor) -> UIColor {
+    class func themeColorDarker(_ themeColor: ThemeColor) -> UIColor {
         switch themeColor {
-        case .SecondaryAccent:
+        case .secondaryAccent:
             return UIColor(hex: "#2F4720") // Kombu green
-        case .Tan:
+        case .tan:
             return UIColor(hex: "#5A491B") // Liver
         default:
             return UIColor.themeColor(themeColor)
@@ -49,10 +49,10 @@ extension UIColor {
 
     class func themeColor(forTextStyle textStyle: TextStyle) -> UIColor {
         switch textStyle {
-        case .Pill:
-            return UIColor.whiteColor().colorWithAlphaComponent(0.95)
+        case .pill:
+            return UIColor.white.withAlphaComponent(0.95)
         default:
-            return UIColor.themeColor(.OffBlack)
+            return UIColor.themeColor(.offBlack)
         }
     }
 }

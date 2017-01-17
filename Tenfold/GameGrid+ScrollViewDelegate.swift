@@ -11,25 +11,25 @@ import UIKit
 
 extension GameGrid: UIScrollViewDelegate {
 
-    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         toggleBounce(true)
         currentScrollCycleHandled = false
     }
 
-    func scrollViewWillEndDragging(scrollView: UIScrollView,
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView,
                                    withVelocity velocity: CGPoint,
                                    targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         if pullDownDistanceExceeds(snapToStartingPositionThreshold!) {
             adjustTopInset(enforceStartingPosition: true)
             decelerationRate = UIScrollViewDecelerationRateFast
-            targetContentOffset.memory.y = -contentInset.top
+            targetContentOffset.pointee.y = -contentInset.top
             snappingInProgress = true
             onWillSnapToStartingPosition?()
             currentScrollCycleHandled = true
         }
     }
 
-    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         bouncingInProgress = pullUpInProgress() || pullDownInProgress()
 
         guard !currentScrollCycleHandled else { return }
@@ -49,7 +49,7 @@ extension GameGrid: UIScrollViewDelegate {
         bounceBack()
     }
 
-    func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
+    func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
         if !bouncingInProgress {
             toggleBounce(false)
         }
@@ -59,13 +59,13 @@ extension GameGrid: UIScrollViewDelegate {
         }
     }
 
-    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         snappingInProgress = false
         toggleBounce(false)
         decelerationRate = UIScrollViewDecelerationRateNormal
     }
 
-    func scrollViewDidScroll(scrollView: UIScrollView) {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if prematurePullUpInProgress() {
             interjectBounce(scrollView)
         }
@@ -75,11 +75,11 @@ extension GameGrid: UIScrollViewDelegate {
            snapToGameplayPositionThreshold != nil {
             if pullDownInProgress() {
                 let pullDownFraction = distancePulledDown() / snapToStartingPositionThreshold!
-                onPullingDown?(withFraction: min(1, pullDownFraction))
+                onPullingDown?(min(1, pullDownFraction))
             } else if pullUpFromStartingPositionInProgress() {
                 let distance = pullUpDistanceFromStartingPosition()
                 let pullUpFraction = distance / snapToGameplayPositionThreshold!
-                onPullingUpFromStartingPosition?(withFraction: min(1, pullUpFraction))
+                onPullingUpFromStartingPosition?(min(1, pullUpFraction))
             }
         }
 
@@ -97,7 +97,7 @@ extension GameGrid: UIScrollViewDelegate {
 
 private extension GameGrid {
 
-    func interjectBounce (scrollView: UIScrollView) {
+    func interjectBounce (_ scrollView: UIScrollView) {
         let currentOffset = round(contentOffset.y + contentInset.top)
         guard currentOffset > 0 else { return }
 
@@ -127,7 +127,7 @@ private extension GameGrid {
         return prematurePullUpInProgress() ? contentDistanceFromTopEdge() : distancePulledUp()
     }
 
-    func prematurePullUpDistanceExceeds(threshold: CGFloat) -> Bool {
+    func prematurePullUpDistanceExceeds(_ threshold: CGFloat) -> Bool {
         return prematurePullUpInProgress() && contentDistanceFromTopEdge() > threshold
     }
 

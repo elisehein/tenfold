@@ -14,11 +14,11 @@ class Play: UIViewController {
 
     private var panTriggered: Bool = false
 
-    private static let defaultBGColor = UIColor.themeColor(.OffWhite)
-    private static let gameplayBGColor = UIColor.themeColor(.OffWhiteShaded)
+    private static let defaultBGColor = UIColor.themeColor(.offWhite)
+    private static let gameplayBGColor = UIColor.themeColor(.offWhiteShaded)
 
     private static let maxNextRoundPullUpThreshold: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 140 : 120
+        return UIDevice.current.userInterfaceIdiom == .pad ? 140 : 120
     }()
 
     var game: Game
@@ -28,9 +28,9 @@ class Play: UIViewController {
     private var nextRoundGrid: NextRoundGrid?
     private let nextRoundPill = NextRoundPill()
     private let gameplayMessagePill = GameplayMessagePill()
-    private let undoPill = Pill(type: .Icon)
-    private let floatingScorePill = ScorePill(type: .Floating)
-    private let staticScorePill = ScorePill(type: .Static)
+    private let iconPill = Pill(type: .icon)
+    private let floatingScorePill = ScorePill(type: .floating)
+    private let staticScorePill = ScorePill(type: .static)
 
     private var passedNextRoundThreshold = false
 
@@ -51,7 +51,7 @@ class Play: UIViewController {
 
         self.game = savedGame == nil ? Game() : savedGame!
         self.gameGrid = GameGrid(game: game)
-        self.menu = Menu(state: self.isOnboarding ? .Onboarding : .Default, firstLaunch: firstLaunch)
+        self.menu = Menu(state: self.isOnboarding ? .onboarding : .default, firstLaunch: firstLaunch)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -68,7 +68,7 @@ class Play: UIViewController {
 
         menu.onTapNewGame = confirmNewGame
         menu.onTapInstructions = showInstructions
-        menu.onTapOptions = { self.presentViewController(OptionsModal(), animated: true, completion: nil) }
+        menu.onTapOptions = { self.present(OptionsModal(), animated: true, completion: nil) }
 
         let pan = UIPanGestureRecognizer(target: self, action: #selector(Play.detectPan))
 
@@ -81,7 +81,7 @@ class Play: UIViewController {
         view.addSubview(menu)
         view.addSubview(gameplayMessagePill)
         view.addSubview(nextRoundPill)
-        view.addSubview(undoPill)
+        view.addSubview(iconPill)
         view.addSubview(floatingScorePill)
         view.addSubview(staticScorePill)
     }
@@ -102,7 +102,7 @@ class Play: UIViewController {
 
         nextRoundPill.toggle(inFrame: view.bounds, showing: false)
         gameplayMessagePill.toggle(inFrame: view.bounds, showing: false)
-        undoPill.toggle(inFrame: view.bounds, showing: false)
+        iconPill.toggle(inFrame: view.bounds, showing: false)
         initNextRoundMatrix()
 
         gameGrid.snapToStartingPositionThreshold = 70
@@ -112,7 +112,7 @@ class Play: UIViewController {
         viewHasLoaded = true
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
 
@@ -121,19 +121,19 @@ class Play: UIViewController {
         }
     }
 
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         if shouldLaunchOnboarding {
             let onboarding = Onboarding()
             onboarding.onWillDismissWithGame = handleOnboardingWillDismissWithGame
-            presentViewController(onboarding, animated: false, completion: nil)
+            present(onboarding, animated: false, completion: nil)
             shouldLaunchOnboarding = false
             return
         }
 
         if shouldShowUpdatesModal {
-            presentViewController(UpdatesModal(), animated: true, completion: nil)
+            present(UpdatesModal(), animated: true, completion: nil)
             shouldShowUpdatesModal = false
         } else if isOnboarding {
             menu.onboardingSteps.begin()
@@ -164,7 +164,7 @@ class Play: UIViewController {
         nextRoundGrid?.frame = nextRoundMatrixFrame
     }
 
-    private func calcNextRoundPullUpThreshold(numberOfItemsInNextRound: Int) -> CGFloat {
+    private func calcNextRoundPullUpThreshold(_ numberOfItemsInNextRound: Int) -> CGFloat {
         let rowsInNextRound = Matrix.singleton.totalRows(numberOfItemsInNextRound)
         let threshold = Grid.heightForGame(withTotalRows: rowsInNextRound,
                                            availableWidth: nextRoundGrid!.bounds.size.width)
@@ -182,7 +182,7 @@ class Play: UIViewController {
         if game.currentRound > 1 && game.startTime != nil {
             let modal = ConfirmationModal(game: game)
             modal.onTapYes = abandonGame
-            presentViewController(modal, animated: true, completion: nil)
+            present(modal, animated: true, completion: nil)
         } else {
             abandonGame()
         }
@@ -221,7 +221,7 @@ class Play: UIViewController {
 
     // MARK: Gameplay logic
 
-    private func handlePairingAttempt(pair: Pair) {
+    private func handlePairingAttempt(_ pair: Pair) {
         let successfulPairing = Pairing.validate(pair, inGame: game)
 
         if successfulPairing {
@@ -241,7 +241,7 @@ class Play: UIViewController {
         }
     }
 
-    func handleSuccessfulPairing(pair: Pair) {
+    func handleSuccessfulPairing(_ pair: Pair) {
         game.crossOut(pair)
         gameGrid.crossOut(pair)
         updateNextRoundPillText()
@@ -249,24 +249,24 @@ class Play: UIViewController {
         updateState()
 
         if removeSurplusRows(containingItemsFrom: pair) {
-            playSound(.CrossOutRow)
+            playSound(.crossOutRow)
         } else {
-            playSound(.CrossOut)
+            playSound(.crossOut)
         }
 
         checkForNewlyUnrepresentedValues()
     }
 
-    func detectPan(recognizer: UIPanGestureRecognizer) {
-        guard recognizer.state == .Changed else {
-            panTriggered = recognizer.state == .Ended
+    func detectPan(_ recognizer: UIPanGestureRecognizer) {
+        guard recognizer.state == .changed else {
+            panTriggered = recognizer.state == .ended
             return
         }
 
         guard !panTriggered else { return }
-        guard abs(recognizer.translationInView(view).x) > 70 else { return }
+        guard abs(recognizer.translation(in: view).x) > 70 else { return }
 
-        if recognizer.velocityInView(view).x > 0 {
+        if recognizer.velocity(in: view).x > 0 {
            undoLatestMove()
         } else {
            showInstructions()
@@ -279,22 +279,22 @@ class Play: UIViewController {
         guard !gameGrid.gridAtStartingPosition else { return }
         guard !gameGrid.rowRemovalInProgress else { return }
         guard game.latestMoveType() != nil else {
-            undoPill.iconName = "not-allowed"
-            undoPill.flash(inFrame: view.bounds)
+            iconPill.iconName = "not-allowed"
+            iconPill.flash(inFrame: view.bounds)
             return
         }
         // These only apply when returning from onboarding
         menu.hideIfNeeded()
         staticScorePill.toggle(inFrame: view.bounds, showing: true, animated: true)
 
-        if game.latestMoveType() == .CrossingOutPair {
+        if game.latestMoveType() == .crossingOutPair {
             undoLatestPairing()
-        } else if game.latestMoveType() == .LoadingNextRound {
+        } else if game.latestMoveType() == .loadingNextRound {
             undoNewRound()
         }
 
-        undoPill.iconName = "undo"
-        undoPill.flash(inFrame: view.bounds)
+        iconPill.iconName = "undo"
+        iconPill.flash(inFrame: view.bounds)
     }
 
     func undoNewRound() {
@@ -308,7 +308,7 @@ class Play: UIViewController {
     }
 
     func undoLatestPairing() {
-        let undoPairing: ((delay: Double) -> Void) = { delay in
+        let undoPairing: ((_ delay: Double) -> Void) = { delay in
             if let pair = self.game.undoLatestPairing() {
                 self.gameGrid.unCrossOut(pair, withDelay: delay)
                 self.updateNextRoundPillText()
@@ -319,11 +319,15 @@ class Play: UIViewController {
 
         if let newRowIndeces = game.undoRowRemoval() {
             gameGrid.addRows(atIndeces: newRowIndeces, completion: {
-                undoPairing(delay: 0.3)
+                undoPairing(0.3)
             })
         } else {
-            undoPairing(delay: 0)
+            undoPairing(0)
         }
+    }
+
+    private func nextRoundAllowed() -> Bool {
+        return game.potentialPairs().count < 10
     }
 
     // Instead of calling reloadData on the entire matrix, dynamically add the next round
@@ -349,9 +353,7 @@ class Play: UIViewController {
             gameGrid.removeRows(withNumberIndeces: surplusIndeces, completion: {
                 if self.game.ended() {
                     StorageService.saveGameSnapshot(self.game, forced: true)
-                    self.presentViewController(GameFinished(game: self.game),
-                                               animated: true,
-                                               completion: { _ in
+                    self.present(GameFinished(game: self.game), animated: true, completion: { _ in
                         self.restart()
                     })
                 } else {
@@ -396,7 +398,7 @@ class Play: UIViewController {
         staticScorePill.round = game.currentRound
     }
 
-    private func playSound(sound: Sound) {
+    private func playSound(_ sound: Sound) {
         if !isOnboarding {
             SoundService.singleton!.playIfAllowed(sound)
         }
@@ -430,6 +432,15 @@ class Play: UIViewController {
     }
 
     func handlePullUpThresholdExceeded() {
+        guard nextRoundAllowed() else {
+            _ = Timer.scheduledTimer(timeInterval: 1.5,
+                                     target: self,
+                                     selector: #selector(self.presentExplanationModalIfNeeded),
+                                     userInfo: nil,
+                                     repeats: false)
+            return
+        }
+
         nextRoundGrid?.hide(animated: false)
         nextRoundPill.dismiss(inFrame: view.bounds, completion: {
             self.updateNextRoundPillText()
@@ -442,6 +453,15 @@ class Play: UIViewController {
         }
     }
 
+    func presentExplanationModalIfNeeded() {
+        guard !StorageService.hasSeenFeatureAnnouncement(.NextRoundDisallowed) else { return }
+
+        let modal = NextRoundDisallowedModal(potentialPairs: game.potentialPairs().count)
+        modal.onTapHelp = showInstructions
+        present(modal, animated: true, completion: nil)
+        StorageService.markFeatureAnnouncementSeen(.NextRoundDisallowed)
+    }
+
     private func handleScroll() {
         guard viewHasLoaded && viewHasAppeared else { return }
 
@@ -450,16 +470,18 @@ class Play: UIViewController {
             nextRoundGrid?.show(animated: true)
 
             let proportionVisible = min(1, gameGrid.distancePulledUp() / gameGrid.pullUpThreshold!)
+            let appropriatePill = nextRoundAllowed() ? nextRoundPill : iconPill
+            iconPill.iconName = "not-allowed"
 
             if proportionVisible == 1 {
                 if !passedNextRoundThreshold {
-                    playSound(.NextRound)
+                    playSound(.nextRound)
                     passedNextRoundThreshold = true
                     gameplayMessagePill.toggle(inFrame: view.bounds, showing: false)
-                    nextRoundPill.toggle(inFrame: view.bounds, showing: true, animated: true)
+                    appropriatePill.toggle(inFrame: view.bounds, showing: true, animated: true)
                 }
             } else {
-                nextRoundPill.toggle(inFrame: view.bounds, showing: false, animated: true)
+                appropriatePill.toggle(inFrame: view.bounds, showing: false, animated: true)
                 passedNextRoundThreshold = false
             }
 
@@ -474,7 +496,7 @@ class Play: UIViewController {
     }
 
     private func handlePullingDown(withFraction fraction: CGFloat) {
-        guard menu.hidden else { return }
+        guard menu.isHidden else { return }
         staticScorePill.alpha = 1 - fraction
         view.backgroundColor = Play.gameplayBGColor.interpolateTo(Play.defaultBGColor, fraction: fraction)
     }
@@ -486,10 +508,10 @@ class Play: UIViewController {
     private func positionScore() {
         if gameGrid.contentOffset.y > -gameGrid.spaceForScore {
             floatingScorePill.toggle(inFrame: view.bounds, showing: true, animated: true)
-            staticScorePill.hidden = true
+            staticScorePill.isHidden = true
         } else {
             floatingScorePill.toggle(inFrame: view.bounds, showing: false, animated: true)
-            staticScorePill.hidden = false
+            staticScorePill.isHidden = false
         }
     }
 
@@ -499,7 +521,7 @@ class Play: UIViewController {
 
     // MARK: Onboarding ended
 
-    private func handleOnboardingWillDismissWithGame(onboardingGame: Game) {
+    private func handleOnboardingWillDismissWithGame(_ onboardingGame: Game) {
         view.backgroundColor = Play.gameplayBGColor
         staticScorePill.alpha = 1
         restart(withGame: onboardingGame, inGameplayPosition: true)

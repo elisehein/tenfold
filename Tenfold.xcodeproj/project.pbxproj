@@ -27,6 +27,7 @@
 		0C41C1AA1D7C48A000E0AAF8 /* appInfo.json in Resources */ = {isa = PBXBuildFile; fileRef = 0C41C1A91D7C48A000E0AAF8 /* appInfo.json */; };
 		0C4F12611D65C58000AAEB54 /* RuleHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4F12601D65C58000AAEB54 /* RuleHeader.swift */; };
 		0C5998C01D8C3AED00D73EF6 /* Gesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5998BF1D8C3AED00D73EF6 /* Gesture.swift */; };
+		0C601A401E29123A003E8C5D /* NextRoundDisallowedModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C601A3F1E29123A003E8C5D /* NextRoundDisallowedModal.swift */; };
 		0C68BE7E1D3A4B3A00A6ACDC /* Rules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C68BE7D1D3A4B3A00A6ACDC /* Rules.swift */; };
 		0C69CE4B1C6DCABA002E0D29 /* Number.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C69CE4A1C6DCABA002E0D29 /* Number.swift */; };
 		0C69CE4E1C6DCDE9002E0D29 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C69CE4D1C6DCDE9002E0D29 /* Array.swift */; };
@@ -103,6 +104,7 @@
 		0C41C1A91D7C48A000E0AAF8 /* appInfo.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = appInfo.json; sourceTree = "<group>"; };
 		0C4F12601D65C58000AAEB54 /* RuleHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RuleHeader.swift; sourceTree = "<group>"; };
 		0C5998BF1D8C3AED00D73EF6 /* Gesture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gesture.swift; sourceTree = "<group>"; };
+		0C601A3F1E29123A003E8C5D /* NextRoundDisallowedModal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextRoundDisallowedModal.swift; sourceTree = "<group>"; };
 		0C68BE7D1D3A4B3A00A6ACDC /* Rules.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Rules.swift; sourceTree = "<group>"; };
 		0C69CE4A1C6DCABA002E0D29 /* Number.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Number.swift; sourceTree = "<group>"; };
 		0C69CE4D1C6DCDE9002E0D29 /* Array.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
@@ -179,6 +181,7 @@
 			children = (
 				0C8E73041D7AF3FF00DFE757 /* AppInfoModal.swift */,
 				0C70C4041D71B95500A9E8B8 /* ConfirmationModal.swift */,
+				0C601A3F1E29123A003E8C5D /* NextRoundDisallowedModal.swift */,
 				0C1C36CD1DA66BA70032A56D /* OptionsModal.swift */,
 				0CE5BD121D8DB81F0007F405 /* UpdatesModal.swift */,
 			);
@@ -427,12 +430,13 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 0720;
+				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = "Elise Hein";
 				TargetAttributes = {
 					0C738AD61C69D811007C9548 = {
 						CreatedOnToolsVersion = 7.2;
 						DevelopmentTeam = DTLCNBMGZU;
+						LastSwiftMigration = 0820;
 					};
 				};
 			};
@@ -529,6 +533,7 @@
 				0CC94F711D7588AF00FAF4B2 /* RankingTable.swift in Sources */,
 				0C34638F1C6F89B30086D3CC /* GameGridCell.swift in Sources */,
 				0CC94F6D1D74B68800FAF4B2 /* GameGrid+ScrollViewDelegate.swift in Sources */,
+				0C601A401E29123A003E8C5D /* NextRoundDisallowedModal.swift in Sources */,
 				0CADBDF61D6D92850090C13F /* GameFinished.swift in Sources */,
 				0C41C1A61D7C130800E0AAF8 /* MaybeRemoteJSON.swift in Sources */,
 				0C1E317D1D86AE6E00ABA583 /* EndOfRoundMarker.swift in Sources */,
@@ -577,13 +582,16 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = QG6ZMDD4VC;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -621,13 +629,16 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = QG6ZMDD4VC;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -641,6 +652,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -651,6 +663,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Elise H (M6RZE52FG5)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Elise H (M6RZE52FG5)";
+				DEVELOPMENT_TEAM = DTLCNBMGZU;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -661,6 +674,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.elisehein.Tenfold;
 				PRODUCT_NAME = Tenfold;
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development com.elisehein.Tenfold";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -671,6 +686,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Elise H (DTLCNBMGZU)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Elise H (DTLCNBMGZU)";
+				DEVELOPMENT_TEAM = DTLCNBMGZU;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -681,6 +697,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.elisehein.Tenfold;
 				PRODUCT_NAME = Tenfold;
 				PROVISIONING_PROFILE = "079e4cdb-5b13-41dc-b717-4809333e781d";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.elisehein.Tenfold";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

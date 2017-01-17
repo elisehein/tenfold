@@ -10,8 +10,8 @@ import Foundation
 import UIKit
 
 extension GameGrid: UICollectionViewDelegateFlowLayout {
-    func collectionView(collectionView: UICollectionView,
-                        shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
+    func collectionView(_ collectionView: UICollectionView,
+                        shouldSelectItemAt indexPath: IndexPath) -> Bool {
         if indecesPermittedForSelection != nil &&
            !indecesPermittedForSelection!.contains(indexPath.item) {
            return false
@@ -20,9 +20,9 @@ extension GameGrid: UICollectionViewDelegateFlowLayout {
         }
     }
 
-    func collectionView(collectionView: UICollectionView,
-                        didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        let numberCell = cellForItemAtIndexPath(indexPath) as? GameGridCell
+    func collectionView(_ collectionView: UICollectionView,
+                        didSelectItemAt indexPath: IndexPath) {
+        let numberCell = cellForItem(at: indexPath) as? GameGridCell
         guard numberCell != nil else { return }
 
         ensureGridPositionedForGameplay()
@@ -40,9 +40,9 @@ extension GameGrid: UICollectionViewDelegateFlowLayout {
         }
     }
 
-    func collectionView(collectionView: UICollectionView,
+    func collectionView(_ collectionView: UICollectionView,
                         layout: UICollectionViewLayout,
-                        sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
         return Grid.cellSize(forAvailableWidth: bounds.size.width)
     }
 }

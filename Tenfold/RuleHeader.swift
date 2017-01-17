@@ -11,9 +11,9 @@ import UIKit
 
 class RuleHeader: UICollectionReusableView {
 
-    private let label = UILabel()
-    private static let widthFactor: CGFloat = {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+    fileprivate let label = UILabel()
+    fileprivate static let widthFactor: CGFloat = {
+        if UIDevice.current.userInterfaceIdiom == .pad {
             return 0.6
         } else {
             return 0.85
@@ -23,7 +23,7 @@ class RuleHeader: UICollectionReusableView {
     var text: String? {
         didSet {
             if let text = text {
-                label.attributedText = NSMutableAttributedString.themeString(.Title, text)
+                label.attributedText = NSMutableAttributedString.themeString(.title, text)
             }
         }
     }
@@ -33,7 +33,7 @@ class RuleHeader: UICollectionReusableView {
         let width = RuleHeader.widthFactor * availableWidth
         let availableSize = CGSize(width: width, height: CGFloat(MAXFLOAT))
         let label = UILabel()
-        label.attributedText = NSMutableAttributedString.themeString(.Title, text)
+        label.attributedText = NSMutableAttributedString.themeString(.title, text)
         label.numberOfLines = 0
         var size = label.sizeThatFits(availableSize)
         size.width = min(width, availableSize.width)
@@ -43,7 +43,7 @@ class RuleHeader: UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        label.textColor = UIColor.themeColor(.OffBlack)
+        label.textColor = UIColor.themeColor(.offBlack)
         label.numberOfLines = 0
 
         addSubview(label)

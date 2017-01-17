@@ -13,17 +13,23 @@ extension UIColor {
     // http://stackoverflow.com/questions/1560081/how-can-i-create-a-uicolor-from-a-hex-string
     // Initialiser for strings of format '#_RED_GREEN_BLUE_'
     convenience init(hex: String) {
-        let redRange    = hex.startIndex.advancedBy(1)..<hex.startIndex.advancedBy(3)
-        let greenRange  = hex.startIndex.advancedBy(3)..<hex.startIndex.advancedBy(5)
-        let blueRange   = hex.startIndex.advancedBy(5)..<hex.startIndex.advancedBy(7)
+        let redRange    = hex.characters.index(hex.startIndex,
+                                               offsetBy: 1)..<hex.characters.index(hex.startIndex,
+                                                                                   offsetBy: 3)
+        let greenRange  = hex.characters.index(hex.startIndex,
+                                               offsetBy: 3)..<hex.characters.index(hex.startIndex,
+                                                                                   offsetBy: 5)
+        let blueRange   = hex.characters.index(hex.startIndex,
+                                               offsetBy: 5)..<hex.characters.index(hex.startIndex,
+                                                                                   offsetBy: 7)
 
         var red: UInt32 = 0
         var green: UInt32 = 0
         var blue: UInt32 = 0
 
-        NSScanner(string: hex.substringWithRange(redRange)).scanHexInt(&red)
-        NSScanner(string: hex.substringWithRange(greenRange)).scanHexInt(&green)
-        NSScanner(string: hex.substringWithRange(blueRange)).scanHexInt(&blue)
+        Scanner(string: hex.substring(with: redRange)).scanHexInt32(&red)
+        Scanner(string: hex.substring(with: greenRange)).scanHexInt32(&green)
+        Scanner(string: hex.substring(with: blueRange)).scanHexInt32(&blue)
 
         self.init(
             red: CGFloat(red) / 255,
@@ -34,15 +40,15 @@ extension UIColor {
     }
 
     // http://stackoverflow.com/a/38638676/2026098
-    func interpolateTo(targetColor: UIColor, fraction: CGFloat) -> UIColor {
+    func interpolateTo(_ targetColor: UIColor, fraction: CGFloat) -> UIColor {
         var f = max(0, fraction)
-        f = min(1, fraction)
-        let c1 = CGColorGetComponents(self.CGColor)
-        let c2 = CGColorGetComponents(targetColor.CGColor)
-        let r: CGFloat = CGFloat(c1[0] + (c2[0] - c1[0]) * f)
-        let g: CGFloat = CGFloat(c1[1] + (c2[1] - c1[1]) * f)
-        let b: CGFloat = CGFloat(c1[2] + (c2[2] - c1[2]) * f)
-        let a: CGFloat = CGFloat(c1[3] + (c2[3] - c1[3]) * f)
+        f = CGFloat(min(1, fraction))
+        let c1 = self.cgColor.components
+        let c2 = targetColor.cgColor.components
+        let r: CGFloat = CGFloat(CGFloat(c1![0]) + CGFloat((c2![0]) - CGFloat(c1![0])) * f)
+        let g: CGFloat = CGFloat(CGFloat(c1![1]) + (CGFloat(c2![1]) - CGFloat(c1![1])) * f)
+        let b: CGFloat = CGFloat(CGFloat(c1![2]) + (CGFloat(c2![2]) - CGFloat(c1![2])) * f)
+        let a: CGFloat = CGFloat(CGFloat(c1![3]) + (CGFloat(c2![3]) - CGFloat(c1![3])) * f)
         return UIColor.init(red: r, green: g, blue: b, alpha: a)
     }
 

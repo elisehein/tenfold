@@ -14,11 +14,11 @@ import SwiftyJSON
 class AppInfoModal: ModalOverlay {
 
     private static let modalInset: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 80 : 50
+        return UIDevice.current.userInterfaceIdiom == .pad ? 80 : 50
     }()
 
     private static let paragraphSpacing: CGFloat = {
-        return UIDevice.currentDevice().userInterfaceIdiom == .Pad ? 45 : 30
+        return UIDevice.current.userInterfaceIdiom == .pad ? 45 : 30
     }()
 
     let logo = UIImageView(image: UIImage(named: "tenfold-logo-small"))
@@ -34,7 +34,7 @@ class AppInfoModal: ModalOverlay {
     var hasLoadedConstraints = false
 
     init() {
-        super.init(position: .Center)
+        super.init(position: .center)
 
         let boldAttributes = labelAttributes(withBoldText: true)
         appNameLabel.attributedText = NSAttributedString(string: "Tenfold App",
@@ -42,8 +42,8 @@ class AppInfoModal: ModalOverlay {
 
         let attributes = labelAttributes(withBoldText: false)
 
-        let version = NSBundle.mainBundle().infoDictionary!["CFBundleShortVersionString"]
-        let build = NSBundle.mainBundle().infoDictionary!["CFBundleVersion"]
+        let version = Bundle.main.infoDictionary!["CFBundleShortVersionString"]
+        let build = Bundle.main.infoDictionary!["CFBundleVersion"]
         appVersionLabel.attributedText = NSAttributedString(string: "Version \(version!).\(build!)",
                                                             attributes: attributes)
 
@@ -54,43 +54,43 @@ class AppInfoModal: ModalOverlay {
                                                        attributes: labelAttributes(withBoldText: false))
 
         specialThanksLabel.numberOfLines = 0
-        let specialThanksText = CopyService.phrasebook(.AppInfo)["specialThanks"].string!
+        let specialThanksText = CopyService.phrasebook(.appInfo)["specialThanks"].string!
         specialThanksLabel.attributedText = NSAttributedString(string: specialThanksText,
                                                                attributes: attributes)
 
         ModalOverlay.configureModalButton(feedbackButton,
-                                          color: UIColor.themeColor(.SecondaryAccent))
-        feedbackButton.setTitle("Help & feedback", forState: .Normal)
+                                          color: UIColor.themeColor(.secondaryAccent))
+        feedbackButton.setTitle("Help & feedback", for: UIControlState())
         feedbackButton.addTarget(self,
                                  action: #selector(AppInfoModal.didTapFeedback),
-                                 forControlEvents: .TouchUpInside)
+                                 for: .touchUpInside)
 
         ModalOverlay.configureModalButton(rateButton,
-                                          color: UIColor.themeColor(.SecondaryAccent))
-        rateButton.setTitle("Rate Tenfold", forState: .Normal)
+                                          color: UIColor.themeColor(.secondaryAccent))
+        rateButton.setTitle("Rate Tenfold", for: UIControlState())
         rateButton.addTarget(self,
                              action: #selector(AppInfoModal.didTapRate),
-                             forControlEvents: .TouchUpInside)
+                             for: .touchUpInside)
 
-        modal.addSubview(logo)
-        modal.addSubview(appNameLabel)
-        modal.addSubview(appVersionLabel)
-        modal.addSubview(developerNameLabel)
-        modal.addSubview(emailLabel)
-        modal.addSubview(specialThanksLabel)
-        modal.addSubview(feedbackButton)
-        modal.addSubview(rateButton)
+        modalBox.addSubview(logo)
+        modalBox.addSubview(appNameLabel)
+        modalBox.addSubview(appVersionLabel)
+        modalBox.addSubview(developerNameLabel)
+        modalBox.addSubview(emailLabel)
+        modalBox.addSubview(specialThanksLabel)
+        modalBox.addSubview(feedbackButton)
+        modalBox.addSubview(rateButton)
     }
 
     func didTapRate() {
-        UIApplication.sharedApplication().openURL(NSURL(string: "itms-apps://itunes.apple.com/app/id1149410716")!)
+        UIApplication.shared.openURL(URL(string: "itms-apps://itunes.apple.com/app/id1149410716")!)
     }
 
     func didTapFeedback() {
-        UIApplication.sharedApplication().openURL(NSURL(string: "mailto:hello@tenfoldapp.com")!)
+        UIApplication.shared.openURL(URL(string: "http://tenfoldapp.com/faq.html")!)
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         view.setNeedsUpdateConstraints()
     }
@@ -101,58 +101,58 @@ class AppInfoModal: ModalOverlay {
             return
         }
 
-        logo.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
-        logo.autoAlignAxisToSuperviewAxis(.Vertical)
-        logo.autoPinEdgeToSuperviewEdge(.Top, withInset: AppInfoModal.modalInset)
+        logo.autoSetDimensions(to: CGSize(width: 30, height: 30))
+        logo.autoAlignAxis(toSuperviewAxis: .vertical)
+        logo.autoPinEdge(toSuperviewEdge: .top, withInset: AppInfoModal.modalInset)
 
-        appNameLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: logo, withOffset: 20)
-        appVersionLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: appNameLabel, withOffset: 5)
-        developerNameLabel.autoPinEdge(.Top,
-                                       toEdge: .Bottom,
-                                       ofView: appVersionLabel,
+        appNameLabel.autoPinEdge(.top, to: .bottom, of: logo, withOffset: 20)
+        appVersionLabel.autoPinEdge(.top, to: .bottom, of: appNameLabel, withOffset: 5)
+        developerNameLabel.autoPinEdge(.top,
+                                       to: .bottom,
+                                       of: appVersionLabel,
                                        withOffset: AppInfoModal.paragraphSpacing)
-        emailLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: developerNameLabel, withOffset:5)
+        emailLabel.autoPinEdge(.top, to: .bottom, of: developerNameLabel, withOffset:5)
 
-        specialThanksLabel.autoMatchDimension(.Width,
-                                              toDimension: .Width,
-                                              ofView: modal,
+        specialThanksLabel.autoMatch(.width,
+                                              to: .width,
+                                              of: modalBox,
                                               withMultiplier: 0.8)
         let labelTopSpacing = specialThanksLabel.text == nil ? 0 : AppInfoModal.paragraphSpacing
-        specialThanksLabel.autoPinEdge(.Top,
-                                       toEdge: .Bottom,
-                                       ofView: emailLabel,
+        specialThanksLabel.autoPinEdge(.top,
+                                       to: .bottom,
+                                       of: emailLabel,
                                        withOffset: CGFloat(labelTopSpacing))
 
-        feedbackButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
-        feedbackButton.autoPinEdge(.Top,
-                                   toEdge: .Bottom,
-                                   ofView: specialThanksLabel,
+        feedbackButton.autoMatch(.width, to: .width, of: modalBox)
+        feedbackButton.autoPinEdge(.top,
+                                   to: .bottom,
+                                   of: specialThanksLabel,
                                    withOffset: AppInfoModal.modalInset)
-        feedbackButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
+        feedbackButton.autoSetDimension(.height, toSize: ModalOverlay.modalButtonHeight)
 
-        rateButton.autoMatchDimension(.Width, toDimension: .Width, ofView: modal)
-        rateButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: feedbackButton, withOffset: -2)
-        rateButton.autoSetDimension(.Height, toSize: ModalOverlay.modalButtonHeight)
-        rateButton.autoPinEdgeToSuperviewEdge(.Bottom)
+        rateButton.autoMatch(.width, to: .width, of: modalBox)
+        rateButton.autoPinEdge(.top, to: .bottom, of: feedbackButton, withOffset: -2)
+        rateButton.autoSetDimension(.height, toSize: ModalOverlay.modalButtonHeight)
+        rateButton.autoPinEdge(toSuperviewEdge: .bottom)
 
-        // swiftlint:disable:next line_length
-        [logo, appNameLabel, appVersionLabel, developerNameLabel, emailLabel, specialThanksLabel, feedbackButton, rateButton].autoAlignViewsToAxis(.Vertical)
+        ([logo, appNameLabel, appVersionLabel, developerNameLabel,
+          emailLabel, specialThanksLabel, feedbackButton, rateButton] as NSArray).autoAlignViews(to: .vertical)
 
         hasLoadedConstraints = true
         super.updateViewConstraints()
     }
 
     private func labelAttributes(withBoldText boldText: Bool) -> [String: AnyObject] {
-        let isIPad = UIDevice.currentDevice().userInterfaceIdiom == .Pad
+        let isIPad = UIDevice.current.userInterfaceIdiom == .pad
 
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .Center
+        paragraphStyle.alignment = .center
         paragraphStyle.lineSpacing = isIPad ? 7 : 4
 
         return [
-            NSForegroundColorAttributeName: UIColor.themeColor(.OffBlack),
+            NSForegroundColorAttributeName: UIColor.themeColor(.offBlack),
             NSFontAttributeName: UIFont.themeFontWithSize(isIPad ? 18 : 14,
-                                                          weight: boldText ? .Bold : .Regular),
+                                                          weight: boldText ? .bold : .regular),
             NSParagraphStyleAttributeName: paragraphStyle
         ]
     }
