@@ -24,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         if let window = window {
             let firstLaunch = StorageService.toggleFirstLaunchFlag()
-            let shouldShowUpdatesModal = StorageService.toggleFeatureAnnouncementFlag(.Undo) && !firstLaunch
+            let shouldShowUpdatesModal = StorageService.toggleFeatureAnnouncementFlag(.undo) && !firstLaunch
 
             let play = Play(shouldShowUpdatesModal: shouldShowUpdatesModal,
                             firstLaunch: firstLaunch)

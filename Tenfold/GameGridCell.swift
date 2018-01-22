@@ -190,9 +190,9 @@ class GameGridCell: UICollectionViewCell {
     }
 
     fileprivate func fill(usingColor color: UIColor,
-                      filler: UIView,
-                      delay: Double = 0,
-                      completion: (() -> Void)? = nil) {
+                          filler: UIView,
+                          delay: Double = 0,
+                          completion: (() -> Void)? = nil) {
         filler.backgroundColor = color
         filler.transform = CGAffineTransform(scaleX: 0, y: 0)
 
@@ -211,9 +211,9 @@ class GameGridCell: UICollectionViewCell {
     }
 
     fileprivate func unfill(usingColor color: UIColor,
-                        filler: UIView,
-                        withDelay delay: Double,
-                        completion: (() -> Void)? = nil) {
+                            filler: UIView,
+                            withDelay delay: Double,
+                            completion: (() -> Void)? = nil) {
         filler.backgroundColor = color
         filler.transform = CGAffineTransform(scaleX: 1, y: 1)
         contentView.backgroundColor = cellBackgroundColor()

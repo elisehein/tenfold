@@ -25,8 +25,8 @@ class RankingService {
     }
 
     class func order(_ gameSnapshots: [GameSnapshot]) -> [GameSnapshot] {
-        return gameSnapshots.sorted(by: { pairOfStats in
-            pairOfStats.0.historicNumberCount < pairOfStats.1.historicNumberCount
+        return gameSnapshots.sorted(by: { snapshot, otherSnapshot  in
+            snapshot.historicNumberCount < otherSnapshot.historicNumberCount
         })
     }
 
@@ -94,21 +94,17 @@ class RankingService {
         return rankedGames
     }
 
-    // swiftlint:disable:next line_length
     func latestGameSnapshotIndex(inOrderedSnapshots orderedSnapshots: [GameSnapshot]) -> Int? {
         guard orderedSnapshots.count > 0 else {
             return nil
         }
 
         let endTimes: [Date] = orderedSnapshots.map({ ($0.endTime as Date) })
-        let sortedEndTimes = endTimes.sorted(by: { pairOfDates in
-            pairOfDates.0.compare(pairOfDates.1) == .orderedAscending
-        })
+        let sortedEndTimes = endTimes.sorted { $0.compare($1) == .orderedAscending }
 
         return endTimes.index(of: sortedEndTimes.last!)!
     }
 
-    // swiftlint:disable:next line_length
     fileprivate func orderedWinningGameSnapshots() -> [GameSnapshot] {
         return orderedGameSnapshots.filter({ $0.numbersRemaining == 0 })
     }

@@ -165,7 +165,7 @@ class GameFinished: UIViewController {
         return text
     }
 
-    func dismissScreen() {
+    @objc func dismissScreen() {
         self.dismiss(animated: true, completion: nil)
     }
 

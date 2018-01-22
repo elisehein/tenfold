@@ -28,11 +28,11 @@ class Game: NSObject, NSCoding {
 
     var numbers: [Number] = []
     var valueCounts: [Int: Int]
-    var latestMove: GameMove? = nil
+    var latestMove: GameMove?
 
     var historicNumberCount: Int = 0
     var currentRound: Int = 1
-    var startTime: Date? = nil
+    var startTime: Date?
 
     override init() {
         numbers = Game.initialNumbers()
@@ -53,7 +53,7 @@ class Game: NSObject, NSCoding {
     fileprivate class func initialNumberValues() -> [Int] {
         var numberValues = [Int]()
 
-        if StorageService.currentFlag(forSetting: .RandomInitialNumbers) {
+        if StorageService.currentFlag(forSetting: .randomInitialNumbers) {
             for _ in 0..<(Game.initialNumberCount) {
                 numberValues.append(Int(arc4random_uniform(9) + 1))
             }

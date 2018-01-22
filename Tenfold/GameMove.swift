@@ -20,7 +20,7 @@ class GameMove: NSObject, NSCoding {
     fileprivate static let placeholdersCoderKey = "gameMovePlaceholdersForRowsRemovedCoderKey"
     fileprivate static let numbersAddedCoderKey = "gameMoveNumbersAddedCoderKey"
 
-    var crossedOutPair: [Int]? = nil
+    var crossedOutPair: [Int]?
     var rowsRemoved: [[Number]] = []
     var placeholdersForRowsRemoved: [Int] = []
     var numbersAdded: Int = 0

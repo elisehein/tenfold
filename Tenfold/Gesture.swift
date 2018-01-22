@@ -93,7 +93,7 @@ class Gesture: CAShapeLayer, CAAnimationDelegate {
 
     fileprivate func faceUp() {
         anchorPoint = CGPoint(x: 0, y: 0)
-        transform = CATransform3DRotate(CATransform3DIdentity, CGFloat(-M_PI_2), 0.0, 0.0, 1.0)
+        transform = CATransform3DRotate(CATransform3DIdentity, .pi / 2, 0.0, 0.0, 1.0)
     }
 
     fileprivate func beginSwoosh(withDelay delay: Double) {

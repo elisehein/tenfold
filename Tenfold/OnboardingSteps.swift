@@ -36,18 +36,18 @@ class OnboardingSteps: UIView {
     fileprivate let okButton = Button()
     fileprivate let dismissButton = Button()
 
-    fileprivate let labelBaseAttributes: [String: AnyObject] = {
+    fileprivate let labelBaseAttributes: [NSAttributedStringKey: Any] = {
         let isIPad = UIDevice.current.userInterfaceIdiom == .pad
 
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
         paragraphStyle.lineSpacing = isIPad ? 7 : 4
 
-        let attributes = [
-            NSForegroundColorAttributeName: UIColor.themeColor(.offBlack),
-            NSParagraphStyleAttributeName: paragraphStyle,
-            NSFontAttributeName: UIFont.themeFontWithSize(isIPad ? 18 : 14)
-        ] as [String : AnyObject]
+        let attributes: [NSAttributedStringKey: Any] = [
+            NSAttributedStringKey.foregroundColor: UIColor.themeColor(.offBlack),
+            NSAttributedStringKey.paragraphStyle: paragraphStyle,
+            NSAttributedStringKey.font: UIFont.themeFontWithSize(isIPad ? 18 : 14)
+        ]
 
         return attributes
     }()
@@ -138,7 +138,7 @@ class OnboardingSteps: UIView {
         })
     }
 
-    func transitionToNextStep() {
+    @objc func transitionToNextStep() {
         UIView.animate(withDuration: 0.3, animations: {
             self.topLabel.alpha = 0
             self.bottomLabel.alpha = 0
@@ -198,7 +198,7 @@ class OnboardingSteps: UIView {
         })
     }
 
-    func didDismissOnboarding() {
+    @objc func didDismissOnboarding() {
         onDismiss?()
     }
 

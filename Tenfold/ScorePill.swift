@@ -21,7 +21,7 @@ class ScorePill: Pill {
     fileprivate let numbersLabel = UILabel()
     fileprivate static let countLabelTransformFactor: CGFloat = 1.35
 
-    var onTap: (() -> Void)? = nil
+    var onTap: (() -> Void)?
     var type: ScorePillType = .static
 
     var numbers: Int = 0 {
@@ -105,7 +105,7 @@ class ScorePill: Pill {
         numbersLabel.frame = countFrame
     }
 
-    func didReceiveTap() {
+    @objc func didReceiveTap() {
         onTap?()
     }
 
@@ -118,9 +118,9 @@ class ScorePill: Pill {
 
         attrString.replaceCharacters(in: NSRange(location: 5, length: 1), with: gapString)
 
-        let attrs = [NSFontAttributeName: UIFont.themeFontWithSize(Pill.detailFontSize),
-                     NSForegroundColorAttributeName: UIColor.themeColor(.tan)]
-        attrString.addAttributes(attrs, range: NSRange(location: 0, length: text.characters.count))
+        let attrs = [NSAttributedStringKey.font: UIFont.themeFontWithSize(Pill.detailFontSize),
+                     NSAttributedStringKey.foregroundColor: UIColor.themeColor(.tan)]
+        attrString.addAttributes(attrs, range: NSRange(location: 0, length: text.count))
         return attrString
     }
 
@@ -146,8 +146,8 @@ class ScorePill: Pill {
         let originalPillFontSize = TextStyleProperties.fontSize[.pill]!
 
         let attrs = [
-            NSForegroundColorAttributeName: UIColor.themeColorDarker(.tan),
-            NSFontAttributeName: UIFont.themeFontWithSize(originalPillFontSize *
+            NSAttributedStringKey.foregroundColor: UIColor.themeColorDarker(.tan),
+            NSAttributedStringKey.font: UIFont.themeFontWithSize(originalPillFontSize *
                                                           ScorePill.countLabelTransformFactor)
         ]
 

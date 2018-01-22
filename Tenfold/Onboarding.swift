@@ -81,17 +81,17 @@ class Onboarding: Play {
         flashTimer = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(Onboarding.flashPairing), userInfo: nil, repeats: true)
     }
 
-    func flashPairing() {
+    @objc func flashPairing() {
         gameGrid.flashNumbers(atIndeces: indecesToFlash,
                               withColor: UIColor.themeColor(.accent))
     }
 
-    func flashGrid() {
+    @objc func flashGrid() {
         gameGrid.flashNumbers(atIndeces: Array(0..<27),
                               withColor: UIColor.themeColor(.offWhiteShaded))
     }
 
-    func transitionToNextStep() {
+    @objc func transitionToNextStep() {
         menu.onboardingSteps.transitionToNextStep()
     }
 

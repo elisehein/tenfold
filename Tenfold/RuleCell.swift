@@ -72,7 +72,7 @@ class RuleCell: UICollectionViewCell {
         }
     }
 
-    var gridAnimationType: RuleGridAnimationType = .Pairings {
+    var gridAnimationType: RuleGridAnimationType = .pairings {
         didSet {
             exampleGrid.animationType = gridAnimationType
         }
@@ -126,7 +126,7 @@ class RuleCell: UICollectionViewCell {
                                                      usingText: text!)
 
         let x = contentView.bounds.size.width * 0.5 * (1 - RuleCell.textWidthFactor)
-        label.frame = CGRect(origin: CGPoint(x: x, y : 0), size: labelSize)
+        label.frame = CGRect(origin: CGPoint(x: x, y: 0), size: labelSize)
 
         var detailLabelFrame = contentView.bounds
         detailLabelFrame.size.width *= RuleCell.textWidthFactor

@@ -54,9 +54,9 @@ class Rules: UIViewController {
 
             let isIPad = UIDevice.current.userInterfaceIdiom == .pad
 
-            let attributes = [NSFontAttributeName: UIFont.themeFontWithSize(isIPad ? 18 : 14),
-                              NSForegroundColorAttributeName: UIColor.themeColor(.offBlack),
-                              NSKernAttributeName: 2.2 as AnyObject] as [String : AnyObject]
+            let attributes = [NSAttributedStringKey.font: UIFont.themeFontWithSize(isIPad ? 18 : 14),
+                              NSAttributedStringKey.foregroundColor: UIColor.themeColor(.offBlack),
+                              NSAttributedStringKey.kern: 2.2 as AnyObject]
 
             label.attributedText = NSAttributedString(string: title!.uppercased(),
                                                       attributes: attributes)
@@ -130,11 +130,11 @@ class Rules: UIViewController {
         }
     }
 
-    func showAppInfo() {
+    @objc func showAppInfo() {
         present(AppInfoModal(), animated: true, completion: nil)
     }
 
-    func goBack() {
+    @objc func goBack() {
         _ = navigationController?.popViewController(animated: true)
     }
 

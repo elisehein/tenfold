@@ -82,8 +82,8 @@ class SlidingStrikethroughButton: Button, CAAnimationDelegate {
                                                        color: UIColor.themeColor(.offBlack))
 
             if options.index(of: option) == struckthroughOption.rawValue {
-                attrString.addAttributes([NSStrikethroughStyleAttributeName: 1],
-                                         range: NSRange(location: 0, length: option.characters.count))
+                attrString.addAttributes([NSAttributedStringKey.strikethroughStyle: 1],
+                                         range: NSRange(location: 0, length: option.count))
             }
 
             titleString.append(attrString)

@@ -257,7 +257,7 @@ class Play: UIViewController {
         checkForNewlyUnrepresentedValues()
     }
 
-    func detectPan(_ recognizer: UIPanGestureRecognizer) {
+    @objc func detectPan(_ recognizer: UIPanGestureRecognizer) {
         guard recognizer.state == .changed else {
             panTriggered = recognizer.state == .ended
             return
@@ -353,7 +353,7 @@ class Play: UIViewController {
             gameGrid.removeRows(withNumberIndeces: surplusIndeces, completion: {
                 if self.game.ended() {
                     StorageService.saveGameSnapshot(self.game, forced: true)
-                    self.present(GameFinished(game: self.game), animated: true, completion: { _ in
+                    self.present(GameFinished(game: self.game), animated: true, completion: {
                         self.restart()
                     })
                 } else {
@@ -453,13 +453,13 @@ class Play: UIViewController {
         }
     }
 
-    func presentExplanationModalIfNeeded() {
-        guard !StorageService.hasSeenFeatureAnnouncement(.NextRoundDisallowed) else { return }
+    @objc func presentExplanationModalIfNeeded() {
+        guard !StorageService.hasSeenFeatureAnnouncement(.nextRoundDisallowed) else { return }
 
         let modal = NextRoundDisallowedModal(potentialPairs: game.potentialPairs().count)
         modal.onTapHelp = showInstructions
         present(modal, animated: true, completion: nil)
-        StorageService.markFeatureAnnouncementSeen(.NextRoundDisallowed)
+        StorageService.markFeatureAnnouncementSeen(.nextRoundDisallowed)
     }
 
     private func handleScroll() {

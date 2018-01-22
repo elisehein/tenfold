@@ -107,14 +107,14 @@ class Menu: UIView {
     }
 
     func configureNewFeatureLabel() {
-        guard !StorageService.hasSeenFeatureAnnouncement(.Options) && !firstLaunch else {
-            StorageService.markFeatureAnnouncementSeen(.Options)
+        guard !StorageService.hasSeenFeatureAnnouncement(.options) && !firstLaunch else {
+            StorageService.markFeatureAnnouncementSeen(.options)
             return
         }
 
         var attrs = NSMutableAttributedString.attributes(forTextStyle: .pill)
-        attrs[NSForegroundColorAttributeName] = UIColor.themeColor(.tan)
-        attrs[NSFontAttributeName] = UIFont.themeFontWithSize(12)
+        attrs[NSAttributedStringKey.foregroundColor] = UIColor.themeColor(.tan)
+        attrs[NSAttributedStringKey.font] = UIFont.themeFontWithSize(12)
         newFeatureLabel.attributedText = NSAttributedString(string: "👈🏻 New!", attributes: attrs)
 
         UIView.animate(withDuration: 1, delay: 0, options: [.autoreverse, .repeat], animations: {
@@ -177,16 +177,16 @@ class Menu: UIView {
         newFeatureLabel.autoAlignAxis(.vertical, toSameAxisOf: optionsButton, withOffset: newFeatureOffset)
     }
 
-    func didTapNewGame() {
+    @objc func didTapNewGame() {
         onTapNewGame!()
     }
 
-    func didTapInstructions() {
+    @objc func didTapInstructions() {
         onTapInstructions!()
     }
 
-    func didTapOptions() {
-        StorageService.markFeatureAnnouncementSeen(.Options)
+    @objc func didTapOptions() {
+        StorageService.markFeatureAnnouncementSeen(.options)
         newFeatureLabel.isHidden = true
         onTapOptions!()
     }

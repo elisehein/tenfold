@@ -56,7 +56,7 @@ class Grid: UICollectionView {
     // want to
     // cross out the visible one
     func performActionOnCells(withIndeces indeces: [Int],
-                                       _ action: ((GameGridCell) -> Void)) {
+                              _ action: ((GameGridCell) -> Void)) {
         for index in indeces {
             let indexPath = IndexPath(item: index, section: 0)
 

@@ -9,20 +9,20 @@
 import Foundation
 
 enum StorageKey: String {
-    case Game = "tenfoldGameStorageKey"
-    case OrderedGameSnapshots = "orderedGameSnapshotsStorageKey"
-    case FirstLaunchFlag = "tenfoldFirstLaunchFlagStorageKey"
+    case game = "tenfoldGameStorageKey"
+    case orderedGameSnapshots = "orderedGameSnapshotsStorageKey"
+    case firstLaunchFlag = "tenfoldFirstLaunchFlagStorageKey"
 
     enum SettingsFlag: String {
-        case SoundOn = "tenfoldSoundPrefStorageKey"
-        case VibrationOn = "tenfoldVibrationFlagStorageKey"
-        case RandomInitialNumbers = "tenfoldRandomInitialNumbersFlagStorageKey"
+        case soundOn = "tenfoldSoundPrefStorageKey"
+        case vibrationOn = "tenfoldVibrationFlagStorageKey"
+        case randomInitialNumbers = "tenfoldRandomInitialNumbersFlagStorageKey"
     }
 
     enum FeatureAnnouncement: String {
-       case Undo = "tenfoldUndoFeatureAnnouncementStorageKey"
-       case Options = "tenfoldOptionsFeatureAnnouncementStorageKey"
-       case NextRoundDisallowed = "tenfoldNextRoundDisallowedFeatureAnnouncementStorageKey"
+       case undo = "tenfoldUndoFeatureAnnouncementStorageKey"
+       case options = "tenfoldOptionsFeatureAnnouncementStorageKey"
+       case nextRoundDisallowed = "tenfoldNextRoundDisallowedFeatureAnnouncementStorageKey"
     }
 }
 
@@ -30,32 +30,32 @@ class StorageService {
 
     class func registerDefaults() {
         UserDefaults.standard.register(defaults: [
-            StorageKey.FirstLaunchFlag.rawValue: true,
-            StorageKey.SettingsFlag.SoundOn.rawValue: true,
-            StorageKey.SettingsFlag.VibrationOn.rawValue: true,
-            StorageKey.SettingsFlag.RandomInitialNumbers.rawValue: false,
-            StorageKey.FeatureAnnouncement.Undo.rawValue: false,
-            StorageKey.FeatureAnnouncement.Options.rawValue: false,
-            StorageKey.FeatureAnnouncement.NextRoundDisallowed.rawValue: false
+            StorageKey.firstLaunchFlag.rawValue: true,
+            StorageKey.SettingsFlag.soundOn.rawValue: true,
+            StorageKey.SettingsFlag.vibrationOn.rawValue: true,
+            StorageKey.SettingsFlag.randomInitialNumbers.rawValue: false,
+            StorageKey.FeatureAnnouncement.undo.rawValue: false,
+            StorageKey.FeatureAnnouncement.options.rawValue: false,
+            StorageKey.FeatureAnnouncement.nextRoundDisallowed.rawValue: false
         ])
     }
 
     class func toggleFirstLaunchFlag() -> Bool {
         let defaults = UserDefaults.standard
-        let flag = defaults.bool(forKey: StorageKey.FirstLaunchFlag.rawValue)
-        defaults.set(false, forKey: StorageKey.FirstLaunchFlag.rawValue)
+        let flag = defaults.bool(forKey: StorageKey.firstLaunchFlag.rawValue)
+        defaults.set(false, forKey: StorageKey.firstLaunchFlag.rawValue)
         return flag
     }
 
     class func saveGame(_ game: Game) {
         let gameData = NSKeyedArchiver.archivedData(withRootObject: game)
         let defaults = UserDefaults.standard
-        defaults.set(gameData, forKey: StorageKey.Game.rawValue)
+        defaults.set(gameData, forKey: StorageKey.game.rawValue)
     }
 
     class func restoreGame() -> Game? {
         let defaults = UserDefaults.standard
-        let gameData = defaults.object(forKey: StorageKey.Game.rawValue)
+        let gameData = defaults.object(forKey: StorageKey.game.rawValue)
 
         if let gameData = gameData as? Data {
             let game = NSKeyedUnarchiver.unarchiveObject(with: gameData)
@@ -67,7 +67,7 @@ class StorageService {
 
     class func restoreOrderedGameSnapshots() -> [GameSnapshot] {
         let defaults = UserDefaults.standard
-        let statsData = defaults.object(forKey: StorageKey.OrderedGameSnapshots.rawValue)
+        let statsData = defaults.object(forKey: StorageKey.orderedGameSnapshots.rawValue)
 
         if let statsData = statsData as? Data {
             let gameStats = NSKeyedUnarchiver.unarchiveObject(with: statsData)
@@ -101,7 +101,7 @@ class StorageService {
         let orderedSnapshotsData = NSKeyedArchiver.archivedData(withRootObject: orderedSnapshots)
         let defaults = UserDefaults.standard
         defaults.set(orderedSnapshotsData,
-                           forKey: StorageKey.OrderedGameSnapshots.rawValue)
+                           forKey: StorageKey.orderedGameSnapshots.rawValue)
         RankingService.singleton.orderedGameSnapshots = orderedSnapshots
     }
 
@@ -128,6 +128,6 @@ class StorageService {
 
     class func markFeatureAnnouncementSeen(_ featureAnnouncement: StorageKey.FeatureAnnouncement) {
         let defaults = UserDefaults.standard
-        defaults.set(true, forKey:featureAnnouncement.rawValue)
+        defaults.set(true, forKey: featureAnnouncement.rawValue)
     }
 }

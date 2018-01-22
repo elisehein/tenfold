@@ -165,13 +165,9 @@ fileprivate extension Game {
         if siblingIndex < numbers.count && siblingIndex >= 0 {
             while siblingIndex + step < numbers.count &&
                 siblingIndex + step > 0 &&
-                numbers[siblingIndex].crossedOut {
-                    siblingIndex = siblingIndex + step
-            }
+                numbers[siblingIndex].crossedOut { siblingIndex += step }
 
-            if !numbers[siblingIndex].crossedOut {
-                return siblingIndex
-            }
+            if !numbers[siblingIndex].crossedOut { return siblingIndex }
         }
 
         return nil

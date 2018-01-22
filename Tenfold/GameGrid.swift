@@ -46,7 +46,7 @@ class GameGrid: Grid {
     // say when pairing two items so far from each other that they cannot be seen on screen
     // at the same time), it's easier to keep track of selection ourselves, rather than natively
     var selectedIndexPaths: [IndexPath] = []
-    var indecesPermittedForSelection: [Int]? = nil
+    var indecesPermittedForSelection: [Int]?
 
     // When you scroll while row insertion or removal is in progress, cellForItemWithIndexPath will
     // for some reason get corrupt data. We can disable user interaction completely to also

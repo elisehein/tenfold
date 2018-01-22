@@ -61,7 +61,7 @@ class RuleHeader: UICollectionReusableView {
         // See header size calculations in Rules.swift for more details
         let y = bounds.size.height - labelSize.height
 
-        label.frame = CGRect(origin: CGPoint(x: x, y : y),
+        label.frame = CGRect(origin: CGPoint(x: x, y: y),
                              size: labelSize)
     }
 

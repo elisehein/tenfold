@@ -105,7 +105,7 @@ class UpdatesModal: ModalOverlay {
         super.updateViewConstraints()
     }
 
-    func didTapOK() {
+    @objc func didTapOK() {
         dismiss(animated: true, completion: nil)
     }
 

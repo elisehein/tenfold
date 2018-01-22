@@ -11,9 +11,9 @@ import UIKit
 
 // These must match the vocabulary used in instructions.json
 enum RuleGridAnimationType: String {
-    case Pairings = "PAIRINGS"
-    case PairingsWithUndo = "PAIRINGS_WITH_UNDO"
-    case PullUp = "PULL_UP"
+    case pairings = "PAIRINGS"
+    case pairingsWithUndo = "PAIRINGS_WITH_UNDO"
+    case pullUp = "PULL_UP"
 }
 
 class RuleGrid: Grid {
@@ -31,17 +31,19 @@ class RuleGrid: Grid {
     var pairs: [[Int]] = []
     var gesture = Gesture(type: .swipeRight)
 
-    var animationType: RuleGridAnimationType = .Pairings {
+    var animationType: RuleGridAnimationType = .pairings {
         didSet {
-            guard animationType != .Pairings else { return }
+            gesture.isHidden = animationType == .pairings
 
-            if animationType == .PairingsWithUndo {
+            switch animationType {
+            case .pairings:
+                return
+            case .pairingsWithUndo:
                 gesture.type = .swipeRight
-            } else if animationType == .PullUp {
+            case .pullUp:
                 gesture.type = .swipeUpAndHold
             }
 
-            gesture.isHidden = animationType == .Pairings
         }
     }
 
@@ -61,19 +63,24 @@ class RuleGrid: Grid {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        if animationType == .PairingsWithUndo {
+        switch animationType {
+        case .pairingsWithUndo:
             gesture.frame = CGRect(origin: CGPoint(x: (bounds.size.width - gesture.totalWidth()) / 2,
                                                    y: (bounds.size.height - Gesture.fingerDiameter) / 2 + 8),
                                    size: CGSize.zero)
-        } else if animationType == .PullUp {
+        case .pullUp:
             gesture.frame = CGRect(origin: CGPoint(x: (bounds.size.width - Gesture.fingerDiameter) / 2,
                                                    y: bounds.size.height - 30),
                                    size: CGSize.zero)
+        default:
+            return
         }
     }
 
     func playLoop() {
-        if animationType == .Pairings || animationType == .PairingsWithUndo {
+        switch animationType {
+        case .pairings,
+             .pairingsWithUndo:
             // Because the timer interval doesn't allow for the first loop to run immediately,
             // we fire the first one ourselves, and then set an interval for the rest.
             // (We only care about this in the case of pairing animations)
@@ -82,9 +89,9 @@ class RuleGrid: Grid {
 
             // swiftlint:disable:next line_length
             _ = after(seconds: Double(pairs.count) * RuleGrid.pairingLoopDuration + RuleGrid.pairingLoopReloadDuration,
-                  performSelector: #selector(RuleGrid.performPairings),
-                  repeats: true)
-        } else {
+                      performSelector: #selector(RuleGrid.performPairings),
+                      repeats: true)
+        default:
             positionGridForPullUp()
 
             // We are delaying the first pull up because for some reason the initial offset will
@@ -95,6 +102,7 @@ class RuleGrid: Grid {
                       performSelector: #selector(RuleGrid.pullUp),
                       repeats: true)
         }
+
     }
 
     func invalidateLoop() {
@@ -105,9 +113,10 @@ class RuleGrid: Grid {
         timers = []
     }
 
-    func pullUp() {
+    @objc func pullUp() {
         gesture.perform(withDelay: 1, completion: {
-            guard self.animationType == .PullUp else { return }
+            // TODO use switch
+            guard self.animationType == .pullUp else { return }
             self.performActionOnCells(withIndeces: Array(36..<self.values.count), { cell in
                 UIView.animate(withDuration: 0.15, delay: 0.4, options: [], animations: {
                     cell.contentView.backgroundColor = UIColor.themeColor(.offWhiteShaded)
@@ -122,7 +131,7 @@ class RuleGrid: Grid {
         _ = after(seconds: 5, performSelector: #selector(RuleGrid.releasePullUp))
     }
 
-    func releasePullUp() {
+    @objc func releasePullUp() {
         setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: true)
     }
 
@@ -137,7 +146,7 @@ class RuleGrid: Grid {
         setContentOffset(CGPoint.zero, animated: false)
     }
 
-    func performPairings() {
+    @objc func performPairings() {
         var delay = RuleGrid.pairingLoopReloadDuration + 0.5
 
         let resetPairs: (() -> Void) = {
@@ -158,7 +167,7 @@ class RuleGrid: Grid {
         // we get a list of indeces anyway from the JSON.
         for index in 0..<pairs.count {
             let pair = pairs[index]
-            let alternatelyUndoingPairing = index % 2 != 0 && animationType == .PairingsWithUndo
+            let alternatelyUndoingPairing = index % 2 != 0 && animationType == .pairingsWithUndo
 
             // Every other pairing should be an undo
             let userInfo: [String: AnyObject] = [
@@ -185,7 +194,7 @@ class RuleGrid: Grid {
         })
     }
 
-    func selectAndCrossOutPair(_ timer: Timer) {
+    @objc func selectAndCrossOutPair(_ timer: Timer) {
         if let userInfo = timer.userInfo! as? [String: AnyObject] {
             selectCell((userInfo["index"]! as? Int)!)
             _ = after(seconds: 0.7,
@@ -194,7 +203,7 @@ class RuleGrid: Grid {
         }
     }
 
-    func undoPairing(_ timer: Timer) {
+    @objc func undoPairing(_ timer: Timer) {
         if let userInfo = timer.userInfo! as? [String: AnyObject] {
             gesture.perform(completion: {
                 self.crossOutPair((userInfo["index"]! as? Int)!,
@@ -205,7 +214,7 @@ class RuleGrid: Grid {
         }
     }
 
-    func crossOutPairWithUserInfo(_ timer: Timer) {
+    @objc func crossOutPairWithUserInfo(_ timer: Timer) {
         if let userInfo = timer.userInfo! as? [String: AnyObject] {
             crossOutPair((userInfo["index"]! as? Int)!,
                          (userInfo["otherIndex"]! as? Int)!,
@@ -257,7 +266,7 @@ class RuleGrid: Grid {
 
     func prepareForReuse() {
         firstPairingDone = false
-        gesture.isHidden = animationType == .Pairings
+        gesture.isHidden = animationType == .pairings
         reloadData()
     }
 
@@ -287,7 +296,7 @@ extension RuleGrid: UICollectionViewDataSource {
             cell.marksEndOfRound = false
             cell.lightColor = UIColor.themeColor(.offWhiteShaded)
 
-            if animationType == .PullUp {
+            if animationType == .pullUp {
                 if indexPath.item == 35 {
                    cell.marksEndOfRound = true
                 } else if indexPath.item > 35 {
