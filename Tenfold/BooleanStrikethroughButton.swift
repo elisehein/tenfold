@@ -11,7 +11,7 @@ import UIKit
 
 class BooleanStrikethroughButton: Button {
 
-    fileprivate let lineLayer = CAShapeLayer()
+    private let lineLayer = CAShapeLayer()
 
     var struckthrough: Bool = false
 
@@ -45,7 +45,7 @@ class BooleanStrikethroughButton: Button {
         lineLayer.add(animation, forKey: "startAnimation")
     }
 
-    fileprivate func startingPath() -> CGPath {
+    private func startingPath() -> CGPath {
         if struckthrough {
             return midPointPath()
         } else {
@@ -53,7 +53,7 @@ class BooleanStrikethroughButton: Button {
         }
     }
 
-    fileprivate func endPath() -> CGPath {
+    private func endPath() -> CGPath {
         if struckthrough {
             return fullWidthLinePath()
         } else {
@@ -61,7 +61,7 @@ class BooleanStrikethroughButton: Button {
         }
     }
 
-    fileprivate func midPointPath() -> CGPath {
+    private func midPointPath() -> CGPath {
         let y = bounds.size.height / 2 + 2
         let path = UIBezierPath()
         let point = CGPoint(x: bounds.size.width / 2, y: y)
@@ -70,7 +70,7 @@ class BooleanStrikethroughButton: Button {
         return path.cgPath
     }
 
-    fileprivate func fullWidthLinePath() -> CGPath {
+    private func fullWidthLinePath() -> CGPath {
         if let textWidth = attributedTitle(for: UIControlState())?.size().width {
             let startX = (bounds.size.width - textWidth) / 2
             let endX = startX + textWidth

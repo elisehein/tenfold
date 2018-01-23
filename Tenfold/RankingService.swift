@@ -105,7 +105,7 @@ class RankingService {
         return endTimes.index(of: sortedEndTimes.last!)!
     }
 
-    fileprivate func orderedWinningGameSnapshots() -> [GameSnapshot] {
+    private func orderedWinningGameSnapshots() -> [GameSnapshot] {
         return orderedGameSnapshots.filter({ $0.numbersRemaining == 0 })
     }
 }

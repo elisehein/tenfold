@@ -11,7 +11,7 @@ import UIKit
 
 class RuleCell: UICollectionViewCell {
 
-    fileprivate static let textWidthFactor: CGFloat = {
+    private static let textWidthFactor: CGFloat = {
         if UIDevice.current.userInterfaceIdiom == .pad {
             return 0.5
         } else {
@@ -19,7 +19,7 @@ class RuleCell: UICollectionViewCell {
         }
     }()
 
-    fileprivate static let gridWidthFactor: CGFloat = {
+    private static let gridWidthFactor: CGFloat = {
         if UIDevice.current.userInterfaceIdiom == .pad {
             return 0.5
         } else {
@@ -27,7 +27,7 @@ class RuleCell: UICollectionViewCell {
         }
     }()
 
-    fileprivate static let textGridSpacing: CGFloat = {
+    private static let textGridSpacing: CGFloat = {
         if UIDevice.current.userInterfaceIdiom == .pad {
             return 40
         } else {
@@ -78,9 +78,9 @@ class RuleCell: UICollectionViewCell {
         }
     }
 
-    fileprivate let label = RuleCell.labelWithAttributedText()
-    fileprivate let detailLabel = UILabel()
-    fileprivate let exampleGrid = RuleGrid()
+    private let label = RuleCell.labelWithAttributedText()
+    private let detailLabel = UILabel()
+    private let exampleGrid = RuleGrid()
 
     class func sizeOccupiedByLabel(forAvailableWidth availableWidth: CGFloat,
                                    usingText text: String) -> CGSize {

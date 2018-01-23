@@ -35,9 +35,10 @@ class UpdatesModal: ModalOverlay {
         titleLabel.textColor = UIColor.themeColor(.offBlack)
         titleLabel.textAlignment = .center
 
-        let text = "Thanks for updating Tenfold!\n" +
-                   "Ever make an annoying mistake while playing? " +
-                   "You can now undo your latest move by swiping right."
+        let text = """
+                   Thanks for updating Tenfold!
+                   Ever make an annoying mistake while playing? You can now undo your latest move by swiping right.
+                   """
         textLabel.numberOfLines = 0
         textLabel.attributedText = NSMutableAttributedString.themeString(.paragraph, text)
 

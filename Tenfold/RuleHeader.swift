@@ -11,8 +11,8 @@ import UIKit
 
 class RuleHeader: UICollectionReusableView {
 
-    fileprivate let label = UILabel()
-    fileprivate static let widthFactor: CGFloat = {
+    private let label = UILabel()
+    private static let widthFactor: CGFloat = {
         if UIDevice.current.userInterfaceIdiom == .pad {
             return 0.6
         } else {

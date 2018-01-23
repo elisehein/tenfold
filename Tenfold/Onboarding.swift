@@ -33,7 +33,7 @@ class Onboarding: Play {
         dismiss(animated: menu.onboardingSteps.currentStep == .welcome, completion: nil)
     }
 
-    fileprivate func handleBeginTransitionToStep(_ onboardingStep: OnboardingStep) {
+    private func handleBeginTransitionToStep(_ onboardingStep: OnboardingStep) {
         switch onboardingStep {
         case .lastTips:
             gameGrid.isUserInteractionEnabled = false
@@ -43,7 +43,7 @@ class Onboarding: Play {
             return
         }
     }
-    fileprivate func handleEndTransitionToStep(_ onboardingStep: OnboardingStep) {
+    private func handleEndTransitionToStep(_ onboardingStep: OnboardingStep) {
         switch onboardingStep {
         case .aimOfTheGame:
             // swiftlint:disable:next line_length
@@ -70,7 +70,7 @@ class Onboarding: Play {
         }
     }
 
-    fileprivate func hintAtPairing(_ pairIndeces: [Int]) {
+    private func hintAtPairing(_ pairIndeces: [Int]) {
         gameGrid.indecesPermittedForSelection = pairIndeces
         gameGrid.isUserInteractionEnabled = true
         gameGrid.isScrollEnabled = false

@@ -19,7 +19,7 @@ enum TextStyle {
 }
 
 struct TextStyleProperties {
-    fileprivate static let isIPad: Bool = {
+    private static let isIPad: Bool = {
         return UIDevice.current.userInterfaceIdiom == .pad
     }()
 

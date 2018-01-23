@@ -30,8 +30,8 @@ private struct GestureConfiguration {
 class Gesture: CAShapeLayer, CAAnimationDelegate {
 
     static let fingerDiameter: CGFloat = 16
-    fileprivate var completionBlock: (() -> Void)?
-    fileprivate var config: GestureConfiguration
+    private var completionBlock: (() -> Void)?
+    private var config: GestureConfiguration
 
     var type: GestureType {
         didSet {
@@ -53,7 +53,7 @@ class Gesture: CAShapeLayer, CAAnimationDelegate {
         opacity = 0
     }
 
-    fileprivate class func configurationForType(_ type: GestureType) -> GestureConfiguration {
+    private class func configurationForType(_ type: GestureType) -> GestureConfiguration {
         switch type {
         case .swipeRight:
             return GestureConfiguration()
@@ -91,12 +91,12 @@ class Gesture: CAShapeLayer, CAAnimationDelegate {
         }
     }
 
-    fileprivate func faceUp() {
+    private func faceUp() {
         anchorPoint = CGPoint(x: 0, y: 0)
         transform = CATransform3DRotate(CATransform3DIdentity, .pi / 2, 0.0, 0.0, 1.0)
     }
 
-    fileprivate func beginSwoosh(withDelay delay: Double) {
+    private func beginSwoosh(withDelay delay: Double) {
         let opacityAnimation = CABasicAnimation(keyPath: "opacity")
         opacityAnimation.beginTime = CACurrentMediaTime() + delay
         opacityAnimation.duration = config.fadeInDuration
@@ -118,7 +118,7 @@ class Gesture: CAShapeLayer, CAAnimationDelegate {
         add(animation, forKey: "swooshStart")
     }
 
-    fileprivate func endSwoosh() {
+    private func endSwoosh() {
         let opacityAnimation = CABasicAnimation(keyPath: "opacity")
         opacityAnimation.duration = config.fadeOutDuration
         opacityAnimation.beginTime = CACurrentMediaTime() +
@@ -142,7 +142,7 @@ class Gesture: CAShapeLayer, CAAnimationDelegate {
         add(animation, forKey: "swooshEnd")
     }
 
-    fileprivate func pathWhileSwooshing() -> CGPath {
+    private func pathWhileSwooshing() -> CGPath {
         let furthestX = config.swooshMidPoint - (Gesture.fingerDiameter / 2)
 
         let bezierPath = UIBezierPath()
@@ -165,7 +165,7 @@ class Gesture: CAShapeLayer, CAAnimationDelegate {
     }
 
     // swiftlint:disable:next variable_name
-    fileprivate func circlePath(atX x: CGFloat = 0) -> CGPath {
+    private func circlePath(atX x: CGFloat = 0) -> CGPath {
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: x, y: 8))
 

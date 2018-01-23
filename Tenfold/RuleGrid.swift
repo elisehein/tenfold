@@ -18,12 +18,12 @@ enum RuleGridAnimationType: String {
 
 class RuleGrid: Grid {
 
-    fileprivate static let pairingLoopDuration: Double = 2.2
-    fileprivate static let pairingLoopReloadDuration: Double = 2
+    private static let pairingLoopDuration: Double = 2.2
+    private static let pairingLoopReloadDuration: Double = 2
 
-    fileprivate var timers: [Timer] = []
-    fileprivate let reuseIdentifier = "GameGridCell"
-    fileprivate var firstPairingDone: Bool = false
+    private var timers: [Timer] = []
+    private let reuseIdentifier = "GameGridCell"
+    private var firstPairingDone: Bool = false
 
     var values: [Int?] = []
 
@@ -135,13 +135,13 @@ class RuleGrid: Grid {
         setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: true)
     }
 
-    fileprivate func positionGridForPullUp() {
+    private func positionGridForPullUp() {
         let cellHeight = Grid.cellSize(forAvailableWidth: bounds.size.width).height
         contentInset.top = 2 * cellHeight + CGFloat(Grid.cellSpacing)
         setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: false)
     }
 
-    fileprivate func positionGridForPairing() {
+    private func positionGridForPairing() {
         contentInset.top = 0
         setContentOffset(CGPoint.zero, animated: false)
     }
@@ -185,7 +185,7 @@ class RuleGrid: Grid {
         }
     }
 
-    fileprivate func prepareToStartOver(completion: @escaping (() -> Void)) {
+    private func prepareToStartOver(completion: @escaping (() -> Void)) {
         var dirtyCells = Array(Set(pairs.joined()))
         dirtyCells += crossedOutIndeces
 
@@ -241,7 +241,7 @@ class RuleGrid: Grid {
         return timer
     }
 
-    fileprivate func selectCell(_ index: Int) {
+    private func selectCell(_ index: Int) {
        let indexPath = IndexPath(item: index, section: 0)
 
         if let cell = cellForItem(at: indexPath) as? GameGridCell {
@@ -249,7 +249,7 @@ class RuleGrid: Grid {
         }
     }
 
-    fileprivate func crossOutPair(_ index: Int, _ otherIndex: Int, reverse: Bool = false, animated: Bool = false) {
+    private func crossOutPair(_ index: Int, _ otherIndex: Int, reverse: Bool = false, animated: Bool = false) {
         let indexPath = IndexPath(item: index, section: 0)
         let otherIndexPath = IndexPath(item: otherIndex, section: 0)
 

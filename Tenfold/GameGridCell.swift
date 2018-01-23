@@ -19,21 +19,21 @@ class GameGridCell: UICollectionViewCell {
     static let fontSizeFactor: CGFloat = 0.45
     static let animationDuration = 0.2
 
-    fileprivate let numberLabel = UILabel()
-    fileprivate let endOfRoundMarker = EndOfRoundMarker()
+    private let numberLabel = UILabel()
+    private let endOfRoundMarker = EndOfRoundMarker()
 
     // We want two separate color fillers to animate in case the selection happens
     // quite quickly; for example, when the selection animation hasn't finished, but
     // the crossing out animation must already begin
-    fileprivate let bottomColorFiller = UIView()
-    fileprivate let topColorFiller = UIView()
+    private let bottomColorFiller = UIView()
+    private let topColorFiller = UIView()
 
     var useClearBackground = false
     var lightColor = UIColor.themeColor(.offWhiteShaded)
     let darkColor = UIColor.themeColor(.offBlack)
     let accentColor = UIColor.themeColor(.accent)
 
-    fileprivate var unfillingInProgress = false
+    private var unfillingInProgress = false
 
     var state: GameGridCellState = .available
 
@@ -189,17 +189,17 @@ class GameGridCell: UICollectionViewCell {
         unfill(usingColor: UIColor.themeColor(.accent), filler: bottomColorFiller, withDelay: delay)
     }
 
-    fileprivate func fill(usingColor color: UIColor,
-                          filler: UIView,
-                          delay: Double = 0,
-                          completion: (() -> Void)? = nil) {
+    private func fill(usingColor color: UIColor,
+                      filler: UIView,
+                      delay: Double = 0,
+                      completion: (() -> Void)? = nil) {
         filler.backgroundColor = color
         filler.transform = CGAffineTransform(scaleX: 0, y: 0)
 
         UIView.animate(withDuration: GameGridCell.animationDuration,
-                                   delay: delay,
-                                   options: [.curveEaseOut, .beginFromCurrentState],
-                                   animations: {
+                      delay: delay,
+                      options: [.curveEaseOut, .beginFromCurrentState],
+                      animations: {
             filler.transform = CGAffineTransform(scaleX: 1, y: 1)
         }, completion: { (finished: Bool) in
             if finished && !self.unfillingInProgress {
@@ -210,10 +210,10 @@ class GameGridCell: UICollectionViewCell {
         })
     }
 
-    fileprivate func unfill(usingColor color: UIColor,
-                            filler: UIView,
-                            withDelay delay: Double,
-                            completion: (() -> Void)? = nil) {
+    private func unfill(usingColor color: UIColor,
+                        filler: UIView,
+                        withDelay delay: Double,
+                        completion: (() -> Void)? = nil) {
         filler.backgroundColor = color
         filler.transform = CGAffineTransform(scaleX: 1, y: 1)
         contentView.backgroundColor = cellBackgroundColor()
@@ -269,11 +269,11 @@ class GameGridCell: UICollectionViewCell {
         }
     }
 
-    fileprivate func cellBackgroundColor() -> UIColor {
+    private func cellBackgroundColor() -> UIColor {
         return useClearBackground ? UIColor.clear : lightColor
     }
 
-    fileprivate func edgeToEdgeCircleFrame() -> CGRect {
+    private func edgeToEdgeCircleFrame() -> CGRect {
         let diagonal = ceil(contentView.bounds.size.width * sqrt(2))
         return CGRect(x: -(diagonal - contentView.bounds.size.width) / 2.0,
                       y: -(diagonal - contentView.bounds.size.height) / 2.0,

@@ -16,10 +16,10 @@ enum ScorePillType {
 
 class ScorePill: Pill {
 
-    fileprivate let logo = UIImageView(image: UIImage(named: "tenfold-logo-small"))
-    fileprivate let roundLabel = UILabel()
-    fileprivate let numbersLabel = UILabel()
-    fileprivate static let countLabelTransformFactor: CGFloat = 1.35
+    private let logo = UIImageView(image: UIImage(named: "tenfold-logo-small"))
+    private let roundLabel = UILabel()
+    private let numbersLabel = UILabel()
+    private static let countLabelTransformFactor: CGFloat = 1.35
 
     var onTap: (() -> Void)?
     var type: ScorePillType = .static
@@ -129,7 +129,7 @@ class ScorePill: Pill {
         return superview!.bounds.size.width
     }
 
-    fileprivate func configureBackground() {
+    private func configureBackground() {
         if type == .static {
             label.backgroundColor = UIColor.clear
         } else {
@@ -139,7 +139,7 @@ class ScorePill: Pill {
         shadowLayer.isHidden = type == .static
     }
 
-    fileprivate func constructAttributedStringForCount(_ count: Int) -> NSMutableAttributedString {
+    private func constructAttributedStringForCount(_ count: Int) -> NSMutableAttributedString {
         let attrString = super.constructAttributedString(withText: "\(count)")
 
         // Start from a scaled down font size so the pulse doesn't look blurry
@@ -155,7 +155,7 @@ class ScorePill: Pill {
         return attrString
     }
 
-    fileprivate func pulse(_ aLabel: UILabel) {
+    private func pulse(_ aLabel: UILabel) {
         UIView.animate(withDuration: GameGridCell.animationDuration,
                                    delay: 0,
                                    options: .curveEaseOut,
@@ -170,7 +170,7 @@ class ScorePill: Pill {
         })
     }
 
-    fileprivate func countLabelTransform() -> CGAffineTransform {
+    private func countLabelTransform() -> CGAffineTransform {
         let defaultScale = 1 / ScorePill.countLabelTransformFactor
         return CGAffineTransform.identity.scaledBy(x: defaultScale, y: defaultScale)
     }

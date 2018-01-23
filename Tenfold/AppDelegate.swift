@@ -42,13 +42,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    fileprivate func initServices() {
+    private func initServices() {
         SoundService.singleton = SoundService()
         CopyService.singleton = CopyService()
         StorageService.registerDefaults()
     }
 
-    fileprivate func setGlobalAppearance() {
+    private func setGlobalAppearance() {
         let proxy = UINavigationBar.appearance()
 
         proxy.setBackgroundImage(UIImage(), for: .default)
