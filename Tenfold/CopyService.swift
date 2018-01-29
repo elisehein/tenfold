@@ -16,7 +16,7 @@ enum Phrasebook {
 }
 
 class CopyService {
-    static var singleton: CopyService? = nil
+    static var singleton: CopyService?
 
     let phrasebooks: [Phrasebook: MaybeRemoteJSON] = [
         .motivational: CopyService.makePhrasebook(fromRemoteFileName: "motivational-phrases",

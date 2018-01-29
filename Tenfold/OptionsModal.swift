@@ -24,7 +24,6 @@ class OptionsModal: ModalOverlay {
 
     var hasLoadedConstraints = false
 
-    // swiftlint:disable:next function_body_length
     init() {
         super.init(position: .center)
 
@@ -51,15 +50,15 @@ class OptionsModal: ModalOverlay {
         ModalOverlay.configureModalButton(doneButton, color: UIColor.themeColor(.secondaryAccent))
 
         soundButton.setTitle("Sounds", for: UIControlState())
-        soundButton.struckthrough = !StorageService.currentFlag(forSetting: .SoundOn)
+        soundButton.struckthrough = !StorageService.currentFlag(forSetting: .soundOn)
 
         vibrationButton.setTitle("Vibrations", for: UIControlState())
-        vibrationButton.struckthrough = !StorageService.currentFlag(forSetting: .VibrationOn)
+        vibrationButton.struckthrough = !StorageService.currentFlag(forSetting: .vibrationOn)
 
         doneButton.setTitle("Done", for: UIControlState())
 
         // swiftlint:disable:next line_length
-        initialNumbersButton.struckthroughOption = StorageService.currentFlag(forSetting: .RandomInitialNumbers) ? .left : .right
+        initialNumbersButton.struckthroughOption = StorageService.currentFlag(forSetting: .randomInitialNumbers) ? .left : .right
         initialNumbersButton.options = ["1-19 Challenge", "Random"]
 
         soundButton.addTarget(self, action: #selector(self.toggleSound), for: .touchUpInside)
@@ -87,7 +86,6 @@ class OptionsModal: ModalOverlay {
         view.setNeedsUpdateConstraints()
     }
 
-    // swiftlint:disable:next function_body_length
     override func updateViewConstraints() {
         if !hasLoadedConstraints {
             soundLabel.autoPinEdge(toSuperviewEdge: .top, withInset: 30)
@@ -135,22 +133,22 @@ class OptionsModal: ModalOverlay {
         super.updateViewConstraints()
     }
 
-    func toggleSound() {
-        StorageService.toggleFlag(forSetting: .SoundOn)
+    @objc func toggleSound() {
+        StorageService.toggleFlag(forSetting: .soundOn)
         soundButton.toggle()
     }
 
-    func toggleVibration() {
-        StorageService.toggleFlag(forSetting: .VibrationOn)
+    @objc func toggleVibration() {
+        StorageService.toggleFlag(forSetting: .vibrationOn)
         vibrationButton.toggle()
     }
 
-    func toggleInitialNumbers() {
-        StorageService.toggleFlag(forSetting: .RandomInitialNumbers)
+    @objc func toggleInitialNumbers() {
+        StorageService.toggleFlag(forSetting: .randomInitialNumbers)
         initialNumbersButton.toggle()
     }
 
-    func dismissModal() {
+    @objc func dismissModal() {
         self.dismiss(animated: true, completion: nil)
     }
 

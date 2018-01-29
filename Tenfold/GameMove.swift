@@ -15,12 +15,12 @@ enum GameMoveType {
 }
 
 class GameMove: NSObject, NSCoding {
-    fileprivate static let pairCoderKey = "gameMovePairCoderKey"
-    fileprivate static let rowsRemovedCoderKey = "gameMoveRowsRemovedCoderKey"
-    fileprivate static let placeholdersCoderKey = "gameMovePlaceholdersForRowsRemovedCoderKey"
-    fileprivate static let numbersAddedCoderKey = "gameMoveNumbersAddedCoderKey"
+    private static let pairCoderKey = "gameMovePairCoderKey"
+    private static let rowsRemovedCoderKey = "gameMoveRowsRemovedCoderKey"
+    private static let placeholdersCoderKey = "gameMovePlaceholdersForRowsRemovedCoderKey"
+    private static let numbersAddedCoderKey = "gameMoveNumbersAddedCoderKey"
 
-    var crossedOutPair: [Int]? = nil
+    var crossedOutPair: [Int]?
     var rowsRemoved: [[Number]] = []
     var placeholdersForRowsRemoved: [Int] = []
     var numbersAdded: Int = 0

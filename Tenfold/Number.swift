@@ -13,9 +13,9 @@ class Number: NSObject, NSCopying, NSCoding {
     var crossedOut: Bool
     var marksEndOfRound: Bool
 
-    fileprivate static let valueCoderKey = "gameNumberValueCoderKey"
-    fileprivate static let crossedOutCoderKey = "gameNumberCrossedOutCoderKey"
-    fileprivate static let marksEndOfRoundCoderKey = "gameNumberMarksEndOfRoundCoderKey"
+    private static let valueCoderKey = "gameNumberValueCoderKey"
+    private static let crossedOutCoderKey = "gameNumberCrossedOutCoderKey"
+    private static let marksEndOfRoundCoderKey = "gameNumberMarksEndOfRoundCoderKey"
 
     init(value: Int?, crossedOut: Bool, marksEndOfRound: Bool) {
         self.value = value

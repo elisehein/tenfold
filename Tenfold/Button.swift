@@ -52,7 +52,7 @@ class Button: UIButton {
     }
 
     func constructAttributedString(withText text: String?,
-                                           color: UIColor) -> NSMutableAttributedString {
+                                   color: UIColor) -> NSMutableAttributedString {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
 
@@ -63,12 +63,12 @@ class Button: UIButton {
         }
 
         let attributes = [
-            NSKernAttributeName: 2.2 as AnyObject,
-            NSFontAttributeName: font,
-            NSForegroundColorAttributeName: color,
-            NSParagraphStyleAttributeName: paragraphStyle,
-            NSStrikethroughStyleAttributeName: (strikeThrough ? 1 : 0) as AnyObject
-        ] as [String : AnyObject]
+            NSAttributedStringKey.kern: 2.2 as AnyObject,
+            NSAttributedStringKey.font: font,
+            NSAttributedStringKey.foregroundColor: color,
+            NSAttributedStringKey.paragraphStyle: paragraphStyle,
+            NSAttributedStringKey.strikethroughStyle: (strikeThrough ? 1 : 0) as AnyObject
+        ]
 
         return NSMutableAttributedString(string: (text?.uppercased())!, attributes: attributes)
     }

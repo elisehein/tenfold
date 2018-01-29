@@ -10,9 +10,9 @@ import Foundation
 import UIKit
 
 class NextRoundCell: UICollectionViewCell {
-    fileprivate static let fontSizeFactor: CGFloat = 0.4
+    private static let fontSizeFactor: CGFloat = 0.4
 
-    fileprivate let numberLabel = UILabel()
+    private let numberLabel = UILabel()
 
     // Ensure valueIsHidden is set before value
     var valueIsHidden: Bool = true

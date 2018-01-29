@@ -67,13 +67,13 @@ extension Game {
         return surplusIndeces
     }
 
-    fileprivate func removeRow(containing index: Int) -> [Int] {
+    private func removeRow(containing index: Int) -> [Int] {
         let surplusIndeces = surplusIndecesOnRow(containingIndex: index)
         removeRow(containing: surplusIndeces)
         return surplusIndeces
     }
 
-    fileprivate func removeRow(containing indeces: [Int]) {
+    private func removeRow(containing indeces: [Int]) {
         guard latestMove != nil else { return }
         guard indeces.count > 0 else { return }
         let numbersToRemove = numbers.filter({ indeces.contains(numbers.index(of: $0)!) })

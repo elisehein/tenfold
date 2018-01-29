@@ -11,8 +11,8 @@ import UIKit
 
 class RuleHeader: UICollectionReusableView {
 
-    fileprivate let label = UILabel()
-    fileprivate static let widthFactor: CGFloat = {
+    private let label = UILabel()
+    private static let widthFactor: CGFloat = {
         if UIDevice.current.userInterfaceIdiom == .pad {
             return 0.6
         } else {
@@ -61,7 +61,7 @@ class RuleHeader: UICollectionReusableView {
         // See header size calculations in Rules.swift for more details
         let y = bounds.size.height - labelSize.height
 
-        label.frame = CGRect(origin: CGPoint(x: x, y : y),
+        label.frame = CGRect(origin: CGPoint(x: x, y: y),
                              size: labelSize)
     }
 

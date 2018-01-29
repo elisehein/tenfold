@@ -11,11 +11,11 @@ import UIKit
 
 class RankingTable: UIView {
 
-    fileprivate static let rowHeight: CGFloat = {
+    private static let rowHeight: CGFloat = {
         return UIDevice.current.userInterfaceIdiom == .pad ? 45 : 25
     }()
 
-    fileprivate let rankedGames: [RankedGame]
+    private let rankedGames: [RankedGame]
 
     init(rankedGames: [RankedGame]) {
         self.rankedGames = rankedGames
@@ -66,7 +66,7 @@ class RankingTable: UIView {
         return CGFloat(subviews.count) * RankingTable.rowHeight
     }
 
-    fileprivate func tableHeaderView() -> UIView {
+    private func tableHeaderView() -> UIView {
         let headerView = UIView()
 
         let numbersLabel = UILabel()
@@ -89,7 +89,7 @@ class RankingTable: UIView {
         return headerView
     }
 
-    fileprivate func tableRows() -> [UIView] {
+    private func tableRows() -> [UIView] {
         var rows = [UIView]()
 
         for rankedGame in rankedGames {
@@ -99,7 +99,7 @@ class RankingTable: UIView {
        return rows
     }
 
-    fileprivate func tableRow(_ rankedGame: RankedGame) -> UIView {
+    private func tableRow(_ rankedGame: RankedGame) -> UIView {
         let rowView = UIView()
 
         let rankLabel = UILabel()

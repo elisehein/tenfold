@@ -135,7 +135,7 @@ extension Game {
 
 // MARK: Querying helpers
 
-fileprivate extension Game {
+private extension Game {
 
     func remainingNumbers() -> [Number] {
         return numbers.filter({ !$0.crossedOut })
@@ -166,7 +166,7 @@ fileprivate extension Game {
             while siblingIndex + step < numbers.count &&
                 siblingIndex + step > 0 &&
                 numbers[siblingIndex].crossedOut {
-                    siblingIndex = siblingIndex + step
+                siblingIndex += step
             }
 
             if !numbers[siblingIndex].crossedOut {

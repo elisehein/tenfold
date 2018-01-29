@@ -21,29 +21,29 @@ class Menu: UIView {
         return UIDevice.current.userInterfaceIdiom == .pad ? 80 : 40
     }()
 
-    fileprivate static let logoWidth: CGFloat = {
+    private static let logoWidth: CGFloat = {
         return UIDevice.current.userInterfaceIdiom == .pad ? 180 : 120
     }()
 
-    fileprivate static let centerPointOffset: CGFloat = {
+    private static let centerPointOffset: CGFloat = {
         return UIDevice.current.userInterfaceIdiom == .pad ? -20 : 0
     }()
 
-    fileprivate static let logoHeightFactor: CGFloat = 0.75
+    private static let logoHeightFactor: CGFloat = 0.75
 
-    fileprivate let logoContainer = UIView()
-    fileprivate let logo = UIImageView()
-    fileprivate let newGameButton = Button()
-    fileprivate let instructionsButton = Button()
-    fileprivate let optionsButton = Button()
-    fileprivate let showMenuTip = Pill(type: .text)
+    private let logoContainer = UIView()
+    private let logo = UIImageView()
+    private let newGameButton = Button()
+    private let instructionsButton = Button()
+    private let optionsButton = Button()
+    private let showMenuTip = Pill(type: .text)
     let onboardingSteps = OnboardingSteps()
 
-    fileprivate var hasLoadedConstraints = false
-    fileprivate let state: MenuState
-    fileprivate var firstLaunch: Bool
+    private var hasLoadedConstraints = false
+    private let state: MenuState
+    private var firstLaunch: Bool
 
-    fileprivate var newFeatureLabel = UILabel()
+    private var newFeatureLabel = UILabel()
 
     var anchorFrame: CGRect = CGRect.zero {
         didSet {
@@ -107,14 +107,14 @@ class Menu: UIView {
     }
 
     func configureNewFeatureLabel() {
-        guard !StorageService.hasSeenFeatureAnnouncement(.Options) && !firstLaunch else {
-            StorageService.markFeatureAnnouncementSeen(.Options)
+        guard !StorageService.hasSeenFeatureAnnouncement(.options) && !firstLaunch else {
+            StorageService.markFeatureAnnouncementSeen(.options)
             return
         }
 
         var attrs = NSMutableAttributedString.attributes(forTextStyle: .pill)
-        attrs[NSForegroundColorAttributeName] = UIColor.themeColor(.tan)
-        attrs[NSFontAttributeName] = UIFont.themeFontWithSize(12)
+        attrs[NSAttributedStringKey.foregroundColor] = UIColor.themeColor(.tan)
+        attrs[NSAttributedStringKey.font] = UIFont.themeFontWithSize(12)
         newFeatureLabel.attributedText = NSAttributedString(string: "👈🏻 New!", attributes: attrs)
 
         UIView.animate(withDuration: 1, delay: 0, options: [.autoreverse, .repeat], animations: {
@@ -144,7 +144,7 @@ class Menu: UIView {
         super.updateConstraints()
     }
 
-    fileprivate func loadOnboardingStateConstraints() {
+    private func loadOnboardingStateConstraints() {
         logoContainer.autoPinEdge(.bottom, to: .top, of: onboardingSteps)
 
         onboardingSteps.autoAlignAxis(toSuperviewAxis: .vertical)
@@ -156,7 +156,7 @@ class Menu: UIView {
         onboardingSteps.autoPinEdge(toSuperviewEdge: .bottom)
     }
 
-    fileprivate func loadDefaultStateConstraints() {
+    private func loadDefaultStateConstraints() {
         logoContainer.autoPinEdge(.bottom, to: .top, of: newGameButton)
 
         for button in [newGameButton, instructionsButton, optionsButton] {
@@ -177,16 +177,16 @@ class Menu: UIView {
         newFeatureLabel.autoAlignAxis(.vertical, toSameAxisOf: optionsButton, withOffset: newFeatureOffset)
     }
 
-    func didTapNewGame() {
+    @objc func didTapNewGame() {
         onTapNewGame!()
     }
 
-    func didTapInstructions() {
+    @objc func didTapInstructions() {
         onTapInstructions!()
     }
 
-    func didTapOptions() {
-        StorageService.markFeatureAnnouncementSeen(.Options)
+    @objc func didTapOptions() {
+        StorageService.markFeatureAnnouncementSeen(.options)
         newFeatureLabel.isHidden = true
         onTapOptions!()
     }
@@ -206,7 +206,7 @@ class Menu: UIView {
         showMenuTip.isHidden = true
     }
 
-    fileprivate func showTipsIfNeeded() {
+    private func showTipsIfNeeded() {
         if firstLaunch {
             UIApplication.shared.delegate?.window??.addSubview(showMenuTip)
             let windowFrame = showMenuTip.superview?.bounds
@@ -275,7 +275,7 @@ class Menu: UIView {
         frame = visibleFrame()
     }
 
-    fileprivate func visibleFrame(atDefaultPosition: Bool = false) -> CGRect {
+    private func visibleFrame(atDefaultPosition: Bool = false) -> CGRect {
         var menuFrame = anchorFrame
         let maxHeight = emptySpaceAvailable!(true)
 
@@ -289,7 +289,7 @@ class Menu: UIView {
         return menuFrame
     }
 
-    fileprivate func offScreenFrame(givenFrame rect: CGRect) -> CGRect {
+    private func offScreenFrame(givenFrame rect: CGRect) -> CGRect {
         var offScreenRect = rect
         offScreenRect.origin.y = -rect.size.height
         return offScreenRect

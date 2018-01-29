@@ -87,7 +87,7 @@ extension UIScrollView {
     //                       |       | x      |      |
     //                        ----------------
     //
-    fileprivate func contentDistanceFromBottomEdge() -> CGFloat {
+    private func contentDistanceFromBottomEdge() -> CGFloat {
         let totalContentHeight = contentSize.height + contentInset.top
         let totalAvailableHeight = frame.size.height
         return totalAvailableHeight - (totalContentHeight - contentDistanceFromTopEdge())

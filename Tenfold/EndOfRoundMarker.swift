@@ -11,9 +11,9 @@ import UIKit
 
 class EndOfRoundMarker: CAShapeLayer {
 
-    fileprivate static let margin: CGFloat = 3.5
-    fileprivate static let depth: CGFloat = 3
-    fileprivate static let length: CGFloat = 8.5
+    private static let margin: CGFloat = 3.5
+    private static let depth: CGFloat = 3
+    private static let length: CGFloat = 8.5
 
     override init(layer: Any) {
         super.init(layer: layer)

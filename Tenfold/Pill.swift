@@ -23,8 +23,8 @@ class Pill: UIView {
 
     }()
 
-    fileprivate static let iconSize: CGFloat = 70
-    fileprivate static let pulseDuration = GameGridCell.animationDuration
+    private static let iconSize: CGFloat = 70
+    private static let pulseDuration = GameGridCell.animationDuration
 
     static let margin: CGFloat = {
         return UIDevice.current.userInterfaceIdiom == .pad ? 25 : 15
@@ -40,7 +40,7 @@ class Pill: UIView {
 
     let label = UILabel()
     let shadowLayer = UIView()
-    fileprivate let iconView = UIImageView()
+    private let iconView = UIImageView()
 
     var iconName: String? {
         didSet {
@@ -56,10 +56,10 @@ class Pill: UIView {
     }
 
     var isShowing = false
-    fileprivate var dismissalInProgress = false
-    fileprivate var popupInProgress = false
-    fileprivate var popupCompletion: (() -> Void)?
-    fileprivate var type: PillType
+    private var dismissalInProgress = false
+    private var popupInProgress = false
+    private var popupCompletion: (() -> Void)?
+    private var type: PillType
 
     var anchorEdge: ALEdge = .bottom
 
@@ -208,7 +208,7 @@ class Pill: UIView {
         })
     }
 
-    fileprivate func frameInside(frame parentFrame: CGRect, showing: Bool) -> CGRect {
+    private func frameInside(frame parentFrame: CGRect, showing: Bool) -> CGRect {
         let width = type == .icon ? Pill.iconSize : textLabelWidth()
         let height = type == .icon ? Pill.iconSize : Pill.labelHeight
 
@@ -246,7 +246,7 @@ class Pill: UIView {
         return label.intrinsicContentSize.width + Pill.labelWidthAddition
     }
 
-    fileprivate func triggerPendingPopupCompletion() {
+    private func triggerPendingPopupCompletion() {
         popupInProgress = false
         popupCompletion?()
         popupCompletion = nil

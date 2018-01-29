@@ -11,39 +11,39 @@ import PureLayout
 import UIKit
 
 class GameFinished: UIViewController {
-    fileprivate let imageView = UIImageView()
-    fileprivate let titleLabel = UILabel()
-    fileprivate let statsLabel = UILabel()
-    fileprivate let rankingTable: RankingTable
-    fileprivate let closeButton = Button()
+    private let imageView = UIImageView()
+    private let titleLabel = UILabel()
+    private let statsLabel = UILabel()
+    private let rankingTable: RankingTable
+    private let closeButton = Button()
 
-    fileprivate let game: Game
+    private let game: Game
 
-    fileprivate var hasLoadedConstraints = false
+    private var hasLoadedConstraints = false
 
-    fileprivate static let imageSize: CGSize = {
+    private static let imageSize: CGSize = {
         return UIDevice.current.userInterfaceIdiom == .pad ?
                CGSize(width: 120, height: 220) :
                CGSize(width: 80, height: 150)
     }()
 
-    fileprivate static let imageBottomSpacing: CGFloat = {
+    private static let imageBottomSpacing: CGFloat = {
         return UIDevice.current.userInterfaceIdiom == .pad ? 70 : 30
     }()
 
-    fileprivate static let titleBottomSpacing: CGFloat = {
+    private static let titleBottomSpacing: CGFloat = {
         return UIDevice.current.userInterfaceIdiom == .pad ? 20 : 10
     }()
 
-    fileprivate static let tableTopSpacing: CGFloat = {
+    private static let tableTopSpacing: CGFloat = {
         return UIDevice.current.userInterfaceIdiom == .pad ? 80 : 40
     }()
 
-    fileprivate static let statsLabelWidthFactor: CGFloat = {
+    private static let statsLabelWidthFactor: CGFloat = {
         return UIDevice.current.userInterfaceIdiom == .pad ? 0.65 : 0.85
     }()
 
-    fileprivate static let closeButtonBottomInset: CGFloat = {
+    private static let closeButtonBottomInset: CGFloat = {
         return UIDevice.current.userInterfaceIdiom == .pad ? 60 : 30
     }()
 
@@ -146,7 +146,7 @@ class GameFinished: UIViewController {
         }, completion: nil)
     }
 
-    fileprivate func statsText() -> String {
+    private func statsText() -> String {
         var text = ""
 
         if RankingService.singleton.numberOfWinningGames() == 1 {
@@ -165,7 +165,7 @@ class GameFinished: UIViewController {
         return text
     }
 
-    func dismissScreen() {
+    @objc func dismissScreen() {
         self.dismiss(animated: true, completion: nil)
     }
 
