@@ -15,11 +15,11 @@ class GameSnapshot: NSObject, NSCoding {
     let startTime: Date?
     let endTime: Date
 
-    fileprivate static let historicNumberCountCoderKey = "gameSnapshotHistoricNumberCountCoderKey"
-    fileprivate static let numbersRemainingCoderKey = "gameSnapshotNumbersRemainingCoderKey"
-    fileprivate static let totalRoundsCoderKey = "gameSnapshotTotalRoundsCoderKey"
-    fileprivate static let startTimeCoderKey = "gameSnapshotStartTimeCoderKey"
-    fileprivate static let endTimeCoderKey = "gameSnapshotEndTimeCoderKey"
+    private static let historicNumberCountCoderKey = "gameSnapshotHistoricNumberCountCoderKey"
+    private static let numbersRemainingCoderKey = "gameSnapshotNumbersRemainingCoderKey"
+    private static let totalRoundsCoderKey = "gameSnapshotTotalRoundsCoderKey"
+    private static let startTimeCoderKey = "gameSnapshotStartTimeCoderKey"
+    private static let endTimeCoderKey = "gameSnapshotEndTimeCoderKey"
 
     init(historicNumberCount: Int,
          numbersRemaining: Int,

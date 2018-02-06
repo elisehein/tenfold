@@ -10,7 +10,7 @@ import Foundation
 
 class Matrix: NSObject {
 
-    fileprivate let itemsPerRow: Int
+    private let itemsPerRow: Int
     static let singleton = Matrix(itemsPerRow: Game.numbersPerRow)
 
     init (itemsPerRow: Int) {

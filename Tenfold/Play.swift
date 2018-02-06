@@ -14,6 +14,8 @@ class Play: UIViewController {
 
     private var panTriggered: Bool = false
 
+    private static let gridInset: CGFloat = 8
+
     private static let defaultBGColor = UIColor.themeColor(.offWhite)
     private static let gameplayBGColor = UIColor.themeColor(.offWhiteShaded)
 
@@ -29,10 +31,13 @@ class Play: UIViewController {
     private let nextRoundPill = NextRoundPill()
     private let gameplayMessagePill = GameplayMessagePill()
     private let iconPill = Pill(type: .icon)
-    private let floatingScorePill = ScorePill(type: .floating)
-    private let staticScorePill = ScorePill(type: .static)
+
+    private let overlayScorePanel = ScorePanel(appearance: .overlay)
+    private let inlineScorePanel = ScorePanel(appearance: .inline)
 
     private var passedNextRoundThreshold = false
+
+    private var safeFrame: CGRect = CGRect.zero
 
     private var viewHasLoaded = false
     private var viewHasAppeared = false
@@ -72,7 +77,7 @@ class Play: UIViewController {
 
         let pan = UIPanGestureRecognizer(target: self, action: #selector(Play.detectPan))
 
-        floatingScorePill.onTap = handleScorePillTap
+        overlayScorePanel.onTap = handleScorePillTap
         updateScore()
 
         view.backgroundColor = Play.defaultBGColor
@@ -82,33 +87,14 @@ class Play: UIViewController {
         view.addSubview(gameplayMessagePill)
         view.addSubview(nextRoundPill)
         view.addSubview(iconPill)
-        view.addSubview(floatingScorePill)
-        view.addSubview(staticScorePill)
+        view.addSubview(overlayScorePanel)
+        view.addSubview(inlineScorePanel)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Cap the width to 450 for larger screens
-        var gameGridFrame = view.bounds
-        gameGridFrame.size.width = min(540, gameGridFrame.size.width)
-        gameGridFrame.origin.x = (view.bounds.size.width - gameGridFrame.size.width) / 2
-
-        let insets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        gameGrid.initialisePositionWithinFrame(gameGridFrame, withInsets: insets)
-
-        menu.emptySpaceAvailable = gameGrid.emptySpaceVisible
-        menu.anchorFrame = view.bounds
-
-        nextRoundPill.toggle(inFrame: view.bounds, showing: false)
-        gameplayMessagePill.toggle(inFrame: view.bounds, showing: false)
-        iconPill.toggle(inFrame: view.bounds, showing: false)
-        initNextRoundMatrix()
-
-        gameGrid.snapToStartingPositionThreshold = 70
-        gameGrid.snapToGameplayPositionThreshold = 50
-        gameGrid.spaceForScore = Pill.margin * 2 + Pill.labelHeight - gameGrid.frame.origin.y
-
+        safeFrame = view.bounds
+        initialisePositions()
         viewHasLoaded = true
     }
 
@@ -119,6 +105,17 @@ class Play: UIViewController {
         if !shouldLaunchOnboarding && !isOnboarding {
             menu.showDefaultView()
         }
+    }
+
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        let safeInsets = view.safeAreaInsets
+        let safeSize = CGSize(width: view.bounds.size.width - safeInsets.left - safeInsets.right,
+                              height: view.bounds.size.height - safeInsets.top - safeInsets.bottom)
+        safeFrame = CGRect(origin: CGPoint(x: safeInsets.left, y: safeInsets.top), size: safeSize)
+        overlayScorePanel.topInset = safeInsets.top
+        inlineScorePanel.topInset = safeInsets.top
+        initialisePositions()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -140,6 +137,31 @@ class Play: UIViewController {
         }
 
         viewHasAppeared = true
+    }
+
+    private func initialisePositions() {
+        // Cap the width for larger screens
+        var gameGridFrame = safeFrame
+        gameGridFrame.size.width = min(540, gameGridFrame.size.width)
+        gameGridFrame.origin.x = (safeFrame.size.width - gameGridFrame.size.width) / 2
+
+        let insets = UIEdgeInsets(top: Play.gridInset,
+                                  left: Play.gridInset,
+                                  bottom: Play.gridInset,
+                                  right: Play.gridInset)
+        gameGrid.initialisePositionWithinFrame(gameGridFrame, withInsets: insets)
+
+        menu.emptySpaceAvailable = gameGrid.emptySpaceVisible
+        menu.anchorFrame = safeFrame
+
+        nextRoundPill.toggle(inFrame: safeFrame, showing: false)
+        gameplayMessagePill.toggle(inFrame: safeFrame, showing: false)
+        iconPill.toggle(inFrame: safeFrame, showing: false)
+        initNextRoundMatrix()
+
+        gameGrid.snapToStartingPositionThreshold = 70
+        gameGrid.snapToGameplayPositionThreshold = 50
+        gameGrid.spaceForScore = Pill.margin * 2 + Pill.labelHeight + safeFrame.origin.y - gameGrid.frame.origin.y
     }
 
     private func initNextRoundMatrix() {
@@ -206,8 +228,8 @@ class Play: UIViewController {
             self.updateNextRoundPillText()
             self.updateScore()
             self.updateState()
-            self.staticScorePill.toggle(inFrame: self.view.bounds, showing: false)
-            self.floatingScorePill.toggle(inFrame: self.view.bounds, showing: false)
+            self.inlineScorePanel.toggle(showing: false)
+            self.overlayScorePanel.toggle(showing: false)
             self.nextRoundGrid?.hide(animated: false)
             self.menu.showIfNeeded(atDefaultPosition: !inGameplayPosition)
         })
@@ -237,7 +259,7 @@ class Play: UIViewController {
         // game move, and then when we've chosen two, we ensure the score becomes visible, too.
         if !isOnboarding {
             menu.hideTipsIfNeeded()
-            staticScorePill.toggle(inFrame: view.bounds, showing: true, animated: true)
+            inlineScorePanel.toggle(showing: true, animated: true)
         }
     }
 
@@ -257,7 +279,7 @@ class Play: UIViewController {
         checkForNewlyUnrepresentedValues()
     }
 
-    func detectPan(_ recognizer: UIPanGestureRecognizer) {
+    @objc func detectPan(_ recognizer: UIPanGestureRecognizer) {
         guard recognizer.state == .changed else {
             panTriggered = recognizer.state == .ended
             return
@@ -280,12 +302,12 @@ class Play: UIViewController {
         guard !gameGrid.rowRemovalInProgress else { return }
         guard game.latestMoveType() != nil else {
             iconPill.iconName = "not-allowed"
-            iconPill.flash(inFrame: view.bounds)
+            iconPill.flash(inFrame: safeFrame)
             return
         }
         // These only apply when returning from onboarding
         menu.hideIfNeeded()
-        staticScorePill.toggle(inFrame: view.bounds, showing: true, animated: true)
+        inlineScorePanel.toggle(showing: true, animated: true)
 
         if game.latestMoveType() == .crossingOutPair {
             undoLatestPairing()
@@ -294,7 +316,7 @@ class Play: UIViewController {
         }
 
         iconPill.iconName = "undo"
-        iconPill.flash(inFrame: view.bounds)
+        iconPill.flash(inFrame: safeFrame)
     }
 
     func undoNewRound() {
@@ -353,7 +375,7 @@ class Play: UIViewController {
             gameGrid.removeRows(withNumberIndeces: surplusIndeces, completion: {
                 if self.game.ended() {
                     StorageService.saveGameSnapshot(self.game, forced: true)
-                    self.present(GameFinished(game: self.game), animated: true, completion: { _ in
+                    self.present(GameFinished(game: self.game), animated: true, completion: {
                         self.restart()
                     })
                 } else {
@@ -372,7 +394,7 @@ class Play: UIViewController {
 
         if unrepresented.count > 0 && game.numbersRemaining() > 10 {
             gameplayMessagePill.newlyUnrepresentedNumber = unrepresented[0]
-            gameplayMessagePill.popup(forSeconds: 3, inFrame: view.bounds, completion: {
+            gameplayMessagePill.popup(forSeconds: 3, inFrame: safeFrame, completion: {
                 self.game.pruneValueCounts()
             })
         } else {
@@ -392,10 +414,10 @@ class Play: UIViewController {
     }
 
     private func updateScore() {
-        floatingScorePill.numbers = game.numbersRemaining()
-        floatingScorePill.round = game.currentRound
-        staticScorePill.numbers = game.numbersRemaining()
-        staticScorePill.round = game.currentRound
+        overlayScorePanel.numbersRemaining = game.numbersRemaining()
+        overlayScorePanel.currentRound = game.currentRound
+        inlineScorePanel.numbersRemaining = game.numbersRemaining()
+        inlineScorePanel.currentRound = game.currentRound
     }
 
     private func playSound(_ sound: Sound) {
@@ -414,7 +436,7 @@ class Play: UIViewController {
 
     private func handleWillSnapToStartingPosition() {
         view.backgroundColor = Play.defaultBGColor
-        staticScorePill.toggle(inFrame: view.frame, showing: false)
+        inlineScorePanel.toggle(showing: false)
         menu.showIfNeeded(atDefaultPosition: true)
     }
 
@@ -427,8 +449,8 @@ class Play: UIViewController {
     }
 
     func handleDidSnapToGameplayPosition() {
-        staticScorePill.alpha = 1
-        staticScorePill.toggle(inFrame: view.frame, showing: true, animated: true)
+        inlineScorePanel.alpha = 1
+        inlineScorePanel.toggle(showing: true, animated: true)
     }
 
     func handlePullUpThresholdExceeded() {
@@ -442,24 +464,24 @@ class Play: UIViewController {
         }
 
         nextRoundGrid?.hide(animated: false)
-        nextRoundPill.dismiss(inFrame: view.bounds, completion: {
+        nextRoundPill.dismiss(inFrame: safeFrame, completion: {
             self.updateNextRoundPillText()
         })
         loadNextRound()
 
         if !isOnboarding {
             menu.hideIfNeeded()
-            staticScorePill.toggle(inFrame: view.bounds, showing: true, animated: true)
+            inlineScorePanel.toggle(showing: true, animated: true)
         }
     }
 
-    func presentExplanationModalIfNeeded() {
-        guard !StorageService.hasSeenFeatureAnnouncement(.NextRoundDisallowed) else { return }
+    @objc func presentExplanationModalIfNeeded() {
+        guard !StorageService.hasSeenFeatureAnnouncement(.nextRoundDisallowed) else { return }
 
         let modal = NextRoundDisallowedModal(potentialPairs: game.potentialPairs().count)
         modal.onTapHelp = showInstructions
         present(modal, animated: true, completion: nil)
-        StorageService.markFeatureAnnouncementSeen(.NextRoundDisallowed)
+        StorageService.markFeatureAnnouncementSeen(.nextRoundDisallowed)
     }
 
     private func handleScroll() {
@@ -477,11 +499,11 @@ class Play: UIViewController {
                 if !passedNextRoundThreshold {
                     playSound(.nextRound)
                     passedNextRoundThreshold = true
-                    gameplayMessagePill.toggle(inFrame: view.bounds, showing: false)
-                    appropriatePill.toggle(inFrame: view.bounds, showing: true, animated: true)
+                    gameplayMessagePill.toggle(inFrame: safeFrame, showing: false)
+                    appropriatePill.toggle(inFrame: safeFrame, showing: true, animated: true)
                 }
             } else {
-                appropriatePill.toggle(inFrame: view.bounds, showing: false, animated: true)
+                appropriatePill.toggle(inFrame: safeFrame, showing: false, animated: true)
                 passedNextRoundThreshold = false
             }
 
@@ -497,7 +519,7 @@ class Play: UIViewController {
 
     private func handlePullingDown(withFraction fraction: CGFloat) {
         guard menu.isHidden else { return }
-        staticScorePill.alpha = 1 - fraction
+        inlineScorePanel.alpha = 1 - fraction
         view.backgroundColor = Play.gameplayBGColor.interpolateTo(Play.defaultBGColor, fraction: fraction)
     }
 
@@ -507,11 +529,11 @@ class Play: UIViewController {
 
     private func positionScore() {
         if gameGrid.contentOffset.y > -gameGrid.spaceForScore {
-            floatingScorePill.toggle(inFrame: view.bounds, showing: true, animated: true)
-            staticScorePill.isHidden = true
+            overlayScorePanel.toggle(showing: true, animated: true)
+            inlineScorePanel.isHidden = true
         } else {
-            floatingScorePill.toggle(inFrame: view.bounds, showing: false, animated: true)
-            staticScorePill.isHidden = false
+            overlayScorePanel.toggle(showing: false, animated: true)
+            inlineScorePanel.isHidden = false
         }
     }
 
@@ -523,7 +545,7 @@ class Play: UIViewController {
 
     private func handleOnboardingWillDismissWithGame(_ onboardingGame: Game) {
         view.backgroundColor = Play.gameplayBGColor
-        staticScorePill.alpha = 1
+        inlineScorePanel.alpha = 1
         restart(withGame: onboardingGame, inGameplayPosition: true)
 
         // Don't know why... Possibly because we don't call handleScroll()

@@ -20,11 +20,11 @@ enum SlidingStrikethroughButtonOption: Int {
 
 class SlidingStrikethroughButton: Button, CAAnimationDelegate {
 
-    fileprivate static let gapSize: CGFloat = {
+    private static let gapSize: CGFloat = {
         return UIDevice.current.userInterfaceIdiom == .pad ? 50 : 40
     }()
 
-    fileprivate let lineLayer = CAShapeLayer()
+    private let lineLayer = CAShapeLayer()
     var struckthroughOption: SlidingStrikethroughButtonOption = .left
 
     var options: [String] = [] {
@@ -70,7 +70,7 @@ class SlidingStrikethroughButton: Button, CAAnimationDelegate {
         lineLayer.add(animation, forKey: "endAnimation")
     }
 
-    fileprivate func configure() {
+    private func configure() {
         let titleString = NSMutableAttributedString()
 
         let gap = NSTextAttachment()
@@ -82,8 +82,8 @@ class SlidingStrikethroughButton: Button, CAAnimationDelegate {
                                                        color: UIColor.themeColor(.offBlack))
 
             if options.index(of: option) == struckthroughOption.rawValue {
-                attrString.addAttributes([NSStrikethroughStyleAttributeName: 1],
-                                         range: NSRange(location: 0, length: option.characters.count))
+                attrString.addAttributes([NSAttributedStringKey.strikethroughStyle: 1],
+                                         range: NSRange(location: 0, length: option.count))
             }
 
             titleString.append(attrString)
@@ -96,7 +96,7 @@ class SlidingStrikethroughButton: Button, CAAnimationDelegate {
         setAttributedTitle(titleString, for: UIControlState())
     }
 
-    fileprivate func startingPathWhenSlidingFrom(_ option: SlidingStrikethroughButtonOption) -> CGPath {
+    private func startingPathWhenSlidingFrom(_ option: SlidingStrikethroughButtonOption) -> CGPath {
         let textWidth = attributedTitle(for: UIControlState())?.size().width
         let textStartX = (bounds.size.width - textWidth!) / 2
         let textEndX = textStartX + textWidth!
@@ -107,7 +107,7 @@ class SlidingStrikethroughButton: Button, CAAnimationDelegate {
         return path.cgPath
     }
 
-    fileprivate func fullWidthLinePath() -> CGPath {
+    private func fullWidthLinePath() -> CGPath {
         let textWidth = attributedTitle(for: UIControlState())?.size().width
         let textStartX = (bounds.size.width - textWidth!) / 2
         let textEndX = textStartX + textWidth!
@@ -117,7 +117,7 @@ class SlidingStrikethroughButton: Button, CAAnimationDelegate {
         return path.cgPath
     }
 
-    fileprivate func linePathY() -> CGFloat {
+    private func linePathY() -> CGFloat {
         return bounds.size.height / 2 + 2
     }
 

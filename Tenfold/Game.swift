@@ -15,12 +15,12 @@ class Game: NSObject, NSCoding {
 
     // Take care not to rename the actual literals, as they are used as storage keys on
     // devices that already have the game installed
-    fileprivate static let numbersCoderKey = "gameNumbersCoderKey"
-    fileprivate static let historicNumberCountCoderKey = "gameHistoricNumberCountCoderKey"
-    fileprivate static let latestMoveCoderKey = "gameLatestMoveCoderKey"
-    fileprivate static let currentRoundCoderKey = "gameCurrentRoundCoderKey"
-    fileprivate static let valueCountsCoderKey = "gameValueCountsCoderKey"
-    fileprivate static let startTimeCoderKey = "gameStartTimeCoderKey"
+    private static let numbersCoderKey = "gameNumbersCoderKey"
+    private static let historicNumberCountCoderKey = "gameHistoricNumberCountCoderKey"
+    private static let latestMoveCoderKey = "gameLatestMoveCoderKey"
+    private static let currentRoundCoderKey = "gameCurrentRoundCoderKey"
+    private static let valueCountsCoderKey = "gameValueCountsCoderKey"
+    private static let startTimeCoderKey = "gameStartTimeCoderKey"
 
     static let defaultInitialNumberValues = [1, 2, 3, 4, 5, 6, 7, 8, 9,
                                              1, 1, 1, 2, 1, 3, 1, 4, 1,
@@ -28,11 +28,11 @@ class Game: NSObject, NSCoding {
 
     var numbers: [Number] = []
     var valueCounts: [Int: Int]
-    var latestMove: GameMove? = nil
+    var latestMove: GameMove?
 
     var historicNumberCount: Int = 0
     var currentRound: Int = 1
-    var startTime: Date? = nil
+    var startTime: Date?
 
     override init() {
         numbers = Game.initialNumbers()
@@ -41,7 +41,7 @@ class Game: NSObject, NSCoding {
         super.init()
     }
 
-    fileprivate class func initialNumbers() -> [Number] {
+    private class func initialNumbers() -> [Number] {
         let initialNumbers: [Number] = initialNumberValues().map({ value in
             return Number(value: value, crossedOut: false, marksEndOfRound: false)
         })
@@ -50,10 +50,10 @@ class Game: NSObject, NSCoding {
         return initialNumbers
     }
 
-    fileprivate class func initialNumberValues() -> [Int] {
+    private class func initialNumberValues() -> [Int] {
         var numberValues = [Int]()
 
-        if StorageService.currentFlag(forSetting: .RandomInitialNumbers) {
+        if StorageService.currentFlag(forSetting: .randomInitialNumbers) {
             for _ in 0..<(Game.initialNumberCount) {
                 numberValues.append(Int(arc4random_uniform(9) + 1))
             }
@@ -64,7 +64,7 @@ class Game: NSObject, NSCoding {
         return numberValues
     }
 
-    fileprivate class func valueCounts(inNumbers givenNumbers: [Number]) -> [Int: Int] {
+    private class func valueCounts(inNumbers givenNumbers: [Number]) -> [Int: Int] {
         var counts = [Int: Int]()
         for number in givenNumbers {
             if counts[number.value!] == nil {

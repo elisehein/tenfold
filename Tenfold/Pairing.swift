@@ -9,7 +9,7 @@
 import Foundation
 
 class Pairing: NSObject {
-    fileprivate static let matrix = Matrix.singleton
+    private static let matrix = Matrix.singleton
 
     static func validate(_ proposedPair: Pair, inGame game: Game) -> Bool {
         if game.isCrossedOut(proposedPair.first) ||
@@ -25,18 +25,18 @@ class Pairing: NSObject {
                positionsCanPair(proposedPair, inGame: game)
     }
 
-    static fileprivate func valuesCanPair(_ pair: Pair, inGame game: Game) -> Bool {
+    static private func valuesCanPair(_ pair: Pair, inGame game: Game) -> Bool {
         let value = game.valueAtIndex(pair.first)
         let otherValue = game.valueAtIndex(pair.second)
 
         return (value == otherValue) || (value! + otherValue! == 10)
     }
 
-    static fileprivate func positionsCanPair(_ pair: Pair, inGame game: Game) -> Bool {
+    static private func positionsCanPair(_ pair: Pair, inGame game: Game) -> Bool {
         return matrix.backToBack(pair) || enclosingCrossedOutNumbers(pair, inGame: game)
     }
 
-    static fileprivate func enclosingCrossedOutNumbers(_ pair: Pair, inGame game: Game) -> Bool {
+    static private func enclosingCrossedOutNumbers(_ pair: Pair, inGame game: Game) -> Bool {
         let enclosingHorizontally = game.allCrossedOutBetween(pair)
         let enclosingVertically = matrix.sameColumn(pair) &&
                                   game.allCrossedOutBetween(pair, withIncrement: Game.numbersPerRow)

@@ -30,13 +30,13 @@ extension GameGrid {
         }
     }
 
-    fileprivate func loadNewGame(_ newGame: Game, enforceStartingPosition: Bool) {
+    private func loadNewGame(_ newGame: Game, enforceStartingPosition: Bool) {
         self.game = newGame
         self.reloadData()
         self.adjustTopInset(enforceStartingPosition: enforceStartingPosition)
     }
 
-    fileprivate func hideCurrentGame(_ completion: @escaping (() -> Void)) {
+    private func hideCurrentGame(_ completion: @escaping (() -> Void)) {
         UIView.animate(withDuration: 0.2,
                                    delay: 0,
                                    options: .curveEaseIn,
@@ -49,7 +49,7 @@ extension GameGrid {
         })
     }
 
-    fileprivate func showCurrentGame(_ completion: (() -> Void)?) {
+    private func showCurrentGame(_ completion: (() -> Void)?) {
         UIView.animate(withDuration: 0.15, delay: 0.2, options: .curveEaseIn, animations: {
             self.alpha = 1
         }, completion: { _ in
@@ -152,7 +152,7 @@ extension GameGrid {
         })
     }
 
-    fileprivate func prepareForRemoval(_ indexPaths: [IndexPath], completion: @escaping (() -> Void)) {
+    private func prepareForRemoval(_ indexPaths: [IndexPath], completion: @escaping (() -> Void)) {
         for indexPath in indexPaths {
             if let cell = cellForItem(at: indexPath) as? GameGridCell {
                 cell.prepareForRemoval(completion: completion)
@@ -162,7 +162,7 @@ extension GameGrid {
         }
     }
 
-    fileprivate func revealCellsAtIndeces(_ indeces: [Int]) {
+    private func revealCellsAtIndeces(_ indeces: [Int]) {
         rowInsertionInProgressWithIndeces = nil
 
         performActionOnCells(withIndeces: indeces, { cell in
@@ -170,7 +170,7 @@ extension GameGrid {
         })
     }
 
-    fileprivate func adjustTopOffsetInAnticipationOfCellCountChange(_ indeces: [Int]) {
+    private func adjustTopOffsetInAnticipationOfCellCountChange(_ indeces: [Int]) {
         // For some reason something funky happens when we're adding stuff
         // to the very end of the game... in this case, adjusting top offset
         // just makes it behave oddly

@@ -101,11 +101,11 @@ class NextRoundDisallowedModal: ModalOverlay {
         super.updateViewConstraints()
     }
 
-    func didTapOk() {
+    @objc func didTapOk() {
         dismiss(animated: true, completion: nil)
     }
 
-    func didTapHelp() {
+    @objc func didTapHelp() {
         dismiss(animated: true, completion: {
             self.onTapHelp?()
         })

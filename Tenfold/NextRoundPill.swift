@@ -27,11 +27,11 @@ class NextRoundPill: Pill {
         let grayedOut = "TO GO"
         if let index = text.indexOf(grayedOut) {
             let attributes = [
-                NSForegroundColorAttributeName: UIColor.white.withAlphaComponent(0.55),
-                NSFontAttributeName: UIFont.themeFontWithSize(Pill.detailFontSize)
+                NSAttributedStringKey.foregroundColor: UIColor.white.withAlphaComponent(0.55),
+                NSAttributedStringKey.font: UIFont.themeFontWithSize(Pill.detailFontSize)
             ]
             attrString.addAttributes(attributes,
-                                     range: NSRange(location: index, length: grayedOut.characters.count))
+                                     range: NSRange(location: index, length: grayedOut.count))
         }
 
         return attrString

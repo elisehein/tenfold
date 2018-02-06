@@ -22,37 +22,37 @@ enum OnboardingStep: Int {
 
 class OnboardingSteps: UIView {
 
-    fileprivate static let steps = JSON.initFromFile("onboardingSteps")!
+    private static let steps = JSON.initFromFile("onboardingSteps")!
 
-    fileprivate static let topLabelAnimationDelay: Double = 0.5
-    fileprivate static let bottomLabelAnimationDelay: Double = 0.6
-    fileprivate static let animationDuration: Double = 0.8
+    private static let topLabelAnimationDelay: Double = 0.5
+    private static let bottomLabelAnimationDelay: Double = 0.6
+    private static let animationDuration: Double = 0.8
 
-    fileprivate let topLabel = UILabel()
-    fileprivate let bottomLabel = UILabel()
-    fileprivate let downArrow = UIImageView(image: UIImage(named: "chevron-down"))
+    private let topLabel = UILabel()
+    private let bottomLabel = UILabel()
+    private let downArrow = UIImageView(image: UIImage(named: "chevron-down"))
 
     let buttonsContainer = UIView()
-    fileprivate let okButton = Button()
-    fileprivate let dismissButton = Button()
+    private let okButton = Button()
+    private let dismissButton = Button()
 
-    fileprivate let labelBaseAttributes: [String: AnyObject] = {
+    private let labelBaseAttributes: [NSAttributedStringKey: Any] = {
         let isIPad = UIDevice.current.userInterfaceIdiom == .pad
 
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
         paragraphStyle.lineSpacing = isIPad ? 7 : 4
 
-        let attributes = [
-            NSForegroundColorAttributeName: UIColor.themeColor(.offBlack),
-            NSParagraphStyleAttributeName: paragraphStyle,
-            NSFontAttributeName: UIFont.themeFontWithSize(isIPad ? 18 : 14)
-        ] as [String : AnyObject]
+        let attributes: [NSAttributedStringKey: Any] = [
+            NSAttributedStringKey.foregroundColor: UIColor.themeColor(.offBlack),
+            NSAttributedStringKey.paragraphStyle: paragraphStyle,
+            NSAttributedStringKey.font: UIFont.themeFontWithSize(isIPad ? 18 : 14)
+        ]
 
         return attributes
     }()
 
-    fileprivate var hasLoadedConstraints = false
+    private var hasLoadedConstraints = false
 
     var currentStep: OnboardingStep?
 
@@ -124,7 +124,7 @@ class OnboardingSteps: UIView {
         }
     }
 
-    fileprivate func showBottomLabel(forOnboardingStep onboardingStep: OnboardingStep) {
+    private func showBottomLabel(forOnboardingStep onboardingStep: OnboardingStep) {
         let secondStep = OnboardingSteps.steps[onboardingStep.rawValue][1].string!
         bottomLabel.attributedText = NSAttributedString(string: secondStep,
                                                         attributes: labelBaseAttributes)
@@ -138,7 +138,7 @@ class OnboardingSteps: UIView {
         })
     }
 
-    func transitionToNextStep() {
+    @objc func transitionToNextStep() {
         UIView.animate(withDuration: 0.3, animations: {
             self.topLabel.alpha = 0
             self.bottomLabel.alpha = 0
@@ -149,7 +149,7 @@ class OnboardingSteps: UIView {
         })
     }
 
-    fileprivate func topLabelAppearanceDelay(forStep onboardingStep: OnboardingStep) -> Double {
+    private func topLabelAppearanceDelay(forStep onboardingStep: OnboardingStep) -> Double {
         switch onboardingStep {
         case .pullUp:
             return 1
@@ -158,7 +158,7 @@ class OnboardingSteps: UIView {
         }
     }
 
-    fileprivate func bottomLabelAppearanceDelay(forStep onboardingStep: OnboardingStep) -> Double {
+    private func bottomLabelAppearanceDelay(forStep onboardingStep: OnboardingStep) -> Double {
         switch onboardingStep {
         case .crossOutIdentical:
             return 2
@@ -167,7 +167,7 @@ class OnboardingSteps: UIView {
         }
     }
 
-    fileprivate func removeStepExtras(_ onboardingStep: OnboardingStep) {
+    private func removeStepExtras(_ onboardingStep: OnboardingStep) {
         switch onboardingStep {
         case .welcome:
             removeButtons()
@@ -176,7 +176,7 @@ class OnboardingSteps: UIView {
         }
     }
 
-    fileprivate func displayButtons() {
+    private func displayButtons() {
         buttonsContainer.alpha = 0
         buttonsContainer.isHidden = false
 
@@ -190,7 +190,7 @@ class OnboardingSteps: UIView {
         }, completion: nil)
     }
 
-    fileprivate func removeButtons() {
+    private func removeButtons() {
         UIView.animate(withDuration: 0.3, animations: {
             self.buttonsContainer.alpha = 0
         }, completion: { _ in
@@ -198,7 +198,7 @@ class OnboardingSteps: UIView {
         })
     }
 
-    func didDismissOnboarding() {
+    @objc func didDismissOnboarding() {
         onDismiss?()
     }
 

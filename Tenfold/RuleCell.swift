@@ -11,7 +11,7 @@ import UIKit
 
 class RuleCell: UICollectionViewCell {
 
-    fileprivate static let textWidthFactor: CGFloat = {
+    private static let textWidthFactor: CGFloat = {
         if UIDevice.current.userInterfaceIdiom == .pad {
             return 0.5
         } else {
@@ -19,7 +19,7 @@ class RuleCell: UICollectionViewCell {
         }
     }()
 
-    fileprivate static let gridWidthFactor: CGFloat = {
+    private static let gridWidthFactor: CGFloat = {
         if UIDevice.current.userInterfaceIdiom == .pad {
             return 0.5
         } else {
@@ -27,7 +27,7 @@ class RuleCell: UICollectionViewCell {
         }
     }()
 
-    fileprivate static let textGridSpacing: CGFloat = {
+    private static let textGridSpacing: CGFloat = {
         if UIDevice.current.userInterfaceIdiom == .pad {
             return 40
         } else {
@@ -72,15 +72,15 @@ class RuleCell: UICollectionViewCell {
         }
     }
 
-    var gridAnimationType: RuleGridAnimationType = .Pairings {
+    var gridAnimationType: RuleGridAnimationType = .pairings {
         didSet {
             exampleGrid.animationType = gridAnimationType
         }
     }
 
-    fileprivate let label = RuleCell.labelWithAttributedText()
-    fileprivate let detailLabel = UILabel()
-    fileprivate let exampleGrid = RuleGrid()
+    private let label = RuleCell.labelWithAttributedText()
+    private let detailLabel = UILabel()
+    private let exampleGrid = RuleGrid()
 
     class func sizeOccupiedByLabel(forAvailableWidth availableWidth: CGFloat,
                                    usingText text: String) -> CGSize {
@@ -126,7 +126,7 @@ class RuleCell: UICollectionViewCell {
                                                      usingText: text!)
 
         let x = contentView.bounds.size.width * 0.5 * (1 - RuleCell.textWidthFactor)
-        label.frame = CGRect(origin: CGPoint(x: x, y : 0), size: labelSize)
+        label.frame = CGRect(origin: CGPoint(x: x, y: 0), size: labelSize)
 
         var detailLabelFrame = contentView.bounds
         detailLabelFrame.size.width *= RuleCell.textWidthFactor

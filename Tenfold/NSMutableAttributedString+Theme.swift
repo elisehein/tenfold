@@ -19,7 +19,7 @@ enum TextStyle {
 }
 
 struct TextStyleProperties {
-    fileprivate static let isIPad: Bool = {
+    private static let isIPad: Bool = {
         return UIDevice.current.userInterfaceIdiom == .pad
     }()
 
@@ -67,7 +67,7 @@ extension NSMutableAttributedString {
         return NSMutableAttributedString(string: string, attributes: attributes(forTextStyle: textStyle))
     }
 
-    class func attributes(forTextStyle textStyle: TextStyle) -> [String: AnyObject] {
+    class func attributes(forTextStyle textStyle: TextStyle) -> [NSAttributedStringKey: Any] {
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = TextStyleProperties.lineSpacing[textStyle]!
@@ -79,13 +79,13 @@ extension NSMutableAttributedString {
                                             weight: TextStyleProperties.fontWeight[textStyle]!)
 
         var attributes = [
-            NSParagraphStyleAttributeName: paragraphStyle,
-            NSFontAttributeName: font,
-            NSForegroundColorAttributeName: UIColor.themeColor(forTextStyle: textStyle)
+            NSAttributedStringKey.paragraphStyle: paragraphStyle,
+            NSAttributedStringKey.font: font,
+            NSAttributedStringKey.foregroundColor: UIColor.themeColor(forTextStyle: textStyle)
         ]
 
         if textStyle == .pill {
-            attributes[NSKernAttributeName] = 1.2 as NSObject?
+            attributes[NSAttributedStringKey.kern] = 1.2 as NSObject?
         }
 
         return attributes

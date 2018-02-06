@@ -12,7 +12,7 @@ import UIKit
 class Grid: UICollectionView {
     static let cellSpacing: Int = 1
 
-    fileprivate let layout: UICollectionViewFlowLayout = {
+    private let layout: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
         l.minimumInteritemSpacing = CGFloat(Grid.cellSpacing)
         l.minimumLineSpacing = CGFloat(Grid.cellSpacing)
@@ -35,7 +35,7 @@ class Grid: UICollectionView {
                        size: size)
     }
 
-    fileprivate func sizeSnappedToPixel(inAvailableSize availableSize: CGSize) -> CGSize {
+    private func sizeSnappedToPixel(inAvailableSize availableSize: CGSize) -> CGSize {
         // We want to get a width that is exactly divisible by the number of items per row,
         // taking into account also spacing, so that we don't get any unequal spacing or cell widths
         let widthForNumbers = availableSize.width - CGFloat(Grid.widthForSpacing())
@@ -56,7 +56,7 @@ class Grid: UICollectionView {
     // want to
     // cross out the visible one
     func performActionOnCells(withIndeces indeces: [Int],
-                                       _ action: ((GameGridCell) -> Void)) {
+                              _ action: ((GameGridCell) -> Void)) {
         for index in indeces {
             let indexPath = IndexPath(item: index, section: 0)
 

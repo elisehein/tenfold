@@ -22,12 +22,12 @@ class Rules: UIViewController {
 
     let sections: UICollectionView
 
-    fileprivate let reuseIdentifier = "RuleExampleCell"
-    fileprivate let headerReuseIdentifier = "RuleHeader"
-    fileprivate let footerReuseIdentifier = "RulesFooter"
-    fileprivate let pageDownIndicatorReuseIdentifier = "PageDownIndicator"
+    private let reuseIdentifier = "RuleExampleCell"
+    private let headerReuseIdentifier = "RuleHeader"
+    private let footerReuseIdentifier = "RulesFooter"
+    private let pageDownIndicatorReuseIdentifier = "PageDownIndicator"
 
-    fileprivate let layout: UICollectionViewFlowLayout = {
+    private let layout: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
 
         if UIDevice.current.userInterfaceIdiom == .pad {
@@ -42,9 +42,9 @@ class Rules: UIViewController {
         return l
     }()
 
-    fileprivate static let centerOffset: CGFloat = -20
+    private static let centerOffset: CGFloat = -20
 
-    fileprivate static var data = JSON.initFromFile("rules")!
+    private static var data = JSON.initFromFile("rules")!
 
     override var title: String? {
         didSet {
@@ -54,9 +54,9 @@ class Rules: UIViewController {
 
             let isIPad = UIDevice.current.userInterfaceIdiom == .pad
 
-            let attributes = [NSFontAttributeName: UIFont.themeFontWithSize(isIPad ? 18 : 14),
-                              NSForegroundColorAttributeName: UIColor.themeColor(.offBlack),
-                              NSKernAttributeName: 2.2 as AnyObject] as [String : AnyObject]
+            let attributes = [NSAttributedStringKey.font: UIFont.themeFontWithSize(isIPad ? 18 : 14),
+                              NSAttributedStringKey.foregroundColor: UIColor.themeColor(.offBlack),
+                              NSAttributedStringKey.kern: 2.2 as AnyObject]
 
             label.attributedText = NSAttributedString(string: title!.uppercased(),
                                                       attributes: attributes)
@@ -92,8 +92,6 @@ class Rules: UIViewController {
 
         view.addSubview(sections)
         view.backgroundColor = UIColor.themeColor(.offWhite)
-
-        automaticallyAdjustsScrollViewInsets = false
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -101,19 +99,22 @@ class Rules: UIViewController {
 
         navigationController?.setNavigationBarHidden(false, animated: true)
 
-        let backButton = UIButton(frame: CGRect(x: 0, y: 0, width: 20, height: 16))
+        let backButton = UIButton()
+
         backButton.setBackgroundImage(UIImage(named: "back-arrow"), for: UIControlState())
         backButton.addTarget(self,
                              action: #selector(Rules.goBack),
                              for: .touchUpInside)
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+        navigationItem.leftBarButtonItem?.customView?.autoSetDimensions(to: CGSize(width: 20, height: 16))
 
-        let infoButton = UIButton(frame: CGRect(x: 0, y: 0, width: 25, height: 17))
+        let infoButton = UIButton()
         infoButton.setBackgroundImage(UIImage(named: "menu-icon"), for: UIControlState())
         infoButton.addTarget(self,
                              action: #selector(Rules.showAppInfo),
                              for: .touchUpInside)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)
+        navigationItem.rightBarButtonItem?.customView?.autoSetDimensions(to: CGSize(width: 25, height: 17))
 
         sections.frame = view.bounds
     }
@@ -130,15 +131,15 @@ class Rules: UIViewController {
         }
     }
 
-    func showAppInfo() {
+    @objc func showAppInfo() {
         present(AppInfoModal(), animated: true, completion: nil)
     }
 
-    func goBack() {
+    @objc func goBack() {
         _ = navigationController?.popViewController(animated: true)
     }
 
-    fileprivate func headerViewForIndexPath(_ indexPath: IndexPath) -> UICollectionReusableView {
+    private func headerViewForIndexPath(_ indexPath: IndexPath) -> UICollectionReusableView {
         // swiftlint:disable:next line_length
         let headerView = sections.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerReuseIdentifier, for: indexPath)
 
@@ -150,7 +151,7 @@ class Rules: UIViewController {
         return headerView
     }
 
-    fileprivate func contentHeight(forSectionAtIndex sectionIndex: Int) -> CGFloat {
+    private func contentHeight(forSectionAtIndex sectionIndex: Int) -> CGFloat {
         let headerHeight = sizeForHeaderInSection(withIndex: sectionIndex).height
         var contentHeight = headerHeight
 
@@ -167,19 +168,19 @@ class Rules: UIViewController {
         return contentHeight
     }
 
-    fileprivate func sizeForHeaderInSection(withIndex sectionIndex: Int) -> CGSize {
+    private func sizeForHeaderInSection(withIndex sectionIndex: Int) -> CGSize {
         let text = Rules.data[sectionIndex]["title"].string
         let width = view.bounds.size.width
         let height = RuleHeader.sizeOccupied(forAvailableWidth: width, usingText: text!).height
         return CGSize(width: width, height: height)
     }
 
-    fileprivate func sizeForFooterInSection(withIndex sectionIndex: Int) -> CGSize {
+    private func sizeForFooterInSection(withIndex sectionIndex: Int) -> CGSize {
         return CGSize(width: sections.bounds.size.width,
                       height: pageInset(forSectionAtIndex: sectionIndex))
     }
 
-    fileprivate func sizeForExampleAtIndexPath(_ indexPath: IndexPath) -> CGSize {
+    private func sizeForExampleAtIndexPath(_ indexPath: IndexPath) -> CGSize {
         let example = Rules.data[indexPath.section]["examples"][indexPath.item]
         let text = example["text"].string
         let numberOfGridValues = example["values"].count
@@ -192,7 +193,7 @@ class Rules: UIViewController {
         return CGSize(width: width, height: height)
     }
 
-    fileprivate func pageInset(forSectionAtIndex sectionIndex: Int) -> CGFloat {
+    private func pageInset(forSectionAtIndex sectionIndex: Int) -> CGFloat {
         let pageHeight = sections.bounds.size.height
         let sectionContentHeight = contentHeight(forSectionAtIndex: sectionIndex)
         return (pageHeight - sectionContentHeight) / 2

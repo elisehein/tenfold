@@ -82,12 +82,12 @@ class AppInfoModal: ModalOverlay {
         modalBox.addSubview(rateButton)
     }
 
-    func didTapRate() {
-        UIApplication.shared.openURL(URL(string: "itms-apps://itunes.apple.com/app/id1149410716")!)
+    @objc func didTapRate() {
+        UIApplication.shared.open(URL(string: "itms-apps://itunes.apple.com/app/id1149410716")!)
     }
 
-    func didTapFeedback() {
-        UIApplication.shared.openURL(URL(string: "http://tenfoldapp.com/faq.html")!)
+    @objc func didTapFeedback() {
+        UIApplication.shared.open(URL(string: "http://tenfoldapp.com/faq.html")!)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -111,7 +111,7 @@ class AppInfoModal: ModalOverlay {
                                        to: .bottom,
                                        of: appVersionLabel,
                                        withOffset: AppInfoModal.paragraphSpacing)
-        emailLabel.autoPinEdge(.top, to: .bottom, of: developerNameLabel, withOffset:5)
+        emailLabel.autoPinEdge(.top, to: .bottom, of: developerNameLabel, withOffset: 5)
 
         specialThanksLabel.autoMatch(.width,
                                               to: .width,
@@ -142,7 +142,7 @@ class AppInfoModal: ModalOverlay {
         super.updateViewConstraints()
     }
 
-    private func labelAttributes(withBoldText boldText: Bool) -> [String: AnyObject] {
+    private func labelAttributes(withBoldText boldText: Bool) -> [NSAttributedStringKey: Any] {
         let isIPad = UIDevice.current.userInterfaceIdiom == .pad
 
         let paragraphStyle = NSMutableParagraphStyle()
@@ -150,10 +150,10 @@ class AppInfoModal: ModalOverlay {
         paragraphStyle.lineSpacing = isIPad ? 7 : 4
 
         return [
-            NSForegroundColorAttributeName: UIColor.themeColor(.offBlack),
-            NSFontAttributeName: UIFont.themeFontWithSize(isIPad ? 18 : 14,
-                                                          weight: boldText ? .bold : .regular),
-            NSParagraphStyleAttributeName: paragraphStyle
+            NSAttributedStringKey.foregroundColor: UIColor.themeColor(.offBlack),
+            NSAttributedStringKey.font: UIFont.themeFontWithSize(isIPad ? 18 : 14,
+                                                                 weight: boldText ? .bold : .regular),
+            NSAttributedStringKey.paragraphStyle: paragraphStyle
         ]
     }
 

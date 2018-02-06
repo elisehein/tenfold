@@ -44,13 +44,13 @@ import UIKit
 class NextRoundGrid: Grid {
 
     // We should store more or as many scale series numbers as there are rows
-    fileprivate static let totalRows = 8
+    private static let totalRows = 8
 
-    fileprivate let reuseIdentifier = "NextRoundCell"
+    private let reuseIdentifier = "NextRoundCell"
 
     var values: [Int?]
-    fileprivate let cellsPerRow: Int
-    fileprivate var startIndex: Int
+    private let cellsPerRow: Int
+    private var startIndex: Int
 
     var proportionVisible: CGFloat = 0 {
         didSet {
@@ -67,7 +67,7 @@ class NextRoundGrid: Grid {
         }
     }
 
-    fileprivate var revealValues: Bool = false {
+    private var revealValues: Bool = false {
         didSet {
             for visibleCell in visibleCells {
                 if let visibleCell = visibleCell as? NextRoundCell {
@@ -118,7 +118,7 @@ class NextRoundGrid: Grid {
         }
     }
 
-    fileprivate func animateAlpha(_ value: CGFloat) {
+    private func animateAlpha(_ value: CGFloat) {
         guard alpha != value else { return }
 
         UIView.animate(withDuration: 0.15, animations: {

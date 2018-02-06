@@ -17,7 +17,7 @@ enum Sound {
 }
 
 class SoundService {
-    static var singleton: SoundService? = nil
+    static var singleton: SoundService?
 
     var players: [Sound: AVAudioPlayer?] = [:]
 
@@ -41,7 +41,7 @@ class SoundService {
         guard sound != nil else { return nil }
 
         do {
-            player = try AVAudioPlayer(data: sound!.data, fileTypeHint: AVFileTypeWAVE)
+            player = try AVAudioPlayer(data: sound!.data, fileTypeHint: AVFileType.wav.rawValue)
             player!.prepareToPlay()
         } catch {
             print("Error initializing AVAudioPlayer")
@@ -62,7 +62,7 @@ class SoundService {
     }
 
     func playIfAllowed(_ sound: Sound) {
-        if StorageService.currentFlag(forSetting: .SoundOn) {
+        if StorageService.currentFlag(forSetting: .soundOn) {
             (players[sound]!)!.play()
         }
     }
@@ -70,7 +70,7 @@ class SoundService {
     func vibrateIfAllowed(_ sound: Sound) {
         guard forceTouchVibrationsAvailable() else { return }
 
-        if StorageService.currentFlag(forSetting: .VibrationOn) {
+        if StorageService.currentFlag(forSetting: .vibrationOn) {
             if sound == .crossOut {
                 AudioServicesPlaySystemSound(1519)
             } else {

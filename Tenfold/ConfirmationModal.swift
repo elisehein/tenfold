@@ -111,13 +111,11 @@ class ConfirmationModal: ModalOverlay {
         textLabel.attributedText = NSMutableAttributedString.themeString(.paragraph, text)
     }
 
-    func didTapYes() {
-        dismiss(animated: true, completion: { _ in
-            self.onTapYes!()
-        })
+    @objc func didTapYes() {
+        dismiss(animated: true, completion: { self.onTapYes!() })
     }
 
-    func didTapCancel() {
+    @objc func didTapCancel() {
         dismiss(animated: true, completion: nil)
     }
 
