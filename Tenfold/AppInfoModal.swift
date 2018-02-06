@@ -83,11 +83,11 @@ class AppInfoModal: ModalOverlay {
     }
 
     @objc func didTapRate() {
-        UIApplication.shared.openURL(URL(string: "itms-apps://itunes.apple.com/app/id1149410716")!)
+        UIApplication.shared.open(URL(string: "itms-apps://itunes.apple.com/app/id1149410716")!)
     }
 
     @objc func didTapFeedback() {
-        UIApplication.shared.openURL(URL(string: "http://tenfoldapp.com/faq.html")!)
+        UIApplication.shared.open(URL(string: "http://tenfoldapp.com/faq.html")!)
     }
 
     override func viewWillAppear(_ animated: Bool) {

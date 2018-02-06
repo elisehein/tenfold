@@ -16,6 +16,7 @@
 		0C1C36D51DA6DA280032A56D /* Game+Queries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1C36D41DA6DA280032A56D /* Game+Queries.swift */; };
 		0C1C36D81DA6DAB50032A56D /* Game+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1C36D71DA6DAB50032A56D /* Game+Actions.swift */; };
 		0C1E317D1D86AE6E00ABA583 /* EndOfRoundMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1E317C1D86AE6E00ABA583 /* EndOfRoundMarker.swift */; };
+		0C33D55D201F3C140063EE81 /* ScorePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C33D55C201F3C140063EE81 /* ScorePanel.swift */; };
 		0C34638F1C6F89B30086D3CC /* GameGridCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C34638E1C6F89B30086D3CC /* GameGridCell.swift */; };
 		0C3463931C6F8C340086D3CC /* Pairing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3463921C6F8C340086D3CC /* Pairing.swift */; };
 		0C392BC71D65E1D800294ACC /* SourceSansPro-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0C392BC61D65E1D400294ACC /* SourceSansPro-Semibold.otf */; };
@@ -59,7 +60,6 @@
 		0CADBDF41D6C65110090C13F /* Pill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CADBDF31D6C65110090C13F /* Pill.swift */; };
 		0CADBDF61D6D92850090C13F /* GameFinished.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CADBDF51D6D92850090C13F /* GameFinished.swift */; };
 		0CB109341C7234FB00182663 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB109331C7234FB00182663 /* UIColor.swift */; };
-		0CB693B61DA500BA00E1B409 /* ScorePill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB693B51DA500BA00E1B409 /* ScorePill.swift */; };
 		0CB938831D1FE6DD005B81F4 /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB938821D1FE6DD005B81F4 /* StorageService.swift */; };
 		0CB9388D1D202832005B81F4 /* NextRoundCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB9388C1D202832005B81F4 /* NextRoundCell.swift */; };
 		0CB938911D20389C005B81F4 /* NextRoundGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB938901D20389C005B81F4 /* NextRoundGrid.swift */; };
@@ -93,6 +93,7 @@
 		0C1C36D41DA6DA280032A56D /* Game+Queries.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Game+Queries.swift"; sourceTree = "<group>"; };
 		0C1C36D71DA6DAB50032A56D /* Game+Actions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Game+Actions.swift"; sourceTree = "<group>"; };
 		0C1E317C1D86AE6E00ABA583 /* EndOfRoundMarker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndOfRoundMarker.swift; sourceTree = "<group>"; };
+		0C33D55C201F3C140063EE81 /* ScorePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScorePanel.swift; sourceTree = "<group>"; };
 		0C34638E1C6F89B30086D3CC /* GameGridCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameGridCell.swift; sourceTree = "<group>"; };
 		0C3463921C6F8C340086D3CC /* Pairing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pairing.swift; sourceTree = "<group>"; };
 		0C392BC61D65E1D400294ACC /* SourceSansPro-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-Semibold.otf"; sourceTree = "<group>"; };
@@ -138,7 +139,6 @@
 		0CADBDF31D6C65110090C13F /* Pill.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pill.swift; sourceTree = "<group>"; };
 		0CADBDF51D6D92850090C13F /* GameFinished.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameFinished.swift; sourceTree = "<group>"; };
 		0CB109331C7234FB00182663 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
-		0CB693B51DA500BA00E1B409 /* ScorePill.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScorePill.swift; sourceTree = "<group>"; };
 		0CB938821D1FE6DD005B81F4 /* StorageService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
 		0CB9388C1D202832005B81F4 /* NextRoundCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextRoundCell.swift; sourceTree = "<group>"; };
 		0CB938901D20389C005B81F4 /* NextRoundGrid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextRoundGrid.swift; sourceTree = "<group>"; };
@@ -339,6 +339,7 @@
 				0CB938901D20389C005B81F4 /* NextRoundGrid.swift */,
 				0CB9388C1D202832005B81F4 /* NextRoundCell.swift */,
 				0CD93E851D79875500D7DF96 /* OnboardingSteps.swift */,
+				0C33D55C201F3C140063EE81 /* ScorePanel.swift */,
 				0CC94F701D7588AF00FAF4B2 /* RankingTable.swift */,
 			);
 			name = Components;
@@ -385,7 +386,6 @@
 			children = (
 				0CA5A79A1DA2E86200917DAA /* GameplayMessagePill.swift */,
 				0C99B0BC1DA3C23100D2728C /* NextRoundPill.swift */,
-				0CB693B51DA500BA00E1B409 /* ScorePill.swift */,
 			);
 			name = Pills;
 			sourceTree = "<group>";
@@ -527,7 +527,6 @@
 				0C70C40F1D73486500A9E8B8 /* JSON.swift in Sources */,
 				0C90AEA01C6C7FDF00E1E42E /* UIFont+Theme.swift in Sources */,
 				0C5998C01D8C3AED00D73EF6 /* Gesture.swift in Sources */,
-				0CB693B61DA500BA00E1B409 /* ScorePill.swift in Sources */,
 				0C41C1A81D7C358600E0AAF8 /* CopyService.swift in Sources */,
 				0C90AEA51C6D1B0700E1E42E /* GameGrid.swift in Sources */,
 				0CC94F711D7588AF00FAF4B2 /* RankingTable.swift in Sources */,
@@ -551,6 +550,7 @@
 				0C99B0BD1DA3C23100D2728C /* NextRoundPill.swift in Sources */,
 				4EA695801D36992E00F9A315 /* Menu.swift in Sources */,
 				0CDA88BF1D87105F0047A461 /* GameMove.swift in Sources */,
+				0C33D55D201F3C140063EE81 /* ScorePanel.swift in Sources */,
 				0CB109341C7234FB00182663 /* UIColor.swift in Sources */,
 				0CE682961D6DB46300CA5787 /* String.swift in Sources */,
 				0CB9388D1D202832005B81F4 /* NextRoundCell.swift in Sources */,

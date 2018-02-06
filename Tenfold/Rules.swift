@@ -92,8 +92,6 @@ class Rules: UIViewController {
 
         view.addSubview(sections)
         view.backgroundColor = UIColor.themeColor(.offWhite)
-
-        automaticallyAdjustsScrollViewInsets = false
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -101,19 +99,22 @@ class Rules: UIViewController {
 
         navigationController?.setNavigationBarHidden(false, animated: true)
 
-        let backButton = UIButton(frame: CGRect(x: 0, y: 0, width: 20, height: 16))
+        let backButton = UIButton()
+
         backButton.setBackgroundImage(UIImage(named: "back-arrow"), for: UIControlState())
         backButton.addTarget(self,
                              action: #selector(Rules.goBack),
                              for: .touchUpInside)
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+        navigationItem.leftBarButtonItem?.customView?.autoSetDimensions(to: CGSize(width: 20, height: 16))
 
-        let infoButton = UIButton(frame: CGRect(x: 0, y: 0, width: 25, height: 17))
+        let infoButton = UIButton()
         infoButton.setBackgroundImage(UIImage(named: "menu-icon"), for: UIControlState())
         infoButton.addTarget(self,
                              action: #selector(Rules.showAppInfo),
                              for: .touchUpInside)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)
+        navigationItem.rightBarButtonItem?.customView?.autoSetDimensions(to: CGSize(width: 25, height: 17))
 
         sections.frame = view.bounds
     }

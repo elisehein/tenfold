@@ -125,12 +125,12 @@ class Pill: UIView {
 
         let triggerTime = DispatchTime.now() + Double(Int64(seconds * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
         DispatchQueue.main.asyncAfter(deadline: triggerTime, execute: { () -> Void in
-                        self.toggle(inFrame: parentFrame,
-                            showing: false,
-                            animated: true,
-                            completion: {
-                                self.triggerPendingPopupCompletion()
-                        })
+            self.toggle(inFrame: parentFrame,
+                        showing: false,
+                        animated: true,
+                        completion: {
+                            self.triggerPendingPopupCompletion()
+            })
         })
     }
 
@@ -145,11 +145,11 @@ class Pill: UIView {
         transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
 
         UIView.animate(withDuration: 0.6,
-                                   delay: 0,
-                                   usingSpringWithDamping: 0.6,
-                                   initialSpringVelocity: 0.3,
-                                   options: [.curveEaseIn],
-                                   animations: {
+                       delay: 0,
+                       usingSpringWithDamping: 0.6,
+                       initialSpringVelocity: 0.3,
+                       options: [.curveEaseIn],
+                       animations: {
             self.alpha = 1
             self.transform = CGAffineTransform(scaleX: 1, y: 1)
         }, completion: { _ in
@@ -178,11 +178,11 @@ class Pill: UIView {
         frame = frameInside(frame: parentFrame, showing: !showing)
 
         UIView.animate(withDuration: animated ? 0.6 : 0,
-                                   delay: 0,
-                                   usingSpringWithDamping: 0.7,
-                                   initialSpringVelocity: 0.3,
-                                   options: [.curveEaseIn, .beginFromCurrentState],
-                                   animations: {
+                       delay: 0,
+                       usingSpringWithDamping: 0.7,
+                       initialSpringVelocity: 0.3,
+                       options: [.curveEaseIn, .beginFromCurrentState],
+                       animations: {
             self.alpha = showing ? 1 : 0
             self.frame = self.frameInside(frame: parentFrame, showing: showing)
         }, completion: { _ in

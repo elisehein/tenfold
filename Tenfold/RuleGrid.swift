@@ -115,7 +115,6 @@ class RuleGrid: Grid {
 
     @objc func pullUp() {
         gesture.perform(withDelay: 1, completion: {
-            // TODO use switch
             guard self.animationType == .pullUp else { return }
             self.performActionOnCells(withIndeces: Array(36..<self.values.count), { cell in
                 UIView.animate(withDuration: 0.15, delay: 0.4, options: [], animations: {
